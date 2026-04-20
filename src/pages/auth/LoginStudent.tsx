@@ -66,7 +66,7 @@ export default function LoginStudent() {
   };
 
   return (
-    <AuthLayout title="Panel ucznia" subtitle="Wprowadź swoje dane oraz kod PIN egzaminu otrzymany od nauczyciela." icon={GraduationCap}>
+    <AuthLayout title="Panel ucznia" subtitle="Wprowadź swoje dane oraz kod PIN egzaminu otrzymany od nauczyciela." icon={GraduationCap} accent="cyber">
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-display font-bold mb-1">Wejście do egzaminu</h2>
