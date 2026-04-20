@@ -14,16 +14,481 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      announcements: {
+        Row: {
+          audience: Database["public"]["Enums"]["app_role"] | null
+          body: string
+          created_at: string
+          created_by: string
+          id: string
+          published: boolean
+          title: string
+        }
+        Insert: {
+          audience?: Database["public"]["Enums"]["app_role"] | null
+          body: string
+          created_at?: string
+          created_by: string
+          id?: string
+          published?: boolean
+          title: string
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["app_role"] | null
+          body?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          published?: boolean
+          title?: string
+        }
+        Relationships: []
+      }
+      answers: {
+        Row: {
+          ai_feedback: string | null
+          answered_at: string
+          attempt_id: string
+          graded_by_ai: boolean
+          id: string
+          is_correct: boolean | null
+          points_awarded: number | null
+          question_id: string
+          response: Json | null
+        }
+        Insert: {
+          ai_feedback?: string | null
+          answered_at?: string
+          attempt_id: string
+          graded_by_ai?: boolean
+          id?: string
+          is_correct?: boolean | null
+          points_awarded?: number | null
+          question_id: string
+          response?: Json | null
+        }
+        Update: {
+          ai_feedback?: string | null
+          answered_at?: string
+          attempt_id?: string
+          graded_by_ai?: boolean
+          id?: string
+          is_correct?: boolean | null
+          points_awarded?: number | null
+          question_id?: string
+          response?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attempts: {
+        Row: {
+          created_at: string
+          exam_id: string
+          graded_at: string | null
+          id: string
+          max_score: number | null
+          passed: boolean | null
+          percent: number | null
+          pin_id: string | null
+          proctoring_data: Json | null
+          score: number | null
+          started_at: string
+          status: Database["public"]["Enums"]["attempt_status"]
+          student_id: string | null
+          student_name: string
+          submitted_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          graded_at?: string | null
+          id?: string
+          max_score?: number | null
+          passed?: boolean | null
+          percent?: number | null
+          pin_id?: string | null
+          proctoring_data?: Json | null
+          score?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id?: string | null
+          student_name: string
+          submitted_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          graded_at?: string | null
+          id?: string
+          max_score?: number | null
+          passed?: boolean | null
+          percent?: number | null
+          pin_id?: string | null
+          proctoring_data?: Json | null
+          score?: number | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["attempt_status"]
+          student_id?: string | null
+          student_name?: string
+          submitted_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempts_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempts_pin_id_fkey"
+            columns: ["pin_id"]
+            isOneToOne: false
+            referencedRelation: "exam_pins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resource_id: string | null
+          resource_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      exam_pins: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          exam_id: string
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          pin_code: string
+          used_count: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by: string
+          exam_id: string
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          pin_code: string
+          used_count?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          exam_id?: string
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          pin_code?: string
+          used_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_pins_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          adaptive: boolean
+          available_from: string | null
+          available_until: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          duration_minutes: number
+          id: string
+          passing_score: number
+          show_results: boolean
+          shuffle_questions: boolean
+          status: Database["public"]["Enums"]["exam_status"]
+          subject: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          adaptive?: boolean
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          passing_score?: number
+          show_results?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["exam_status"]
+          subject?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          adaptive?: boolean
+          available_from?: string | null
+          available_until?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration_minutes?: number
+          id?: string
+          passing_score?: number
+          show_results?: boolean
+          shuffle_questions?: boolean
+          status?: Database["public"]["Enums"]["exam_status"]
+          subject?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      materials: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_path: string
+          file_size: number | null
+          file_type: string | null
+          id: string
+          subject: string | null
+          title: string
+          uploaded_by: string
+          visible_to_students: boolean
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_path: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          subject?: string | null
+          title: string
+          uploaded_by: string
+          visible_to_students?: boolean
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_path?: string
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          subject?: string | null
+          title?: string
+          uploaded_by?: string
+          visible_to_students?: boolean
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          first_name: string | null
+          id: string
+          language: string
+          last_name: string | null
+          phone: string | null
+          two_factor_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          first_name?: string | null
+          id?: string
+          language?: string
+          last_name?: string | null
+          phone?: string | null
+          two_factor_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          first_name?: string | null
+          id?: string
+          language?: string
+          last_name?: string | null
+          phone?: string | null
+          two_factor_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          ai_generated: boolean
+          correct_answer: Json | null
+          created_at: string
+          difficulty: Database["public"]["Enums"]["difficulty_level"]
+          exam_id: string
+          explanation: string | null
+          id: string
+          media_url: string | null
+          options: Json | null
+          order_index: number
+          points: number
+          prompt: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at: string
+        }
+        Insert: {
+          ai_generated?: boolean
+          correct_answer?: Json | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          exam_id: string
+          explanation?: string | null
+          id?: string
+          media_url?: string | null
+          options?: Json | null
+          order_index?: number
+          points?: number
+          prompt: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+        }
+        Update: {
+          ai_generated?: boolean
+          correct_answer?: Json | null
+          created_at?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          exam_id?: string
+          explanation?: string | null
+          id?: string
+          media_url?: string | null
+          options?: Json | null
+          order_index?: number
+          points?: number
+          prompt?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_primary_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "teacher" | "student"
+      attempt_status: "in_progress" | "submitted" | "graded"
+      difficulty_level: "easy" | "medium" | "hard"
+      exam_status: "draft" | "published" | "archived"
+      question_type:
+        | "single_choice"
+        | "multiple_choice"
+        | "true_false"
+        | "short_answer"
+        | "essay"
+        | "matching"
+        | "drag_drop"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +615,20 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "teacher", "student"],
+      attempt_status: ["in_progress", "submitted", "graded"],
+      difficulty_level: ["easy", "medium", "hard"],
+      exam_status: ["draft", "published", "archived"],
+      question_type: [
+        "single_choice",
+        "multiple_choice",
+        "true_false",
+        "short_answer",
+        "essay",
+        "matching",
+        "drag_drop",
+      ],
+    },
   },
 } as const
