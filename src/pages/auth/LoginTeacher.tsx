@@ -53,6 +53,7 @@ export default function LoginTeacher() {
       title="Panel nauczyciela"
       subtitle="Twórz egzaminy, zarządzaj bankiem pytań, korzystaj z AI do oceniania prac."
       icon={Users}
+      accent="gold"
     >
       <div className="space-y-6">
         <div>

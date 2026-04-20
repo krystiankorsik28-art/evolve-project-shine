@@ -94,6 +94,7 @@ export default function LoginAdmin() {
       title="Panel administratora"
       subtitle="Pełne zarządzanie platformą EduNex.pl. Wymaga drugiego składnika uwierzytelniania (TOTP)."
       icon={Shield}
+      accent="red"
     >
       <div className="space-y-6">
         <div>
