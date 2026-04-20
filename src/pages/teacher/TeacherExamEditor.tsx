@@ -68,7 +68,7 @@ export default function TeacherExamEditor() {
       title: exam.title, description: exam.description, subject: exam.subject,
       duration_minutes: exam.duration_minutes, passing_score: exam.passing_score,
       shuffle_questions: exam.shuffle_questions, show_results: exam.show_results,
-      status: exam.status,
+      status: exam.status as "draft" | "published" | "archived",
     }).eq("id", exam.id);
     if (error) { toast.error(error.message); return; }
     toast.success("Zapisano");
