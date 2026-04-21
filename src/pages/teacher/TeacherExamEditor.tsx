@@ -9,13 +9,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Sparkles, KeyRound, Loader2, Save } from "lucide-react";
+import { Plus, Trash2, Sparkles, KeyRound, Loader2, Save, Library } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { logAudit } from "@/lib/audit";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-
-type QType = "single_choice" | "multiple_choice" | "true_false" | "short_answer" | "essay";
+import { QuestionTypeEditor, QUESTION_TYPE_LABELS, QUESTION_TYPE_ICONS, QType } from "@/components/QuestionTypeEditor";
 
 interface Question {
   id: string; question_type: QType; prompt: string;
