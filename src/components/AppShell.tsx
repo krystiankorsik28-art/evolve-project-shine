@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LogOut, LayoutDashboard, Users, FileText, ScrollText, BookOpen, BarChart3, ShieldAlert } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, FileText, BookOpen, ShieldAlert, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ interface NavItem { to: string; icon: typeof LayoutDashboard; label: string; }
 const navByRole: Record<AppRole, NavItem[]> = {
   admin: [
     { to: "/admin", icon: LayoutDashboard, label: "Pulpit" },
+    { to: "/admin/approvals", icon: ShieldCheck, label: "Akceptacje" },
     { to: "/admin/users", icon: Users, label: "Użytkownicy" },
     { to: "/admin/audit", icon: ShieldAlert, label: "Logi audytu" },
   ],

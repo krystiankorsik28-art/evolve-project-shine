@@ -16,6 +16,8 @@ import RegisterTeacher from "./pages/auth/RegisterTeacher";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminAudit from "./pages/admin/AdminAudit";
+import AdminTeacherApprovals from "./pages/admin/AdminTeacherApprovals";
+import TeacherPending from "./pages/teacher/TeacherPending";
 import TeacherDashboard from "./pages/teacher/TeacherDashboard";
 import TeacherExams from "./pages/teacher/TeacherExams";
 import TeacherExamEditor from "./pages/teacher/TeacherExamEditor";
@@ -47,8 +49,10 @@ const App = () => (
               <Route path="/admin" element={<ProtectedRoute role="admin"><AdminDashboard /></ProtectedRoute>} />
               <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsers /></ProtectedRoute>} />
               <Route path="/admin/audit" element={<ProtectedRoute role="admin"><AdminAudit /></ProtectedRoute>} />
+              <Route path="/admin/approvals" element={<ProtectedRoute role="admin"><AdminTeacherApprovals /></ProtectedRoute>} />
 
               {/* Teacher */}
+              <Route path="/teacher/pending" element={<ProtectedRoute role="teacher"><TeacherPending /></ProtectedRoute>} />
               <Route path="/teacher" element={<ProtectedRoute role="teacher"><TeacherDashboard /></ProtectedRoute>} />
               <Route path="/teacher/exams" element={<ProtectedRoute role="teacher"><TeacherExams /></ProtectedRoute>} />
               <Route path="/teacher/exams/:id" element={<ProtectedRoute role="teacher"><TeacherExamEditor /></ProtectedRoute>} />
