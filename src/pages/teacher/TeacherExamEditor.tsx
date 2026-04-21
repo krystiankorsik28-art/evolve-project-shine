@@ -37,8 +37,13 @@ export default function TeacherExamEditor() {
   const [aiOpen, setAiOpen] = useState(false);
   const [aiTopic, setAiTopic] = useState("");
   const [aiCount, setAiCount] = useState(5);
+  const [aiType, setAiType] = useState<QType>("single_choice");
   const [aiLoading, setAiLoading] = useState(false);
   const [pin, setPin] = useState<string | null>(null);
+  const [newType, setNewType] = useState<QType>("single_choice");
+  const [bankOpen, setBankOpen] = useState(false);
+  const [bankItems, setBankItems] = useState<Array<{ id: string; prompt: string; question_type: QType; difficulty: string; points: number; options: unknown; correct_answer: unknown; explanation: string | null }>>([]);
+  const [bankSelected, setBankSelected] = useState<Set<string>>(new Set());
 
   const load = async () => {
     if (!id) return;
