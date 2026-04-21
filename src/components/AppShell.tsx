@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LogOut, LayoutDashboard, Users, FileText, BookOpen, ShieldAlert, ShieldCheck } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, FileText, BookOpen, ShieldAlert, ShieldCheck, Library } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ const navByRole: Record<AppRole, NavItem[]> = {
   teacher: [
     { to: "/teacher", icon: LayoutDashboard, label: "Pulpit" },
     { to: "/teacher/exams", icon: FileText, label: "Egzaminy" },
+    { to: "/teacher/bank", icon: Library, label: "Bank pytań" },
     { to: "/teacher/materials", icon: BookOpen, label: "Materiały" },
   ],
   student: [

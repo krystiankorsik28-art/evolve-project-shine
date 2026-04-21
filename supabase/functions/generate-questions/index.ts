@@ -1,5 +1,8 @@
 // Edge function: generowanie pytań przez Lovable AI
-// Tryby: topic | from_text | paraphrase | translate | validate
+// Tryby zapisu:
+//   - exam_id: wstawia do tabeli questions (egzamin)
+//   - to_bank=true: wstawia do question_bank
+//   - brak: zwraca pytania bez zapisu
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -14,7 +17,7 @@ const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const QUESTION_TYPES = [
   "single_choice", "multiple_choice", "true_false", "short_answer",
-  "essay", "matching", "fill_in_blank", "ordering", "numeric", "code",
+  "essay", "matching", "drag_drop", "fill_in_blank", "ordering", "numeric", "code", "hotspot",
 ] as const;
 
 const SCHEMA = {
@@ -27,7 +30,7 @@ const SCHEMA = {
         properties: {
           question_type: { type: "string", enum: QUESTION_TYPES as unknown as string[] },
           prompt: { type: "string" },
-          options: { type: "array", items: { type: "string" } },
+          options: {},
           correct_answer: {},
           explanation: { type: "string" },
           difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
@@ -97,33 +100,102 @@ Deno.serve(async (req) => {
     let result: { questions?: unknown[]; text?: string } = {};
 
     if (mode === "topic") {
-      const { topic, count = 5, difficulty = "medium", language = "pl", types = ["single_choice"], extra_context = "" } = body;
-      const sys = `Jesteś ekspertem dydaktyki. Generujesz wysokiej jakości pytania egzaminacyjne w języku ${language}. Dla single_choice/multiple_choice: 4 opcje, correct_answer = indeks(y) (np. 0 albo [0,2]). Dla true_false: opcje ["Prawda","Fałsz"], correct_answer = 0 lub 1. Dla short_answer/numeric: correct_answer = string z poprawną odpowiedzią. Dla essay: correct_answer = wzorzec oceny. Dla matching/ordering/fill_in_blank: correct_answer jako struktura JSON. Każde pytanie ma 'explanation' (1-3 zdania).`;
-      const user_p = `Wygeneruj ${count} pytań na temat: "${topic}". Trudność: ${difficulty}. Dozwolone typy: ${types.join(", ")}. ${extra_context ? "Dodatkowy kontekst: " + extra_context : ""}`;
+      const {
+        topic, count = 5, difficulty = "medium", language = "pl",
+        types, question_type, extra_context = "",
+      } = body;
+      const allowedTypes: string[] = Array.isArray(types) ? types : [question_type ?? "single_choice"];
+      const sys = `Jesteś ekspertem dydaktyki. Generujesz wysokiej jakości pytania egzaminacyjne w języku ${language}.
+Format correct_answer dla typów:
+- single_choice: liczba (indeks)
+- multiple_choice: tablica indeksów [0,2]
+- true_false: 0 (Prawda) lub 1 (Fałsz), opcje ["Prawda","Fałsz"]
+- short_answer: string z poprawną odpowiedzią
+- essay: string z wzorcową odpowiedzią/kryteriami
+- numeric: {value, tolerance, unit}
+- matching: opcje [{left,right}], correct_answer = mapowanie
+- drag_drop: opcje [{item,target}]
+- fill_in_blank: prompt z {{1}}, {{2}}, correct_answer = ["odp1","odp2"]
+- ordering: opcje = elementy w poprawnej kolejności
+- code: {language, expected_output, solution}
+- hotspot: {x, y, radius, image_url}
+Każde pytanie ma 'explanation' (1-3 zdania).`;
+      const user_p = `Wygeneruj ${count} pytań na temat: "${topic}". Trudność: ${difficulty}. Dozwolone typy: ${allowedTypes.join(", ")}. ${extra_context ? "Dodatkowy kontekst: " + extra_context : ""}`;
       result = await callAI(sys, user_p);
     } else if (mode === "from_text") {
       const { text, count = 5, types = ["single_choice"] } = body;
-      const sys = `Jesteś ekspertem dydaktyki. Tworzysz pytania na podstawie podanego materiału. Zwracaj realne pytania osadzone w tekście. Dla single_choice/multiple_choice: 4 opcje, correct_answer = indeks(y).`;
+      const sys = `Jesteś ekspertem dydaktyki. Tworzysz pytania na podstawie podanego materiału.`;
       result = await callAI(sys, `Materiał:\n${text}\n\nWygeneruj ${count} pytań typów: ${types.join(", ")}`);
     } else if (mode === "paraphrase") {
       const { prompt } = body;
       const sys = "Sparafrazuj pytanie zachowując sens i poprawność merytoryczną. Zwróć JEDNO pytanie.";
-      const out = await callAI(sys, `Pytanie: "${prompt}"\nZwróć JSON {questions:[{...}]} z jednym pytaniem o tym samym typie i correct_answer.`);
-      result = out;
+      result = await callAI(sys, `Pytanie: "${prompt}"\nZwróć JSON {questions:[{...}]} z jednym pytaniem o tym samym typie i correct_answer.`);
     } else if (mode === "translate") {
       const { prompt, options = [], target_lang = "en" } = body;
-      const sys = `Przetłumacz pytanie na ${target_lang}, zachowując terminologię techniczną. Zwróć JSON {questions:[{prompt, options}]}.`;
+      const sys = `Przetłumacz pytanie na ${target_lang}, zachowując terminologię techniczną.`;
       result = await callAI(sys, `Pytanie: ${prompt}\nOpcje: ${JSON.stringify(options)}`);
     } else if (mode === "validate") {
       const { prompt, options = [], correct_answer } = body;
-      const sys = "Jesteś recenzentem testów. Sprawdź czy pytanie jest poprawne merytorycznie, jednoznaczne i czy oznaczona odpowiedź jest właściwa. Odpowiedz krótko po polsku w formacie: STATUS: OK|UWAGI \\n KOMENTARZ: ...";
+      const sys = "Jesteś recenzentem testów. Sprawdź poprawność merytoryczną, jednoznaczność i poprawność oznaczonej odpowiedzi. Format: STATUS: OK|UWAGI \\n KOMENTARZ: ...";
       const text = await callAI(sys, `Pytanie: ${prompt}\nOpcje: ${JSON.stringify(options)}\nOznaczona poprawna: ${JSON.stringify(correct_answer)}`, false);
-      result = { text: String(text) };
+      return new Response(JSON.stringify({ success: true, text: String(text) }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     } else {
       return new Response(JSON.stringify({ error: "unknown mode" }), { status: 400, headers: corsHeaders });
     }
 
-    return new Response(JSON.stringify({ success: true, ...result }), {
+    const questions = (result.questions ?? []) as Array<Record<string, unknown>>;
+
+    // Persist if requested
+    if (body.exam_id && questions.length > 0) {
+      // Check exam ownership
+      const { data: exam } = await admin.from("exams").select("created_by").eq("id", body.exam_id).maybeSingle();
+      if (!exam || exam.created_by !== user.id) {
+        return new Response(JSON.stringify({ error: "Exam not found or not owned" }), { status: 403, headers: corsHeaders });
+      }
+      const { count: existing } = await admin.from("questions").select("*", { count: "exact", head: true }).eq("exam_id", body.exam_id);
+      const rows = questions.map((q, i) => ({
+        exam_id: body.exam_id,
+        question_type: q.question_type as string,
+        prompt: q.prompt as string,
+        options: (q.options ?? []) as never,
+        correct_answer: (q.correct_answer ?? null) as never,
+        explanation: (q.explanation ?? null) as string | null,
+        difficulty: (q.difficulty ?? "medium") as string,
+        points: (q.points ?? 1) as number,
+        order_index: (existing ?? 0) + i,
+        ai_generated: true,
+      }));
+      const { error: insErr } = await admin.from("questions").insert(rows);
+      if (insErr) throw new Error(insErr.message);
+      return new Response(JSON.stringify({ success: true, count: rows.length, questions }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (body.to_bank && questions.length > 0) {
+      const rows = questions.map((q) => ({
+        question_type: q.question_type as string,
+        prompt: q.prompt as string,
+        options: (q.options ?? []) as never,
+        correct_answer: (q.correct_answer ?? null) as never,
+        explanation: (q.explanation ?? null) as string | null,
+        difficulty: (q.difficulty ?? "medium") as string,
+        points: (q.points ?? 1) as number,
+        category_id: (body.category_id ?? null) as string | null,
+        language: (body.language ?? "pl") as string,
+        ai_generated: true,
+        created_by: user.id,
+      }));
+      const { error: insErr } = await admin.from("question_bank").insert(rows);
+      if (insErr) throw new Error(insErr.message);
+      return new Response(JSON.stringify({ success: true, count: rows.length, questions }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true, count: questions.length, questions }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
