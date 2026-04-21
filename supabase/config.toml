@@ -1,1 +1,7 @@
 project_id = "jcdtpnyvwhdvublkzdou"
+
+[functions.admin-manage-users]
+verify_jwt = false
+
+[functions.generate-questions]
+verify_jwt = false

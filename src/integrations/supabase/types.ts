@@ -244,6 +244,44 @@ export type Database = {
           },
         ]
       }
+      exam_schedules: {
+        Row: {
+          created_at: string
+          created_by: string
+          duration_minutes: number
+          exam_id: string
+          id: string
+          notes: string | null
+          scheduled_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          duration_minutes?: number
+          exam_id: string
+          id?: string
+          notes?: string | null
+          scheduled_at: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          duration_minutes?: number
+          exam_id?: string
+          id?: string
+          notes?: string | null
+          scheduled_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_schedules_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exams: {
         Row: {
           adaptive: boolean
@@ -337,6 +375,38 @@ export type Database = {
         }
         Relationships: []
       }
+      proctoring_events: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "proctoring_events_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -376,6 +446,158 @@ export type Database = {
           two_factor_enabled?: boolean
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      question_bank: {
+        Row: {
+          ai_generated: boolean
+          ai_validated: boolean
+          category_id: string | null
+          correct_answer: Json | null
+          created_at: string
+          created_by: string
+          difficulty: Database["public"]["Enums"]["difficulty_level"]
+          explanation: string | null
+          id: string
+          language: string
+          media_url: string | null
+          options: Json | null
+          points: number
+          prompt: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          ai_generated?: boolean
+          ai_validated?: boolean
+          category_id?: string | null
+          correct_answer?: Json | null
+          created_at?: string
+          created_by: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          explanation?: string | null
+          id?: string
+          language?: string
+          media_url?: string | null
+          options?: Json | null
+          points?: number
+          prompt: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          ai_generated?: boolean
+          ai_validated?: boolean
+          category_id?: string | null
+          correct_answer?: Json | null
+          created_at?: string
+          created_by?: string
+          difficulty?: Database["public"]["Enums"]["difficulty_level"]
+          explanation?: string | null
+          id?: string
+          language?: string
+          media_url?: string | null
+          options?: Json | null
+          points?: number
+          prompt?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "question_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_bank_tags: {
+        Row: {
+          question_id: string
+          tag_id: string
+        }
+        Insert: {
+          question_id: string
+          tag_id: string
+        }
+        Update: {
+          question_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_tags_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_bank_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "question_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      question_tags: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }
@@ -440,20 +662,32 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          approval_status: Database["public"]["Enums"]["approval_status"]
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           id: string
+          rejection_reason: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Insert: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           id?: string
+          rejection_reason?: string | null
           role: Database["public"]["Enums"]["app_role"]
           user_id: string
         }
         Update: {
+          approval_status?: Database["public"]["Enums"]["approval_status"]
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           id?: string
+          rejection_reason?: string | null
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
         }
@@ -475,9 +709,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_approved_teacher: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "teacher" | "student"
+      approval_status: "pending" | "approved" | "rejected"
       attempt_status: "in_progress" | "submitted" | "graded"
       difficulty_level: "easy" | "medium" | "hard"
       exam_status: "draft" | "published" | "archived"
@@ -489,6 +725,11 @@ export type Database = {
         | "essay"
         | "matching"
         | "drag_drop"
+        | "fill_in_blank"
+        | "ordering"
+        | "numeric"
+        | "code"
+        | "hotspot"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -617,6 +858,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "teacher", "student"],
+      approval_status: ["pending", "approved", "rejected"],
       attempt_status: ["in_progress", "submitted", "graded"],
       difficulty_level: ["easy", "medium", "hard"],
       exam_status: ["draft", "published", "archived"],
@@ -628,6 +870,11 @@ export const Constants = {
         "essay",
         "matching",
         "drag_drop",
+        "fill_in_blank",
+        "ordering",
+        "numeric",
+        "code",
+        "hotspot",
       ],
     },
   },
