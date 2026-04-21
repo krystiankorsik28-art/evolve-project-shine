@@ -242,16 +242,28 @@ export default function TeacherExamEditor() {
         {/* Pytania */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <CardTitle>Pytania ({questions.length})</CardTitle>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Dialog open={aiOpen} onOpenChange={setAiOpen}>
                   <DialogTrigger asChild><Button variant="outline"><Sparkles className="h-4 w-4 mr-2 text-accent" /> Generuj AI</Button></DialogTrigger>
                   <DialogContent>
                     <DialogHeader><DialogTitle>Generowanie pytań AI</DialogTitle></DialogHeader>
-                    <div className="space-y-4">
-                      <div className="space-y-2"><Label>Temat / zakres</Label><Textarea value={aiTopic} onChange={(e) => setAiTopic(e.target.value)} placeholder="np. Średniowiecze w Polsce, X-XV wiek" rows={3} /></div>
-                      <div className="space-y-2"><Label>Liczba pytań</Label><Input type="number" min={1} max={20} value={aiCount} onChange={(e) => setAiCount(parseInt(e.target.value) || 5)} /></div>
+                    <div className="space-y-3">
+                      <div><Label>Temat / zakres</Label><Textarea value={aiTopic} onChange={(e) => setAiTopic(e.target.value)} placeholder="np. Średniowiecze w Polsce, X-XV wiek" rows={3} /></div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div><Label>Liczba pytań</Label><Input type="number" min={1} max={20} value={aiCount} onChange={(e) => setAiCount(parseInt(e.target.value) || 5)} /></div>
+                        <div><Label>Typ</Label>
+                          <Select value={aiType} onValueChange={(v) => setAiType(v as QType)}>
+                            <SelectTrigger><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {(Object.keys(QUESTION_TYPE_LABELS) as QType[]).map((t) => (
+                                <SelectItem key={t} value={t}>{QUESTION_TYPE_LABELS[t]}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setAiOpen(false)}>Anuluj</Button>
@@ -259,13 +271,26 @@ export default function TeacherExamEditor() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <Button onClick={() => addQuestion()}><Plus className="h-4 w-4 mr-2" /> Dodaj pytanie</Button>
+
+                <Button variant="outline" onClick={loadBank}><Library className="h-4 w-4 mr-2" /> Z banku</Button>
+
+                <div className="flex">
+                  <Select value={newType} onValueChange={(v) => setNewType(v as QType)}>
+                    <SelectTrigger className="w-[180px] rounded-r-none border-r-0"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(QUESTION_TYPE_LABELS) as QType[]).map((t) => (
+                        <SelectItem key={t} value={t}>{QUESTION_TYPE_ICONS[t]} {QUESTION_TYPE_LABELS[t]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button className="rounded-l-none" onClick={() => addQuestion()}><Plus className="h-4 w-4 mr-1" /> Dodaj</Button>
+                </div>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {questions.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">Brak pytań. Dodaj pierwsze lub użyj AI.</p>
+              <p className="text-sm text-muted-foreground text-center py-8">Brak pytań. Dodaj pierwsze, użyj AI lub wstaw z banku.</p>
             ) : questions.map((q, i) => (
               <QuestionEditor key={q.id} question={q} index={i}
                 onChange={(nq) => { setQuestions(questions.map((x) => x.id === nq.id ? nq : x)); }}
@@ -276,6 +301,39 @@ export default function TeacherExamEditor() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Bank dialog */}
+      <Dialog open={bankOpen} onOpenChange={setBankOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>Wstaw pytania z banku ({bankSelected.size} zaznaczonych)</DialogTitle></DialogHeader>
+          {bankItems.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">Bank jest pusty. Przejdź do "Bank pytań" aby dodać.</p>
+          ) : (
+            <div className="space-y-2">
+              {bankItems.map((b) => (
+                <label key={b.id} className={`flex gap-3 p-3 border rounded-lg cursor-pointer ${bankSelected.has(b.id) ? "border-primary bg-primary/5" : "border-border"}`}>
+                  <input type="checkbox" checked={bankSelected.has(b.id)} onChange={(e) => {
+                    const n = new Set(bankSelected);
+                    if (e.target.checked) n.add(b.id); else n.delete(b.id);
+                    setBankSelected(n);
+                  }} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex gap-1 mb-1">
+                      <Badge variant="secondary" className="text-xs">{QUESTION_TYPE_ICONS[b.question_type]} {QUESTION_TYPE_LABELS[b.question_type]}</Badge>
+                      <Badge variant="outline" className="text-xs">{b.difficulty} • {b.points} pkt</Badge>
+                    </div>
+                    <p className="text-sm line-clamp-2">{b.prompt}</p>
+                  </div>
+                </label>
+              ))}
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBankOpen(false)}>Anuluj</Button>
+            <Button onClick={insertFromBank} disabled={bankSelected.size === 0}>Wstaw {bankSelected.size}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
 }
@@ -286,48 +344,47 @@ function QuestionEditor({ question, index, onChange, onSave, onDelete }: {
   onSave: (q: Question) => void;
   onDelete: (id: string) => void;
 }) {
-  const isChoice = question.question_type === "single_choice" || question.question_type === "multiple_choice" || question.question_type === "true_false";
   return (
     <div className="border border-border rounded-lg p-4 space-y-3 bg-card">
       <div className="flex items-start justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline">#{index + 1}</Badge>
-          <Badge variant="secondary">{question.question_type}</Badge>
+          <Badge variant="secondary">{QUESTION_TYPE_ICONS[question.question_type]} {QUESTION_TYPE_LABELS[question.question_type]}</Badge>
           <Badge variant="outline">{question.points} pkt</Badge>
+          <Badge variant="outline">{question.difficulty}</Badge>
         </div>
         <Button variant="ghost" size="sm" onClick={() => onDelete(question.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
       </div>
       <Textarea value={question.prompt} onChange={(e) => onChange({ ...question, prompt: e.target.value })} onBlur={() => onSave(question)} placeholder="Treść pytania..." rows={2} />
-      {isChoice && (
-        <div className="space-y-2">
-          {question.options.map((opt, i) => (
-            <div key={i} className="flex gap-2">
-              <Input value={opt} onChange={(e) => { const no = [...question.options]; no[i] = e.target.value; onChange({ ...question, options: no }); }} onBlur={() => onSave(question)} />
-              <Button variant={question.correct_answer === i || (Array.isArray(question.correct_answer) && question.correct_answer.includes(i)) ? "default" : "outline"} size="sm" onClick={() => {
-                const newCorrect = question.question_type === "multiple_choice"
-                  ? (Array.isArray(question.correct_answer) ? (question.correct_answer.includes(i) ? question.correct_answer.filter((x) => x !== i) : [...question.correct_answer, i]) : [i])
-                  : i;
-                onChange({ ...question, correct_answer: newCorrect });
-                onSave({ ...question, correct_answer: newCorrect });
-              }}>✓</Button>
-              {question.question_type !== "true_false" && (
-                <Button variant="ghost" size="sm" onClick={() => { const no = question.options.filter((_, x) => x !== i); onChange({ ...question, options: no }); onSave({ ...question, options: no }); }}>×</Button>
-              )}
-            </div>
-          ))}
-          {question.question_type !== "true_false" && (
-            <Button variant="ghost" size="sm" onClick={() => { const no = [...question.options, `Opcja ${String.fromCharCode(65 + question.options.length)}`]; onChange({ ...question, options: no }); onSave({ ...question, options: no }); }}>
-              <Plus className="h-3.5 w-3.5 mr-1" /> Dodaj opcję
-            </Button>
-          )}
-        </div>
-      )}
-      {(question.question_type === "short_answer" || question.question_type === "essay") && (
-        <div className="space-y-2">
-          <Label className="text-xs">Wzorzec/oczekiwana odpowiedź (dla AI):</Label>
-          <Textarea value={typeof question.correct_answer === "string" ? question.correct_answer : ""} onChange={(e) => onChange({ ...question, correct_answer: e.target.value })} onBlur={() => onSave(question)} rows={2} />
-        </div>
-      )}
+      <QuestionTypeEditor
+        type={question.question_type}
+        options={question.options}
+        correctAnswer={question.correct_answer}
+        onChange={(patch) => {
+          const next = { ...question, ...(patch as Partial<Question>) } as Question;
+          onChange(next);
+          onSave(next);
+        }}
+        onBlur={() => onSave(question)}
+      />
+      <div className="flex gap-2 items-center pt-2 border-t border-border">
+        <Label className="text-xs">Punkty:</Label>
+        <Input type="number" min={0} step={0.5} value={question.points} className="w-20 h-8"
+          onChange={(e) => onChange({ ...question, points: parseFloat(e.target.value) || 1 })}
+          onBlur={() => onSave(question)} />
+        <Label className="text-xs ml-2">Trudność:</Label>
+        <Select value={question.difficulty} onValueChange={(v) => {
+          const next = { ...question, difficulty: v as Question["difficulty"] };
+          onChange(next); onSave(next);
+        }}>
+          <SelectTrigger className="w-32 h-8"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="easy">Łatwa</SelectItem>
+            <SelectItem value="medium">Średnia</SelectItem>
+            <SelectItem value="hard">Trudna</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 }
