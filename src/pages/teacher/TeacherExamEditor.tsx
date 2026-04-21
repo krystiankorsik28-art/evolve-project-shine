@@ -79,15 +79,44 @@ export default function TeacherExamEditor() {
     await logAudit("exam_updated", { resource_type: "exam", resource_id: exam.id });
   };
 
-  const addQuestion = async (type: QType = "single_choice") => {
+  const addQuestion = async (type: QType = newType) => {
     if (!id) return;
+    const defaultOptions: unknown =
+      type === "true_false" ? ["Prawda", "Fałsz"] :
+      type === "single_choice" || type === "multiple_choice" ? ["Opcja A", "Opcja B"] :
+      type === "matching" ? [{ left: "", right: "" }] :
+      type === "drag_drop" ? [{ item: "", target: "" }] :
+      type === "ordering" ? ["", ""] : [];
     const { data, error } = await supabase.from("questions").insert({
       exam_id: id, question_type: type, prompt: "Nowe pytanie",
-      options: type === "true_false" ? ["Prawda", "Fałsz"] : type === "single_choice" || type === "multiple_choice" ? ["Opcja A", "Opcja B"] : [],
+      options: defaultOptions as never,
       correct_answer: null, points: 1, order_index: questions.length,
     }).select().single();
     if (error) { toast.error(error.message); return; }
-    setQuestions([...questions, { ...data, options: data.options as string[] } as never]);
+    setQuestions([...questions, { ...data, options: (data.options ?? []) as string[] } as never]);
+  };
+
+  const loadBank = async () => {
+    const { data } = await supabase.from("question_bank").select("id, prompt, question_type, difficulty, points, options, correct_answer, explanation").order("created_at", { ascending: false });
+    setBankItems((data ?? []) as never);
+    setBankSelected(new Set());
+    setBankOpen(true);
+  };
+
+  const insertFromBank = async () => {
+    if (!id || bankSelected.size === 0) return;
+    const items = bankItems.filter((b) => bankSelected.has(b.id));
+    const rows = items.map((b, i) => ({
+      exam_id: id, question_type: b.question_type, prompt: b.prompt,
+      options: (b.options ?? []) as never, correct_answer: b.correct_answer as never,
+      points: b.points, difficulty: (b.difficulty as "easy" | "medium" | "hard"),
+      order_index: questions.length + i,
+    }));
+    const { error } = await supabase.from("questions").insert(rows);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Dodano ${rows.length} pytań z banku`);
+    setBankOpen(false);
+    load();
   };
 
   const updateQuestion = async (q: Question) => {
