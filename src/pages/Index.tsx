@@ -458,6 +458,43 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ======== POMOC / FAQ ======== */}
+      <section id="pomoc" className="container py-20 lg:py-24 scroll-mt-24">
+        <div className="grid lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-accent-on-soft text-xs font-semibold tracking-wider uppercase mb-4">
+              <HelpCircle className="h-3.5 w-3.5" /> Centrum pomocy
+            </div>
+            <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
+              Najczęściej zadawane pytania
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Nie znalazłeś odpowiedzi? Napisz do nas — wsparcie odpowiada w ciągu 24 godzin w dni robocze.
+            </p>
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+              <a href="#kontakt"><MessageCircle className="h-4 w-4 mr-2" /> Przejdź do kontaktu</a>
+            </Button>
+          </div>
+          <div className="lg:col-span-8">
+            <Accordion type="single" collapsible className="rounded-2xl bg-card border border-border divide-y divide-border overflow-hidden">
+              {faqs.map((f, i) => (
+                <AccordionItem key={i} value={`item-${i}`} className="border-0 px-5">
+                  <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-5">
+                    {f.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* ======== KONTAKT ======== */}
+      <ContactSection />
+
       {/* ======== CTA STRIP ======== */}
       <section className="bg-hero relative overflow-hidden">
         <div className="absolute inset-0 bg-mesh opacity-80" />
