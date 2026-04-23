@@ -302,7 +302,7 @@ const Index = () => {
       </section>
 
       {/* ======== 3 LOGIN CARDS — bardzo czytelne ======== */}
-      <section className="container py-20 lg:py-24">
+      <section id="egzaminy" className="container py-20 lg:py-24 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-foreground/80 text-xs font-semibold tracking-wider uppercase mb-4">
             Wybierz panel
@@ -371,7 +371,7 @@ const Index = () => {
       </section>
 
       {/* ======== AKTUALNOŚCI + SKRÓTY ======== */}
-      <section className="container py-16 grid lg:grid-cols-3 gap-8">
+      <section id="materialy" className="container py-16 grid lg:grid-cols-3 gap-8 scroll-mt-24">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 rounded-lg bg-accent-soft"><Bell className="h-5 w-5 text-accent-on-soft" /></div>
@@ -427,7 +427,7 @@ const Index = () => {
       </section>
 
       {/* ======== FEATURES ======== */}
-      <section className="bg-secondary/50 border-y border-border py-20 lg:py-24">
+      <section id="raporty" className="bg-secondary/50 border-y border-border py-20 lg:py-24 scroll-mt-24">
         <div className="container">
           <div className="max-w-2xl mx-auto text-center mb-14">
             <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
