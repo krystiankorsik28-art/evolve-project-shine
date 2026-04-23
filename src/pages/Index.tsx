@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import {
   Shield, Users, GraduationCap, ArrowRight, Bell, BookOpen, FileText, BarChart3,
   Phone, HelpCircle, Sparkles, Lock, Globe, Award, CheckCircle2, Activity,
-  Zap, Server, Cpu, Database, ExternalLink, Flag,
+  Zap, Server, Cpu, Database, ExternalLink, Flag, Mail, MapPin, Send, MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Index = () => {
   const { user, role, loading } = useAuth();
