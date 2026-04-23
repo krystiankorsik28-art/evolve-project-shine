@@ -154,7 +154,7 @@ const Index = () => {
           </nav>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Button asChild variant="default" className="hidden sm:inline-flex bg-primary-deep hover:bg-primary text-primary-foreground font-semibold">
+            <Button asChild variant="default" className="hidden sm:inline-flex bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-cyber">
               <Link to="/auth/student">Wejdź na platformę</Link>
             </Button>
           </div>
