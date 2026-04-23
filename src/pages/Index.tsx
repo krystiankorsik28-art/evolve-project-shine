@@ -127,13 +127,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* ======== STATE BANNER (pasek państwowy) ======== */}
-      <div className="bg-primary-deep text-primary-foreground text-xs">
+      <div className="bg-primary-deep text-white text-xs">
         <div className="container flex items-center justify-between h-9">
           <div className="flex items-center gap-3">
             <Flag className="h-3.5 w-3.5 text-gold" />
-            <span className="font-medium tracking-wide">SERWIS PAŃSTWOWY · Rzeczpospolita Polska · Ministerstwo Edukacji</span>
+            <span className="font-medium tracking-wide text-white/95">SERWIS PAŃSTWOWY · Rzeczpospolita Polska · Ministerstwo Edukacji</span>
           </div>
-          <div className="hidden md:flex items-center gap-4 text-primary-foreground/70">
+          <div className="hidden md:flex items-center gap-4 text-white/80">
             <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> System działa</span>
             <span className="font-mono">v2.6.0</span>
           </div>
@@ -373,7 +373,7 @@ const Index = () => {
                 className="p-5 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth flex items-start gap-4"
               >
                 <div className="flex flex-col items-center min-w-[80px]">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-primary-deep text-primary-foreground tracking-wider">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-primary-deep text-white tracking-wider">
                     {n.tag}
                   </span>
                   <span className="text-xs text-muted-foreground font-mono mt-1.5">{n.date}</span>
@@ -467,18 +467,18 @@ const Index = () => {
       </section>
 
       {/* ======== FOOTER ======== */}
-      <footer className="bg-primary-deep text-primary-foreground py-12">
+      <footer className="bg-primary-deep text-white py-12">
         <div className="container">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <Logo size="md" variant="light" />
-            <div className="flex flex-wrap gap-6 text-sm text-primary-foreground/70">
+            <div className="flex flex-wrap gap-6 text-sm text-white/80">
               <a href="#" className="hover:text-accent transition-smooth">Polityka prywatności</a>
               <a href="#" className="hover:text-accent transition-smooth">Regulamin</a>
               <a href="#" className="hover:text-accent transition-smooth">Dostępność WCAG</a>
               <a href="#" className="hover:text-accent transition-smooth">Kontakt</a>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-primary-foreground/10 text-sm text-primary-foreground/60 text-center">
+          <div className="mt-8 pt-8 border-t border-white/10 text-sm text-white/70 text-center">
             © {new Date().getFullYear()} EduNex.pl — Państwowa platforma edukacyjna. Wszystkie prawa zastrzeżone.
           </div>
         </div>
