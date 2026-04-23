@@ -110,22 +110,26 @@ export default function StudentExam() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card sticky top-0 z-30">
-        <div className="container flex items-center justify-between h-16">
+      <header className="border-b border-border bg-card sticky top-0 z-30 shadow-sm">
+        <div className="container flex items-center justify-between h-16 gap-4">
           <Logo size="sm" />
-          <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground">{answered}/{questions.length} odpowiedzi</div>
-            <div className={`flex items-center gap-2 font-mono text-lg font-bold px-3 py-1 rounded-md ${timeLeft && timeLeft < 300 ? "bg-destructive/10 text-destructive" : "bg-secondary"}`}>
-              <Clock className="h-4 w-4" /> {String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 text-sm">
+              <span className="font-mono font-bold text-foreground tabular-nums">{answered}</span>
+              <span className="text-muted-foreground">/ {questions.length} odp.</span>
+            </div>
+            <div className={`flex items-center gap-2 font-mono text-base font-bold px-3 py-1.5 rounded-lg border ${timeLeft && timeLeft < 300 ? "bg-destructive/10 text-destructive border-destructive/30 animate-pulse" : "bg-secondary text-foreground border-border"}`}>
+              <Clock className="h-4 w-4" /> <span className="tabular-nums">{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}</span>
             </div>
           </div>
         </div>
         <div className="h-1 bg-secondary"><div className="h-full bg-gradient-gold transition-all" style={{ width: `${progress}%` }} /></div>
       </header>
 
-      <main className="container max-w-3xl py-8">
+      <main className="container max-w-3xl py-8 px-4">
         <div className="mb-6">
-          <h1 className="text-2xl font-display font-bold">{attempt.exams.title}</h1>
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground mb-1">Egzamin</div>
+          <h1 className="text-2xl md:text-3xl font-display font-extrabold text-foreground text-balance">{attempt.exams.title}</h1>
         </div>
 
         <motion.div key={q.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>

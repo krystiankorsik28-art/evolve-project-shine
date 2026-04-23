@@ -63,8 +63,8 @@ export default function AdminDashboard() {
             <Card key={t.label} className="overflow-hidden relative">
               <div className={`absolute top-0 right-0 h-24 w-24 bg-gradient-to-br ${t.color} opacity-10 rounded-bl-full`} />
               <CardContent className="pt-6">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${t.color} mb-3`}>
-                  <t.icon className="h-5 w-5 text-primary-foreground" />
+                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${t.color} mb-3 shadow-md`}>
+                  <t.icon className="h-5 w-5 text-white drop-shadow" />
                 </div>
                 <div className="text-3xl font-display font-bold">{t.value}</div>
                 <div className="text-sm text-muted-foreground mt-1">{t.label}</div>

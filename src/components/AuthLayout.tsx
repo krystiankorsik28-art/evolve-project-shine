@@ -13,7 +13,7 @@ const accentMap: Record<AuthAccent, {
   red: {
     iconBg: "bg-[hsl(var(--flag-red))]",
     iconText: "text-white",
-    chip: "bg-[hsl(var(--flag-red)/0.18)] text-white border-white/20",
+    chip: "bg-white/10 text-white border-white/30",
     label: "PANEL ADMINISTRATORA",
     bar: "bg-[hsl(var(--flag-red))]",
     glow: "bg-[hsl(var(--flag-red)/0.35)]",
@@ -21,7 +21,7 @@ const accentMap: Record<AuthAccent, {
   gold: {
     iconBg: "bg-gold",
     iconText: "text-gold-foreground",
-    chip: "bg-gold/20 text-white border-gold/40",
+    chip: "bg-white/10 text-white border-gold/50",
     label: "PANEL NAUCZYCIELA",
     bar: "bg-gold",
     glow: "bg-gold/35",
@@ -29,7 +29,7 @@ const accentMap: Record<AuthAccent, {
   cyber: {
     iconBg: "bg-accent",
     iconText: "text-accent-foreground",
-    chip: "bg-accent/20 text-white border-accent/40",
+    chip: "bg-white/10 text-white border-accent/50",
     label: "PANEL UCZNIA",
     bar: "bg-accent",
     glow: "bg-accent/35",
