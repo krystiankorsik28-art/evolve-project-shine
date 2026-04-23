@@ -3,14 +3,18 @@ import { Link } from "react-router-dom";
 import {
   Shield, Users, GraduationCap, ArrowRight, Bell, BookOpen, FileText, BarChart3,
   Phone, HelpCircle, Sparkles, Lock, Globe, Award, CheckCircle2, Activity,
-  Zap, Server, Cpu, Database, ExternalLink, Flag,
+  Zap, Server, Cpu, Database, ExternalLink, Flag, Mail, MapPin, Send, MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Index = () => {
   const { user, role, loading } = useAuth();
@@ -64,11 +68,20 @@ const Index = () => {
   ] as const;
 
   const navItems = [
-    { icon: FileText, label: "Egzaminy" },
-    { icon: BookOpen, label: "Materiały" },
-    { icon: BarChart3, label: "Raporty" },
-    { icon: HelpCircle, label: "Pomoc" },
-    { icon: Phone, label: "Kontakt" },
+    { icon: FileText, label: "Egzaminy", href: "#egzaminy" },
+    { icon: BookOpen, label: "Materiały", href: "#materialy" },
+    { icon: BarChart3, label: "Raporty", href: "#raporty" },
+    { icon: HelpCircle, label: "Pomoc", href: "#pomoc" },
+    { icon: Phone, label: "Kontakt", href: "#kontakt" },
+  ];
+
+  const faqs = [
+    { q: "Jak otrzymać dostęp do platformy?", a: "Uczniowie otrzymują kod PIN od nauczyciela — nie wymaga to rejestracji. Nauczyciele rejestrują się przez panel rejestracji i czekają na akceptację administratora szkoły. Administratorzy są dodawani przez zespół EduNex.pl." },
+    { q: "Czy moje dane są bezpieczne?", a: "Tak. Wszystkie dane są szyfrowane (TLS 1.3 w tranzycie, AES-256 w spoczynku). Stosujemy 2FA dla administratorów, pełne logi audytu i polityki RLS na poziomie bazy. Jesteśmy zgodni z RODO." },
+    { q: "Czy mogę używać EduNex.pl na telefonie?", a: "Oczywiście. Platforma jest w pełni responsywna — działa na telefonach, tabletach i komputerach. Obsługujemy też tryb jasny i ciemny." },
+    { q: "Jak działa generowanie pytań przez AI?", a: "Nauczyciel podaje temat i poziom trudności, a AI generuje gotowe pytania (jednokrotnego/wielokrotnego wyboru, otwarte itp.). Każde pytanie można edytować przed dodaniem do egzaminu." },
+    { q: "Co jeśli stracę dostęp do konta 2FA?", a: "Skontaktuj się z administratorem swojej szkoły lub z naszym wsparciem przez formularz poniżej. Po weryfikacji tożsamości zresetujemy 2FA." },
+    { q: "Ile kosztuje EduNex.pl?", a: "Dla szkół publicznych w Polsce platforma jest bezpłatna w ramach państwowego programu cyfryzacji oświaty. Dla szkół prywatnych dostępne są pakiety komercyjne." },
   ];
 
   const features = [
@@ -146,9 +159,11 @@ const Index = () => {
           <Logo size="md" />
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
-              <Button key={item.label} variant="ghost" className="text-sm font-semibold text-foreground/80 hover:text-foreground">
-                <item.icon className="h-4 w-4 mr-2" />
-                {item.label}
+              <Button key={item.label} asChild variant="ghost" className="text-sm font-semibold text-foreground/80 hover:text-foreground">
+                <a href={item.href}>
+                  <item.icon className="h-4 w-4 mr-2" />
+                  {item.label}
+                </a>
               </Button>
             ))}
           </nav>
@@ -287,7 +302,7 @@ const Index = () => {
       </section>
 
       {/* ======== 3 LOGIN CARDS — bardzo czytelne ======== */}
-      <section className="container py-20 lg:py-24">
+      <section id="egzaminy" className="container py-20 lg:py-24 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-foreground/80 text-xs font-semibold tracking-wider uppercase mb-4">
             Wybierz panel
@@ -356,7 +371,7 @@ const Index = () => {
       </section>
 
       {/* ======== AKTUALNOŚCI + SKRÓTY ======== */}
-      <section className="container py-16 grid lg:grid-cols-3 gap-8">
+      <section id="materialy" className="container py-16 grid lg:grid-cols-3 gap-8 scroll-mt-24">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 rounded-lg bg-accent-soft"><Bell className="h-5 w-5 text-accent-on-soft" /></div>
@@ -412,7 +427,7 @@ const Index = () => {
       </section>
 
       {/* ======== FEATURES ======== */}
-      <section className="bg-secondary/50 border-y border-border py-20 lg:py-24">
+      <section id="raporty" className="bg-secondary/50 border-y border-border py-20 lg:py-24 scroll-mt-24">
         <div className="container">
           <div className="max-w-2xl mx-auto text-center mb-14">
             <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
@@ -442,6 +457,43 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* ======== POMOC / FAQ ======== */}
+      <section id="pomoc" className="container py-20 lg:py-24 scroll-mt-24">
+        <div className="grid lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-accent-on-soft text-xs font-semibold tracking-wider uppercase mb-4">
+              <HelpCircle className="h-3.5 w-3.5" /> Centrum pomocy
+            </div>
+            <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
+              Najczęściej zadawane pytania
+            </h2>
+            <p className="text-muted-foreground leading-relaxed mb-6">
+              Nie znalazłeś odpowiedzi? Napisz do nas — wsparcie odpowiada w ciągu 24 godzin w dni robocze.
+            </p>
+            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+              <a href="#kontakt"><MessageCircle className="h-4 w-4 mr-2" /> Przejdź do kontaktu</a>
+            </Button>
+          </div>
+          <div className="lg:col-span-8">
+            <Accordion type="single" collapsible className="rounded-2xl bg-card border border-border divide-y divide-border overflow-hidden">
+              {faqs.map((f, i) => (
+                <AccordionItem key={i} value={`item-${i}`} className="border-0 px-5">
+                  <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-5">
+                    {f.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
+                    {f.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* ======== KONTAKT ======== */}
+      <ContactSection />
 
       {/* ======== CTA STRIP ======== */}
       <section className="bg-hero relative overflow-hidden">
@@ -475,7 +527,7 @@ const Index = () => {
               <a href="#" className="hover:text-accent transition-smooth">Polityka prywatności</a>
               <a href="#" className="hover:text-accent transition-smooth">Regulamin</a>
               <a href="#" className="hover:text-accent transition-smooth">Dostępność WCAG</a>
-              <a href="#" className="hover:text-accent transition-smooth">Kontakt</a>
+              <a href="#kontakt" className="hover:text-accent transition-smooth">Kontakt</a>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-white/10 text-sm text-white/70 text-center">
@@ -486,5 +538,107 @@ const Index = () => {
     </div>
   );
 };
+
+function ContactSection() {
+  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) {
+      toast.error("Uzupełnij imię, e-mail i treść wiadomości.");
+      return;
+    }
+    const subject = encodeURIComponent(form.subject || `Wiadomość od ${form.name}`);
+    const body = encodeURIComponent(
+      `Imię i nazwisko: ${form.name}\nE-mail: ${form.email}\n\n${form.message}`
+    );
+    window.location.href = `mailto:kontakt@edunex.pl?subject=${subject}&body=${body}`;
+    toast.success("Otwieram klienta poczty…");
+  };
+
+  return (
+    <section id="kontakt" className="bg-secondary/40 border-y border-border py-20 lg:py-24 scroll-mt-24">
+      <div className="container grid lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-5 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-accent-on-soft text-xs font-semibold tracking-wider uppercase">
+            <Phone className="h-3.5 w-3.5" /> Skontaktuj się z nami
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground text-balance">
+            Wsparcie dla szkół, nauczycieli i uczniów
+          </h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Pomagamy z rejestracją, integracją z systemem szkoły, resetem 2FA oraz pytaniami dotyczącymi RODO.
+          </p>
+
+          <div className="space-y-4 pt-2">
+            <a href="mailto:kontakt@edunex.pl" className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth group">
+              <div className="p-2.5 rounded-lg bg-accent-soft text-accent-on-soft group-hover:scale-110 transition-spring">
+                <Mail className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">E-mail</div>
+                <div className="font-semibold text-foreground">kontakt@edunex.pl</div>
+                <div className="text-sm text-muted-foreground">Odpowiedź w 24h (pn-pt)</div>
+              </div>
+            </a>
+
+            <a href="tel:+48221234567" className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth group">
+              <div className="p-2.5 rounded-lg bg-gold/15 text-gold group-hover:scale-110 transition-spring">
+                <Phone className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Infolinia</div>
+                <div className="font-semibold text-foreground">+48 22 123 45 67</div>
+                <div className="text-sm text-muted-foreground">Pn–Pt, 8:00–16:00</div>
+              </div>
+            </a>
+
+            <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border">
+              <div className="p-2.5 rounded-lg bg-[hsl(var(--flag-red)/0.12)] text-[hsl(var(--flag-red))]">
+                <MapPin className="h-5 w-5" />
+              </div>
+              <div>
+                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Adres</div>
+                <div className="font-semibold text-foreground">Ministerstwo Edukacji Narodowej</div>
+                <div className="text-sm text-muted-foreground">al. J. Ch. Szucha 25, 00-918 Warszawa</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-7">
+          <form onSubmit={handleSubmit} className="rounded-2xl bg-card border border-border shadow-card p-7 space-y-5">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="c-name" className="text-sm font-semibold text-foreground">Imię i nazwisko *</label>
+                <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Jan Kowalski" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="c-email" className="text-sm font-semibold text-foreground">E-mail *</label>
+                <Input id="c-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="jan@szkola.pl" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="c-subject" className="text-sm font-semibold text-foreground">Temat</label>
+              <Input id="c-subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="np. Reset 2FA / Rejestracja szkoły" />
+            </div>
+            <div className="space-y-2">
+              <label htmlFor="c-message" className="text-sm font-semibold text-foreground">Wiadomość *</label>
+              <Textarea id="c-message" rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Opisz swoje pytanie lub problem…" />
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+              <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+                <Lock className="h-3.5 w-3.5" /> Dane przetwarzane zgodnie z RODO
+              </p>
+              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold h-11 px-6">
+                <Send className="h-4 w-4 mr-2" /> Wyślij wiadomość
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export default Index;
