@@ -8,8 +8,8 @@ export function Logo({ size = "md", variant = "default" }: { size?: "sm" | "md" 
     xl: { icon: "h-14 w-14", text: "text-4xl", subtext: "text-base" },
   };
   const s = sizes[size];
-  const textColor = variant === "light" ? "text-primary-foreground" : "text-foreground";
-  const subColor = variant === "light" ? "text-primary-foreground/70" : "text-muted-foreground";
+  const textColor = variant === "light" ? "text-white" : "text-foreground";
+  const subColor = variant === "light" ? "text-white/80" : "text-muted-foreground";
 
   return (
     <div className="flex items-center gap-3">
