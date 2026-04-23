@@ -159,9 +159,11 @@ const Index = () => {
           <Logo size="md" />
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
-              <Button key={item.label} variant="ghost" className="text-sm font-semibold text-foreground/80 hover:text-foreground">
-                <item.icon className="h-4 w-4 mr-2" />
-                {item.label}
+              <Button key={item.label} asChild variant="ghost" className="text-sm font-semibold text-foreground/80 hover:text-foreground">
+                <a href={item.href}>
+                  <item.icon className="h-4 w-4 mr-2" />
+                  {item.label}
+                </a>
               </Button>
             ))}
           </nav>
