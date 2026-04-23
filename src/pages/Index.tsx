@@ -68,11 +68,20 @@ const Index = () => {
   ] as const;
 
   const navItems = [
-    { icon: FileText, label: "Egzaminy" },
-    { icon: BookOpen, label: "Materiały" },
-    { icon: BarChart3, label: "Raporty" },
-    { icon: HelpCircle, label: "Pomoc" },
-    { icon: Phone, label: "Kontakt" },
+    { icon: FileText, label: "Egzaminy", href: "#egzaminy" },
+    { icon: BookOpen, label: "Materiały", href: "#materialy" },
+    { icon: BarChart3, label: "Raporty", href: "#raporty" },
+    { icon: HelpCircle, label: "Pomoc", href: "#pomoc" },
+    { icon: Phone, label: "Kontakt", href: "#kontakt" },
+  ];
+
+  const faqs = [
+    { q: "Jak otrzymać dostęp do platformy?", a: "Uczniowie otrzymują kod PIN od nauczyciela — nie wymaga to rejestracji. Nauczyciele rejestrują się przez panel rejestracji i czekają na akceptację administratora szkoły. Administratorzy są dodawani przez zespół EduNex.pl." },
+    { q: "Czy moje dane są bezpieczne?", a: "Tak. Wszystkie dane są szyfrowane (TLS 1.3 w tranzycie, AES-256 w spoczynku). Stosujemy 2FA dla administratorów, pełne logi audytu i polityki RLS na poziomie bazy. Jesteśmy zgodni z RODO." },
+    { q: "Czy mogę używać EduNex.pl na telefonie?", a: "Oczywiście. Platforma jest w pełni responsywna — działa na telefonach, tabletach i komputerach. Obsługujemy też tryb jasny i ciemny." },
+    { q: "Jak działa generowanie pytań przez AI?", a: "Nauczyciel podaje temat i poziom trudności, a AI generuje gotowe pytania (jednokrotnego/wielokrotnego wyboru, otwarte itp.). Każde pytanie można edytować przed dodaniem do egzaminu." },
+    { q: "Co jeśli stracę dostęp do konta 2FA?", a: "Skontaktuj się z administratorem swojej szkoły lub z naszym wsparciem przez formularz poniżej. Po weryfikacji tożsamości zresetujemy 2FA." },
+    { q: "Ile kosztuje EduNex.pl?", a: "Dla szkół publicznych w Polsce platforma jest bezpłatna w ramach państwowego programu cyfryzacji oświaty. Dla szkół prywatnych dostępne są pakiety komercyjne." },
   ];
 
   const features = [
