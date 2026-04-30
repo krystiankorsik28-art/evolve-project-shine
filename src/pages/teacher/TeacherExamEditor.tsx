@@ -158,7 +158,10 @@ export default function TeacherExamEditor() {
 
   const generatePin = async () => {
     if (!id || !exam) return;
-    const code = Array.from({ length: 6 }, () => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[Math.floor(Math.random() * 32)]).join("");
+    // PIN: dokładnie 6 cyfr (kryptograficznie losowe)
+    const buf = new Uint32Array(1);
+    crypto.getRandomValues(buf);
+    const code = String(buf[0] % 1000000).padStart(6, "0");
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     if (pin) {
