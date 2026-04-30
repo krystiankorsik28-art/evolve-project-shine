@@ -75,8 +75,15 @@ export default function TeacherExamEditor() {
       status: exam.status as "draft" | "published" | "archived",
     }).eq("id", exam.id);
     if (error) { toast.error(error.message); return; }
-    toast.success("Zapisano");
     await logAudit("exam_updated", { resource_type: "exam", resource_id: exam.id });
+
+    // Auto-generuj PIN przy publikacji jeśli go nie ma
+    if (exam.status === "published" && !pin) {
+      await generatePin();
+      toast.success("Opublikowano i wygenerowano PIN dla uczniów");
+    } else {
+      toast.success("Zapisano");
+    }
   };
 
   const addQuestion = async (type: QType = newType) => {
