@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
-import { Loader2, Clock, CheckCircle2 } from "lucide-react";
+import { Loader2, Clock, CheckCircle2, ShieldAlert, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -29,6 +29,26 @@ export default function StudentExam() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [violations, setViolations] = useState(0);
+  const [acFullscreen, setAcFullscreen] = useState(false);
+  const violationsRef = useRef(0);
+
+  // Anti-cheat: log violation to proctoring_events
+  const logEvent = async (event_type: string, metadata: Record<string, unknown> = {}) => {
+    if (!attemptId) return;
+    try {
+      await supabase.from("proctoring_events").insert([{
+        attempt_id: attemptId, event_type, metadata: metadata as never,
+      }]);
+    } catch { /* ignore */ }
+  };
+
+  const flagViolation = (type: string, msg: string) => {
+    violationsRef.current += 1;
+    setViolations(violationsRef.current);
+    toast.warning(`⚠️ ${msg} (${violationsRef.current})`);
+    logEvent(type, { count: violationsRef.current, ts: Date.now() });
+  };
 
   useEffect(() => {
     document.title = "Egzamin — EduNex.pl";
@@ -69,6 +89,60 @@ export default function StudentExam() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft]);
+
+  // === ANTI-CHEAT ===
+  useEffect(() => {
+    if (!attempt) return;
+    logEvent("exam_started", { ua: navigator.userAgent });
+
+    const onVis = () => {
+      if (document.hidden) flagViolation("tab_hidden", "Wyjście z karty wykryte");
+    };
+    const onBlur = () => flagViolation("window_blur", "Utrata fokusu okna");
+    const onCopy = (e: ClipboardEvent) => { e.preventDefault(); flagViolation("copy_attempt", "Kopiowanie zablokowane"); };
+    const onPaste = (e: ClipboardEvent) => { e.preventDefault(); flagViolation("paste_attempt", "Wklejanie zablokowane"); };
+    const onContext = (e: MouseEvent) => { e.preventDefault(); flagViolation("right_click", "Prawy przycisk zablokowany"); };
+    const onKey = (e: KeyboardEvent) => {
+      // Block PrintScreen, Ctrl+P, Ctrl+S, F12, Ctrl+Shift+I
+      if (e.key === "PrintScreen" || (e.ctrlKey && ["p", "s", "u"].includes(e.key.toLowerCase())) ||
+          e.key === "F12" || (e.ctrlKey && e.shiftKey && ["i", "j", "c"].includes(e.key.toLowerCase()))) {
+        e.preventDefault();
+        flagViolation("forbidden_key", `Zablokowano ${e.key}`);
+      }
+    };
+    const onFs = () => setAcFullscreen(!!document.fullscreenElement);
+    const onBefore = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("blur", onBlur);
+    document.addEventListener("copy", onCopy);
+    document.addEventListener("paste", onPaste);
+    document.addEventListener("contextmenu", onContext);
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("fullscreenchange", onFs);
+    window.addEventListener("beforeunload", onBefore);
+
+    // Heartbeat co 15s
+    const hb = setInterval(() => logEvent("heartbeat", { current_q: current, answered: Object.keys(responses).length }), 15000);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("blur", onBlur);
+      document.removeEventListener("copy", onCopy);
+      document.removeEventListener("paste", onPaste);
+      document.removeEventListener("contextmenu", onContext);
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("fullscreenchange", onFs);
+      window.removeEventListener("beforeunload", onBefore);
+      clearInterval(hb);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attempt?.id]);
+
+  const enterFullscreen = async () => {
+    try { await document.documentElement.requestFullscreen(); }
+    catch { toast.error("Twoja przeglądarka nie wspiera trybu pełnoekranowego"); }
+  };
 
   const submit = async () => {
     if (!attempt || submitting) return;
@@ -118,6 +192,16 @@ export default function StudentExam() {
               <span className="font-mono font-bold text-foreground tabular-nums">{answered}</span>
               <span className="text-muted-foreground">/ {questions.length} odp.</span>
             </div>
+            {violations > 0 && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-xs font-semibold">
+                <ShieldAlert className="h-3.5 w-3.5" /> {violations}
+              </div>
+            )}
+            {!acFullscreen && (
+              <Button size="sm" variant="outline" onClick={enterFullscreen} className="hidden md:inline-flex">
+                <Eye className="h-3.5 w-3.5 mr-1.5" /> Pełny ekran
+              </Button>
+            )}
             <div className={`flex items-center gap-2 font-mono text-base font-bold px-3 py-1.5 rounded-lg border ${timeLeft && timeLeft < 300 ? "bg-destructive/10 text-destructive border-destructive/30 animate-pulse" : "bg-secondary text-foreground border-border"}`}>
               <Clock className="h-4 w-4" /> <span className="tabular-nums">{String(mins).padStart(2, "0")}:{String(secs).padStart(2, "0")}</span>
             </div>

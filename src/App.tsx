@@ -23,6 +23,7 @@ import TeacherExams from "./pages/teacher/TeacherExams";
 import TeacherExamEditor from "./pages/teacher/TeacherExamEditor";
 import TeacherMaterials from "./pages/teacher/TeacherMaterials";
 import TeacherQuestionBank from "./pages/teacher/TeacherQuestionBank";
+import TeacherLiveMonitor from "./pages/teacher/TeacherLiveMonitor";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentExam from "./pages/student/StudentExam";
 import StudentResults from "./pages/student/StudentResults";
@@ -59,6 +60,7 @@ const App = () => (
               <Route path="/teacher/exams/:id" element={<ProtectedRoute role="teacher"><TeacherExamEditor /></ProtectedRoute>} />
               <Route path="/teacher/materials" element={<ProtectedRoute role="teacher"><TeacherMaterials /></ProtectedRoute>} />
               <Route path="/teacher/bank" element={<ProtectedRoute role="teacher"><TeacherQuestionBank /></ProtectedRoute>} />
+              <Route path="/teacher/live" element={<ProtectedRoute role="teacher"><TeacherLiveMonitor /></ProtectedRoute>} />
 
               {/* Student */}
               <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />

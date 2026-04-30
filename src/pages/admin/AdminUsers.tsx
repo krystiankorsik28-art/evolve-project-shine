@@ -5,9 +5,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logAudit } from "@/lib/audit";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download, Search } from "lucide-react";
 
 interface Row {
   user_id: string;
@@ -21,6 +23,31 @@ interface Row {
 export default function AdminUsers() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+
+  const filtered = rows.filter((r) => {
+    if (roleFilter !== "all" && (r.role ?? "") !== roleFilter) return false;
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (r.display_name ?? "").toLowerCase().includes(s)
+      || (r.first_name ?? "").toLowerCase().includes(s)
+      || (r.last_name ?? "").toLowerCase().includes(s);
+  });
+
+  const exportCSV = () => {
+    const header = ["display_name", "first_name", "last_name", "role", "created_at"];
+    const rowsCsv = filtered.map((r) => [
+      JSON.stringify(r.display_name ?? ""), JSON.stringify(r.first_name ?? ""),
+      JSON.stringify(r.last_name ?? ""), r.role ?? "", r.created_at,
+    ].join(","));
+    const csv = [header.join(","), ...rowsCsv].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `uzytkownicy-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Wyeksportowano ${filtered.length} użytkowników`);
+  };
 
   const load = async () => {
     setLoading(true);
@@ -55,11 +82,31 @@ export default function AdminUsers() {
   return (
     <AppShell title="Użytkownicy" subtitle="Zarządzaj rolami i kontami">
       <Card>
-        <CardHeader><CardTitle>Wszyscy użytkownicy ({rows.length})</CardTitle></CardHeader>
+        <CardHeader>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <CardTitle>Użytkownicy ({filtered.length} / {rows.length})</CardTitle>
+            <div className="flex gap-2 flex-wrap">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input className="pl-9 w-56" placeholder="Szukaj po imieniu/nazwisku..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              </div>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Wszystkie role</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="teacher">Nauczyciel</SelectItem>
+                  <SelectItem value="student">Uczeń</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" onClick={exportCSV}><Download className="h-4 w-4 mr-2" /> CSV</Button>
+            </div>
+          </div>
+        </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-12"><Loader2 className="animate-spin h-6 w-6 text-primary" /></div>
-          ) : rows.length === 0 ? (
+          ) : filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">Brak użytkowników.</p>
           ) : (
             <Table>
@@ -72,7 +119,7 @@ export default function AdminUsers() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((r) => (
+                {filtered.map((r) => (
                   <TableRow key={r.user_id}>
                     <TableCell className="font-medium">{r.display_name || `${r.first_name ?? ""} ${r.last_name ?? ""}`.trim() || "—"}</TableCell>
                     <TableCell><Badge variant={r.role === "admin" ? "destructive" : r.role === "teacher" ? "default" : "secondary"}>{r.role ?? "brak"}</Badge></TableCell>

@@ -12,7 +12,7 @@ import { toast } from "sonner";
 const schema = z.object({
   first_name: z.string().trim().min(2, "Imię min. 2 znaki").max(50),
   last_name: z.string().trim().min(2, "Nazwisko min. 2 znaki").max(50),
-  pin: z.string().trim().min(4, "PIN min. 4 znaki").max(16),
+  pin: z.string().trim().regex(/^[0-9]{6}$/, "PIN musi składać się z 6 cyfr"),
 });
 
 export default function LoginStudent() {
@@ -70,7 +70,7 @@ export default function LoginStudent() {
       <div className="space-y-6">
         <div>
           <h2 className="text-2xl font-display font-bold mb-1">Wejście do egzaminu</h2>
-          <p className="text-sm text-muted-foreground">Twoje imię i nazwisko + 6-znakowy PIN egzaminu</p>
+          <p className="text-sm text-muted-foreground">Twoje imię i nazwisko + 6-cyfrowy PIN egzaminu</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -84,15 +84,18 @@ export default function LoginStudent() {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="pin">Kod PIN egzaminu</Label>
+            <Label htmlFor="pin">Kod PIN egzaminu (6 cyfr)</Label>
             <Input
               id="pin"
               value={form.pin}
-              onChange={(e) => setForm({ ...form, pin: e.target.value.toUpperCase() })}
+              onChange={(e) => setForm({ ...form, pin: e.target.value.replace(/\D/g, "").slice(0, 6) })}
               required
-              className="text-center text-2xl tracking-[0.5em] font-mono uppercase h-14"
-              maxLength={16}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              className="text-center text-2xl tracking-[0.5em] font-mono h-14"
+              maxLength={6}
               autoComplete="off"
+              placeholder="••••••"
             />
           </div>
           <Button type="submit" className="w-full h-12" disabled={loading}>

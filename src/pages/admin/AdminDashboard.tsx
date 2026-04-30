@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, FileText, ScrollText, Activity, ShieldCheck, AlertTriangle } from "lucide-react";
+import { Users, FileText, ScrollText, Activity, ShieldCheck, AlertTriangle, UserCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -73,14 +73,23 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Zarządzanie użytkownikami</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Users className="h-5 w-5" /> Użytkownicy</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">Przyznawaj role, edytuj profile, dezaktywuj konta.</p>
               <Button asChild><Link to="/admin/users">Otwórz</Link></Button>
+            </CardContent>
+          </Card>
+          <Card className="border-warning/30 bg-warning/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-warning"><UserCheck className="h-5 w-5" /> Akceptacje nauczycieli</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">Zatwierdź lub odrzuć wnioski o konta nauczycielskie.</p>
+              <Button asChild variant="outline"><Link to="/admin/approvals">Przejrzyj</Link></Button>
             </CardContent>
           </Card>
           <Card>

@@ -21,11 +21,17 @@ Deno.serve(async (req) => {
     const body: Body = await req.json().catch(() => ({}));
     const first_name = (body.first_name ?? "").trim();
     const last_name = (body.last_name ?? "").trim();
-    const pin = (body.pin ?? "").trim().toUpperCase();
+    const pin = (body.pin ?? "").trim();
 
-    if (first_name.length < 2 || last_name.length < 2 || pin.length < 4) {
+    if (first_name.length < 2 || last_name.length < 2) {
       return new Response(
-        JSON.stringify({ success: false, error: "Niepoprawne dane wejściowe" }),
+        JSON.stringify({ success: false, error: "Imię i nazwisko muszą mieć co najmniej 2 znaki" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+    if (!/^[0-9]{6}$/.test(pin)) {
+      return new Response(
+        JSON.stringify({ success: false, error: "PIN musi składać się z dokładnie 6 cyfr" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
