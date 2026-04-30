@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Logo } from "@/components/Logo";
-import { Loader2, Clock, CheckCircle2 } from "lucide-react";
+import { Loader2, Clock, CheckCircle2, ShieldAlert, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -29,6 +29,26 @@ export default function StudentExam() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [violations, setViolations] = useState(0);
+  const [acFullscreen, setAcFullscreen] = useState(false);
+  const violationsRef = useRef(0);
+
+  // Anti-cheat: log violation to proctoring_events
+  const logEvent = async (event_type: string, metadata: Record<string, unknown> = {}) => {
+    if (!attemptId) return;
+    try {
+      await supabase.from("proctoring_events").insert({
+        attempt_id: attemptId, event_type, metadata,
+      });
+    } catch { /* ignore */ }
+  };
+
+  const flagViolation = (type: string, msg: string) => {
+    violationsRef.current += 1;
+    setViolations(violationsRef.current);
+    toast.warning(`⚠️ ${msg} (${violationsRef.current})`);
+    logEvent(type, { count: violationsRef.current, ts: Date.now() });
+  };
 
   useEffect(() => {
     document.title = "Egzamin — EduNex.pl";
