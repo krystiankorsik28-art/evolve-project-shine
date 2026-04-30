@@ -37,9 +37,9 @@ export default function StudentExam() {
   const logEvent = async (event_type: string, metadata: Record<string, unknown> = {}) => {
     if (!attemptId) return;
     try {
-      await supabase.from("proctoring_events").insert({
+      await supabase.from("proctoring_events").insert([{
         attempt_id: attemptId, event_type, metadata,
-      });
+      }]);
     } catch { /* ignore */ }
   };
 
