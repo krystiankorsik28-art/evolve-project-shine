@@ -38,7 +38,7 @@ export default function StudentExam() {
     if (!attemptId) return;
     try {
       await supabase.from("proctoring_events").insert([{
-        attempt_id: attemptId, event_type, metadata,
+        attempt_id: attemptId, event_type, metadata: metadata as never,
       }]);
     } catch { /* ignore */ }
   };
