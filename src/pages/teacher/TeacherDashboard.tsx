@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { AppShell } from "@/components/AppShell";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Plus, BookOpen, Sparkles, ScrollText } from "lucide-react";
+import { FileText, Plus, BookOpen, Sparkles, ScrollText, Activity, Library } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
@@ -50,18 +50,26 @@ export default function TeacherDashboard() {
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
-          <Card>
+        <div className="grid lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-2">
             <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5" /> Egzaminy</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">Twórz egzaminy z pomocą AI, zarządzaj kodami PIN, śledź wyniki uczniów.</p>
-              <div className="flex gap-2">
+              <p className="text-sm text-muted-foreground">Twórz egzaminy z pomocą AI, generuj 6-cyfrowe kody PIN, śledź wyniki uczniów na żywo.</p>
+              <div className="flex flex-wrap gap-2">
                 <Button asChild><Link to="/teacher/exams"><FileText className="h-4 w-4 mr-2" /> Wszystkie egzaminy</Link></Button>
                 <Button variant="outline" asChild><Link to="/teacher/exams"><Plus className="h-4 w-4 mr-2" /> Nowy egzamin</Link></Button>
+                <Button variant="outline" asChild><Link to="/teacher/bank"><Library className="h-4 w-4 mr-2" /> Bank pytań</Link></Button>
               </div>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="border-success/30 bg-success/5">
+            <CardHeader><CardTitle className="flex items-center gap-2 text-success"><Activity className="h-5 w-5" /> Live monitoring</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">Obserwuj uczniów w trakcie egzaminu w czasie rzeczywistym — postęp i wykrywanie nieuczciwych zachowań.</p>
+              <Button asChild className="bg-success hover:bg-success/90"><Link to="/teacher/live">Otwórz live</Link></Button>
+            </CardContent>
+          </Card>
+          <Card className="lg:col-span-3">
             <CardHeader><CardTitle className="flex items-center gap-2"><BookOpen className="h-5 w-5" /> Materiały edukacyjne</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">Wgrywaj prezentacje, wideo, audio i dokumenty dla swoich uczniów.</p>
