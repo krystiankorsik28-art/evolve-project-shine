@@ -5,9 +5,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { logAudit } from "@/lib/audit";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download, Search } from "lucide-react";
 
 interface Row {
   user_id: string;
@@ -21,6 +23,31 @@ interface Row {
 export default function AdminUsers() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+
+  const filtered = rows.filter((r) => {
+    if (roleFilter !== "all" && (r.role ?? "") !== roleFilter) return false;
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (r.display_name ?? "").toLowerCase().includes(s)
+      || (r.first_name ?? "").toLowerCase().includes(s)
+      || (r.last_name ?? "").toLowerCase().includes(s);
+  });
+
+  const exportCSV = () => {
+    const header = ["display_name", "first_name", "last_name", "role", "created_at"];
+    const rowsCsv = filtered.map((r) => [
+      JSON.stringify(r.display_name ?? ""), JSON.stringify(r.first_name ?? ""),
+      JSON.stringify(r.last_name ?? ""), r.role ?? "", r.created_at,
+    ].join(","));
+    const csv = [header.join(","), ...rowsCsv].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `uzytkownicy-${Date.now()}.csv`; a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Wyeksportowano ${filtered.length} użytkowników`);
+  };
 
   const load = async () => {
     setLoading(true);
