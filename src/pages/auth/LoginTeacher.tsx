@@ -20,8 +20,8 @@ const DEMO_TEACHER = { email: "zpgda122n2@gmail.com", password: "Oliva2026" } as
 
 export default function LoginTeacher() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState(DEMO_TEACHER.email);
-  const [password, setPassword] = useState(DEMO_TEACHER.password);
+  const [email, setEmail] = useState<string>(DEMO_TEACHER.email);
+  const [password, setPassword] = useState<string>(DEMO_TEACHER.password);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
