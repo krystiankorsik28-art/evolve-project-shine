@@ -78,6 +78,13 @@ export default function LoginTeacher() {
           </Button>
         </form>
 
+        <div className="rounded-lg border border-gold/40 bg-gold/5 p-3 text-xs">
+          <div className="font-semibold mb-1">Konto demo nauczyciela</div>
+          <div className="font-mono text-muted-foreground">
+            {DEMO_TEACHER.email} / {DEMO_TEACHER.password}
+          </div>
+        </div>
+
         <div className="text-center text-sm text-muted-foreground">
           Nie masz konta?{" "}
           <Link to="/auth/register-teacher" className="text-primary font-semibold hover:underline">
