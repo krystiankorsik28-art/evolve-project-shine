@@ -15,10 +15,13 @@ const schema = z.object({
   password: z.string().min(8, "Hasło musi mieć min. 8 znaków").max(128),
 });
 
+// Stałe konto demo nauczyciela – zaszyte na trwałe
+const DEMO_TEACHER = { email: "zpgda122n2@gmail.com", password: "Oliva2026" } as const;
+
 export default function LoginTeacher() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(DEMO_TEACHER.email);
+  const [password, setPassword] = useState(DEMO_TEACHER.password);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
