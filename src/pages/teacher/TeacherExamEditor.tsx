@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trash2, Sparkles, KeyRound, Loader2, Save, Library } from "lucide-react";
+import { Plus, Trash2, Sparkles, KeyRound, Loader2, Save, Library, ImagePlus, Copy, Rocket, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { logAudit } from "@/lib/audit";
@@ -20,6 +20,7 @@ interface Question {
   id: string; question_type: QType; prompt: string;
   options: unknown; correct_answer: unknown; points: number;
   difficulty: "easy" | "medium" | "hard"; order_index: number;
+  media_url?: string | null;
 }
 
 interface Exam {
@@ -183,6 +184,39 @@ export default function TeacherExamEditor() {
     toast.success(`PIN: ${code}`);
   };
 
+  const publishAndShare = async () => {
+    if (!exam) return;
+    const { error } = await supabase.from("exams").update({ status: "published" }).eq("id", exam.id);
+    if (error) { toast.error(error.message); return; }
+    setExam({ ...exam, status: "published" });
+    let code = pin;
+    if (!code) {
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      code = String(buf[0] % 1000000).padStart(6, "0");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { error: pinErr } = await supabase.from("exam_pins").insert({
+        exam_id: exam.id, pin_code: code, created_by: user.id,
+      });
+      if (pinErr) { toast.error(pinErr.message); return; }
+      setPin(code);
+    }
+    await logAudit("exam_published", { resource_type: "exam", resource_id: exam.id });
+    try {
+      await navigator.clipboard.writeText(`Egzamin: ${exam.title}\nPIN: ${code}\nStrona: ${window.location.origin}/`);
+      toast.success(`Opublikowano! PIN ${code} skopiowano do schowka`);
+    } catch {
+      toast.success(`Opublikowano! PIN: ${code}`);
+    }
+  };
+
+  const copyPin = async () => {
+    if (!pin) return;
+    try { await navigator.clipboard.writeText(pin); toast.success("PIN skopiowany"); }
+    catch { toast.error("Nie udało się skopiować"); }
+  };
+
   if (loading || !exam) {
     return <AppShell title="Ładowanie..."><div className="flex justify-center py-16"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div></AppShell>;
   }
@@ -227,20 +261,24 @@ export default function TeacherExamEditor() {
             </div>
             <div className="flex items-center gap-2"><Switch checked={exam.shuffle_questions} onCheckedChange={(v) => setExam({ ...exam, shuffle_questions: v })} /><Label>Mieszaj pytania</Label></div>
             <div className="flex items-center gap-2"><Switch checked={exam.show_results} onCheckedChange={(v) => setExam({ ...exam, show_results: v })} /><Label>Pokaż wyniki uczniowi</Label></div>
-            <div className="md:col-span-2 flex gap-2">
+            <div className="md:col-span-2 flex flex-wrap gap-2">
               <Button onClick={saveExam}><Save className="h-4 w-4 mr-2" /> Zapisz ustawienia</Button>
+              <Button onClick={publishAndShare} className="bg-gradient-cyber text-white hover:opacity-90 shadow-cyber">
+                <Rocket className="h-4 w-4 mr-2" /> {exam.status === "published" ? "Udostępnij ponownie" : "Opublikuj i udostępnij"}
+              </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* PIN */}
-        <Card>
-          <CardHeader><CardTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5" /> Kod PIN dla uczniów</CardTitle></CardHeader>
+        <Card className="border-accent/30">
+          <CardHeader><CardTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5 text-accent" /> Kod PIN dla uczniów</CardTitle></CardHeader>
           <CardContent>
             {pin ? (
-              <div className="flex items-center gap-4">
-                <div className="text-4xl font-mono font-bold tracking-widest bg-secondary px-6 py-3 rounded-lg">{pin}</div>
-                <Button variant="outline" onClick={generatePin}>Wygeneruj nowy</Button>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="text-4xl font-mono font-bold tracking-widest bg-gradient-cyber text-white px-6 py-3 rounded-lg shadow-cyber animate-pulse-glow">{pin}</div>
+                <Button variant="outline" onClick={copyPin}><Copy className="h-4 w-4 mr-2" /> Kopiuj PIN</Button>
+                <Button variant="ghost" onClick={generatePin}>Wygeneruj nowy</Button>
               </div>
             ) : (
               <Button onClick={generatePin}><KeyRound className="h-4 w-4 mr-2" /> Wygeneruj PIN</Button>
@@ -366,6 +404,7 @@ function QuestionEditor({ question, index, onChange, onSave, onDelete }: {
         <Button variant="ghost" size="sm" onClick={() => onDelete(question.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
       </div>
       <Textarea value={question.prompt} onChange={(e) => onChange({ ...question, prompt: e.target.value })} onBlur={() => onSave(question)} placeholder="Treść pytania..." rows={2} />
+      <QuestionMediaUpload question={question} onChange={onChange} onSave={onSave} />
       <QuestionTypeEditor
         type={question.question_type}
         options={question.options}
@@ -395,6 +434,62 @@ function QuestionEditor({ question, index, onChange, onSave, onDelete }: {
           </SelectContent>
         </Select>
       </div>
+    </div>
+  );
+}
+
+function QuestionMediaUpload({ question, onChange, onSave }: {
+  question: Question;
+  onChange: (q: Question) => void;
+  onSave: (q: Question) => void;
+}) {
+  const [uploading, setUploading] = useState(false);
+
+  const upload = async (file: File) => {
+    if (file.size > 10 * 1024 * 1024) { toast.error("Max 10 MB"); return; }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "bin";
+      const path = `${question.id}/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("question-media").upload(path, file, { upsert: false });
+      if (error) throw error;
+      const { data: pub } = supabase.storage.from("question-media").getPublicUrl(path);
+      const next = { ...question, media_url: pub.publicUrl };
+      onChange(next);
+      const { error: upErr } = await supabase.from("questions").update({ media_url: pub.publicUrl }).eq("id", question.id);
+      if (upErr) throw upErr;
+      onSave(next);
+      toast.success("Załącznik dodany");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Błąd uploadu");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const remove = async () => {
+    const next = { ...question, media_url: null };
+    onChange(next);
+    await supabase.from("questions").update({ media_url: null }).eq("id", question.id);
+    onSave(next);
+  };
+
+  return (
+    <div className="border border-dashed border-border rounded-lg p-3 bg-secondary/30">
+      {question.media_url ? (
+        <div className="flex items-start gap-3">
+          <img src={question.media_url} alt="Załącznik" className="h-20 w-28 object-cover rounded border border-border" />
+          <div className="flex-1 text-xs text-muted-foreground break-all">{question.media_url}</div>
+          <Button size="sm" variant="ghost" onClick={remove}><X className="h-4 w-4" /></Button>
+        </div>
+      ) : (
+        <label className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground hover:text-foreground transition-smooth">
+          <ImagePlus className="h-4 w-4" />
+          <span>{uploading ? "Wgrywanie..." : "Dodaj zdjęcie / plik do pytania (max 10 MB)"}</span>
+          <input type="file" accept="image/*,.pdf" className="hidden" disabled={uploading}
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = ""; }} />
+        </label>
+      )}
     </div>
   );
 }

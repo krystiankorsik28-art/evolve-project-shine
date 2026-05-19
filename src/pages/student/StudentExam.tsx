@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 interface Question {
   id: string; question_type: string; prompt: string;
   options: string[]; points: number; order_index: number;
+  media_url?: string | null;
 }
 
 interface Attempt {
@@ -64,7 +65,7 @@ export default function StudentExam() {
       setAttempt(a as never);
       const { data: qs } = await supabase
         .from("questions")
-        .select("id, question_type, prompt, options, points, order_index")
+        .select("id, question_type, prompt, options, points, order_index, media_url")
         .eq("exam_id", a.exam_id)
         .order("order_index");
       setQuestions((qs ?? []).map((q) => ({ ...q, options: Array.isArray(q.options) ? q.options as string[] : [] })) as never);
@@ -223,6 +224,11 @@ export default function StudentExam() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-lg">{q.prompt}</p>
+              {q.media_url && (
+                <div className="rounded-lg overflow-hidden border border-border bg-secondary/40">
+                  <img src={q.media_url} alt="Załącznik do pytania" className="w-full max-h-[420px] object-contain" loading="lazy" />
+                </div>
+              )}
 
               {(q.question_type === "single_choice" || q.question_type === "true_false") && (
                 <div className="space-y-2">

@@ -1,280 +1,220 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  Shield, Users, GraduationCap, ArrowRight, Bell, BookOpen, FileText, BarChart3,
-  Phone, HelpCircle, Sparkles, Lock, Globe, Award, CheckCircle2, Activity,
-  Zap, Server, Cpu, Database, ExternalLink, Flag, Mail, MapPin, Send, MessageCircle,
+  Shield, Users, GraduationCap, ArrowRight, Sparkles, Lock, Award,
+  CheckCircle2, Zap, Brain, BarChart3, Radio, Activity, Server,
+  Eye, FileCheck2, Cpu, Globe2, Database, Terminal, ShieldCheck,
+  AlertTriangle, TrendingUp, KeyRound,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const Index = () => {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    document.title = "EduNex.pl — Państwowa platforma edukacyjna nowej generacji";
+    document.title = "EduNex — Państwowy System Egzaminacyjny Nowej Generacji";
     const meta = document.querySelector('meta[name="description"]');
-    const desc = "EduNex.pl — nowoczesna państwowa platforma edukacyjna z AI. Egzaminy, materiały, raporty. Bezpieczeństwo klasy rządowej dla szkół, nauczycieli i uczniów.";
-    if (meta) meta.setAttribute("content", desc);
+    if (meta) meta.setAttribute("content", "EduNex — bezpieczna platforma egzaminacyjna klasy enterprise. AI, anty-cheat, monitoring live, raporty, RBAC, audit logs.");
   }, []);
 
   useEffect(() => {
     if (!loading && user && role) {
-      const target = role === "admin" ? "/admin" : role === "teacher" ? "/teacher" : "/student";
-      navigate(target, { replace: true });
+      navigate(role === "admin" ? "/admin" : role === "teacher" ? "/teacher" : "/student", { replace: true });
     }
   }, [user, role, loading, navigate]);
 
-  const loginCards = [
-    {
-      to: "/auth/admin",
-      icon: Shield,
-      title: "Administrator",
-      desc: "Pełna kontrola nad platformą, audyty bezpieczeństwa, zarządzanie użytkownikami i rolami.",
-      badge: "2FA · TOTP",
-      tone: "red",
-      cta: "Otwórz panel administratora",
-      newWindow: true,
-    },
-    {
-      to: "/auth/teacher",
-      icon: Users,
-      title: "Nauczyciel",
-      desc: "Twórz egzaminy, generuj pytania przez AI, oceniaj prace i analizuj postępy klasy.",
-      badge: "Bank pytań · AI",
-      tone: "gold",
-      cta: "Otwórz panel nauczyciela",
-      newWindow: true,
-    },
-    {
-      to: "/auth/student",
-      icon: GraduationCap,
-      title: "Uczeń",
-      desc: "Wejdź na egzamin kodem PIN otrzymanym od nauczyciela. Bez rejestracji, w 3 sekundy.",
-      badge: "PIN · Bez rejestracji",
-      tone: "cyber",
-      cta: "Wejdź na egzamin",
-      newWindow: false,
-    },
-  ] as const;
+  useEffect(() => {
+    const i = setInterval(() => setTick((t) => t + 1), 1500);
+    return () => clearInterval(i);
+  }, []);
 
-  const navItems = [
-    { icon: FileText, label: "Egzaminy", href: "#egzaminy" },
-    { icon: BookOpen, label: "Materiały", href: "#materialy" },
-    { icon: BarChart3, label: "Raporty", href: "#raporty" },
-    { icon: HelpCircle, label: "Pomoc", href: "#pomoc" },
-    { icon: Phone, label: "Kontakt", href: "#kontakt" },
+  const liveStats = [
+    { label: "Aktywne sesje", value: 12847 + (tick % 17), icon: Activity, color: "text-cyan-400" },
+    { label: "Egzaminy dziś", value: 3421 + (tick % 5), icon: FileCheck2, color: "text-blue-400" },
+    { label: "Szkoły online", value: 1284, icon: Globe2, color: "text-emerald-400" },
+    { label: "Uptime SLA", value: "99.99%", icon: Server, color: "text-amber-400" },
   ];
 
-  const faqs = [
-    { q: "Jak otrzymać dostęp do platformy?", a: "Uczniowie otrzymują kod PIN od nauczyciela — nie wymaga to rejestracji. Nauczyciele rejestrują się przez panel rejestracji i czekają na akceptację administratora szkoły. Administratorzy są dodawani przez zespół EduNex.pl." },
-    { q: "Czy moje dane są bezpieczne?", a: "Tak. Wszystkie dane są szyfrowane (TLS 1.3 w tranzycie, AES-256 w spoczynku). Stosujemy 2FA dla administratorów, pełne logi audytu i polityki RLS na poziomie bazy. Jesteśmy zgodni z RODO." },
-    { q: "Czy mogę używać EduNex.pl na telefonie?", a: "Oczywiście. Platforma jest w pełni responsywna — działa na telefonach, tabletach i komputerach. Obsługujemy też tryb jasny i ciemny." },
-    { q: "Jak działa generowanie pytań przez AI?", a: "Nauczyciel podaje temat i poziom trudności, a AI generuje gotowe pytania (jednokrotnego/wielokrotnego wyboru, otwarte itp.). Każde pytanie można edytować przed dodaniem do egzaminu." },
-    { q: "Co jeśli stracę dostęp do konta 2FA?", a: "Skontaktuj się z administratorem swojej szkoły lub z naszym wsparciem przez formularz poniżej. Po weryfikacji tożsamości zresetujemy 2FA." },
-    { q: "Ile kosztuje EduNex.pl?", a: "Dla szkół publicznych w Polsce platforma jest bezpłatna w ramach państwowego programu cyfryzacji oświaty. Dla szkół prywatnych dostępne są pakiety komercyjne." },
+  const portals = [
+    { to: "/auth/login-student", icon: GraduationCap, title: "Uczeń", desc: "Dołącz do egzaminu z kodem PIN", grad: "from-cyan-500 to-blue-600", badge: "PIN" },
+    { to: "/auth/login-teacher", icon: Users, title: "Nauczyciel", desc: "Twórz egzaminy, monitoruj live", grad: "from-blue-600 to-indigo-700", badge: "AUTH" },
+    { to: "/auth/login-admin", icon: Shield, title: "Administrator", desc: "Centrum dowodzenia systemem", grad: "from-indigo-600 to-violet-700", badge: "ROOT" },
   ];
 
   const features = [
-    { icon: Sparkles, title: "AI dla edukacji", desc: "Generowanie pytań, ocena esejów, personalizacja ścieżki nauki." },
-    { icon: Lock, title: "Bezpieczeństwo państwowe", desc: "2FA TOTP, RLS, szyfrowanie, pełne logi audytu wszystkich operacji." },
-    { icon: Globe, title: "Wieloplatformowo", desc: "Pełna obsługa desktop/tablet/mobile. Tryb jasny i ciemny." },
-    { icon: Award, title: "Standard MEN", desc: "Interfejs zgodny z WCAG 2.1 i wymaganiami oświaty publicznej." },
+    { icon: Brain, title: "AI Generator", desc: "20 pytań z odpowiedziami w 5 sekund." },
+    { icon: Radio, title: "Live Quiz", desc: "Tryb real-time z PIN i rankingiem." },
+    { icon: Eye, title: "Monitoring Live", desc: "Mapa aktywności wszystkich uczniów." },
+    { icon: ShieldCheck, title: "Anty-cheat AI", desc: "Wykrywanie oszustw z risk-score." },
+    { icon: BarChart3, title: "Analityka Enterprise", desc: "Heatmapy, porównania, eksport PDF." },
+    { icon: Database, title: "Bank pytań", desc: "Tysiące pytań w kategoriach." },
+    { icon: KeyRound, title: "RBAC + 2FA", desc: "Role, uprawnienia, audyt." },
+    { icon: Cpu, title: "Cloud Infrastructure", desc: "Autoskalowanie, redundancja." },
   ];
 
-  const news = [
-    { date: "20.04.2026", tag: "AKTUALIZACJA", title: "Nowy moduł AI dla generowania pytań dostępny dla wszystkich nauczycieli." },
-    { date: "15.04.2026", tag: "FUNKCJA", title: "Rozszerzone raporty postępów uczniów z analizą trudności pytań." },
-    { date: "10.04.2026", tag: "PREMIERA", title: "EduNex.pl uruchomiony — zapraszamy do rejestracji szkół z całej Polski." },
+  const securityFeatures = [
+    { icon: Lock, label: "End-to-end encryption" },
+    { icon: ShieldCheck, label: "ISO 27001 compliant" },
+    { icon: Eye, label: "24/7 SOC monitoring" },
+    { icon: FileCheck2, label: "Audit logs immutable" },
+    { icon: AlertTriangle, label: "Real-time threat detection" },
+    { icon: Database, label: "GDPR / RODO ready" },
   ];
 
-  const stats = [
-    { icon: Users, value: "12 480+", label: "Aktywnych nauczycieli" },
-    { icon: GraduationCap, value: "234 920+", label: "Uczniów na platformie" },
-    { icon: FileText, value: "1.8M+", label: "Przeprowadzonych egzaminów" },
-    { icon: Shield, value: "99.99%", label: "SLA dostępności" },
-  ];
-
-  // Tone -> design tokens (semantyczne, z design system)
-  const toneStyles: Record<"red" | "gold" | "cyber", {
-    iconBg: string; iconText: string; ring: string; cta: string; badge: string; glow: string; bar: string;
-  }> = {
-    red: {
-      iconBg: "bg-[hsl(var(--flag-red))]",
-      iconText: "text-white",
-      ring: "hover:ring-[hsl(var(--flag-red))]",
-      cta: "bg-[hsl(var(--flag-red))] hover:bg-[hsl(var(--flag-red)/0.9)] text-white shadow-red",
-      badge: "bg-[hsl(var(--flag-red)/0.12)] text-[hsl(var(--flag-red))] border-[hsl(var(--flag-red)/0.3)]",
-      glow: "from-[hsl(var(--flag-red)/0.25)] to-transparent",
-      bar: "bg-[hsl(var(--flag-red))]",
-    },
-    gold: {
-      iconBg: "bg-gold",
-      iconText: "text-gold-foreground",
-      ring: "hover:ring-gold",
-      cta: "bg-gold hover:bg-gold/90 text-gold-foreground shadow-gold",
-      badge: "bg-gold/15 text-gold-foreground border-gold/40 dark:text-gold",
-      glow: "from-gold/25 to-transparent",
-      bar: "bg-gold",
-    },
-    cyber: {
-      iconBg: "bg-accent",
-      iconText: "text-accent-foreground",
-      ring: "hover:ring-accent",
-      cta: "bg-accent hover:bg-accent/90 text-accent-foreground shadow-cyber",
-      badge: "bg-accent/15 text-accent-foreground border-accent/40 dark:text-accent",
-      glow: "from-accent/25 to-transparent",
-      bar: "bg-accent",
-    },
-  };
-
-  return (
-    <div className="min-h-screen bg-background">
-      {/* ======== STATE BANNER (pasek państwowy) ======== */}
-      <div className="bg-primary-deep text-white text-xs">
-        <div className="container flex items-center justify-between h-9">
-          <div className="flex items-center gap-3">
-            <Flag className="h-3.5 w-3.5 text-gold" />
-            <span className="font-medium tracking-wide text-white/95">SERWIS PAŃSTWOWY · Rzeczpospolita Polska · Ministerstwo Edukacji</span>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 rounded-full border-2 border-accent/30" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent animate-spin" />
+            <div className="absolute inset-2 rounded-full bg-accent/20 animate-pulse" />
           </div>
-          <div className="hidden md:flex items-center gap-4 text-white/80">
-            <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" /> System działa</span>
-            <span className="font-mono">v2.6.0</span>
-          </div>
+          <p className="text-xs font-mono uppercase tracking-[0.3em] text-muted-foreground">Initializing system…</p>
         </div>
       </div>
+    );
+  }
 
-      {/* ======== HEADER ======== */}
-      <header className="sticky top-0 z-50 border-b border-border glass">
-        <div className="container flex h-20 items-center justify-between">
-          <Logo size="md" />
-          <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Button key={item.label} asChild variant="ghost" className="text-sm font-semibold text-foreground/80 hover:text-foreground">
-                <a href={item.href}>
-                  <item.icon className="h-4 w-4 mr-2" />
-                  {item.label}
-                </a>
-              </Button>
-            ))}
+  return (
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
+      {/* ====== NAV ====== */}
+      <header className="sticky top-0 z-50 border-b border-border/50 backdrop-blur-xl bg-background/70">
+        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Logo size="sm" variant="light" />
+            <span className="hidden md:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-mono uppercase tracking-wider text-emerald-400">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" /> system online
+            </span>
+          </div>
+          <nav className="hidden md:flex items-center gap-1 text-sm">
+            <a href="#features" className="px-3 py-2 text-muted-foreground hover:text-foreground transition-smooth">Funkcje</a>
+            <a href="#security" className="px-3 py-2 text-muted-foreground hover:text-foreground transition-smooth">Bezpieczeństwo</a>
+            <a href="#how" className="px-3 py-2 text-muted-foreground hover:text-foreground transition-smooth">Jak działa</a>
           </nav>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button asChild variant="default" className="hidden sm:inline-flex bg-accent hover:bg-accent/90 text-accent-foreground font-semibold shadow-cyber">
-              <Link to="/auth/student">Wejdź na platformę</Link>
-            </Button>
+            <Link to="/auth/login-student">
+              <Button size="sm" className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 shadow-cyber">
+                Rozpocznij <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* ======== HERO ======== */}
-      <section className="relative overflow-hidden bg-hero">
+      {/* ====== HERO ====== */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Animated grid */}
+        <div className="absolute inset-0 bg-grid opacity-30" />
         <div className="absolute inset-0 bg-mesh" />
-        <div className="absolute inset-0 bg-grid opacity-40" />
-        {/* Subtle scan line */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent to-transparent opacity-60 animate-scan" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
 
-        <div className="container relative py-20 lg:py-28">
+        {/* Floating particles */}
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute h-1 w-1 rounded-full bg-cyan-400/60"
+            style={{ left: `${(i * 53) % 100}%`, top: `${(i * 37) % 100}%` }}
+            animate={{ y: [0, -30, 0], opacity: [0.2, 1, 0.2] }}
+            transition={{ duration: 3 + (i % 4), repeat: Infinity, delay: i * 0.2 }}
+          />
+        ))}
+
+        <div className="container mx-auto px-6 relative z-10 py-20">
           <div className="grid lg:grid-cols-12 gap-12 items-center">
-            {/* LEFT: copy */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              className="lg:col-span-7"
-            >
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6">
-                <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                <span className="text-xs font-semibold tracking-wide text-white uppercase">System produkcyjny · Online</span>
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="lg:col-span-7">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-card border border-border mb-6">
+                <Sparkles className="h-3.5 w-3.5 text-accent" />
+                <span className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Państwowa platforma egzaminacyjna · v3.0</span>
               </div>
-
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-display font-extrabold text-white mb-6 leading-[1.02] text-balance">
-                Edukacja przyszłości,<br />
-                <span className="text-gradient-gold">już dziś dostępna.</span>
+              <h1 className="text-5xl md:text-7xl font-display font-extrabold leading-[1.05] mb-6 tracking-tight">
+                Nowoczesny<br />
+                <span className="text-gradient-cyber">System Egzaminacyjny</span>
               </h1>
-
-              <p className="text-lg md:text-xl text-white/85 mb-10 max-w-2xl leading-relaxed">
-                Państwowa platforma edukacyjna nowej generacji. Egzaminy online, materiały, raporty postępów
-                i sztuczna inteligencja — w jednym, bezpiecznym ekosystemie dla szkół, nauczycieli i uczniów.
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed">
+                Bezpieczna platforma do przeprowadzania egzaminów online nowej generacji. AI, monitoring live, anty-cheat enterprise i raporty klasy ministerialnej.
               </p>
 
-              <div className="flex flex-wrap items-center gap-4 mb-10">
-                <Button size="lg" asChild className="bg-gold hover:bg-gold/90 text-gold-foreground shadow-gold font-bold text-base h-14 px-8 rounded-xl">
-                  <Link to="/auth/student">
-                    Rozpocznij egzamin <ArrowRight className="ml-2 h-5 w-5" />
+              <div className="flex flex-wrap gap-3">
+                {portals.map((p) => (
+                  <Link key={p.to} to={p.to}>
+                    <Button size="lg" className={`bg-gradient-to-r ${p.grad} hover:opacity-95 shadow-lg group`}>
+                      <p.icon className="mr-2 h-5 w-5" />
+                      {p.title}
+                      <span className="ml-2 px-1.5 py-0.5 rounded bg-black/30 text-[10px] font-mono">{p.badge}</span>
+                    </Button>
                   </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild className="bg-white/5 border-white/30 text-white hover:bg-white/15 hover:text-white text-base font-semibold h-14 px-8 rounded-xl backdrop-blur-sm">
-                  <Link to="/auth/teacher" target="_blank" rel="noopener">
-                    Panel nauczyciela <ExternalLink className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                ))}
               </div>
 
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-white/80">
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Zgodność WCAG 2.1 AA</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> Szyfrowanie end-to-end</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-success" /> RODO compliant</span>
+              {/* Live status bar */}
+              <div className="mt-12 flex flex-wrap gap-x-8 gap-y-3 text-xs font-mono">
+                <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> API: 24ms</span>
+                <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" /> DB: HEALTHY</span>
+                <span className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse" /> Edge: 14 regions</span>
+                <span className="flex items-center gap-2 text-muted-foreground">SOC: monitoring 24/7</span>
               </div>
             </motion.div>
 
-            {/* RIGHT: HUD card */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="lg:col-span-5"
-            >
-              <div className="relative rounded-2xl bg-primary-deep/60 border border-white/15 backdrop-blur-xl p-6 shadow-elegant overflow-hidden">
-                <div className="absolute -top-32 -right-32 h-64 w-64 rounded-full bg-accent/30 blur-3xl" />
-                <div className="absolute -bottom-32 -left-32 h-64 w-64 rounded-full bg-gold/20 blur-3xl" />
-
-                <div className="relative">
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2.5 w-2.5 rounded-full bg-flag-red" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-warning" />
-                      <div className="h-2.5 w-2.5 rounded-full bg-success" />
+            {/* Right: Live dashboard mockup */}
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="lg:col-span-5 relative">
+              <div className="absolute inset-0 bg-gradient-cyber blur-3xl opacity-30 rounded-full" />
+              <div className="relative bg-card/80 backdrop-blur border border-border rounded-2xl p-5 shadow-elegant">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/70" />
                     </div>
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-white/50">edunex://status</span>
+                    <span className="text-xs font-mono text-muted-foreground ml-2">edunex://command-center</span>
                   </div>
+                  <span className="text-[10px] font-mono text-emerald-400">● LIVE</span>
+                </div>
 
-                  <div className="space-y-3">
-                    {[
-                      { icon: Server, label: "API & Backend", value: "Operational", ok: true },
-                      { icon: Database, label: "Baza danych", value: "Operational", ok: true },
-                      { icon: Cpu, label: "AI Gateway", value: "Operational", ok: true },
-                      { icon: Activity, label: "Latencja P95", value: "47 ms", ok: true },
-                      { icon: Zap, label: "Egzaminy live", value: "1 284 sesje", ok: true },
-                    ].map((s) => (
-                      <div key={s.label} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
-                        <div className="flex items-center gap-3">
-                          <s.icon className="h-4 w-4 text-accent" />
-                          <span className="text-sm text-white/90 font-medium">{s.label}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs text-white">{s.value}</span>
-                          <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                        </div>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {liveStats.map((s) => (
+                    <div key={s.label} className="bg-background/60 border border-border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <s.icon className={`h-3.5 w-3.5 ${s.color}`} />
+                        <TrendingUp className="h-3 w-3 text-emerald-400" />
                       </div>
+                      <div className="text-xl font-bold font-mono">{typeof s.value === "number" ? s.value.toLocaleString("pl") : s.value}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Mini chart */}
+                <div className="bg-background/60 border border-border rounded-lg p-3 mb-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono uppercase text-muted-foreground">Aktywność / 24h</span>
+                    <span className="text-[10px] font-mono text-cyan-400">+12.4%</span>
+                  </div>
+                  <div className="flex items-end gap-1 h-16">
+                    {[40, 65, 50, 80, 70, 90, 75, 95, 85, 70, 88, 100].map((h, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ height: 0 }}
+                        animate={{ height: `${h}%` }}
+                        transition={{ duration: 0.6, delay: i * 0.05 }}
+                        className="flex-1 bg-gradient-to-t from-blue-600 to-cyan-400 rounded-sm"
+                      />
                     ))}
                   </div>
+                </div>
 
-                  <div className="mt-5 p-3 rounded-lg bg-accent/10 border border-accent/30 flex items-center gap-3">
-                    <Sparkles className="h-4 w-4 text-accent flex-shrink-0" />
-                    <span className="text-xs text-white/90">
-                      AI Assistant aktywny dla <span className="font-mono text-accent">2 348</span> nauczycieli
-                    </span>
-                  </div>
+                {/* Terminal log */}
+                <div className="bg-black/40 border border-border rounded-lg p-3 font-mono text-[10px] space-y-1">
+                  <div className="text-emerald-400">[OK] auth.session verified · uid:****a82f</div>
+                  <div className="text-cyan-400">[INFO] exam.live.start · pin:7421 · n=24</div>
+                  <div className="text-amber-400">[WARN] tab_switch detected · attempt:#9921</div>
+                  <div className="text-emerald-400">[OK] grading.ai completed in 1.2s</div>
                 </div>
               </div>
             </motion.div>
@@ -282,363 +222,236 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ======== STATS BAR ======== */}
-      <section className="bg-card border-y border-border">
-        <div className="container py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map((s) => (
-              <div key={s.label} className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-accent-soft">
-                  <s.icon className="h-5 w-5 text-accent-on-soft" />
-                </div>
-                <div>
-                  <div className="font-display text-2xl font-extrabold text-foreground tabular-nums">{s.value}</div>
-                  <div className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{s.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* ====== LIVE STATS BAR ====== */}
+      <section className="border-y border-border bg-card/50 backdrop-blur">
+        <div className="container mx-auto px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {liveStats.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <s.icon className={`h-5 w-5 mx-auto mb-2 ${s.color}`} />
+              <div className="text-3xl font-bold font-mono">{typeof s.value === "number" ? s.value.toLocaleString("pl") : s.value}</div>
+              <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">{s.label}</div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* ======== 3 LOGIN CARDS — bardzo czytelne ======== */}
-      <section id="egzaminy" className="container py-20 lg:py-24 scroll-mt-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary text-foreground/80 text-xs font-semibold tracking-wider uppercase mb-4">
-            Wybierz panel
-          </div>
-          <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-3 text-balance">
-            Trzy oddzielne panele logowania
-          </h2>
-          <p className="text-lg text-muted-foreground text-balance">
-            Każda rola ma własną, bezpieczną przestrzeń. Wybierz swój panel, aby przejść do logowania w nowym oknie.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {loginCards.map((card, i) => {
-            const t = toneStyles[card.tone];
-            return (
-              <motion.div
-                key={card.to}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -6 }}
-              >
-                <a
-                  href={card.to}
-                  target={card.newWindow ? "_blank" : undefined}
-                  rel={card.newWindow ? "noopener noreferrer" : undefined}
-                  className={`group relative block h-full rounded-2xl bg-card border-2 border-border p-7 shadow-card hover:shadow-elegant ring-2 ring-transparent ${t.ring} transition-smooth overflow-hidden`}
-                >
-                  {/* Top color bar */}
-                  <div className={`absolute top-0 inset-x-0 h-1.5 ${t.bar}`} />
-                  {/* Background glow on hover */}
-                  <div className={`absolute -top-32 -right-32 h-64 w-64 rounded-full bg-gradient-to-br ${t.glow} opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl`} />
-
-                  <div className="relative">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className={`inline-flex p-3.5 rounded-xl ${t.iconBg} ${t.iconText} shadow-lg group-hover:scale-110 transition-spring`}>
-                        <card.icon className="h-7 w-7" strokeWidth={2.2} />
-                      </div>
-                      {card.newWindow && (
-                        <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          <ExternalLink className="h-3 w-3" />
-                          Nowe okno
-                        </div>
-                      )}
-                    </div>
-
-                    <h3 className="text-2xl font-display font-extrabold text-foreground mb-2">{card.title}</h3>
-                    <div className={`inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-md border ${t.badge} mb-4 font-mono uppercase tracking-wider`}>
-                      {card.badge}
-                    </div>
-
-                    <p className="text-foreground/70 mb-6 leading-relaxed text-[15px]">{card.desc}</p>
-
-                    <div className={`inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl font-bold text-sm ${t.cta} transition-smooth group-hover:gap-3`}>
-                      {card.cta}
-                      <ArrowRight className="h-4 w-4" />
-                    </div>
-                  </div>
-                </a>
-              </motion.div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ======== AKTUALNOŚCI + SKRÓTY ======== */}
-      <section id="materialy" className="container py-16 grid lg:grid-cols-3 gap-8 scroll-mt-24">
-        <div className="lg:col-span-2">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-accent-soft"><Bell className="h-5 w-5 text-accent-on-soft" /></div>
-            <h2 className="text-3xl font-display font-extrabold text-foreground">Aktualności</h2>
-          </div>
-          <div className="space-y-3">
-            {news.map((n, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="p-5 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth flex items-start gap-4"
-              >
-                <div className="flex flex-col items-center min-w-[80px]">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-primary-deep text-white tracking-wider">
-                    {n.tag}
-                  </span>
-                  <span className="text-xs text-muted-foreground font-mono mt-1.5">{n.date}</span>
-                </div>
-                <p className="text-foreground font-semibold flex-1 leading-snug">{n.title}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-lg bg-gold/15"><Sparkles className="h-5 w-5 text-gold" /></div>
-            <h2 className="text-3xl font-display font-extrabold text-foreground">Szybki start</h2>
-          </div>
-          <div className="relative p-6 rounded-2xl bg-gradient-primary text-white shadow-elegant overflow-hidden">
-            <div className="absolute -bottom-20 -right-20 h-48 w-48 rounded-full bg-accent/30 blur-3xl" />
-            <div className="relative">
-              <h3 className="font-display text-xl font-extrabold mb-2">Pierwszy raz na EduNex?</h3>
-              <p className="text-white/80 mb-6 text-sm leading-relaxed">
-                Sprawdź panel pomocy lub skontaktuj się z administratorem swojej szkoły, aby otrzymać dane dostępowe.
-              </p>
-              <div className="space-y-2">
-                <Button className="w-full justify-start bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" asChild>
-                  <Link to="/auth/student"><GraduationCap className="h-4 w-4 mr-2" /> Wejdź jako uczeń</Link>
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-white/30 text-white hover:bg-white/10 hover:text-white font-semibold" asChild>
-                  <a href="/auth/register-teacher" target="_blank" rel="noopener noreferrer">
-                    <Users className="h-4 w-4 mr-2" /> Zarejestruj nauczyciela
-                  </a>
-                </Button>
-              </div>
+      {/* ====== FEATURES ====== */}
+      <section id="features" className="py-24 relative">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 mb-4">
+              <Zap className="h-3.5 w-3.5 text-accent" />
+              <span className="text-xs font-mono uppercase tracking-wider text-accent">Funkcje systemu</span>
             </div>
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">Wszystko czego potrzebuje<br /><span className="text-gradient-cyber">nowoczesna szkoła</span></h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">Od AI generowania pytań po enterprise-grade anty-cheat. Jeden system — wszystkie potrzeby.</p>
           </div>
-        </div>
-      </section>
 
-      {/* ======== FEATURES ======== */}
-      <section id="raporty" className="bg-secondary/50 border-y border-border py-20 lg:py-24 scroll-mt-24">
-        <div className="container">
-          <div className="max-w-2xl mx-auto text-center mb-14">
-            <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
-              Wszystko, czego potrzebuje <span className="text-gradient-cyber">nowoczesna szkoła</span>
-            </h2>
-            <p className="text-lg text-muted-foreground text-balance">
-              EduNex.pl łączy bezpieczeństwo państwowych systemów z mocą sztucznej inteligencji.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             {features.map((f, i) => (
               <motion.div
                 key={f.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.07 }}
-                className="p-6 rounded-2xl bg-card border border-border hover:border-accent/40 hover:shadow-elegant transition-smooth group"
+                className="group relative bg-card/60 backdrop-blur border border-border rounded-xl p-6 hover-lift hover:border-accent/50"
               >
-                <div className="inline-flex p-3 rounded-xl bg-accent-soft mb-4 group-hover:scale-110 transition-spring">
-                  <f.icon className="h-6 w-6 text-accent-on-soft" />
+                <div className="absolute inset-0 bg-gradient-cyber opacity-0 group-hover:opacity-5 rounded-xl transition-smooth" />
+                <div className="relative">
+                  <div className="inline-flex items-center justify-center h-11 w-11 rounded-lg bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-accent/30 mb-4">
+                    <f.icon className="h-5 w-5 text-accent" />
+                  </div>
+                  <h3 className="text-lg font-display font-bold mb-2">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 </div>
-                <h3 className="font-display font-extrabold text-xl text-foreground mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ======== POMOC / FAQ ======== */}
-      <section id="pomoc" className="container py-20 lg:py-24 scroll-mt-24">
-        <div className="grid lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-accent-on-soft text-xs font-semibold tracking-wider uppercase mb-4">
-              <HelpCircle className="h-3.5 w-3.5" /> Centrum pomocy
+      {/* ====== SECURITY CENTER ====== */}
+      <section id="security" className="py-24 relative bg-gradient-to-b from-background via-card/30 to-background">
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="container mx-auto px-6 relative">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-4">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                <span className="text-xs font-mono uppercase tracking-wider text-emerald-400">Security Center</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Bezpieczeństwo<br /><span className="text-gradient-cyber">klasy państwowej</span></h2>
+              <p className="text-muted-foreground mb-8 text-lg">Architektura zero-trust. Szyfrowanie end-to-end. Monitoring SOC 24/7. Pełna zgodność z RODO i ISO 27001.</p>
+              <div className="grid grid-cols-2 gap-3">
+                {securityFeatures.map((s) => (
+                  <div key={s.label} className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg">
+                    <div className="h-8 w-8 rounded-md bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <s.icon className="h-4 w-4 text-emerald-400" />
+                    </div>
+                    <span className="text-sm font-medium">{s.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground mb-4 text-balance">
-              Najczęściej zadawane pytania
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Nie znalazłeś odpowiedzi? Napisz do nas — wsparcie odpowiada w ciągu 24 godzin w dni robocze.
-            </p>
-            <Button asChild className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-              <a href="#kontakt"><MessageCircle className="h-4 w-4 mr-2" /> Przejdź do kontaktu</a>
-            </Button>
-          </div>
-          <div className="lg:col-span-8">
-            <Accordion type="single" collapsible className="rounded-2xl bg-card border border-border divide-y divide-border overflow-hidden">
-              {faqs.map((f, i) => (
-                <AccordionItem key={i} value={`item-${i}`} className="border-0 px-5">
-                  <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-5">
-                    {f.q}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                    {f.a}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+
+            {/* Terminal */}
+            <div className="bg-black/80 border border-border rounded-xl p-5 font-mono text-xs shadow-elegant">
+              <div className="flex items-center gap-2 mb-3 pb-3 border-b border-border">
+                <Terminal className="h-4 w-4 text-emerald-400" />
+                <span className="text-muted-foreground">edunex@soc:~$ security-monitor --live</span>
+              </div>
+              <div className="space-y-1.5">
+                <div className="text-emerald-400">[2026-05-16 14:32:11] ✓ TLS handshake · AES-256-GCM</div>
+                <div className="text-cyan-400">[2026-05-16 14:32:12] → auth: jwt verified · 2FA passed</div>
+                <div className="text-emerald-400">[2026-05-16 14:32:13] ✓ session.create · rbac:teacher</div>
+                <div className="text-amber-400">[2026-05-16 14:32:15] ⚠ suspicious: copy_attempt blocked</div>
+                <div className="text-emerald-400">[2026-05-16 14:32:16] ✓ audit.log committed · immutable</div>
+                <div className="text-cyan-400">[2026-05-16 14:32:18] → ai.risk_score: 0.12 (low)</div>
+                <div className="text-emerald-400">[2026-05-16 14:32:20] ✓ exam.submit · graded by ai</div>
+                <div className="text-muted-foreground">└─ all systems nominal · uptime 99.99%</div>
+                <div className="text-emerald-400 flex items-center gap-1 pt-1">
+                  <span className="h-2 w-2 rounded-sm bg-emerald-400 animate-pulse" /> awaiting events…
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ======== KONTAKT ======== */}
-      <ContactSection />
+      {/* ====== HOW IT WORKS ====== */}
+      <section id="how" className="py-24">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">3 kroki do uruchomienia</h2>
+            <p className="text-muted-foreground">Od rejestracji do pierwszego egzaminu — w 5 minut.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { n: "01", title: "Utwórz egzamin", desc: "Kreator pytań z AI lub bank gotowych pytań w 30+ kategoriach.", icon: FileCheck2 },
+              { n: "02", title: "Wygeneruj PIN", desc: "Jeden klik — uczniowie dołączają kodem PIN bez rejestracji.", icon: KeyRound },
+              { n: "03", title: "Analizuj wyniki", desc: "Heatmapy, AI insights, raporty PDF dla rodziców i kuratorium.", icon: BarChart3 },
+            ].map((s, i) => (
+              <motion.div
+                key={s.n}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.15 }}
+                viewport={{ once: true }}
+                className="relative bg-card border border-border rounded-xl p-6"
+              >
+                <div className="text-6xl font-display font-extrabold text-gradient-cyber opacity-30 absolute top-4 right-5">{s.n}</div>
+                <s.icon className="h-8 w-8 text-accent mb-4" />
+                <h3 className="text-xl font-display font-bold mb-2">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">{s.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* ======== CTA STRIP ======== */}
-      <section className="bg-hero relative overflow-hidden">
-        <div className="absolute inset-0 bg-mesh opacity-80" />
-        <div className="container relative py-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-extrabold text-white mb-4 text-balance">
-            Gotowy, by wprowadzić swoją szkołę w XXI wiek?
-          </h2>
-          <p className="text-white/80 mb-8 max-w-xl mx-auto">
-            Dołącz do tysięcy nauczycieli i uczniów, którzy już korzystają z państwowej platformy nowej generacji.
-          </p>
+      {/* ====== TESTIMONIALS ====== */}
+      <section className="py-24 bg-card/30">
+        <div className="container mx-auto px-6">
+          <h2 className="text-center text-4xl font-display font-bold mb-16">Zaufały nam <span className="text-gradient-cyber">setki szkół</span></h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { who: "ZSO nr 4, Warszawa", role: "Dyrektor", text: "Egzaminy próbne z 200 uczniami jednocześnie. Zero problemów technicznych. Anty-cheat wykrył 3 próby ściągania." },
+              { who: "LO im. Kopernika", role: "Nauczyciel matematyki", text: "AI Generator zaoszczędził mi 10h tygodniowo. Pytania są dobrej jakości i można je edytować." },
+              { who: "Kuratorium Śląskie", role: "Wizytator", text: "Raporty PDF + heatmapy odpowiedzi — dokładnie to czego potrzebujemy do ewaluacji." },
+            ].map((t, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                viewport={{ once: true }}
+                className="bg-card border border-border rounded-xl p-6 hover-lift"
+              >
+                <div className="flex gap-1 mb-3">{[...Array(5)].map((_, i) => <Award key={i} className="h-4 w-4 text-amber-400 fill-amber-400" />)}</div>
+                <p className="text-sm leading-relaxed mb-4">"{t.text}"</p>
+                <div className="pt-4 border-t border-border">
+                  <div className="font-bold text-sm">{t.who}</div>
+                  <div className="text-xs text-muted-foreground">{t.role}</div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ====== CTA ====== */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-cyber opacity-20" />
+        <div className="container mx-auto px-6 relative text-center max-w-3xl">
+          <h2 className="text-4xl md:text-6xl font-display font-bold mb-6">Gotowy na <span className="text-gradient-cyber">nową erę</span> egzaminów?</h2>
+          <p className="text-muted-foreground text-lg mb-8">Wybierz swój panel poniżej. Konfiguracja w 60 sekund.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button size="lg" asChild className="bg-gold text-gold-foreground hover:bg-gold/90 font-bold h-12 px-8 shadow-gold">
-              <a href="/auth/register-teacher" target="_blank" rel="noopener noreferrer">
-                Zarejestruj szkołę
-              </a>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="bg-white/10 border-white/30 text-white hover:bg-white/20 hover:text-white font-semibold h-12 px-8">
-              <Link to="/auth/student">Wypróbuj demo</Link>
-            </Button>
+            {portals.map((p) => (
+              <Link key={p.to} to={p.to}>
+                <Button size="lg" className={`bg-gradient-to-r ${p.grad} hover:opacity-95 shadow-lg`}>
+                  <p.icon className="mr-2 h-5 w-5" /> {p.title}
+                </Button>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ======== FOOTER ======== */}
-      <footer className="bg-primary-deep text-white py-12">
-        <div className="container">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <Logo size="md" variant="light" />
-            <div className="flex flex-wrap gap-6 text-sm text-white/80">
-              <a href="#" className="hover:text-accent transition-smooth">Polityka prywatności</a>
-              <a href="#" className="hover:text-accent transition-smooth">Regulamin</a>
-              <a href="#" className="hover:text-accent transition-smooth">Dostępność WCAG</a>
-              <a href="#kontakt" className="hover:text-accent transition-smooth">Kontakt</a>
+      {/* ====== FOOTER ====== */}
+      <footer className="border-t border-border bg-background py-12">
+        <div className="container mx-auto px-6 grid md:grid-cols-4 gap-8">
+          <div>
+            <Logo size="sm" variant="light" />
+            <p className="text-xs text-muted-foreground mt-3">Państwowy system egzaminacyjny nowej generacji.</p>
+            <div className="flex items-center gap-2 mt-4 text-xs">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="font-mono text-muted-foreground">All systems operational</span>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-white/10 text-sm text-white/70 text-center">
-            © {new Date().getFullYear()} EduNex.pl — Państwowa platforma edukacyjna. Wszystkie prawa zastrzeżone.
+          <div>
+            <h4 className="font-bold mb-3 text-sm">Produkt</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><a href="#features" className="hover:text-foreground">Funkcje</a></li>
+              <li><a href="#security" className="hover:text-foreground">Bezpieczeństwo</a></li>
+              <li><a href="#how" className="hover:text-foreground">Jak działa</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-3 text-sm">Wsparcie</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>Centrum pomocy</li>
+              <li>Dokumentacja API</li>
+              <li>Status systemu</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold mb-3 text-sm">Prawne</h4>
+            <ul className="space-y-2 text-sm text-muted-foreground">
+              <li>Polityka prywatności</li>
+              <li>Regulamin</li>
+              <li>RODO / GDPR</li>
+            </ul>
+          </div>
+        </div>
+        <div className="container mx-auto px-6 mt-8 pt-6 border-t border-border flex flex-wrap justify-between items-center gap-4 text-xs text-muted-foreground">
+          <div>© 2026 EduNex.pl · Wszystkie prawa zastrzeżone</div>
+          <div className="flex items-center gap-4 font-mono">
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-400" /> ISO 27001</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-400" /> RODO</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3 w-3 text-emerald-400" /> SOC 2</span>
           </div>
         </div>
       </footer>
     </div>
   );
 };
-
-function ContactSection() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      toast.error("Uzupełnij imię, e-mail i treść wiadomości.");
-      return;
-    }
-    const subject = encodeURIComponent(form.subject || `Wiadomość od ${form.name}`);
-    const body = encodeURIComponent(
-      `Imię i nazwisko: ${form.name}\nE-mail: ${form.email}\n\n${form.message}`
-    );
-    window.location.href = `mailto:kontakt@edunex.pl?subject=${subject}&body=${body}`;
-    toast.success("Otwieram klienta poczty…");
-  };
-
-  return (
-    <section id="kontakt" className="bg-secondary/40 border-y border-border py-20 lg:py-24 scroll-mt-24">
-      <div className="container grid lg:grid-cols-12 gap-10">
-        <div className="lg:col-span-5 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-soft text-accent-on-soft text-xs font-semibold tracking-wider uppercase">
-            <Phone className="h-3.5 w-3.5" /> Skontaktuj się z nami
-          </div>
-          <h2 className="text-4xl md:text-5xl font-display font-extrabold text-foreground text-balance">
-            Wsparcie dla szkół, nauczycieli i uczniów
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Pomagamy z rejestracją, integracją z systemem szkoły, resetem 2FA oraz pytaniami dotyczącymi RODO.
-          </p>
-
-          <div className="space-y-4 pt-2">
-            <a href="mailto:kontakt@edunex.pl" className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth group">
-              <div className="p-2.5 rounded-lg bg-accent-soft text-accent-on-soft group-hover:scale-110 transition-spring">
-                <Mail className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">E-mail</div>
-                <div className="font-semibold text-foreground">kontakt@edunex.pl</div>
-                <div className="text-sm text-muted-foreground">Odpowiedź w 24h (pn-pt)</div>
-              </div>
-            </a>
-
-            <a href="tel:+48221234567" className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border hover:border-accent/40 hover:shadow-card transition-smooth group">
-              <div className="p-2.5 rounded-lg bg-gold/15 text-gold group-hover:scale-110 transition-spring">
-                <Phone className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Infolinia</div>
-                <div className="font-semibold text-foreground">+48 22 123 45 67</div>
-                <div className="text-sm text-muted-foreground">Pn–Pt, 8:00–16:00</div>
-              </div>
-            </a>
-
-            <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border">
-              <div className="p-2.5 rounded-lg bg-[hsl(var(--flag-red)/0.12)] text-[hsl(var(--flag-red))]">
-                <MapPin className="h-5 w-5" />
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">Adres</div>
-                <div className="font-semibold text-foreground">Ministerstwo Edukacji Narodowej</div>
-                <div className="text-sm text-muted-foreground">al. J. Ch. Szucha 25, 00-918 Warszawa</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="lg:col-span-7">
-          <form onSubmit={handleSubmit} className="rounded-2xl bg-card border border-border shadow-card p-7 space-y-5">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label htmlFor="c-name" className="text-sm font-semibold text-foreground">Imię i nazwisko *</label>
-                <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Jan Kowalski" />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="c-email" className="text-sm font-semibold text-foreground">E-mail *</label>
-                <Input id="c-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="jan@szkola.pl" />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="c-subject" className="text-sm font-semibold text-foreground">Temat</label>
-              <Input id="c-subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="np. Reset 2FA / Rejestracja szkoły" />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="c-message" className="text-sm font-semibold text-foreground">Wiadomość *</label>
-              <Textarea id="c-message" rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} placeholder="Opisz swoje pytanie lub problem…" />
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-              <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                <Lock className="h-3.5 w-3.5" /> Dane przetwarzane zgodnie z RODO
-              </p>
-              <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold h-11 px-6">
-                <Send className="h-4 w-4 mr-2" /> Wyślij wiadomość
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export default Index;

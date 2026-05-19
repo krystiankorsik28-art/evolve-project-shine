@@ -14,36 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      announcements: {
-        Row: {
-          audience: Database["public"]["Enums"]["app_role"] | null
-          body: string
-          created_at: string
-          created_by: string
-          id: string
-          published: boolean
-          title: string
-        }
-        Insert: {
-          audience?: Database["public"]["Enums"]["app_role"] | null
-          body: string
-          created_at?: string
-          created_by: string
-          id?: string
-          published?: boolean
-          title: string
-        }
-        Update: {
-          audience?: Database["public"]["Enums"]["app_role"] | null
-          body?: string
-          created_at?: string
-          created_by?: string
-          id?: string
-          published?: boolean
-          title?: string
-        }
-        Relationships: []
-      }
       answers: {
         Row: {
           ai_feedback: string | null
@@ -91,6 +61,123 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attempt_live_state: {
+        Row: {
+          answered_count: number
+          attempt_id: string
+          blur_count: number
+          copy_count: number
+          current_question: number
+          exam_id: string
+          forbidden_key_count: number
+          fullscreen_on: boolean
+          heartbeat_count: number
+          last_event_at: string | null
+          last_event_type: string | null
+          paste_count: number
+          right_click_count: number
+          student_name: string | null
+          suspicion_score: number
+          tab_hidden_count: number
+          total_questions: number
+          updated_at: string
+        }
+        Insert: {
+          answered_count?: number
+          attempt_id: string
+          blur_count?: number
+          copy_count?: number
+          current_question?: number
+          exam_id: string
+          forbidden_key_count?: number
+          fullscreen_on?: boolean
+          heartbeat_count?: number
+          last_event_at?: string | null
+          last_event_type?: string | null
+          paste_count?: number
+          right_click_count?: number
+          student_name?: string | null
+          suspicion_score?: number
+          tab_hidden_count?: number
+          total_questions?: number
+          updated_at?: string
+        }
+        Update: {
+          answered_count?: number
+          attempt_id?: string
+          blur_count?: number
+          copy_count?: number
+          current_question?: number
+          exam_id?: string
+          forbidden_key_count?: number
+          fullscreen_on?: boolean
+          heartbeat_count?: number
+          last_event_at?: string | null
+          last_event_type?: string | null
+          paste_count?: number
+          right_click_count?: number
+          student_name?: string | null
+          suspicion_score?: number
+          tab_hidden_count?: number
+          total_questions?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempt_live_state_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: true
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempt_live_state_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attempt_screen_frames: {
+        Row: {
+          attempt_id: string
+          created_at: string
+          exam_id: string
+          id: string
+          image_data: string
+        }
+        Insert: {
+          attempt_id: string
+          created_at?: string
+          exam_id: string
+          id?: string
+          image_data: string
+        }
+        Update: {
+          attempt_id?: string
+          created_at?: string
+          exam_id?: string
+          id?: string
+          image_data?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attempt_screen_frames_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attempt_screen_frames_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
             referencedColumns: ["id"]
           },
         ]
@@ -200,6 +287,68 @@ export type Database = {
         }
         Relationships: []
       }
+      class_students: {
+        Row: {
+          class_id: string
+          created_at: string
+          id: string
+          student_name: string | null
+          student_user_id: string | null
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          id?: string
+          student_name?: string | null
+          student_user_id?: string | null
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          id?: string
+          student_name?: string | null
+          student_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "class_students_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classes: {
+        Row: {
+          color: string
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          updated_at: string
+          year: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          created_by: string
+          id?: string
+          name: string
+          updated_at?: string
+          year?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          updated_at?: string
+          year?: string
+        }
+        Relationships: []
+      }
       exam_pins: {
         Row: {
           active: boolean
@@ -237,44 +386,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "exam_pins_exam_id_fkey"
-            columns: ["exam_id"]
-            isOneToOne: false
-            referencedRelation: "exams"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      exam_schedules: {
-        Row: {
-          created_at: string
-          created_by: string
-          duration_minutes: number
-          exam_id: string
-          id: string
-          notes: string | null
-          scheduled_at: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          duration_minutes?: number
-          exam_id: string
-          id?: string
-          notes?: string | null
-          scheduled_at: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          duration_minutes?: number
-          exam_id?: string
-          id?: string
-          notes?: string | null
-          scheduled_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "exam_schedules_exam_id_fkey"
             columns: ["exam_id"]
             isOneToOne: false
             referencedRelation: "exams"
@@ -339,7 +450,6 @@ export type Database = {
       materials: {
         Row: {
           created_at: string
-          description: string | null
           file_path: string
           file_size: number | null
           file_type: string | null
@@ -351,7 +461,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          description?: string | null
           file_path: string
           file_size?: number | null
           file_type?: string | null
@@ -363,7 +472,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          description?: string | null
           file_path?: string
           file_size?: number | null
           file_type?: string | null
@@ -461,7 +569,6 @@ export type Database = {
           explanation: string | null
           id: string
           language: string
-          media_url: string | null
           options: Json | null
           points: number
           prompt: string
@@ -480,7 +587,6 @@ export type Database = {
           explanation?: string | null
           id?: string
           language?: string
-          media_url?: string | null
           options?: Json | null
           points?: number
           prompt: string
@@ -499,7 +605,6 @@ export type Database = {
           explanation?: string | null
           id?: string
           language?: string
-          media_url?: string | null
           options?: Json | null
           points?: number
           prompt?: string
@@ -513,36 +618,6 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "question_categories"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      question_bank_tags: {
-        Row: {
-          question_id: string
-          tag_id: string
-        }
-        Insert: {
-          question_id: string
-          tag_id: string
-        }
-        Update: {
-          question_id?: string
-          tag_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "question_bank_tags_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "question_bank"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "question_bank_tags_tag_id_fkey"
-            columns: ["tag_id"]
-            isOneToOne: false
-            referencedRelation: "question_tags"
             referencedColumns: ["id"]
           },
         ]
@@ -583,19 +658,19 @@ export type Database = {
       question_tags: {
         Row: {
           created_at: string
-          created_by: string | null
+          created_by: string
           id: string
           name: string
         }
         Insert: {
           created_at?: string
-          created_by?: string | null
+          created_by: string
           id?: string
           name: string
         }
         Update: {
           created_at?: string
-          created_by?: string | null
+          created_by?: string
           id?: string
           name?: string
         }
@@ -698,6 +773,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      event_risk_weight: { Args: { _event_type: string }; Returns: number }
       get_primary_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]

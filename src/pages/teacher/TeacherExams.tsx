@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, FileText, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, FileText, Edit, Trash2, Loader2, Rocket, Copy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
@@ -68,6 +68,31 @@ export default function TeacherExams() {
     load();
   };
 
+  const publishAndShare = async (e: Exam) => {
+    if (!user) return;
+    if (e.status !== "published") {
+      const { error } = await supabase.from("exams").update({ status: "published" }).eq("id", e.id);
+      if (error) { toast.error(error.message); return; }
+    }
+    const { data: existing } = await supabase.from("exam_pins").select("pin_code").eq("exam_id", e.id).eq("active", true).maybeSingle();
+    let code = existing?.pin_code as string | undefined;
+    if (!code) {
+      const buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      code = String(buf[0] % 1000000).padStart(6, "0");
+      const { error: pErr } = await supabase.from("exam_pins").insert({ exam_id: e.id, pin_code: code, created_by: user.id });
+      if (pErr) { toast.error(pErr.message); return; }
+    }
+    await logAudit("exam_published", { resource_type: "exam", resource_id: e.id });
+    try {
+      await navigator.clipboard.writeText(`Egzamin: ${e.title}\nPIN: ${code}\n${window.location.origin}/`);
+      toast.success(`Opublikowano! PIN ${code} skopiowano do schowka`);
+    } catch {
+      toast.success(`Opublikowano! PIN: ${code}`);
+    }
+    load();
+  };
+
   return (
     <AppShell title="Egzaminy" subtitle="Twórz, edytuj i publikuj egzaminy">
       <div className="space-y-6">
@@ -125,8 +150,11 @@ export default function TeacherExams() {
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-1">{e.subject ?? "Bez przedmiotu"}</p>
                   <p className="text-xs text-muted-foreground mb-4">{e.duration_minutes} min · {new Date(e.created_at).toLocaleDateString("pl-PL")}</p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button size="sm" variant="default" asChild><Link to={`/teacher/exams/${e.id}`}><Edit className="h-3.5 w-3.5 mr-1.5" /> Edytuj</Link></Button>
+                    <Button size="sm" onClick={() => publishAndShare(e)} className="bg-gradient-cyber text-white hover:opacity-90 shadow-cyber">
+                      <Rocket className="h-3.5 w-3.5 mr-1.5" /> {e.status === "published" ? "Udostępnij" : "Opublikuj"}
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => remove(e.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
                   </div>
                 </CardContent>

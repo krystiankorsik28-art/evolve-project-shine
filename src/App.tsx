@@ -24,6 +24,16 @@ import TeacherExamEditor from "./pages/teacher/TeacherExamEditor";
 import TeacherMaterials from "./pages/teacher/TeacherMaterials";
 import TeacherQuestionBank from "./pages/teacher/TeacherQuestionBank";
 import TeacherLiveMonitor from "./pages/teacher/TeacherLiveMonitor";
+import TeacherAnalytics from "./pages/teacher/TeacherAnalytics";
+import TeacherLeaderboard from "./pages/teacher/TeacherLeaderboard";
+import TeacherClasses from "./pages/teacher/TeacherClasses";
+import TeacherCalendar from "./pages/teacher/TeacherCalendar";
+import TeacherAIGenerator from "./pages/teacher/TeacherAIGenerator";
+import TeacherLiveLobby from "./pages/teacher/TeacherLiveLobby";
+import TeacherHomework from "./pages/teacher/TeacherHomework";
+import Forum from "./pages/Forum";
+import Settings from "./pages/Settings";
+import StudentAchievements from "./pages/student/StudentAchievements";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentExam from "./pages/student/StudentExam";
 import StudentResults from "./pages/student/StudentResults";
@@ -45,6 +55,9 @@ const App = () => (
               <Route path="/auth/admin" element={<LoginAdmin />} />
               <Route path="/auth/teacher" element={<LoginTeacher />} />
               <Route path="/auth/student" element={<LoginStudent />} />
+              <Route path="/auth/login-admin" element={<LoginAdmin />} />
+              <Route path="/auth/login-teacher" element={<LoginTeacher />} />
+              <Route path="/auth/login-student" element={<LoginStudent />} />
               <Route path="/auth/register-teacher" element={<RegisterTeacher />} />
 
               {/* Admin */}
@@ -61,11 +74,23 @@ const App = () => (
               <Route path="/teacher/materials" element={<ProtectedRoute role="teacher"><TeacherMaterials /></ProtectedRoute>} />
               <Route path="/teacher/bank" element={<ProtectedRoute role="teacher"><TeacherQuestionBank /></ProtectedRoute>} />
               <Route path="/teacher/live" element={<ProtectedRoute role="teacher"><TeacherLiveMonitor /></ProtectedRoute>} />
+              <Route path="/teacher/analytics" element={<ProtectedRoute role="teacher"><TeacherAnalytics /></ProtectedRoute>} />
+              <Route path="/teacher/leaderboard" element={<ProtectedRoute role="teacher"><TeacherLeaderboard /></ProtectedRoute>} />
 
               {/* Student */}
               <Route path="/student" element={<ProtectedRoute role="student"><StudentDashboard /></ProtectedRoute>} />
-              <Route path="/student/exam/:attemptId" element={<ProtectedRoute role="student"><StudentExam /></ProtectedRoute>} />
-              <Route path="/student/results/:attemptId" element={<ProtectedRoute role="student"><StudentResults /></ProtectedRoute>} />
+              {/* Egzamin i wyniki: dostępne dla anonimowych/uczniów po PIN — bez wymagania roli student */}
+              <Route path="/student/exam/:attemptId" element={<StudentExam />} />
+              <Route path="/student/results/:attemptId" element={<StudentResults />} />
+
+              <Route path="/teacher/classes" element={<ProtectedRoute role="teacher"><TeacherClasses /></ProtectedRoute>} />
+              <Route path="/teacher/calendar" element={<ProtectedRoute role="teacher"><TeacherCalendar /></ProtectedRoute>} />
+              <Route path="/teacher/ai" element={<ProtectedRoute role="teacher"><TeacherAIGenerator /></ProtectedRoute>} />
+              <Route path="/teacher/live-lobby" element={<ProtectedRoute role="teacher"><TeacherLiveLobby /></ProtectedRoute>} />
+              <Route path="/teacher/homework" element={<ProtectedRoute role="teacher"><TeacherHomework /></ProtectedRoute>} />
+              <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/student/achievements" element={<ProtectedRoute role="student"><StudentAchievements /></ProtectedRoute>} />
 
               <Route path="*" element={<NotFound />} />
             </Routes>
