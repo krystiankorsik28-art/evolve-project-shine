@@ -117,7 +117,7 @@ export function AiAssistant({ onClose, onAccept }: { onClose: () => void; onAcce
   return (
     <Modal title="🪄 AI Asystent egzaminu" onClose={onClose} wide>
       <div className="space-y-4">
-        <div className="rounded-lg border border-violet-400/20 bg-violet-500/5 p-3 text-xs text-violet-100/80">
+        <div className="rounded-lg border border-accent/20 bg-violet-500/5 p-3 text-xs text-violet-100/80">
           Napisz po prostu, co mam zrobić — np. <em>„dodaj 3 zadania ze zdjęcia jako pytania otwarte i dołącz obrazek do każdego"</em>, <em>„zrób 5 pytań testowych z tego materiału"</em>, <em>„utwórz pytanie wielokrotnego wyboru do tego diagramu"</em>. Możesz dyktować mikrofonem 🎙️.
         </div>
 
@@ -170,7 +170,7 @@ export function AiAssistant({ onClose, onAccept }: { onClose: () => void; onAcce
         </Field>
 
         {summary && (
-          <div className="rounded-lg bg-cyan-500/5 border border-cyan-400/20 p-3 text-xs text-cyan-100">
+          <div className="rounded-lg bg-cyan-500/5 border border-accent/20 p-3 text-xs text-cyan-100">
             <strong>AI:</strong> {summary}
           </div>
         )}
@@ -180,7 +180,7 @@ export function AiAssistant({ onClose, onAccept }: { onClose: () => void; onAcce
           <button
             disabled={busy}
             onClick={run}
-            className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-400 hover:to-cyan-400 text-white font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50"
           >
             {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
             {busy ? "Pracuję..." : "Wykonaj"}

@@ -216,11 +216,11 @@ export function Monitoring() {
 
       {/* Stats tiles */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <Tile color="from-emerald-500 to-teal-500" label="Aktywnych" value={stats.total} />
-        <Tile color="from-amber-500 to-orange-500" label="Średnie ryzyko" value={stats.mid} />
-        <Tile color="from-pink-500 to-rose-500" label="Wysokie ryzyko" value={stats.high} />
-        <Tile color="from-violet-500 to-fuchsia-500" label="Bez fullscreen" value={stats.noFs} />
-        <Tile color="from-cyan-500 to-blue-500" label="Zdarzenia" value={stats.totalEvents} />
+        <Tile color="from-accent to-blue-500" label="Aktywnych" value={stats.total} />
+        <Tile color="from-accent to-blue-500" label="Średnie ryzyko" value={stats.mid} />
+        <Tile color="from-accent to-blue-500" label="Wysokie ryzyko" value={stats.high} />
+        <Tile color="from-accent to-blue-500" label="Bez fullscreen" value={stats.noFs} />
+        <Tile color="from-accent to-blue-500" label="Zdarzenia" value={stats.totalEvents} />
       </div>
 
       {/* Filters */}
@@ -246,7 +246,7 @@ export function Monitoring() {
 
       {/* Bulk actions */}
       {selected.size > 0 && (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyan-500/10 border border-cyan-400/20 text-xs text-cyan-200">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyan-500/10 border border-accent/20 text-xs text-cyan-200">
           <span className="font-semibold">{selected.size}</span> zaznaczonych
           <button onClick={bulkStop} className="ml-auto px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-200">Zatrzymaj wszystkich</button>
           <button onClick={() => setSelected(new Set())} className="px-2 py-1 rounded bg-white/10 hover:bg-white/20 text-white/70">Odznacz</button>
@@ -312,7 +312,7 @@ export function Monitoring() {
                       <span>Ryzyko</span><span>{r.suspicion_score}/100</span>
                     </div>
                     <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full bg-gradient-to-r from-emerald-400 via-amber-400 to-pink-400`} style={{ width: `${Math.min(100, r.suspicion_score)}%` }}/>
+                      <div className={`h-full rounded-full bg-gradient-to-r from-accent to-blue-500`} style={{ width: `${Math.min(100, r.suspicion_score)}%` }}/>
                     </div>
                   </div>
 
@@ -342,7 +342,7 @@ export function Monitoring() {
                   {isExpanded && (
                     <>
                       {/* Anti-Cheat Intelligence Panel */}
-                      <div className="mb-3 p-3 rounded-xl bg-gradient-to-br from-rose-500/[0.05] to-amber-500/[0.03] border border-rose-400/20">
+                      <div className="mb-3 p-3 rounded-xl bg-gradient-to-br from-accent/[0.05] to-accent/[0.05] border border-accent/20">
                         <div className="flex items-center gap-2 mb-2">
                           <ShieldAlert className="w-4 h-4 text-rose-300"/>
                           <span className="text-[10px] font-semibold uppercase tracking-wider text-rose-300">Anti-Cheat Intelligence</span>

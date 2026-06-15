@@ -178,7 +178,7 @@ export function Eksport() {
             {(Object.keys(FORMAT_INFO) as Format[]).map((f) => {
               const meta = FORMAT_INFO[f]; const Icon = meta.icon;
               return (
-                <button key={f} onClick={() => setFormat(f)} className={`text-left p-3 rounded-lg border transition ${format === f ? "border-cyan-400/40 bg-cyan-500/10" : "border-white/10 bg-white/[0.02] hover:bg-white/5"}`}>
+                <button key={f} onClick={() => setFormat(f)} className={`text-left p-3 rounded-lg border transition ${format === f ? "border-accent/40 bg-cyan-500/10" : "border-white/10 bg-white/[0.02] hover:bg-white/5"}`}>
                   <div className="flex items-center gap-2 mb-1"><Icon className="w-4 h-4 text-cyan-300"/><span className="font-medium text-white text-sm">{meta.label}</span></div>
                   <div className="text-xs text-white/50">{meta.desc}</div>
                 </button>
@@ -186,7 +186,7 @@ export function Eksport() {
             })}
           </div>
 
-          <button onClick={exportNow} disabled={busy || !exam} className="w-full mt-3 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold disabled:opacity-50 hover:brightness-110 transition">
+          <button onClick={exportNow} disabled={busy || !exam} className="w-full mt-3 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold disabled:opacity-50 hover:brightness-110 transition">
             {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Download className="w-4 h-4"/>}
             Pobierz plik
           </button>

@@ -5,9 +5,9 @@ import { toast } from "sonner";
 type Slide = { title: string; content: string; icon: string };
 
 const THEMES = [
-  { id: "dark-pro", label: "Dark Pro", gradient: "from-slate-900 via-purple-900 to-slate-900" },
-  { id: "light-clean", label: "Light Clean", gradient: "from-white via-blue-50 to-white" },
-  { id: "gradient", label: "Gradient", gradient: "from-indigo-500 via-purple-500 to-pink-500" },
+  { id: "dark-pro", label: "Dark Pro", gradient: "from-accent to-blue-500" },
+  { id: "light-clean", label: "Light Clean", gradient: "from-accent to-blue-500" },
+  { id: "gradient", label: "Gradient", gradient: "from-accent to-blue-500" },
 ];
 
 export function AIPresentationGenerator() {
@@ -39,7 +39,7 @@ export function AIPresentationGenerator() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-400 to-orange-500 grid place-items-center">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
           <Presentation className="w-5 h-5 text-black" />
         </div>
         <div>

@@ -181,17 +181,17 @@ export function Egzaminy() {
           </h2>
           <p className="text-xs text-white/50">Twórz, publikuj i zarządzaj egzaminami.</p>
         </div>
-        <button onClick={createNew} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-400 text-white text-sm font-semibold shadow-lg shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
+        <button onClick={createNew} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-sm font-semibold shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
           <Plus className="w-4 h-4"/>Nowy egzamin
         </button>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard icon={FileText} label="Wszystkie" value={exams.length} color="from-sky-500 to-blue-600" />
-        <StatCard icon={Eye} label="Opublikowane" value={published} color="from-emerald-500 to-teal-600" />
-        <StatCard icon={Edit3} label="Szkice" value={drafts} color="from-amber-500 to-orange-600" />
-        <StatCard icon={BarChart3} label="Śr. czas" value={exams.length ? `${Math.round(exams.reduce((a, e) => a + e.duration_minutes, 0) / exams.length)} min` : "—"} color="from-violet-500 to-purple-600" />
+        <StatCard icon={FileText} label="Wszystkie" value={exams.length} color="from-accent to-blue-500" />
+        <StatCard icon={Eye} label="Opublikowane" value={published} color="from-accent to-blue-500" />
+        <StatCard icon={Edit3} label="Szkice" value={drafts} color="from-accent to-blue-500" />
+        <StatCard icon={BarChart3} label="Śr. czas" value={exams.length ? `${Math.round(exams.reduce((a, e) => a + e.duration_minutes, 0) / exams.length)} min` : "—"} color="from-accent to-blue-500" />
       </div>
 
       {/* Secondary stats */}
@@ -222,7 +222,7 @@ export function Egzaminy() {
             <button key={f} onClick={() => setStatusFilter(f)}
               className={`px-3 py-2 rounded-lg text-xs font-mono tracking-wide transition ${
                 statusFilter === f
-                  ? "bg-gradient-to-r from-sky-500/20 to-blue-500/20 text-sky-300 border border-sky-400/30"
+                  ? "bg-gradient-to-r from-accent/20 to-accent/20 text-sky-300 border border-sky-400/30"
                   : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
               }`}>
               {f === "all" ? "WSZYSTKIE" : f === "published" ? "OPUBLIKOWANE" : "SZKICE"}
@@ -253,7 +253,7 @@ export function Egzaminy() {
                 <div className="space-y-3">
                   <FileText className="w-12 h-12 mx-auto text-white/20" />
                   <p>Brak egzaminów.</p>
-                  <button onClick={createNew} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-sky-500 to-blue-500 text-white text-sm font-semibold hover:brightness-110 transition">
+                  <button onClick={createNew} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-white text-sm font-semibold hover:brightness-110 transition">
                     <Plus className="w-4 h-4"/>Utwórz pierwszy
                   </button>
                 </div>
@@ -266,7 +266,7 @@ export function Egzaminy() {
               const m = meta[e.id];
               return (
                 <div key={e.id} onClick={() => setOpenExamId(e.id)}
-                  className="group relative overflow-hidden rounded-xl bg-white/[0.02] border border-white/10 hover:border-sky-400/30 hover:bg-white/[0.04] transition cursor-pointer p-4">
+                  className="group relative overflow-hidden rounded-xl bg-white/[0.02] border border-white/10 hover:border-accent/30 hover:bg-white/[0.04] transition cursor-pointer p-4">
 
                   {/* Top gradient bar */}
                   <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${grad}`} />
@@ -316,7 +316,7 @@ export function Egzaminy() {
                   {/* Progress bar (attempts / question count) */}
                   {m && m.questionCount > 0 && (
                     <div className="mt-2.5 h-1 rounded-full bg-white/5 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-400 transition-all"
+                      <div className="h-full rounded-full bg-gradient-to-r from-accent to-blue-500 transition-all"
                         style={{ width: `${Math.min(100, ((m.attemptCount ?? 0) / m.questionCount) * 100)}%` }} />
                     </div>
                   )}

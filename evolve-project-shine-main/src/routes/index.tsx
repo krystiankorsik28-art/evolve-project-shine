@@ -7,16 +7,15 @@ import {
   Mail, Phone, MapPin, Send, Loader2, Menu, X, FileText, ClipboardList,
   Library, BarChart3, Lock, Calendar, Sparkles, Zap, Globe2, Activity,   ShieldCheck, ChevronUp, Code2, Presentation,
   BrainCircuit, Bot, Database, Smartphone, Wifi, Cloud, Download, Upload,
-  Timer, Clock, Award, Medal, Star, Trophy, TrendingUp, Target, Eye,
+  Timer, Clock, Award, Medal, Star, Trophy, Target, Eye,
   Search, Filter, LayoutDashboard, Share2, Github,
-  School, BookMarked, MessageSquare, LifeBuoy,
+  School, BookMarked, MessageSquare,
   DollarSign, BadgeCheck, Verified, Monitor,
   Laptop, Rocket, Flag, Compass, PenTool,
   ArrowLeft, Play, ChevronRight, ChevronDown, Plus, Tablet, Headphones, Bell,
   Lightbulb, Cable, Workflow, GripVertical, Puzzle, ScrollText, Heart, KeyRound, Video,
-  Infinity, Computer, Newspaper, Radio, GitBranch,
+  Infinity, Computer, Notebook, Radio, GitBranch,
   ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
-  Sigma, Orbit, Handshake, Coins, Notebook, ListChecks,
   SmartphoneNfc, Sun, Moon, Palette,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -36,7 +35,7 @@ export const Route = createFileRoute("/")({
 
 /* ──── Confetti ──── */
 function burstConfetti(e: React.MouseEvent) {
-  const colors = ["#22d3ee", "#a78bfa", "#f472b6", "#34d399", "#fbbf24", "#f97316"];
+  const colors = ["#22d3ee", "#06b6d4", "#0891b2", "#67e8f9", "#22d3ee", "#06b6d4"];
   for (let i = 0; i < 30; i++) {
     const el = document.createElement("div");
     el.className = "confetti-piece";
@@ -86,85 +85,7 @@ function TextReveal({ text, className = "" }: { text: string; className?: string
   );
 }
 
-/* ──── Parallax Orb Wrapper ──── */
-function ParallaxOrbs() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-    const onMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 2;
-      const y = (e.clientY / window.innerHeight - 0.5) * 2;
-      el.querySelectorAll<HTMLElement>(".parallax-layer").forEach((l) => {
-        const d = parseFloat(l.dataset.depth ?? "5");
-        l.style.translate = `${x * d}px ${y * d}px`;
-      });
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    return () => window.removeEventListener("mousemove", onMove);
-  }, []);
-  return <div ref={ref} className="hidden" />;
-}
-
 /* ──── Particle Background ──── */
-function ParticleBg() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d");
-    if (!ctx) return;
-    let animId: number;
-    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight; };
-    resize();
-    window.addEventListener("resize", resize, { passive: true });
-    const count = Math.min(60, Math.floor((window.innerWidth * window.innerHeight) / 15000));
-    const particles = Array.from({ length: count }, () => ({
-      x: Math.random() * (c?.width ?? window.innerWidth),
-      y: Math.random() * (c?.height ?? window.innerHeight),
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: 1 + Math.random() * 1.5,
-      o: 0.2 + Math.random() * 0.4,
-    }));
-    const draw = () => {
-      if (!c || !ctx) return;
-      ctx.clearRect(0, 0, c.width, c.height);
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = c.width;
-        if (p.x > c.width) p.x = 0;
-        if (p.y < 0) p.y = c.height;
-        if (p.y > c.height) p.y = 0;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `oklch(0.75 0.18 200 / ${p.o})`;
-        ctx.fill();
-      }
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `oklch(0.75 0.18 200 / ${0.06 * (1 - dist / 120)})`;
-            ctx.stroke();
-          }
-        }
-      }
-      animId = requestAnimationFrame(draw);
-    };
-    animId = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
-  }, []);
-  return <canvas ref={ref} id="particle-canvas" className="fixed inset-0 pointer-events-none" />;
-}
-
 function Landing() {
   const { setTheme } = useTheme();
   const [loaded, setLoaded] = useState(false);
@@ -261,10 +182,7 @@ function Landing() {
       <div className={`min-h-screen bg-canvas selection:bg-accent/30 selection:text-white overflow-x-hidden ${loaded ? "opacity-100" : "opacity-0"} transition-opacity duration-700`}>
         <div ref={progRef} className="scroll-progress" />
         <div ref={glowRef} className="spotlight max-lg:hidden" />
-        <ParallaxOrbs />
-        <ParticleBg />
         <Toaster theme="dark" />
-        <SocialProof />
         <CookieBanner />
         <NavBar />
         <main className="relative z-10">
@@ -282,9 +200,6 @@ function Landing() {
           <TestimonialsFlow />
           <PricingFlow />
           <FAQFlow />
-          <GlobalEnterpriseFlow />
-          <InvestorFlow />
-          <BlogFlow />
           <MobileCtaFlow />
           <NewsletterFlow />
           <ContactFlow />
@@ -319,55 +234,6 @@ function SplashScreen({ onDone }: { onDone: () => void }) {
         </div>
       </div>
       <style>{`@keyframes splashPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } } @keyframes splashFade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } } @keyframes splashLoad { to { transform:scaleX(1); } }`}</style>
-    </div>
-  );
-}
-
-const SOCIAL_EVENTS = [
-  { n: "Zofia Wiśniewska", a: "zakończyła egzamin", s: "92%", g: "emerald" },
-  { n: "III LO w Gdyni", a: "dodała 40 pytań z biologii do banku", s: "gotowe", g: "cyan" },
-  { n: "Jakub K.", a: "otrzymał certyfikat z", s: "matematyki", g: "amber" },
-  { n: "V LO Kraków", a: "rozpoczęła sprawdzian —", s: "28 uczniów", g: "violet" },
-  { n: "Hanna Lewandowska", a: "poprawiła wynik o", s: "+14 pkt", g: "emerald" },
-  { n: "ZSE Poznań", a: "przeniósł 3 klasy z Librusa", s: "200 uczniów", g: "cyan" },
-  { n: "Maja S.", a: "zdobyła certyfikat —", s: "100%", g: "emerald" },
-  { n: "SP Nr 5", a: "dodała klasę", s: "3B", g: "violet" },
-  { n: "II LO Warszawa", a: "włączyła monitoring AI —", s: "działa", g: "cyan" },
-  { n: "Paweł Górski", a: "właśnie ułożył sprawdzian z", s: "chemii", g: "amber" },
-  { n: "XIV LO", a: "przeprowadził egzamin próbny —", s: "32 osoby", g: "emerald" },
-  { n: "Ewa Kwiatkowska", a: "otrzymała certyfikat z", s: "polskiego", g: "violet" },
-  { n: "SP Nr 32", a: "dodała 80 uczniów —", s: "załatwione", g: "cyan" },
-  { n: "III LO Gdynia", a: "przeprowadziło 6 egzaminów dziś", s: "aktywni", g: "emerald" },
-];
-function SocialProof() {
-  const [items, setItems] = useState<{ n: string; a: string; s: string; g: string; id: number }[]>([]);
-  const idRef = useRef(0);
-  useEffect(() => {
-    const show = () => {
-      const ev = SOCIAL_EVENTS[Math.floor(Math.random() * SOCIAL_EVENTS.length)];
-      const id = ++idRef.current;
-      setItems((prev) => [...prev.slice(-2), { ...ev, id }]);
-      setTimeout(() => setItems((prev) => prev.filter((x) => x.id !== id)), 6000 + Math.random() * 6000);
-    };
-    const t1 = setTimeout(show, 2000 + Math.random() * 4000);
-    let timeout: ReturnType<typeof setTimeout>;
-    const sched = () => { timeout = setTimeout(() => { show(); sched(); }, 3000 + Math.random() * 11000); };
-    sched();
-    return () => { clearTimeout(t1); clearTimeout(timeout); };
-  }, []);
-  const cm: Record<string, string> = { emerald: "#34d399", cyan: "#22d3ee", amber: "#fbbf24", violet: "#a78bfa" };
-  return (
-    <div className="fixed bottom-28 left-6 z-50 flex flex-col gap-2 max-lg:hidden pointer-events-none">
-      {items.map((ev) => (
-        <div key={ev.id} className="rounded-2xl bg-black/60 backdrop-blur-2xl px-4 py-3 shadow-2xl max-w-[280px] border border-white/[0.06]"
-          style={{ animation: "notifIn 0.45s cubic-bezier(0.16,1,0.3,1)" }}>
-          <div className="flex items-center gap-3 text-xs">
-            <span className="w-2 h-2 rounded-full shrink-0" style={{ background: cm[ev.g] ?? "#888", boxShadow: `0 0 8px ${cm[ev.g] ?? "#888"}` }} />
-            <div><span className="font-medium text-white/90">{ev.n}</span><span className="text-white/40"> {ev.a}</span> <span className="text-white/60 font-mono"> {ev.s}</span></div>
-          </div>
-        </div>
-      ))}
-      <style>{`@keyframes notifIn { from { opacity:0; transform:translateY(16px) scale(0.95); } to { opacity:1; transform:translateY(0) scale(1); } }`}</style>
     </div>
   );
 }
@@ -475,7 +341,7 @@ function Hero() {
   return (
     <section className="relative min-h-screen pt-20 pb-24 sm:pb-32 overflow-hidden">
       <div className="absolute inset-0" style={{
-        background: 'radial-gradient(ellipse at 50% 20%, oklch(0.65 0.15 240 / 0.04) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.65 0.15 240 / 0.02) 0%, transparent 50%)'
+        background: 'radial-gradient(ellipse at 50% 20%, oklch(0.82 0.12 200 / 0.04) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.82 0.12 200 / 0.02) 0%, transparent 50%)'
       }} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative">
         <div className="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-xs text-white/60 mb-10 backdrop-blur-sm">
@@ -512,25 +378,26 @@ function Hero() {
 
 const STATS_DATA = [
   { v: 3752, l: "Przeprowadzonych egzaminów", s: "+" },
-  { v: 829, l: "Aktywnych nauczycieli", s: "+" },
   { v: 36140, l: "Uczniów w systemie", s: "+" },
+  { v: 829, l: "Aktywnych nauczycieli", s: "+" },
   { v: 99.98, l: "Dostępność", s: "%" },
-  { v: 18920, l: "Certyfikatów wydanych", s: "+" },
 ];
 function CountUp({ target, suffix }: { target: number; suffix: string }) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const [started, setStarted] = useState(false);
+  const startedRef = useRef(false);
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !started) setStarted(true); }, { threshold: 0.3 });
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !startedRef.current) { startedRef.current = true; setStarted(true); } }, { threshold: 0.3 });
     if (ref.current) obs.observe(ref.current);
     return () => obs.disconnect();
-  }, [started]);
+  }, []);
   useEffect(() => {
     if (!started) return;
     let frame: number;
     const t0 = performance.now();
     const step = (now: number) => {
+      if (document.hidden) { frame = requestAnimationFrame(step); return; }
       const pct = Math.min((now - t0) / 2000, 1);
       const e = 1 - Math.pow(1 - pct, 3);
       setVal(target > 1000 ? Math.round(e * target) : parseFloat((e * target).toFixed(1)));
@@ -546,10 +413,10 @@ function StatsMarquee() {
     <section className="relative py-12 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
           {STATS_DATA.map((s, i) => (
             <div key={s.l} className="text-center reveal" style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-cyan-200 via-violet-200 to-fuchsia-200 bg-clip-text text-transparent">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-accent to-blue-500 bg-clip-text text-transparent">
                 <CountUp target={s.v} suffix={s.s} />
               </div>
               <div className="text-xs text-white/40 mt-1.5 font-medium">{s.l}</div>
@@ -610,7 +477,7 @@ const FEATURE_CATEGORIES = [
     ],
   },
   {
-    id: "ai", label: "AI", icon: BrainCircuit, gradient: "from-violet-400 to-fuchsia-500",
+    id: "ai", label: "AI", icon: BrainCircuit, gradient: "from-accent to-blue-500",
     items: [
       { title: "Auto-ocena odpowiedzi", bullets: ["Pytania zamknięte — ocena w 0,3s", "AI ocenia otwarte — rozumie kontekst", "Korekta pisowni nie wpływa na ocenę", "Statystyki trudności pytań"] },
       { title: "Asystent AI nauczyciela", bullets: ["Rozmowa głosowa z asystentem", "Podpowiedzi przy układaniu pytań", "Analiza błędów klasy", "Personalizowane rekomendacje"] },
@@ -619,7 +486,7 @@ const FEATURE_CATEGORIES = [
     ],
   },
   {
-    id: "analityka", label: "Analityka", icon: BarChart3, gradient: "from-emerald-400 to-teal-500",
+    id: "analityka", label: "Analityka", icon: BarChart3, gradient: "from-accent to-blue-500",
     items: [
       { title: "Panel nauczyciela", bullets: ["KPI: egzaminy, średnia, alerty", "Wykresy wyników w czasie", "Ranking uczniów", "Filtry dat i przedmiotów"] },
       { title: "Monitoring na żywo", bullets: ["Postęp ucznia w czasie rzeczywistym", "Aktywni / ryzyko podział", "Zdarzenia i alerty", "Zatrzymanie egzaminu zdalnie"] },
@@ -628,15 +495,7 @@ const FEATURE_CATEGORIES = [
     ],
   },
   {
-    id: "zarzadzanie", label: "Zarządzanie", icon: Users, gradient: "from-amber-400 to-orange-500",
-    items: [
-      { title: "Klasy i grupy", bullets: ["Tworzenie klas z przedmiotem", "Import uczniów z CSV", "Podział na grupy", "Archiwizacja po roku"] },
-      { title: "Dziennik i oceny", bullets: ["Oceny z egzaminów", "Średnia ważona", "Porównanie wizualne", "Eksport do Vulcan/Librus"] },
-      { title: "Komunikacja", bullets: ["Wiadomości do uczniów/rodziców", "Wysyłka wyników e-mailem", "Ogłoszenia dla klasy/szkoły"] },
-    ],
-  },
-  {
-    id: "bezpieczenstwo", label: "Bezpieczeństwo", icon: Shield, gradient: "from-red-400 to-rose-500",
+    id: "bezpieczenstwo", label: "Bezpieczeństwo", icon: Shield, gradient: "from-accent to-blue-500",
     items: [
       { title: "Ochrona danych", bullets: ["Szyfrowanie TLS 1.3", "AES-256 w spoczynku", "Serwery w UE", "Backupy co 6h"] },
       { title: "Zgodność z RODO", bullets: ["Umowa powierzenia danych", "Dziennik audytu", "Eksport danych na żądanie", "Usunięcie w 48h"] },
@@ -645,28 +504,11 @@ const FEATURE_CATEGORIES = [
     ],
   },
   {
-    id: "integracje", label: "Integracje", icon: Puzzle, gradient: "from-sky-400 to-indigo-500",
+    id: "integracje", label: "Integracje", icon: Puzzle, gradient: "from-accent to-blue-500",
     items: [
       { title: "Dzienniki", bullets: ["Vulcan — synchronizacja ocen", "Librus — import i eksport", "Mobidziennik — wymiana danych"] },
       { title: "Działanie mobilne", bullets: ["Chrome / Edge / Firefox", "Bez instalacji", "Telefon, tablet, komputer", "Responsywny interfejs"] },
       { title: "Eksport i import", bullets: ["Import z Word, PDF, Excel", "Export do PDF, Excel, CSV", "API REST dla integracji"] },
-    ],
-  },
-  {
-    id: "szkola", label: "Dla szkoły", icon: School, gradient: "from-teal-400 to-emerald-500",
-    items: [
-      { title: "Organizacja roku", bullets: ["Kalendarz roku szkolnego", "Planowanie ferii i przerw", "Zarządzanie zastępstwami", "Dyżury nauczycielskie"] },
-      { title: "Dokumentacja", bullets: ["Dzienniki lekcyjne online", "Arkusze ocen i świadectwa", "Druki MEN gotowe do wydruku", "Archiwum elektroniczne"] },
-      { title: "Statystyki szkoły", bullets: ["Wskaźniki zdawalności", "Frekwencja klas", "Porównanie oddziałów", "Raporty dla organu prowadzącego"] },
-      { title: "Komunikacja z rodzicami", bullets: ["Masowe powiadomienia e-mail", "Kontakt przez dziennik", "Wywieszki i ogłoszenia", "Konsultacje online"] },
-    ],
-  },
-  {
-    id: "wsparcie", label: "Wsparcie", icon: LifeBuoy, gradient: "from-accent to-sky-500",
-    items: [
-      { title: "Pomoc techniczna", bullets: ["Chat na żywo — odpowiedź w 2 min", "Baza wiedzy z video poradnikami", "Ticket system dla szkół", "Zdalna pomoc przez TeamViewer"] },
-      { title: "Szkolenia", bullets: ["Webinary na żywo co tydzień", "Materiały video krok po kroku", "Certyfikat ukończenia szkolenia", "Szkolenia stacjonarne dla rady"] },
-      { title: "Wdrożenie", bullets: ["Asysta przy pierwszym logowaniu", "Import danych z poprzedniego systemu", "Konfiguracja API i SSO", "Testy akceptacyjne z raportem"] },
     ],
   },
 ];
@@ -757,9 +599,6 @@ function DemoShowcase() {
   const restart = () => { setStep("start"); setAnswers([false, false, false]); setCorrect(null); setShowExplain(false); setTotalTime(0); };
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute top-1/2 -translate-y-1/2 -right-60 parallax-layer opacity-30" data-depth="7" style={{ animationDuration: "18s" }}>
-        <div className="w-[500px] h-[500px] rounded-full glass-orb floating-1" />
-      </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Demo na żywo</span>
@@ -770,7 +609,7 @@ function DemoShowcase() {
           <div className="card-premium rounded-2xl p-8 sm:p-10 relative overflow-hidden">
             {step === "start" && (
               <div className="text-center" style={{ animation: "quizFade 0.4s ease-out" }}>
-                <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-violet-500 grid place-items-center mb-6 shadow-lg floating-3"><Notebook className="w-8 h-8 text-black"/></div>
+                <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-violet-500 grid place-items-center mb-6 shadow-lg"><Notebook className="w-8 h-8 text-black"/></div>
                 <h3 className="text-2xl font-bold">Matematyka — Klasa 6</h3>
                 <div className="mt-3 flex justify-center gap-4 text-xs text-white/40">
                   <span className="flex items-center gap-1"><Timer className="w-3.5 h-3.5"/>~30s na pytanie</span>
@@ -822,7 +661,7 @@ function DemoShowcase() {
             )}
             {step === "done" && (
               <div className="text-center" style={{ animation: "quizFade 0.5s ease-out" }}>
-                <div className={`w-24 h-24 mx-auto rounded-[28px] grid place-items-center mb-6 shadow-lg ${score === 3 ? "bg-gradient-to-br from-emerald-400 to-teal-500" : score >= 2 ? "bg-gradient-to-br from-accent to-blue-500" : "bg-gradient-to-br from-amber-400 to-orange-500"}`}
+                <div className="w-24 h-24 mx-auto rounded-[28px] grid place-items-center mb-6 shadow-lg bg-gradient-to-br from-accent to-blue-500"
                   style={{ animation: "splashPulse 1.5s ease-in-out infinite" }}>
                   {score === 3 ? <Award className="w-10 h-10 text-black"/> : score >= 2 ? <Star className="w-10 h-10 text-black"/> : <Target className="w-10 h-10 text-black"/>}
                 </div>
@@ -894,15 +733,12 @@ function DemoShowcase() {
 function ForWhomFlow() {
   const cards = [
     { icon: GraduationCap, accent: "from-accent to-blue-500", to: "/auth/student", title: "Uczeń", lines: ["Wejście PIN-em bez konta", "Czysty interfejs egzaminu", "Wynik widoczny od razu", "Certyfikat PDF + QR"] },
-    { icon: Users, accent: "from-violet-400 to-fuchsia-500", to: "/auth/teacher", title: "Nauczyciel", lines: ["Pytania z AI w 3 sekundy", "Klasy, oceny, dziennik", "Monitoring na żywo", "Eksport PDF/Excel"] },
-    { icon: ShieldCheck, accent: "from-amber-300 to-rose-400", to: "/auth/admin", title: "Dyrekcja", lines: ["Zatwierdzanie nauczycieli", "Raporty zbiorcze", "Audyt i statystyki", "Wgląd w wyniki szkoły"] },
-    { icon: Heart, accent: "from-emerald-400 to-teal-500", to: "/auth/parent", title: "Rodzic", lines: ["Wgląd w wyniki dziecka", "Powiadomienia e-mail", "Raport postępów", "Konsultacje online"] },
+    { icon: Users, accent: "from-accent to-blue-500", to: "/auth/teacher", title: "Nauczyciel", lines: ["Pytania z AI w 3 sekundy", "Klasy, oceny, dziennik", "Monitoring na żywo", "Eksport PDF/Excel"] },
+    { icon: ShieldCheck, accent: "from-accent to-blue-500", to: "/auth/admin", title: "Dyrekcja", lines: ["Zatwierdzanie nauczycieli", "Raporty zbiorcze", "Audyt i statystyki", "Wgląd w wyniki szkoły"] },
+    { icon: Heart, accent: "from-accent to-blue-500", to: "/auth/parent", title: "Rodzic", lines: ["Wgląd w wyniki dziecka", "Powiadomienia e-mail", "Raport postępów", "Konsultacje online"] },
   ];
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute -left-40 top-1/3 parallax-layer" data-depth="6" style={{ animationDuration: "16s" }}>
-        <div className="w-[400px] h-[400px] rounded-full glass-orb floating-2" />
-      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Dla kogo</span>
@@ -988,21 +824,14 @@ function ComparisonShowcase() {
 
 /* ──── ACHIEVEMENTS ──── */
 const ACHIEVEMENTS = [
-  { icon: Trophy, value: "847+", label: "Egzaminów dziennie", color: "from-amber-400 to-orange-500" },
+  { icon: Trophy, value: "847+", label: "Egzaminów dziennie", color: "from-accent to-blue-500" },
   { icon: School, value: "128+", label: "Aktywnych szkół", color: "from-accent to-blue-500" },
-  { icon: Users, value: "2 340", label: "Nauczycieli online", color: "from-violet-400 to-fuchsia-500" },
-  { icon: Award, value: "18 920", label: "Certyfikatów", color: "from-emerald-400 to-teal-500" },
-  { icon: Heart, value: "97.8%", label: "Zadowolonych uczniów", color: "from-rose-400 to-pink-500" },
-  { icon: Infinity, value: "99.98%", label: "Uptime SLA", color: "from-emerald-300 to-cyan-400" },
-  { icon: Sparkles, value: "670+", label: "Funkcji i integracji", color: "from-sky-400 to-indigo-500" },
-  { icon: Globe2, value: "16", label: "Województw", color: "from-teal-400 to-emerald-500" },
+  { icon: Award, value: "18 920", label: "Certyfikatów", color: "from-accent to-blue-500" },
+  { icon: Heart, value: "97.8%", label: "Zadowolonych uczniów", color: "from-accent to-blue-500" },
 ];
 function AchievementsFlow() {
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 parallax-layer opacity-20" data-depth="4" style={{ animationDuration: "20s" }}>
-        <div className="w-[700px] h-[700px] rounded-full glass-orb floating-3" />
-      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Osiągnięcia</span>
@@ -1057,7 +886,7 @@ function AIPlatformFlow() {
           {capabilities.map((c, i) => (
             <div key={c.title} className={`reveal card-premium rounded-2xl p-5 hover:-translate-y-1 stagger-item transition-all ${!c.active ? 'opacity-50' : ''}`}
               style={{ animationDelay: `${i * 0.05}s` }}>
-              <div className={`w-10 h-10 rounded-xl grid place-items-center mb-4 ${c.active ? 'bg-gradient-to-br from-accent to-violet-500' : 'bg-white/[0.04]'}`}>
+              <div className={`w-10 h-10 rounded-xl grid place-items-center mb-4 ${c.active ? 'bg-gradient-to-br from-accent to-blue-500' : 'bg-white/[0.04]'}`}>
                 <c.icon className={`w-5 h-5 ${c.active ? 'text-black' : 'text-white/30'}`} />
               </div>
               <h3 className="text-sm font-semibold text-white">{c.title}</h3>
@@ -1225,125 +1054,20 @@ function AiDemoShowcase() {
 }
 
 /* ──── GLOBAL & ENTERPRISE ──── */
-function GlobalEnterpriseFlow() {
-  const regions = [
-    { flag: "🇪🇺", name: "Europa", desc: "Serwery w UE, pełna zgodność z RODO i GDPR", count: "12 krajów" },
-    { flag: "🇺🇸", name: "Ameryka Pn.", desc: "CDN w USA i Kanadzie, wsparcie EST timezone", count: "3 kraje" },
-    { flag: "🇬🇧", name: "Wielka Brytania", desc: "Zgodność z UK GDPR, dedykowany serwer w Londynie", count: "UK" },
-    { flag: "🌍", name: "Global", desc: "Global CDN, 30+ języków, multi-walutowość", count: "40+ krajów" },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Globalna platforma</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Edukacja bez granic" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Działamy na całym świecie — z lokalną zgodnością i globalnym zasięgiem.</p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
-          {regions.map((r) => (
-            <div key={r.name} className="reveal card-premium rounded-2xl p-6 text-center hover:-translate-y-1 stagger-item">
-              <div className="text-4xl mb-3">{r.flag}</div>
-              <h3 className="font-semibold text-sm text-white/90">{r.name}</h3>
-              <p className="mt-1 text-xs text-white/50">{r.desc}</p>
-              <div className="mt-3 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 text-accent text-[10px] font-medium">{r.count}</div>
-            </div>
-          ))}
-        </div>
-        <div className="reveal-scale">
-          <div className="relative rounded-3xl bg-gradient-to-br from-accent/5 via-violet-950/20 to-fuchsia-950/20 border border-white/[0.06] p-10 sm:p-14 text-center overflow-hidden">
-            <div className="absolute -top-40 -left-40 w-[400px] h-[400px] rounded-full glass-orb floating-2 opacity-30" />
-            <div className="relative">
-              <Building2 className="w-12 h-12 text-accent mx-auto mb-4" />
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Dla firm i <span className="shimmer">organizacji</span></h2>
-              <p className="mt-3 text-white/40 text-sm max-w-2xl mx-auto">Enterprise-grade platforma dla korporacji, uczelni, jednostek rządowych i organizacji międzynarodowych. SSO, SLA 99.99%, dedykowany support, prywatne instancje.</p>
-              <div className="mt-8 flex flex-wrap justify-center gap-4 text-sm">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/50"><ShieldCheck className="w-4 h-4 text-accent"/>SSO & SAML</div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/50"><Database className="w-4 h-4 text-accent"/>Private Cloud</div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/50"><Users className="w-4 h-4 text-accent"/>Do 100k użytkowników</div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/50"><Globe className="w-4 h-4 text-accent"/>Multi-region</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ──── INVESTOR SECTION ──── */
-function InvestorFlow() {
-  const metrics = [
-    { label: "Active Users", value: "36k+", change: "+180% YoY" },
-    { label: "Schools Onboarded", value: "128+", change: "+94% YoY" },
-    { label: "Monthly Exams", value: "25k+", change: "+210% YoY" },
-    { label: "Revenue Growth", value: "3.2x", change: "ARR 2025" },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute -right-40 top-1/3 parallax-layer opacity-20" data-depth="8">
-        <div className="w-[500px] h-[500px] rounded-full glass-orb floating-1" />
-      </div>
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/20 text-amber-300/80 backdrop-blur-sm">Dla inwestorów</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Inwestuj w przyszłość edukacji" /></h2>
-          <p className="mt-3 text-white/40 text-sm max-w-lg mx-auto">EduNex to jeden z najszybciej rozwijających się edTechów w Europie Środkowo-Wschodniej.</p>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          {metrics.map((m) => (
-            <div key={m.label} className="reveal card-premium rounded-2xl p-6 text-center hover:-translate-y-1 stagger-item">
-              <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-transparent">{m.value}</div>
-              <div className="text-xs text-white/40 mt-1">{m.label}</div>
-              <div className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-emerald-300/80 font-mono">
-                <TrendingUp className="w-3 h-3" />{m.change}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="reveal-scale max-w-2xl mx-auto">
-          <div className="card-premium rounded-2xl p-8">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 grid place-items-center shrink-0">
-                <Handshake className="w-6 h-6 text-black" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white/90">Dołącz do naszej misji</h3>
-                <p className="mt-2 text-sm text-white/50 leading-relaxed">Budujemy globalną platformę edukacyjną AI nowej generacji. Szukamy partnerów strategicznych i inwestorów, którzy podzielają naszą wizję demokratyzacji edukacji na świecie.</p>
-                <div className="mt-4 flex flex-wrap gap-4 text-xs">
-                  <div className="flex items-center gap-2 text-white/40"><Scale className="w-3.5 h-3.5 text-accent"/>Series A — Q4 2026</div>
-                  <div className="flex items-center gap-2 text-white/40"><Users className="w-3.5 h-3.5 text-accent"/>Zespół: 24 osoby</div>
-                  <div className="flex items-center gap-2 text-white/40"><Globe className="w-3.5 h-3.5 text-accent"/>TAM: $15B+</div>
-                </div>
-                <a href="#kontakt" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-amber-400/10 border border-amber-400/20 text-amber-300/80 hover:bg-amber-400/20 transition-all">
-                  Skontaktuj się z nami <ArrowUpRight className="w-3.5 h-3.5"/>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ──── SECURITY ──── */
 const SECURITY_ITEMS = [
   { icon: Lock, title: "Szyfrowanie TLS 1.3", desc: "Dane przesyłane z szyfrowaniem klasy bankowej. Certyfikat SSL automatycznie odnawiany.", color: "from-accent to-blue-500" },
-  { icon: Shield, title: "Ochrona przed atakami", desc: "WAF, DDoS protection, rate limiting. Monitoring 24/7 przez zespół bezpieczeństwa.", color: "from-violet-400 to-fuchsia-500" },
-  { icon: Fingerprint, title: "RODO — pełna zgodność", desc: "Umowa powierzenia danych, dziennik audytu, prawo do bycia zapomnianym.", color: "from-emerald-400 to-teal-500" },
-  { icon: Database, title: "Backupy co 6h", desc: "Automatyczne kopie na 3 niezależnych serwerach w różnych lokalizacjach w UE.", color: "from-amber-400 to-orange-500" },
-  { icon: ScanFace, title: "Tryb egzaminacyjny", desc: "Blokada skrótów, pełny ekran, monitoring aktywności, losowanie pytań.", color: "from-rose-400 to-pink-500" },
-  { icon: Building2, title: "Serwery w Polsce", desc: "Dane przechowywane w Warszawie i Krakowie. Poza jurysdykcją CLOUD Act.", color: "from-sky-400 to-indigo-500" },
-  { icon: Users, title: "Kontrola dostępu RBAC", desc: "Role: admin, dyrektor, nauczyciel. 2FA dla administratora, dostęp tylko do własnych zasobów.", color: "from-teal-400 to-emerald-500" },
-  { icon: Radio, title: "Monitoring 24/7", desc: "Automatyczne skanowanie podatności, testy penetracyjne co kwartał, SOC.", color: "from-purple-400 to-violet-500" },
+  { icon: Shield, title: "Ochrona przed atakami", desc: "WAF, DDoS protection, rate limiting. Monitoring 24/7 przez zespół bezpieczeństwa.", color: "from-accent to-blue-500" },
+  { icon: Fingerprint, title: "RODO — pełna zgodność", desc: "Umowa powierzenia danych, dziennik audytu, prawo do bycia zapomnianym.", color: "from-accent to-blue-500" },
+  { icon: Database, title: "Backupy co 6h", desc: "Automatyczne kopie na 3 niezależnych serwerach w różnych lokalizacjach w UE.", color: "from-accent to-blue-500" },
+  { icon: ScanFace, title: "Tryb egzaminacyjny", desc: "Blokada skrótów, pełny ekran, monitoring aktywności, losowanie pytań.", color: "from-accent to-blue-500" },
+  { icon: Building2, title: "Serwery w Polsce", desc: "Dane przechowywane w Warszawie i Krakowie. Poza jurysdykcją CLOUD Act.", color: "from-accent to-blue-500" },
+  { icon: Users, title: "Kontrola dostępu RBAC", desc: "Role: admin, dyrektor, nauczyciel. 2FA dla administratora, dostęp tylko do własnych zasobów.", color: "from-accent to-blue-500" },
+  { icon: Radio, title: "Monitoring 24/7", desc: "Automatyczne skanowanie podatności, testy penetracyjne co kwartał, SOC.", color: "from-accent to-blue-500" },
 ];
 function SecurityFlow() {
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute top-0 left-0 parallax-layer" data-depth="5" style={{ animationDuration: "14s" }}>
-        <div className="w-[500px] h-[500px] rounded-full glass-orb floating-1" />
-      </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Bezpieczeństwo</span>
@@ -1416,13 +1140,10 @@ function TestimonialsFlow() {
 
 /* ──── PRICING ──── */
 const PLANS = [
-  { name: "Klasa", price: "0", sub: "na zawsze", lines: ["Do 35 uczniów", "Bank pytań 300+", "15 egzaminów/mies", "Podstawowe raporty", "Wsparcie e-mail"], feat: false },
-  { name: "Korepetytor", price: "49", sub: "/mies", lines: ["Do 15 uczniów", "Bank pytań 500+", "30 egzaminów/mies", "Generator AI 50 zapytań", "Podstawowe raporty"], feat: false },
-  { name: "Nauczyciel", price: "99", sub: "/mies", lines: ["Do 60 uczniów", "Bank pytań 3000+", "Egzaminy bez limitu", "Generator AI 200 zapytań", "Monitoring na żywo", "Wsparcie priorytetowe"], feat: false },
+  { name: "Klasa", price: "0", sub: "na zawsze", lines: ["Do 35 uczniów", "Bank pytań 300+", "Egzaminy bez limitu", "Podstawowe raporty", "Wsparcie e-mail"], feat: false },
+  { name: "Nauczyciel", price: "99", sub: "/mies", lines: ["Do 60 uczniów", "Bank pytań 3000+", "Egzaminy bez limitu", "Generator AI 200 zapytań", "Monitoring na żywo", "Wsparcie priorytetowe"], feat: true },
   { name: "Szkoła", price: "490", sub: "/mies", lines: ["Do 300 uczniów", "Bank pytań bez limitu", "Anti-cheat + monitoring", "API REST + integracje", "Panel dyrekcji", "Wsparcie 24/7"], feat: false },
-  { name: "Szkoła Plus", price: "890", sub: "/mies", lines: ["Do 800 uczniów", "Bank pytań bez limitu", "Generaor AI bez limitu", "Anti-cheat + monitoring", "API REST + integracje", "Dedykowany opiekun", "Priorytetowy SLA"], feat: true },
-  { name: "Dzielnica", price: "2990", sub: "/mies", lines: ["Do 5000 uczniów", "Wiele szkół w jednym panelu", "Raporty zbiorcze", "SLA 99,99%", "Dedykowany serwer", "Szkolenia stacjonarne"], feat: false },
-  { name: "Kuratorium", price: "Indywidualnie", sub: "", lines: ["Nieograniczona liczba szkół", "Centralna baza danych", "Raporty wojewódzkie", "SLA 99,99%", "Dedykowany zespół wdrożeniowy"], feat: false },
+  { name: "Enterprise", price: "Indywidualnie", sub: "", lines: ["Nieograniczona liczba użytkowników", "Dedykowany serwer", "SLA 99,99%", "Szkolenia stacjonarne", "Priorytetowe wsparcie 24/7"], feat: false },
 ];
 function PricingFlow() {
   const navigate = useNavigate();
@@ -1447,12 +1168,12 @@ function PricingFlow() {
             Rocznie <span className="ml-1.5 text-[10px] font-semibold bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-full">-20%</span>
           </span>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start max-w-5xl mx-auto">
-          {PLANS.slice(0, 3).map((pl) => {
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-start max-w-6xl mx-auto">
+          {PLANS.map((pl) => {
             const price = yr && !isFree(pl.price) && !isContact(pl.price) ? yp(pl.price) : pl.price;
             const isFeatured = pl.feat;
             return (
-              <div key={pl.name} className={`relative rounded-2xl p-7 sm:p-8 flex flex-col h-full transition-all duration-300 ${isFeatured ? "bg-gradient-to-b from-white/[0.1] to-white/[0.03] border border-accent/40 shadow-[0_0_60px_-16px_oklch(0.65_0.15_240_/_0.3)] hover:-translate-y-1.5" : "bg-white/[0.06] border border-white/[0.1] hover:border-white/25 hover:bg-white/[0.09] hover:-translate-y-1"}`}>
+              <div key={pl.name} className={`relative rounded-2xl p-7 sm:p-8 flex flex-col h-full transition-all duration-300 ${isFeatured ? "bg-gradient-to-b from-white/[0.1] to-white/[0.03] border border-accent/40 shadow-[0_0_60px_-16px_oklch(0.65_0.15_240_/_0.3)] hover:-translate-y-1.5" : isContact(pl.price) ? "bg-white/[0.04] border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.06] hover:-translate-y-1" : "bg-white/[0.06] border border-white/[0.1] hover:border-white/25 hover:bg-white/[0.09] hover:-translate-y-1"}`}>
                 {isFeatured && (
                   <>
                     <div className="absolute -inset-[1px] rounded-2xl pointer-events-none" style={{ background: "linear-gradient(135deg, oklch(0.65 0.15 240 / 0.3), transparent 40%, transparent 60%, oklch(0.65 0.15 240 / 0.3))", zIndex: -1 }} />
@@ -1487,29 +1208,6 @@ function PricingFlow() {
             );
           })}
         </div>
-        <div className="reveal mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-5xl mx-auto">
-          {PLANS.slice(3).map((pl) => {
-            const price = yr && !isFree(pl.price) && !isContact(pl.price) ? yp(pl.price) : pl.price;
-            return (
-              <div key={pl.name} className="rounded-xl p-5 bg-white/[0.04] border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.06] transition-all duration-300 flex flex-col">
-                <h3 className="text-sm font-semibold text-white/70">{pl.name}</h3>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-white">{price}</span>
-                  <span className="text-xs text-white/40">{yr && pl.sub === "/mies" ? "/rok" : pl.sub}</span>
-                </div>
-                <ul className="mt-3 space-y-2 text-xs flex-1">
-                  {pl.lines.map((l) => (
-                    <li key={l} className="flex gap-2"><CheckCircle2 className="w-3.5 h-3.5 mt-0.5 shrink-0 text-white/25" /><span className="text-white/55">{l}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-auto pt-4">
-                  {!isContact(pl.price) && <NexaPayCheckout planName={pl.name} amount={yr ? yp(pl.price) + " zł" : pl.price + " zł"} amountUsd={String(Math.round(parseInt(pl.price) / 4))} />}
-                  {isContact(pl.price) && <button onClick={() => document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" })} className="w-full py-2.5 rounded-xl text-xs font-semibold border border-white/20 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/40 transition-all magnetic-btn">Poproś o wycenę</button>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
     </section>
   );
@@ -1519,15 +1217,9 @@ function PricingFlow() {
 const FAQ = [
   { q: "Czy uczniowie muszą zakładać konto?", a: "Nie. Uczeń wchodzi przeglądarką, wpisuje PIN i imię. Konto nie jest wymagane — zero rejestracji." },
   { q: "Czy mogę wgrać pytania z dokumentu?", a: "Tak. Wspieramy import z Worda, PDF oraz Excel. Możesz też wczytać zdjęcie — AI odczyta pytania automatycznie." },
-  { q: "Jak wygląda umowa ze szkołą?", a: "Umowa powierzenia danych zgodna z RODO oraz faktura VAT. Proces do trzech dni roboczych." },
-  { q: "Czy są zniżki dla placówek publicznych?", a: "Tak. Szkoły publiczne otrzymują 30% rabatu na plan Szkoła i 20% na plan Nauczyciel." },
   { q: "Jak szybko mogę zacząć?", a: "Rejestracja trwa 2 minuty. Dla planu Klasa — dostęp od razu, bez karty płatniczej." },
-  { q: "Czy platforma działa na telefonie?", a: "Tak. EduNex działa w każdej przeglądarce — komputer, tablet, telefon. Bez instalacji." },
   { q: "Jak AI wykrywa ściąganie?", a: "AI analizuje ruchy myszy, wykrywa opuszczanie okna, porównuje odpowiedzi uczniów i wysyła alerty na żywo." },
-  { q: "Czy mogę przenieść dane z innego systemu?", a: "Tak. Oferujemy bezpłatny import z Vulcan, Librusa, CSV i Excel. Nasi specjaliści pomogą." },
-  { q: "Jakie są wymagania sprzętowe?", a: "Dowolne urządzenie z przeglądarką (Chrome, Edge, Firefox, Opera, Safari). Stabilne łącze do monitoringu." },
-  { q: "Czy są szkolenia dla nauczycieli?", a: "Tak. Bezpłatne webinary co tydzień, baza wiedzy z video poradnikami oraz szkolenia stacjonarne." },
-  { q: "Jak działa certyfikat po egzaminie?", a: "Po zakończeniu egzaminu generujemy PDF z unikalnym numerem seryjnym i kodem QR do weryfikacji online." },
+  { q: "Czy platforma działa na telefonie?", a: "Tak. EduNex działa w każdej przeglądarce — komputer, tablet, telefon. Bez instalacji." },
   { q: "Czy mogę przetestować przed zakupem?", a: "Tak. Plan Klasa jest całkowicie darmowy — bez limitu czasu, bez karty, bez zobowiązań." },
 ];
 function FAQFlow() {
@@ -1560,78 +1252,15 @@ function FAQFlow() {
 }
 
 /* ──── BLOG + MARQUEE PARTNERS ──── */
-const PARTNERS = [
-  { n: "Vulcan", i: Computer, c: "from-blue-400 to-indigo-500" },
-  { n: "Librus", i: Globe2, c: "from-emerald-400 to-teal-500" },
-  { n: "Mobidziennik", i: Smartphone, c: "from-accent to-sky-500" },
-  { n: "Office 365", i: LayoutDashboard, c: "from-orange-400 to-red-500" },
-  { n: "Google Workspace", i: Search, c: "from-amber-400 to-yellow-500" },
-  { n: "API REST", i: GitBranch, c: "from-violet-400 to-fuchsia-500" },
-  { n: "Vulcan", i: Computer, c: "from-blue-400 to-indigo-500" },
-  { n: "Librus", i: Globe2, c: "from-emerald-400 to-teal-500" },
-  { n: "Mobidziennik", i: Smartphone, c: "from-accent to-sky-500" },
-  { n: "Office 365", i: LayoutDashboard, c: "from-orange-400 to-red-500" },
-  { n: "Google Workspace", i: Search, c: "from-amber-400 to-yellow-500" },
-  { n: "API REST", i: GitBranch, c: "from-violet-400 to-fuchsia-500" },
-];
-function BlogFlow() {
-  const posts = [
-    { t: "Jak AI zmienia egzaminy w polskich szkołach", d: "Sztuczna inteligencja automatyzuje ocenianie i wykrywa ściąganie. Sprawdź, co zmieniło się w 2025 roku.", tag: "AI", time: "5 min" },
-    { t: "RODO w szkole — poradnik dla dyrektora", d: "Wszystko o ochronie danych uczniowskich. Umowy, zgody, procedury krok po kroku.", tag: "RODO", time: "8 min" },
-    { t: "Egzaminy online — jak przygotować szkołę", d: "Od wyboru platformy po pierwszy test. Praktyczny przewodnik dla nauczycieli.", tag: "Poradnik", time: "6 min" },
-    { t: "Monitoring na żywo — jak działa w praktyce", d: "Zobacz jak nauczyciele wykorzystują monitoring do poprawy wyników swoich uczniów.", tag: "Funkcje", time: "4 min" },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="absolute -right-40 top-1/2 parallax-layer opacity-30" data-depth="6" style={{ animationDuration: "17s" }}>
-        <div className="w-[400px] h-[400px] rounded-full glass-orb floating-2" />
-      </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Blog</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Wiedza i aktualności" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Porady, aktualności i best practices dla nowoczesnej szkoły.</p>
-        </div>
-        <div className="reveal grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {posts.map((p, i) => (
-            <div key={p.t} className="card-premium rounded-2xl p-6 hover:-translate-y-1 hover-glow cursor-pointer stagger-item" style={{ transitionDelay: `${i * 0.06}s` }}>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-accent/10 text-accent/80">{p.tag}</span>
-                <span className="text-[10px] text-white/30">{p.time}</span>
-              </div>
-              <h3 className="font-semibold text-sm text-white/90">{p.t}</h3>
-              <p className="mt-2 text-xs text-white/50 leading-relaxed">{p.d}</p>
-            </div>
-          ))}
-        </div>
-        <div className="reveal mt-12">
-          <span className="section-label block text-center mb-6 text-white/30">Zintegrowany z</span>
-          <div className="overflow-hidden mask-image-[linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-            <div className="marquee-track">
-              {PARTNERS.map((p, i) => (
-                <div key={`${p.n}-${i}`} className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.02] border border-white/[0.06] text-xs text-white/40 shrink-0">
-                  <div className={`w-5 h-5 rounded-md bg-gradient-to-br ${p.c} grid place-items-center`}><p.i className="w-2.5 h-2.5 text-black"/></div>
-                  {p.n}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ──── MOBILE ──── */
 function MobileCtaFlow() {
   return (
     <section className="relative py-16 overflow-hidden">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="reveal-scale">
-          <div className="relative rounded-3xl bg-gradient-to-br from-cyan-950/30 via-violet-950/20 to-fuchsia-950/20 border border-white/[0.06] p-10 sm:p-14 text-center overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-[300px] h-[300px] rounded-full glass-orb floating-3" />
-            <div className="relative">
-              <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-violet-500 grid place-items-center mb-6 shadow-lg">
+            <div className="relative rounded-3xl bg-gradient-to-br from-accent/10 via-accent/5 to-accent/5 border border-white/[0.06] p-10 sm:p-14 text-center overflow-hidden">
+              <div className="relative">
+                <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-blue-500 grid place-items-center mb-6 shadow-lg">
                 <SmartphoneNfc className="w-8 h-8 text-black"/>
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">EduNex w <span className="shimmer">Twojej kieszeni</span></h2>
@@ -1659,10 +1288,10 @@ function NewsletterFlow() {
       <div className="max-w-lg mx-auto px-4 sm:px-6 text-center">
         <div className="reveal">
           {sent ? (
-            <div className="card-premium rounded-2xl p-8"><CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3 floating-3"/><h2 className="text-2xl font-bold text-emerald-300">Jesteś zapisany!</h2><p className="mt-2 text-sm text-white/50">Nowości i porady — raz na dwa tygodnie.</p></div>
+            <div className="card-premium rounded-2xl p-8"><CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3"/><h2 className="text-2xl font-bold text-emerald-300">Jesteś zapisany!</h2><p className="mt-2 text-sm text-white/50">Nowości i porady — raz na dwa tygodnie.</p></div>
           ) : (
             <>
-              <Bell className="w-7 h-7 text-accent mx-auto mb-4 floating-3"/>
+              <Bell className="w-7 h-7 text-accent mx-auto mb-4"/>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Bądź na bieżąco</h2>
               <p className="mt-3 text-white/40 text-sm">Nowe funkcje, porady i aktualności — raz na dwa tygodnie, zero spamu.</p>
               <form onSubmit={onSubmit} className="mt-6 flex items-center gap-2 max-w-sm mx-auto">

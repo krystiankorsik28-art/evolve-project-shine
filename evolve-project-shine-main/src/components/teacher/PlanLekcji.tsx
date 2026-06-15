@@ -71,9 +71,9 @@ export function PlanLekcji() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-violet-500/10 p-6 flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 grid place-items-center"><CalendarClock className="w-5 h-5 text-slate-900"/></div>
+      <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6 flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><CalendarClock className="w-5 h-5 text-slate-900"/></div>
           <div>
             <h2 className="text-xl font-display font-bold text-white">Plan lekcji</h2>
             <p className="text-xs text-white/50">Twórz ręcznie lub generuj z AI — cele, fazy, materiały, praca domowa, ocenianie.</p>
@@ -83,7 +83,7 @@ export function PlanLekcji() {
           <button onClick={() => setManualOpen(true)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-sm">
             <Plus className="w-4 h-4"/>Ręczny
           </button>
-          <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-900 font-semibold text-sm">
+          <button onClick={() => setOpen(true)} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-slate-900 font-semibold text-sm">
             <Sparkles className="w-4 h-4"/>Generuj z AI
           </button>
         </div>
@@ -136,7 +136,7 @@ export function PlanLekcji() {
               </div>
               <div className="flex justify-end gap-2 pt-2">
                 <button onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-white/5 text-white/70 text-sm">Anuluj</button>
-                <button disabled={busy} onClick={generate} className="px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-900 font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50">
+                <button disabled={busy} onClick={generate} className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50">
                   {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4"/>}{busy ? "Generuję..." : "Generuj"}
                 </button>
               </div>

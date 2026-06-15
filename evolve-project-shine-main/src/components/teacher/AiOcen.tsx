@@ -35,8 +35,8 @@ export function AiOcen() {
         <p className="text-sm text-white/50 mt-1">Automatyczne ocenianie esejów z rubryką i analityka egzaminów z AI.</p>
       </div>
       <div className="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/10">
-        <button onClick={() => setTab("essay")} className={`px-4 py-2 rounded-lg text-sm transition ${tab === "essay" ? "bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold" : "text-white/60 hover:text-white"}`}>Oceń esej</button>
-        <button onClick={() => setTab("insights")} className={`px-4 py-2 rounded-lg text-sm transition ${tab === "insights" ? "bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold" : "text-white/60 hover:text-white"}`}>Analiza egzaminu</button>
+        <button onClick={() => setTab("essay")} className={`px-4 py-2 rounded-lg text-sm transition ${tab === "essay" ? "bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold" : "text-white/60 hover:text-white"}`}>Oceń esej</button>
+        <button onClick={() => setTab("insights")} className={`px-4 py-2 rounded-lg text-sm transition ${tab === "insights" ? "bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold" : "text-white/60 hover:text-white"}`}>Analiza egzaminu</button>
       </div>
       {tab === "essay" ? <EssayGrader /> : <InsightsPanel />}
     </div>
@@ -85,7 +85,7 @@ function EssayGrader() {
           <label className="block text-xs uppercase tracking-widest text-white/40 mb-1">Rubryka (opcjonalnie)</label>
           <textarea value={rubric} onChange={(e) => setRubric(e.target.value)} placeholder="Treść 40%, argumentacja 25%, struktura 15%, język 15%, oryginalność 5%" className="w-full min-h-20 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-cyan-400/40"/>
         </div>
-        <button onClick={run} disabled={busy} className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold disabled:opacity-50 hover:brightness-110 transition">
+        <button onClick={run} disabled={busy} className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-white font-semibold disabled:opacity-50 hover:brightness-110 transition">
           {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4"/>}Oceń odpowiedź
         </button>
       </div>
@@ -102,7 +102,7 @@ function EssayGrader() {
                 <div className="text-cyan-300 font-mono text-sm mt-1">{Math.round(result.percent)}%  ·  pewność {Math.round(result.confidence * 100)}%</div>
               </div>
             </div>
-            <div className="text-sm text-white/80 leading-relaxed border-l-2 border-cyan-400/40 pl-3">{result.feedback}</div>
+            <div className="text-sm text-white/80 leading-relaxed border-l-2 border-accent/40 pl-3">{result.feedback}</div>
             <div>
               <div className="text-xs uppercase tracking-widest text-white/40 mb-2">Kryteria</div>
               <div className="space-y-1.5">
@@ -185,7 +185,7 @@ function InsightsPanel() {
             {exams.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
           </select>
         </div>
-        <button onClick={run} disabled={busy || !examId} className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white font-semibold inline-flex items-center gap-2 disabled:opacity-50">
+        <button onClick={run} disabled={busy || !examId} className="px-5 py-2.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-white font-semibold inline-flex items-center gap-2 disabled:opacity-50">
           {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Sparkles className="w-4 h-4"/>}Analizuj
         </button>
       </div>

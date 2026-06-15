@@ -43,10 +43,10 @@ export function Analityka() {
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <KPI label="Egzaminy" value={stats.exams} color="from-cyan-500 to-blue-500"/>
-        <KPI label="Podejścia" value={stats.attempts} color="from-violet-500 to-fuchsia-500"/>
-        <KPI label="Średni wynik" value={`${stats.avgScore}%`} color="from-emerald-500 to-teal-500"/>
-        <KPI label="Zdawalność" value={`${stats.passRate}%`} color="from-amber-500 to-orange-500"/>
+        <KPI label="Egzaminy" value={stats.exams} color="from-accent to-blue-500"/>
+        <KPI label="Podejścia" value={stats.attempts} color="from-accent to-blue-500"/>
+        <KPI label="Średni wynik" value={`${stats.avgScore}%`} color="from-accent to-blue-500"/>
+        <KPI label="Zdawalność" value={`${stats.passRate}%`} color="from-accent to-blue-500"/>
       </div>
       <div className="grid lg:grid-cols-2 gap-4">
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
@@ -202,7 +202,7 @@ export function Materialy({ go }: { go?: (tab: string) => void }) {
        items.length===0 ? <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-white/40 text-sm">Brak materiałów</div> :
        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
          {items.map(m => (
-           <div key={m.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-cyan-400/30">
+           <div key={m.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-accent/30">
              <div className="flex items-start justify-between">
                <BookOpen className="w-8 h-8 text-amber-300"/>
                <button onClick={()=>toggleVis(m)} className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${m.visible_to_students?"bg-emerald-500/15 text-emerald-300":"bg-white/5 text-white/40"}`}>{m.visible_to_students?"WIDOCZNY":"UKRYTY"}</button>
@@ -249,7 +249,7 @@ function LibrarySection({ go }: { go?: (tab: string) => void }) {
   const canScrollRight = () => { if (containerRef.current) containerRef.current.scrollBy({ left: 320, behavior: "smooth" }); };
 
   return (
-    <div className="rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/[0.06] to-violet-500/[0.06] p-5 relative">
+    <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/[0.06] to-accent/[0.06] p-5 relative">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="font-display font-bold text-white inline-flex items-center gap-2"><BookText className="w-5 h-5 text-cyan-300"/>Biblioteka podręczników</h3>
@@ -267,7 +267,7 @@ function LibrarySection({ go }: { go?: (tab: string) => void }) {
           const expanded = open[s.name];
           const selCount = (selected[s.name] ?? []).length;
           return (
-            <div key={s.name} className="shrink-0 w-64 rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-cyan-400/30 transition">
+            <div key={s.name} className="shrink-0 w-64 rounded-xl border border-white/10 bg-white/[0.03] overflow-hidden hover:border-accent/30 transition">
               <button onClick={() => setOpen((p) => ({ ...p, [s.name]: !p[s.name] }))} className="w-full flex items-center gap-3 p-3.5 hover:bg-white/[0.05] transition">
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${s.color} grid place-items-center shrink-0`}>
                   <s.icon className="w-5 h-5 text-white" />
@@ -301,7 +301,7 @@ function LibrarySection({ go }: { go?: (tab: string) => void }) {
 
       {/* Selection bar */}
       {totalSelected > 0 && (
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-3">
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-accent/30 bg-cyan-500/10 px-4 py-3">
           <div className="text-sm text-white/80">
             <span className="font-semibold text-cyan-200">{totalSelected}</span> rozdziałów wybranych z{" "}
             {Object.keys(selected).filter((k) => (selected[k] ?? []).length > 0).length} podręczników
@@ -311,9 +311,9 @@ function LibrarySection({ go }: { go?: (tab: string) => void }) {
       )}
 
       {totalSelected > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl border border-cyan-400/40 bg-[#0a0f1f]/95 backdrop-blur-xl shadow-[0_16px_48px_-12px_rgba(0,0,0,0.8)] px-6 py-4 flex items-center gap-6">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-2xl border border-accent/40 bg-[#0a0f1f]/95 backdrop-blur-xl shadow-[0_16px_48px_-12px_rgba(0,0,0,0.8)] px-6 py-4 flex items-center gap-6">
           <div className="text-sm text-white/70 hidden sm:block">Zaznaczono <span className="font-bold text-cyan-200">{totalSelected}</span> rozdziałów</div>
-          <button onClick={() => { localStorage.setItem("exam_selected", JSON.stringify(selected)); go?.("ai"); }} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-white font-semibold text-sm hover:shadow-[0_8px_24px_-8px_rgba(34,211,238,0.5)] transition">
+          <button onClick={() => { localStorage.setItem("exam_selected", JSON.stringify(selected)); go?.("ai"); }} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-br from-accent to-blue-500 text-white font-semibold text-sm hover:shadow-[0_8px_24px_-8px_rgba(34,211,238,0.5)] transition">
             <Sparkles className="w-4 h-4" /> Generuj egzamin z AI
           </button>
           <button onClick={() => setSelected({})} className="p-2.5 rounded-xl hover:bg-white/5 text-white/50">
@@ -370,7 +370,7 @@ export function Forum() {
        threads.length===0 ? <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-white/40 text-sm">Brak wątków</div> :
        <div className="space-y-2">
          {threads.map(t => (
-           <button key={t.id} onClick={()=>setOpened(t)} className="w-full text-left rounded-xl border border-white/10 bg-white/[0.03] hover:border-cyan-400/30 p-4 flex items-center justify-between">
+           <button key={t.id} onClick={()=>setOpened(t)} className="w-full text-left rounded-xl border border-white/10 bg-white/[0.03] hover:border-accent/30 p-4 flex items-center justify-between">
              <div className="flex items-center gap-3">
                <MessageCircle className="w-5 h-5 text-cyan-300"/>
                <div>

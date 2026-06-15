@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Mail, Lock, Eye, EyeOff, GraduationCap, ArrowRight, CheckCircle2, BookOpen, BarChart3, Shield, UserPlus, KeyRound, ChevronLeft, Star, Award } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, UserPlus, KeyRound, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { SocialLogin } from "@/components/auth/SocialLogin";
@@ -10,13 +10,6 @@ export const Route = createFileRoute("/auth/student")({
   component: StudentLogin,
   head: () => ({ meta: [{ title: "Logowanie — Uczeń | EduNex" }] }),
 });
-
-const FEATURES = [
-  { icon: BookOpen, t: "Egzaminy online", d: "Rozwiązuj testy i sprawdziany bezpośrednio w przeglądarce" },
-  { icon: BarChart3, t: "Wyniki na żywo", d: "Śledź postępy i zobacz wyniki natychmiast po zakończeniu" },
-  { icon: Shield, t: "Bezpieczeństwo", d: "Dane chronione, certyfikaty z kodem QR do weryfikacji" },
-  { icon: Star, t: "Osiągnięcia", d: "Zbieraj certyfikaty i śledź swoją historię egzaminów" },
-];
 
 function StudentLogin() {
   const [tab, setTab] = useState<"login" | "register" | "pin">("login");
@@ -28,7 +21,6 @@ function StudentLogin() {
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
-  /* ──── PIN state ──── */
   const [pinStep, setPinStep] = useState<"name" | "pin">("name");
   const [pinName, setPinName] = useState("");
   const [pinLname, setPinLname] = useState("");
@@ -68,42 +60,12 @@ function StudentLogin() {
     <AuthProvider>
     <div className="auth-bg">
       <Toaster theme="dark" />
-      <div className="auth-panel max-lg:hidden">
-        <div className="absolute inset-0 grid-pattern opacity-50" />
-        <div className="relative z-10 flex flex-col gap-6">
-          <Link to="/" className="flex items-center gap-2 text-white/40 hover:text-white transition-colors text-sm">
-            <ChevronLeft className="w-4 h-4"/>EduNex
-          </Link>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 text-accent text-[11px] font-medium w-fit">
-            <GraduationCap className="w-3.5 h-3.5"/>Uczeń
-          </div>
-          <h2 className="display-md font-bold text-white">Twój egzamin zaczyna się tutaj</h2>
-          <p className="body-sm">Zaloguj się, aby rozwiązywać testy, sprawdzać wyniki i zdobywać certyfikaty.</p>
-          <div className="space-y-3 mt-4">
-            {FEATURES.map((f) => (
-              <div key={f.t} className="flex gap-3">
-                <div className="w-9 h-9 rounded-lg bg-accent/10 grid place-items-center shrink-0"><f.icon className="w-4 h-4 text-accent"/></div>
-                <div><div className="text-sm text-white/90 font-medium">{f.t}</div><div className="text-xs text-white/40">{f.d}</div></div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 p-4 rounded-xl bg-accent/5 border border-accent/10">
-            <div className="flex items-center gap-2 text-xs text-white/60">
-              <Award className="w-3.5 h-3.5 text-accent"/> "Wreszcie platforma, która działa. Egzaminy bez stresu i papierologii."
-            </div>
-            <div className="mt-2 flex items-center gap-2 text-[11px] text-white/30">
-              <span className="w-5 h-5 rounded-full bg-accent/20 grid place-items-center text-[9px]">ZK</span>
-              Zofia Kowalska, III LO Gdynia
-            </div>
-          </div>
-        </div>
-      </div>
       <div className="auth-form">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 text-white/30 hover:text-white/60 transition-colors text-xs mb-6">
+        <div className="text-center">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/60 transition-colors text-xs mb-5">
             <ChevronLeft className="w-3 h-3"/>EduNex
           </Link>
-          <div className="flex items-center justify-center gap-1.5 bg-white/[0.04] border border-white/[0.06] rounded-xl p-1 w-fit mx-auto">
+          <div className="flex items-center justify-center gap-1 bg-white/[0.04] border border-white/[0.06] rounded-xl p-1 w-fit mx-auto mb-6">
             {(["login", "register", "pin"] as const).map((t) => (
               <button key={t} onClick={() => setTab(t)}
                 className={`auth-tab ${tab === t ? "active" : ""}`}>
@@ -128,20 +90,18 @@ function StudentLogin() {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                   <input type={showPass ? "text" : "password"} value={pass} onChange={(e) => setPass(e.target.value)} placeholder="••••••••" className="auth-input pl-10 pr-10" />
-                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><Eye className="w-4 h-4"/></button>
+                  <button type="button" onClick={() => setShowPass(!showPass)} aria-label={showPass ? "Ukryj hasło" : "Pokaż hasło"} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><Eye className="w-4 h-4"/></button>
                 </div>
               </div>
             </div>
-            <div className="flex justify-end mt-2">
-              <Link to="/auth/reset-password" className="text-xs text-accent/70 hover:text-accent transition-colors">Nie pamiętasz hasła?</Link>
+            <div className="flex justify-end mt-1">
+              <Link to="/auth/reset-password" className="text-xs text-white/40 hover:text-white/70 transition-colors">Nie pamiętasz hasła?</Link>
             </div>
-            <button onClick={submitLogin} disabled={busy} className="auth-submit mt-6">
+            <button onClick={submitLogin} disabled={busy} className="auth-submit mt-5">
               {busy ? "Logowanie..." : "Zaloguj się"}
             </button>
-            <div className="mt-6">
-              <SocialLogin mode="login" />
-            </div>
-            <div className="mt-6 flex justify-center gap-4 text-xs text-white/30">
+            <SocialLogin mode="login" />
+            <div className="flex justify-center gap-4 text-xs text-white/30 mt-2">
               <Link to="/auth/teacher" className="hover:text-white/60">Nauczyciel</Link>
               <Link to="/auth/admin" className="hover:text-white/60">Admin</Link>
               <Link to="/auth/parent" className="hover:text-white/60">Rodzic</Link>
@@ -171,9 +131,9 @@ function StudentLogin() {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                   <input type={showPass ? "text" : "password"} value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Utwórz hasło" className="auth-input pl-10 pr-10" />
-                  <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><Eye className="w-4 h-4"/></button>
-                </div>
-                {pass && (
+                  <button type="button" onClick={() => setShowPass(!showPass)} aria-label={showPass ? "Ukryj hasło" : "Pokaż hasło"} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"><Eye className="w-4 h-4"/></button>
+                  </div>
+                  {pass && (
                   <div className="mt-2">
                     <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
                       <div className={`h-full rounded-full transition-all duration-500 ${pass.length < 6 ? "pw-weak" : pass.length < 10 ? "pw-fair" : pass.length < 14 ? "pw-good" : "pw-strong"}`} />
@@ -183,7 +143,7 @@ function StudentLogin() {
                 )}
               </div>
             </div>
-            <button onClick={submitRegister} disabled={busy} className="auth-submit mt-6">
+            <button onClick={submitRegister} disabled={busy} className="auth-submit mt-5">
               {busy ? "Rejestracja..." : "Utwórz konto"}
             </button>
           </div>
@@ -205,7 +165,7 @@ function StudentLogin() {
                     </div>
                   </div>
                 </div>
-                <button onClick={() => pinName && pinLname ? setPinStep("pin") : toast.error("Podaj imię i nazwisko")} disabled={!pinName || !pinLname} className="auth-submit mt-6">
+                <button onClick={() => pinName && pinLname ? setPinStep("pin") : toast.error("Podaj imię i nazwisko")} disabled={!pinName || !pinLname} className="auth-submit mt-5">
                   Dalej <ArrowRight className="w-4 h-4"/>
                 </button>
               </>

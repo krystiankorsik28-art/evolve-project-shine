@@ -145,7 +145,7 @@ function StudentDashboard() {
           </Link>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 text-sm text-white/70">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 grid place-items-center">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
                 <User className="w-4 h-4 text-[#05080f]" />
               </div>
               <span className="text-white/90 font-medium">{displayName}</span>
@@ -159,15 +159,15 @@ function StudentDashboard() {
 
       <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
         {/* Hero */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-cyan-500/10 via-teal-500/5 to-emerald-500/10 p-6 md:p-8">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6 md:p-8">
           <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-cyan-400/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-emerald-400/10 blur-3xl" />
           <div className="relative flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-400 to-teal-500 grid place-items-center shadow-xl shadow-cyan-400/20">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center shadow-xl shadow-accent/20">
               <GraduationCap className="w-8 h-8 text-[#05080f]" />
             </div>
             <div>
-              <div className="text-[10px] tracking-[0.25em] text-cyan-300/70 uppercase font-mono">Panel ucznia</div>
+              <div className="text-[10px] tracking-[0.25em] text-accent/70 uppercase font-mono">Panel ucznia</div>
               <h1 className="text-2xl md:text-3xl font-display font-bold mt-1">Witaj, {displayName.split(" ")[0]}!</h1>
               <p className="text-white/50 text-sm mt-1">Wprowadź PIN, aby rozpocząć egzamin, lub przejrzyj historię.</p>
             </div>
@@ -177,7 +177,7 @@ function StudentDashboard() {
         {/* PIN entry card */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-500 grid place-items-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
               <KeyRound className="w-5 h-5 text-[#05080f]" />
             </div>
             <div>
@@ -202,7 +202,7 @@ function StudentDashboard() {
                     if (e.key === "Backspace" && !d && i > 0) document.getElementById(`pin-${i-1}`)?.focus();
                   }}
                   id={`pin-${i}`}
-                  className="w-full max-w-[52px] aspect-square text-center text-xl font-mono bg-white/[0.04] border border-white/[0.08] rounded-xl outline-none focus:border-cyan-400/40 focus:bg-white/[0.06] transition-all"
+                  className="w-full max-w-[52px] aspect-square text-center text-xl font-mono bg-white/[0.04] border border-white/[0.08] rounded-xl outline-none focus:border-accent/40 focus:bg-white/[0.06] transition-all"
                   autoComplete="off"
                 />
               ))}
@@ -210,7 +210,7 @@ function StudentDashboard() {
             <button
               type="submit"
               disabled={!pinReady || pinLoading}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-teal-400 hover:from-cyan-300 hover:to-teal-300 text-[#05080f] font-semibold text-sm disabled:opacity-40 transition shadow-lg shadow-cyan-400/20"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-[#05080f] font-semibold text-sm disabled:opacity-40 transition shadow-lg shadow-accent/20"
             >
               {pinLoading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Zap className="w-4 h-4"/>}
               {pinLoading ? "Sprawdzam..." : "Rozpocznij"}
@@ -222,7 +222,7 @@ function StudentDashboard() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-fuchsia-500 grid place-items-center">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
                 <History className="w-5 h-5 text-white" />
               </div>
               <div>
@@ -232,7 +232,7 @@ function StudentDashboard() {
             </div>
           </div>
           {loadingHistory ? (
-            <div className="flex items-center justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-cyan-400"/></div>
+            <div className="flex items-center justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-accent"/></div>
           ) : history.length === 0 ? (
             <div className="py-8 text-center">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-amber-500/10 border border-amber-400/20 grid place-items-center mb-3">

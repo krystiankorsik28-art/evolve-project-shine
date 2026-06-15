@@ -72,7 +72,7 @@ export function Sprawdziany() {
           <h2 className="text-xl font-display font-bold text-white inline-flex items-center gap-2"><ScrollText className="w-5 h-5 text-amber-400"/>Sprawdziany</h2>
           <p className="text-xs text-white/50">Szybkie kartkówki i testy dla Twojej klasy.</p>
         </div>
-        <button onClick={createNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white text-sm font-semibold shadow-lg shadow-amber-500/20">
+        <button onClick={createNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white text-sm font-semibold shadow-lg shadow-accent/20">
           <Plus className="w-4 h-4"/>Nowy sprawdzian
         </button>
       </div>

@@ -104,7 +104,7 @@ export function AICourseGenerator() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-400 to-fuchsia-500 grid place-items-center">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
           <BookOpen className="w-5 h-5 text-black" />
         </div>
         <div>
@@ -166,7 +166,7 @@ export function AICourseGenerator() {
 
       {step === "generating" && (
         <div className="card-premium rounded-2xl p-12 text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-violet-500 grid place-items-center mx-auto mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center mx-auto mb-6">
             <Sparkles className="w-8 h-8 text-black floating-3" />
           </div>
           <Loader2 className="w-6 h-6 animate-spin text-accent mx-auto mb-4" />
@@ -177,7 +177,7 @@ export function AICourseGenerator() {
             <p>Generowanie struktury lekcji</p>
           </div>
           <div className="mt-6 w-48 h-1 rounded-full bg-white/[0.06] mx-auto overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-accent to-violet-500" style={{ animation: "splashLoad 2.5s cubic-bezier(0.16,1,0.3,1) forwards" }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-accent to-blue-500" style={{ animation: "splashLoad 2.5s cubic-bezier(0.16,1,0.3,1) forwards" }} />
           </div>
         </div>
       )}

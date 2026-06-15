@@ -66,7 +66,7 @@ export function AIMaterialRecommender() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 grid place-items-center">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
           <BookOpen className="w-5 h-5 text-black" />
         </div>
         <div>

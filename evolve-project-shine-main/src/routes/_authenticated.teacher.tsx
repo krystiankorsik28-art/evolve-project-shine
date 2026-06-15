@@ -210,7 +210,7 @@ function TeacherPanel() {
               <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.18em] text-white/35 uppercase">
                 <span>EduNex</span>
                 <ChevronRight className="w-3 h-3"/>
-                <span className="text-cyan-300/70">{currentNav?.l ?? "Pulpit"}</span>
+                <span className="text-accent/70">{currentNav?.l ?? "Pulpit"}</span>
               </div>
               <h1 className="text-base lg:text-lg font-display font-bold text-white truncate">
                 {tab === "pulpit" ? `${greet}, ${displayName}!` : currentNav?.l}
@@ -323,11 +323,11 @@ function TeacherPanel() {
                         title={collapsed ? n.l : undefined}
                         className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition relative ${
                           active
-                            ? "bg-gradient-to-r from-cyan-500/20 via-violet-500/15 to-amber-500/10 text-white border border-cyan-400/20 shadow-[0_0_20px_-8px_rgba(34,211,238,0.15)]"
+                            ? "bg-gradient-to-r from-accent/20 via-accent/10 to-accent/5 text-white border border-accent/20 shadow-[0_0_20px_-8px_rgba(34,211,238,0.15)]"
                             : "text-white/55 hover:text-white hover:bg-white/[0.04] border border-transparent"
                         } ${collapsed ? "justify-center" : ""}`}
                       >
-                        {active && <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-7 rounded-r bg-gradient-to-b from-cyan-300 via-violet-400 to-amber-400" />}
+                        {active && <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-7 rounded-r bg-gradient-to-b from-accent to-blue-500" />}
                         <n.i className={`w-4 h-4 shrink-0 ${active ? "text-sky-300" : "group-hover:text-sky-200/80"}`} />
                         {!collapsed && (
                           <>
@@ -336,7 +336,7 @@ function TeacherPanel() {
                               <span className={`text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded ${
                                 n.badge === "LIVE"
                                   ? "bg-pink-500/20 text-pink-300 border border-pink-400/30"
-                                  : "bg-cyan-500/15 text-cyan-300 border border-cyan-400/25"
+                                  : "bg-cyan-500/15 text-accent border border-cyan-400/25"
                               }`}>{n.badge}</span>
                             )}
                           </>
@@ -352,15 +352,15 @@ function TeacherPanel() {
           <div className="p-3 border-t border-white/[0.06] space-y-2">
             {!collapsed ? (
               <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06]">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center text-slate-900 font-bold text-sm shadow-lg shadow-cyan-500/20">{userInitial}</div>
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm shadow-lg shadow-accent/20">{userInitial}</div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[9px] tracking-[0.2em] text-cyan-300 font-mono">NAUCZYCIEL</div>
+                  <div className="text-[9px] tracking-[0.2em] text-accent font-mono">NAUCZYCIEL</div>
                   <div className="text-xs text-white/80 truncate">{email || "nauczyciel@edunex.pl"}</div>
                 </div>
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0"/>
               </div>
             ) : (
-              <div className="w-9 h-9 mx-auto rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center text-slate-900 font-bold text-sm">{userInitial}</div>
+              <div className="w-9 h-9 mx-auto rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm">{userInitial}</div>
             )}
             <button onClick={logout} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white hover:bg-white/5 transition ${collapsed ? "justify-center" : ""}`} title="Wyloguj się">
               <LogOut className="w-4 h-4"/> {!collapsed && "Wyloguj się"}
@@ -396,7 +396,7 @@ function TeacherPanel() {
                       onClick={() => { setTab(n.k); setSearchOpen(false); setSearchQ(""); }}
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 transition"
                     >
-                      <n.i className="w-4 h-4 text-cyan-300"/>
+                      <n.i className="w-4 h-4 text-accent"/>
                       <span className="flex-1 text-left">{n.l}</span>
                       <ChevronRight className="w-3.5 h-3.5 text-white/30"/>
                     </button>
@@ -431,44 +431,6 @@ function TeacherPanel() {
             {tab === "eksport" && <Eksport />}
             {tab === "aiocen" && <AiOcen />}
             {tab === "certyfikaty" && <Certyfikaty />}
-          </div>
-
-          {/* GOD MODE - Floating quick action bar */}
-          <div className="sticky bottom-0 z-30 border-t border-white/10 bg-[#0a0f1f]/95 backdrop-blur-xl px-4 py-2 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[9px] font-mono tracking-[0.2em] text-white/30 mr-2 hidden sm:inline">QUICK</span>
-              <button onClick={() => setTab("pulpit")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Pulpit">
-                <LayoutDashboard className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("egzaminy")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Egzaminy">
-                <FileText className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("ai")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="AI Generator">
-                <Sparkles className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("monitoring")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Monitoring">
-                <Activity className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("live")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Live Quiz">
-                <Radio className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("edziennik")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="e-Dziennik">
-                <Globe className="w-4 h-4" />
-              </button>
-              <div className="w-px h-5 bg-white/10 mx-1" />
-              <button onClick={() => setTab("analityka")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Analityka">
-                <BarChart3 className="w-4 h-4" />
-              </button>
-              <button onClick={() => setTab("ustawienia")} className="p-2 rounded-lg text-white/40 hover:text-white hover:bg-white/5 transition" title="Ustawienia">
-                <Settings className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[9px] font-mono text-white/25 hidden sm:inline">{now.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}</span>
-              <span className="flex items-center gap-1 text-[9px] font-mono text-emerald-400/60">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />ONLINE
-              </span>
-            </div>
           </div>
         </main>
         </div>
@@ -524,11 +486,11 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
               <ShieldCheck className="w-3 h-3"/> Panel Nauczyciela · EduNex
             </div>
             <h2 className="text-2xl lg:text-3xl font-display font-bold text-white leading-tight">
-              Twoja klasa czeka. <span className="bg-gradient-to-r from-red-300 via-white to-red-300 bg-clip-text text-transparent">Zacznijmy nową lekcję.</span>
+              Twoja klasa czeka. <span className="bg-gradient-to-r from-accent via-white to-accent bg-clip-text text-transparent">Zacznijmy nową lekcję.</span>
             </h2>
             <p className="text-sm text-white/55">Wygeneruj egzamin AI w 60 sekund, uruchom Live Quiz w czasie rzeczywistym lub przejdź do analityki postępów uczniów.</p>
             <div className="flex flex-wrap gap-2 pt-1">
-              <button onClick={() => go("ai")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 via-violet-500 to-amber-500 hover:brightness-110 text-slate-900 font-semibold text-sm transition shadow-lg shadow-cyan-500/20">
+              <button onClick={() => go("ai")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm transition shadow-lg shadow-accent/20">
                 <Sparkles className="w-4 h-4"/> Nowy egzamin AI
               </button>
               <button onClick={() => go("live")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition">
@@ -546,9 +508,9 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
       </div>
 
       {/* Quick create bar */}
-      <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-gradient-to-r from-cyan-500/5 via-violet-500/5 to-amber-500/5 border border-white/10">
+      <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-gradient-to-r from-accent/5 via-accent/5 to-accent/5 border border-white/10">
         <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 self-center mr-2">Szybkie tworzenie:</span>
-        <button onClick={() => go("ai")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 text-xs transition">
+        <button onClick={() => go("ai")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-accent text-xs transition">
           <Sparkles className="w-3.5 h-3.5" />Egzamin AI
         </button>
         <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 text-xs transition">
@@ -564,11 +526,11 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
 
       {/* KPI grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <KPI icon={FileText} label="Moje egzaminy" value={exams.length} delta="+2" trend="up" color="from-sky-400 to-blue-600"/>
-        <KPI icon={CheckCircle2} label="Opublikowane" value={published} delta={`${exams.length ? Math.round((published/exams.length)*100) : 0}%`} trend="up" color="from-emerald-400 to-teal-600"/>
-        <KPI icon={Users} label="Podejścia uczniów" value={attempts} delta="+12" trend="up" color="from-violet-400 to-fuchsia-600"/>
-        <KPI icon={Zap} label="Aktywność" value={`${spark.reduce((a,b)=>a+b,0)}/12d`} delta="stabilnie" trend="flat" color="from-amber-400 to-orange-600"/>
-        <KPI icon={ScrollText} label="Sprawdziany" value={0} delta="nowość" trend="flat" color="from-rose-400 to-pink-600"/>
+        <KPI icon={FileText} label="Moje egzaminy" value={exams.length} delta="+2" trend="up" color="from-accent to-blue-600"/>
+        <KPI icon={CheckCircle2} label="Opublikowane" value={published} delta={`${exams.length ? Math.round((published/exams.length)*100) : 0}%`} trend="up" color="from-accent to-blue-600"/>
+        <KPI icon={Users} label="Podejścia uczniów" value={attempts} delta="+12" trend="up" color="from-accent to-blue-600"/>
+        <KPI icon={Zap} label="Aktywność" value={`${spark.reduce((a,b)=>a+b,0)}/12d`} delta="stabilnie" trend="flat" color="from-accent to-blue-600"/>
+        <KPI icon={ScrollText} label="Sprawdziany" value={0} delta="nowość" trend="flat" color="from-accent to-blue-600"/>
       </div>
 
       {/* Main grid */}
@@ -580,7 +542,7 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
               <h3 className="flex items-center gap-2 text-lg font-display font-bold text-white"><FileText className="w-5 h-5 text-sky-400"/>Ostatnie egzaminy</h3>
               <p className="text-xs text-white/45">{exams.length} egzaminów · {published} opublikowanych · {drafts} szkiców</p>
             </div>
-            <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1 text-xs text-cyan-300 hover:text-cyan-200 transition">
+            <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1 text-xs text-accent hover:text-cyan-200 transition">
               Zobacz wszystkie <ArrowUpRight className="w-3.5 h-3.5"/>
             </button>
           </div>
@@ -600,7 +562,7 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
                   onClick={() => go("egzaminy")}
                   className="w-full flex items-center gap-4 py-3 text-left hover:bg-white/[0.02] -mx-2 px-2 rounded-lg transition group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/20 to-violet-500/10 border border-white/10 grid place-items-center text-cyan-300 shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 border border-white/10 grid place-items-center text-accent shrink-0">
                     <FileText className="w-4 h-4"/>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -621,13 +583,13 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
 
         {/* Side column */}
         <div className="space-y-5">
-          <div className="rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/15 via-cyan-500/5 to-emerald-500/5 backdrop-blur p-6">
+          <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/15 via-accent/5 to-accent/5 backdrop-blur p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="flex items-center gap-2 text-base font-display font-bold text-emerald-300"><Activity className="w-4 h-4"/>Live monitoring</h3>
-              <span className="text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">ACTIVE</span>
+              <h3 className="flex items-center gap-2 text-base font-display font-bold text-accent"><Activity className="w-4 h-4"/>Live monitoring</h3>
+              <span className="text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded bg-accent/20 text-accent border border-accent/30">ACTIVE</span>
             </div>
             <p className="text-xs text-white/55 mb-4">Obserwuj uczniów w trakcie egzaminu w czasie rzeczywistym — postęp i wykrywanie nieuczciwych zachowań.</p>
-            <button onClick={() => go("monitoring")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-semibold text-sm transition">
+            <button onClick={() => go("monitoring")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent/80 text-slate-900 font-semibold text-sm transition">
               Otwórz monitoring <ChevronRight className="w-4 h-4"/>
             </button>
           </div>
@@ -655,10 +617,10 @@ function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; publ
           </div>
           <BarChart values={spark}/>
         </div>
-          <div className="rounded-2xl border border-violet-400/20 bg-gradient-to-br from-violet-500/15 via-fuchsia-500/10 to-amber-500/5 p-6">
-          <h3 className="flex items-center gap-2 text-base font-display font-bold text-white mb-2"><Brain className="w-4 h-4 text-violet-300"/>AI Tutor 24/7</h3>
+          <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 p-6">
+          <h3 className="flex items-center gap-2 text-base font-display font-bold text-white mb-2"><Brain className="w-4 h-4 text-accent"/>AI Tutor 24/7</h3>
           <p className="text-xs text-white/55 mb-4">Twój asystent dostępny w każdej chwili — pomaga generować scenariusze lekcji, wyjaśnia trudne tematy i przygotowuje uczniów.</p>
-            <button onClick={() => go("tutor")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-violet-500 via-fuchsia-500 to-amber-500 hover:brightness-110 text-white font-semibold text-sm transition">
+            <button onClick={() => go("tutor")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm transition">
             Porozmawiaj z AI <ChevronRight className="w-4 h-4"/>
           </button>
           <div className="mt-4 text-[10px] font-mono text-white/30 tracking-wider">{email ? `ID · ${email}` : ""}</div>
@@ -698,7 +660,7 @@ function Sparkline({ values }: { values: number[] }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-mono tracking-wider text-cyan-300">TWORZENIE EGZAMINÓW · 12D</span>
+        <span className="text-[10px] font-mono tracking-wider text-accent">TWORZENIE EGZAMINÓW · 12D</span>
         <span className="text-[10px] font-mono text-white/40">{values.reduce((a,b)=>a+b,0)} total</span>
       </div>
       <svg width={w} height={h} className="block">
@@ -724,7 +686,7 @@ function BarChart({ values }: { values: number[] }) {
         const h = Math.max(6, (v/max)*100);
         return (
           <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
-            <div className="w-full rounded-t-md bg-gradient-to-t from-cyan-500/60 to-violet-500/60 hover:from-cyan-400 hover:to-violet-400 transition-all relative" style={{ height: `${h}%` }}>
+            <div className="w-full rounded-t-md bg-gradient-to-t from-accent/60 to-accent/40 hover:from-accent hover:to-blue-500 transition-all relative" style={{ height: `${h}%` }}>
               <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/60 opacity-0 group-hover:opacity-100 transition">{v}</span>
             </div>
             <span className="text-[9px] font-mono text-white/30">d-{values.length-i}</span>
@@ -738,7 +700,7 @@ function BarChart({ values }: { values: number[] }) {
 function QuickAction({ icon: Icon, label, onClick }: { icon: React.ComponentType<{className?:string}>; label: string; onClick: () => void }) {
   return (
     <button onClick={onClick} className="flex flex-col items-start gap-2 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-cyan-400/30 transition group">
-      <Icon className="w-4 h-4 text-cyan-300 group-hover:scale-110 transition"/>
+      <Icon className="w-4 h-4 text-accent group-hover:scale-110 transition"/>
       <span className="text-xs text-white/80 font-medium">{label}</span>
     </button>
   );
@@ -756,8 +718,8 @@ function StatusPill({ status }: { status: string }) {
 function EmptyState({ icon: Icon, title, desc, cta, onClick }: { icon: React.ComponentType<{className?:string}>; title: string; desc: string; cta: string; onClick: () => void }) {
   return (
     <div className="py-10 text-center">
-      <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-white/10 grid place-items-center mb-3">
-        <Icon className="w-5 h-5 text-cyan-300"/>
+      <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/20 border border-white/10 grid place-items-center mb-3">
+        <Icon className="w-5 h-5 text-accent"/>
       </div>
       <div className="text-sm font-semibold text-white">{title}</div>
       <div className="text-xs text-white/45 mt-1 max-w-sm mx-auto">{desc}</div>
@@ -806,9 +768,9 @@ function AISection() {
 
       {aiTab === "generator" && (
         <>
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-violet-500/10 via-cyan-500/5 to-emerald-500/10 p-6">
+          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6">
             <div className="flex items-center gap-3 mb-1">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center"><Sparkles className="w-5 h-5 text-slate-900"/></div>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Sparkles className="w-5 h-5 text-slate-900"/></div>
               <div>
                 <h2 className="text-xl font-display font-bold text-white">AI Generator</h2>
                 <p className="text-xs text-white/50">Gemini · pytania ze zdjęcia, z tematu, lub ilustracje do pytań — z zapisem do banku lub bezpośrednio do egzaminu.</p>
@@ -911,7 +873,7 @@ function QPreview({ q, idx }: { q: AiQ; idx: number }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono text-cyan-300">PYT. {idx+1} · {q.question_type.toUpperCase()} · {q.difficulty.toUpperCase()} · {q.points}p</span>
+        <span className="text-[10px] font-mono text-accent">PYT. {idx+1} · {q.question_type.toUpperCase()} · {q.difficulty.toUpperCase()} · {q.points}p</span>
       </div>
       <div className="text-sm text-white font-medium">{q.prompt}</div>
       {q.options && q.options.length > 0 && (
@@ -941,15 +903,15 @@ function AIImage() {
     <div className="grid lg:grid-cols-2 gap-5">
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-cyan-300 mb-2 block font-mono">Opis ilustracji</span>
+          <span className="text-xs uppercase tracking-wider text-accent mb-2 block font-mono">Opis ilustracji</span>
           <textarea rows={5} value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="np. Schemat układu krwionośnego człowieka" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
         </label>
-        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50">
+        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50">
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "Generuję..." : "Wygeneruj ilustrację"}
         </button>
       </div>
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><ImageIcon className="w-4 h-4 text-cyan-300"/>Podgląd</h3>
+        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><ImageIcon className="w-4 h-4 text-accent"/>Podgląd</h3>
         {url ? (
           <div className="space-y-3">
             <img src={url} alt="generated" className="w-full rounded-lg border border-white/10"/>
@@ -991,7 +953,7 @@ function AIPhoto() {
     <div className="grid lg:grid-cols-2 gap-5">
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
         <div>
-          <div className="text-xs uppercase tracking-wider text-cyan-300 mb-2 font-mono">Krok 1</div>
+          <div className="text-xs uppercase tracking-wider text-accent mb-2 font-mono">Krok 1</div>
           <label className="block border-2 border-dashed border-white/15 rounded-xl p-8 text-center cursor-pointer hover:border-cyan-400/40 hover:bg-white/[0.02] transition">
             <input type="file" accept="image/*" onChange={(e)=>onFile(e.target.files?.[0] ?? null)} className="hidden"/>
             {preview ? <img src={preview} alt="podgląd" className="max-h-64 mx-auto rounded-lg"/> : (<><ImageIcon className="w-10 h-10 mx-auto text-white/30 mb-2"/><p className="text-sm text-white/50">Kliknij lub przeciągnij zdjęcie zadania</p></>)}
@@ -1001,12 +963,12 @@ function AIPhoto() {
           <div className="text-xs uppercase tracking-wider text-violet-300 mb-2 font-mono">Krok 2</div>
           <textarea rows={3} value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="np. Pytanie ABCD do klasy 2 LO o sile tarcia." className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
         </div>
-        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 transition hover:scale-[1.01]">
+        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 transition hover:scale-[1.01]">
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj pytanie"}
         </button>
       </div>
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-cyan-300"/>Wynik</h3>
+        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-accent"/>Wynik</h3>
         {result ? (<><QPreview q={result} idx={0}/><ResultActions qs={[result]} single/></>) : (<p className="text-sm text-white/40">Wynik pojawi się tutaj.</p>)}
       </div>
     </div>
@@ -1037,7 +999,7 @@ function AIGenerate() {
     <div className="grid lg:grid-cols-2 gap-5">
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-cyan-300 mb-2 block font-mono">Temat</span>
+          <span className="text-xs uppercase tracking-wider text-accent mb-2 block font-mono">Temat</span>
           <input value={topic} onChange={(e)=>setTopic(e.target.value)} placeholder="np. II wojna światowa — 1939" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
         </label>
         <div className="grid grid-cols-2 gap-3">
@@ -1054,12 +1016,12 @@ function AIGenerate() {
             </select>
           </label>
         </div>
-        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 hover:scale-[1.01] transition">
+        <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 hover:scale-[1.01] transition">
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Brain className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj"}
         </button>
       </div>
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-cyan-300"/>Wynik</h3>
+        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-accent"/>Wynik</h3>
         {result ? (
           <div className="space-y-2 max-h-[500px] overflow-auto pr-1">
             {result.map((q,i) => <QPreview key={i} q={q} idx={i}/>)}
@@ -1103,9 +1065,9 @@ function Certyfikaty() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-500/10 via-cyan-500/5 to-emerald-500/10 p-6">
+      <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 grid place-items-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
             <Award className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -1162,7 +1124,7 @@ function Certyfikaty() {
                             href={`/verify/${serial}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-400/20 text-cyan-300 text-xs hover:bg-cyan-500/20 transition"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-500/10 border border-cyan-400/20 text-accent text-xs hover:bg-cyan-500/20 transition"
                           >
                             <ExternalLink className="w-3 h-3" />Sprawdź
                           </a>

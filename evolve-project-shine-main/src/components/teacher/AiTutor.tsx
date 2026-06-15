@@ -123,7 +123,7 @@ export function AiTutor() {
       {/* Sidebar wątków */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col">
         <div className="p-3 border-b border-white/5 space-y-2">
-          <button onClick={newThread} className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-400 hover:to-cyan-400 text-white text-sm font-semibold">
+          <button onClick={newThread} className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white text-sm font-semibold">
             <Plus className="w-4 h-4"/>Nowa rozmowa
           </button>
           <select value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full px-2 py-1.5 rounded-md bg-white/5 border border-white/10 text-xs text-white">
@@ -133,7 +133,7 @@ export function AiTutor() {
         <div className="flex-1 overflow-y-auto p-2 space-y-1 min-h-0">
           {threads.length === 0 && <div className="text-xs text-white/40 p-3">Brak rozmów. Zacznij nową.</div>}
           {threads.map(t => (
-            <div key={t.id} className={`group flex items-center gap-1 rounded-lg ${activeId === t.id ? "bg-cyan-500/10 border border-cyan-400/20" : "hover:bg-white/5 border border-transparent"}`}>
+            <div key={t.id} className={`group flex items-center gap-1 rounded-lg ${activeId === t.id ? "bg-cyan-500/10 border border-accent/20" : "hover:bg-white/5 border border-transparent"}`}>
               <button onClick={() => selectThread(t.id)} className="flex-1 text-left px-3 py-2 min-w-0">
                 <div className="text-sm text-white truncate">{t.title}</div>
                 {t.subject && <div className="text-[10px] text-cyan-300/70 font-mono">{t.subject}</div>}
@@ -147,7 +147,7 @@ export function AiTutor() {
       {/* Chat */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col">
         <div className="p-4 border-b border-white/5 flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-cyan-500 grid place-items-center"><Brain className="w-5 h-5 text-white"/></div>
+          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Brain className="w-5 h-5 text-white"/></div>
           <div>
             <div className="text-sm font-bold text-white">AI Tutor</div>
             <div className="text-[11px] text-white/40">Wytłumaczy każdy temat, krok po kroku. Po polsku.</div>

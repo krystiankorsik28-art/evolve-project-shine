@@ -190,7 +190,7 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
             </p>
           </div>
         </div>
-        <button onClick={saveExam} disabled={savingExam} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-sm font-semibold shadow-lg shadow-cyan-500/20 disabled:opacity-50 transition-all hover:scale-[1.02]">
+        <button onClick={saveExam} disabled={savingExam} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-sm font-semibold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all hover:scale-[1.02]">
           <Save className="w-4 h-4" />{savingExam ? "Zapisuję..." : "Zapisz ustawienia"}
         </button>
       </div>
@@ -252,7 +252,7 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 space-y-3">
           <h3 className="text-sm font-mono uppercase tracking-widest text-white/40 mb-1 inline-flex items-center gap-2"><KeyRound className="w-4 h-4 text-amber-400" />Aktywny PIN</h3>
           {activePin ? (
-            <div className="rounded-xl border border-cyan-400/30 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 p-4 text-center">
+            <div className="rounded-xl border border-accent/30 bg-gradient-to-br from-accent/10 to-accent/10 p-4 text-center">
               <div className="font-mono text-3xl tracking-[0.25em] text-cyan-300">{activePin.pin_code}</div>
               <div className="text-[10px] text-white/40 mt-1 font-mono">
                 {activePin.used_count}/{activePin.max_uses ?? "∞"} użyć
@@ -267,7 +267,7 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
                 <Copy className="w-3.5 h-3.5" />Kopiuj
               </button>
             )}
-            <button onClick={newPin} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold text-xs transition">
+            <button onClick={newPin} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white font-semibold text-xs transition">
               <RefreshCw className="w-3.5 h-3.5" />Nowy PIN
             </button>
           </div>
@@ -299,16 +299,16 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
             </div>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <button onClick={() => setAiAssistOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-fuchsia-500 to-violet-500 hover:from-fuchsia-400 hover:to-violet-400 text-white text-xs font-semibold transition">
+            <button onClick={() => setAiAssistOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-xs font-semibold transition">
               <Wand2 className="w-3.5 h-3.5" />AI Asystent
             </button>
-            <button onClick={() => setAiOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-400 hover:to-cyan-400 text-white text-xs font-semibold transition">
+            <button onClick={() => setAiOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-xs font-semibold transition">
               <Sparkles className="w-3.5 h-3.5" />Generuj AI
             </button>
             <button onClick={() => setBankOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/80 text-xs transition">
               <Library className="w-3.5 h-3.5" />Z banku
             </button>
-            <button onClick={() => addQuestion()} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white text-xs font-semibold shadow-lg shadow-cyan-500/20 transition">
+            <button onClick={() => addQuestion()} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-xs font-semibold shadow-lg shadow-accent/20 transition">
               <Plus className="w-3.5 h-3.5" />Dodaj
             </button>
           </div>
@@ -321,7 +321,7 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
             <p className="mb-3">Brak pytań. Dodaj ręcznie, z banku lub wygeneruj AI.</p>
             <div className="flex justify-center gap-2">
               <button onClick={() => addQuestion()} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-xs font-semibold"><Plus className="w-3.5 h-3.5" />Dodaj ręcznie</button>
-              <button onClick={() => setAiOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-violet-500 to-cyan-500 text-white text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" />Generuj AI</button>
+              <button onClick={() => setAiOpen(true)} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-white text-xs font-semibold"><Sparkles className="w-3.5 h-3.5" />Generuj AI</button>
             </div>
           </div>
         ) : filteredQuestions.length === 0 ? (
@@ -333,7 +333,7 @@ export function ExamEditor({ examId, onBack }: { examId: string; onBack: () => v
               const isOpen = Array.isArray(openIdx) ? openIdx.includes(realIdx) : openIdx === realIdx;
               const QIcon = QTYPE_ICONS[q.question_type] || FileQuestion;
               return (
-                <div key={q.id} className={`rounded-xl border transition ${isOpen ? "border-sky-400/30 bg-white/[0.04]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}>
+                <div key={q.id} className={`rounded-xl border transition ${isOpen ? "border-accent/30 bg-white/[0.04]" : "border-white/10 bg-white/[0.02] hover:border-white/20"}`}>
                   {/* Question header */}
                   <div className="flex items-center gap-2 p-3">
                     <GripVertical className="w-4 h-4 text-white/20 cursor-grab" />
@@ -406,7 +406,7 @@ function BankPicker({ onClose, onPick }: { onClose: () => void; onPick: (qs: QDr
         {loading ? <div className="text-center text-white/40 py-6"><Loader2 className="w-5 h-5 animate-spin inline" /></div> :
           items.length === 0 ? <div className="text-center text-white/40 py-6 text-sm">Bank jest pusty</div> :
           items.map((it) => (
-            <label key={it.id} className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer ${picked[it.id] ? "bg-cyan-500/10 border border-cyan-400/30" : "bg-white/[0.02] border border-white/5 hover:bg-white/[0.04]"}`}>
+            <label key={it.id} className={`flex items-start gap-2 p-2.5 rounded-lg cursor-pointer ${picked[it.id] ? "bg-cyan-500/10 border border-accent/30" : "bg-white/[0.02] border border-white/5 hover:bg-white/[0.04]"}`}>
               <input type="checkbox" checked={!!picked[it.id]} onChange={(e) => setPicked({ ...picked, [it.id]: e.target.checked })} className="mt-1 accent-cyan-400" />
               <div className="flex-1 min-w-0">
                 <div className="text-sm text-white/90 line-clamp-2">{it.prompt}</div>
@@ -420,7 +420,7 @@ function BankPicker({ onClose, onPick }: { onClose: () => void; onPick: (qs: QDr
       </div>
       <div className="flex justify-end gap-2 pt-3 border-t border-white/10 mt-3">
         <button onClick={onClose} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm transition">Anuluj</button>
-        <button onClick={() => { const chosen = items.filter((it) => picked[it.id]); if (chosen.length === 0) return; onPick(chosen); onClose(); }} className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold text-sm transition">
+        <button onClick={() => { const chosen = items.filter((it) => picked[it.id]); if (chosen.length === 0) return; onPick(chosen); onClose(); }} className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white font-semibold text-sm transition">
           Dodaj ({Object.values(picked).filter(Boolean).length})
         </button>
       </div>

@@ -82,7 +82,7 @@ export function Ogloszenia() {
           <h2 className="font-display text-2xl font-bold text-white inline-flex items-center gap-2"><Megaphone className="w-5 h-5 text-cyan-300"/>Ogłoszenia</h2>
           <p className="text-sm text-white/50 mt-1">Publikuj wiadomości do całej klasy lub wszystkich uczniów.</p>
         </div>
-        <button onClick={() => setModalOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold text-sm hover:brightness-110 transition">
+        <button onClick={() => setModalOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold text-sm hover:brightness-110 transition">
           <Plus className="w-4 h-4"/>Nowe ogłoszenie
         </button>
       </div>
@@ -98,7 +98,7 @@ export function Ogloszenia() {
             const Icon = meta.icon;
             const klasa = classes.find(c => c.id === a.class_id)?.name ?? "Wszyscy";
             return (
-              <div key={a.id} className={`rounded-2xl border bg-white/[0.03] p-5 transition ${a.pinned ? "border-cyan-400/30 shadow-[0_0_0_1px_rgba(34,211,238,0.1)]" : "border-white/10"}`}>
+              <div key={a.id} className={`rounded-2xl border bg-white/[0.03] p-5 transition ${a.pinned ? "border-accent/30 shadow-[0_0_0_1px_rgba(34,211,238,0.1)]" : "border-white/10"}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap mb-1.5">
@@ -154,7 +154,7 @@ export function Ogloszenia() {
           </label>
           <div className="flex justify-end gap-2 pt-2">
             <button onClick={() => setModalOpen(false)} className="px-4 py-2 rounded-lg text-sm text-white/70 hover:bg-white/5">Anuluj</button>
-            <button onClick={submit} disabled={busy} className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold text-sm disabled:opacity-50 inline-flex items-center gap-2">
+            <button onClick={submit} disabled={busy} className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold text-sm disabled:opacity-50 inline-flex items-center gap-2">
               {busy && <Loader2 className="w-4 h-4 animate-spin"/>}Opublikuj
             </button>
           </div>

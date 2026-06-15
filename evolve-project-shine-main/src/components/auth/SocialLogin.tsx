@@ -5,11 +5,7 @@ import { toast } from "sonner";
 
 const PROVIDERS: { id: AuthProvider; label: string; icon: string }[] = [
   { id: "google", label: "Google", icon: "G" },
-  { id: "github", label: "GitHub", icon: "GH" },
   { id: "microsoft", label: "Microsoft", icon: "MS" },
-  { id: "apple", label: "Apple", icon: "A" },
-  { id: "discord", label: "Discord", icon: "D" },
-  { id: "linkedin", label: "LinkedIn", icon: "LI" },
 ];
 
 export function SocialLogin({ mode = "login" }: { mode?: "login" | "register" }) {
@@ -28,27 +24,11 @@ export function SocialLogin({ mode = "login" }: { mode?: "login" | "register" })
   };
 
   const getProviderStyle = (id: AuthProvider) => {
-    const styles: Record<AuthProvider, string> = {
-      google: "border-[#4285F4]/20 hover:border-[#4285F4]/40 hover:bg-[#4285F4]/5",
-      github: "border-[#333]/20 hover:border-[#333]/40 hover:bg-[#333]/5",
-      microsoft: "border-[#00A4EF]/20 hover:border-[#00A4EF]/40 hover:bg-[#00A4EF]/5",
-      apple: "border-white/10 hover:border-white/20 hover:bg-white/5",
-      discord: "border-[#5865F2]/20 hover:border-[#5865F2]/40 hover:bg-[#5865F2]/5",
-      linkedin: "border-[#0A66C2]/20 hover:border-[#0A66C2]/40 hover:bg-[#0A66C2]/5",
+    const styles: Record<string, string> = {
+      google: "hover:bg-white/5",
+      microsoft: "hover:bg-white/5",
     };
-    return styles[id];
-  };
-
-  const getProviderText = (id: AuthProvider) => {
-    const textStyles: Record<AuthProvider, string> = {
-      google: "text-[#4285F4]",
-      github: "text-white/80",
-      microsoft: "text-[#00A4EF]",
-      apple: "text-white/80",
-      discord: "text-[#5865F2]",
-      linkedin: "text-[#0A66C2]",
-    };
-    return textStyles[id];
+    return styles[id] ?? "";
   };
 
   return (
@@ -68,7 +48,7 @@ export function SocialLogin({ mode = "login" }: { mode?: "login" | "register" })
             key={id}
             onClick={() => handleProvider(id)}
             disabled={busy !== null}
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl border transition-all duration-200 text-sm font-medium
+            className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl border border-white/10 transition-all duration-200 text-sm font-medium
               bg-white/[0.02] backdrop-blur-sm
               ${getProviderStyle(id)}
               ${busy === id ? 'opacity-50 cursor-wait' : 'hover:-translate-y-0.5'}
@@ -80,11 +60,8 @@ export function SocialLogin({ mode = "login" }: { mode?: "login" | "register" })
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
             ) : (
-              <span className={`w-5 h-5 rounded grid place-items-center text-[10px] font-bold ${getProviderText(id)}`}>
-                {icon}
-              </span>
+              <span className="text-white/80">{label}</span>
             )}
-            <span className={getProviderText(id)}>{label}</span>
           </button>
         ))}
       </div>

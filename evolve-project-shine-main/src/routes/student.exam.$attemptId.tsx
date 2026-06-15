@@ -371,7 +371,7 @@ function ExamRunner() {
         <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 max-w-md text-center">
           <AlertTriangle className="w-10 h-10 mx-auto text-amber-300 mb-3" />
           <p className="text-red-300 mb-4">{error}</p>
-          <Link to="/auth/student" className="text-cyan-300 hover:underline">← Wróć do logowania</Link>
+          <Link to="/auth/student" className="text-accent hover:underline">← Wróć do logowania</Link>
         </div>
       </div>
     );
@@ -404,7 +404,7 @@ function ExamRunner() {
       <div className="min-h-screen bg-aurora text-white flex items-center justify-center p-6">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
           <p className="mb-4">Ten egzamin nie ma jeszcze pytań.</p>
-          <Link to="/" className="text-cyan-300 hover:underline">← Wróć</Link>
+          <Link to="/" className="text-accent hover:underline">← Wróć</Link>
         </div>
       </div>
     );
@@ -433,8 +433,8 @@ function ExamRunner() {
               <rect x="160" y="30" width="80" height="8" rx="2" />
             </svg>
           </div>
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
-            <MonitorUp className="w-8 h-8 text-cyan-300" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-accent/15 border border-accent/30 flex items-center justify-center">
+            <MonitorUp className="w-8 h-8 text-accent" />
           </div>
           <h1 className="text-2xl font-display font-bold mb-2">Udostępnij ekran, aby rozpocząć</h1>
           <p className="text-white/60 mb-6 text-sm leading-relaxed">
@@ -520,7 +520,7 @@ function ExamRunner() {
               {flaggedCount > 0 && <><span>·</span><span className="text-amber-300">⚑ {flaggedCount} do przeglądu</span></>}
               {savedAt && <><span>·</span><span className="text-emerald-300 inline-flex items-center gap-1"><Save className="w-3 h-3"/>zapisano</span></>}
               <span>·</span>
-              <span className="text-cyan-300">{framesSent} klatek</span>
+              <span className="text-accent">{framesSent} klatek</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -532,7 +532,7 @@ function ExamRunner() {
                 <Maximize className="w-3.5 h-3.5"/> Pełny ekran
               </button>
             )}
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-sm border ${lowTime ? "bg-red-500/15 text-red-200 border-red-400/30 animate-pulse" : "bg-white/5 text-cyan-200 border-white/10"}`}>
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-mono text-sm border ${lowTime ? "bg-red-500/15 text-red-200 border-red-400/30 animate-pulse" : "bg-white/5 text-accent border-white/10"}`}>
               <Clock className="w-4 h-4"/> {mmss}
             </div>
             <button
@@ -540,14 +540,14 @@ function ExamRunner() {
                 setShowReview(true);
               }}
               disabled={submitting}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-500 hover:brightness-110 text-slate-900 text-sm font-semibold disabled:opacity-50 transition"
+              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 text-sm font-semibold disabled:opacity-50 transition"
             >
               <ListChecks className="w-4 h-4"/>Przejrzyj i wyślij
             </button>
           </div>
         </div>
         <div className="h-1 bg-white/5">
-          <div className="h-full bg-gradient-to-r from-cyan-400 via-violet-500 to-emerald-400 transition-all" style={{ width: `${(answered/questions.length)*100}%` }}/>
+          <div className="h-full bg-gradient-to-r from-accent to-blue-500 transition-all" style={{ width: `${(answered/questions.length)*100}%` }}/>
         </div>
       </div>
 
@@ -557,7 +557,7 @@ function ExamRunner() {
           <div key={q.id} className="animate-fadeIn bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-6 md:p-8">
             <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-cyan-300 font-mono px-2 py-1 rounded-md bg-cyan-500/10 border border-cyan-400/20">
+                <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-accent font-mono px-2 py-1 rounded-md bg-accent/10 border border-accent/20">
                   {typeIcon(q.question_type)}{labelForType(q.question_type)}
                 </span>
                 <span className="text-[10px] uppercase tracking-widest text-amber-300 font-mono">{q.points} pkt</span>
@@ -594,14 +594,14 @@ function ExamRunner() {
               {idx+1}/{questions.length} · {answered} odp. {flaggedCount > 0 && `· ${flaggedCount}⚑`}
             </div>
             {idx < questions.length-1 ? (
-              <button onClick={() => goToQuestion(Math.min(questions.length-1, idx+1))} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 hover:brightness-110 text-white font-semibold text-sm transition">
+              <button onClick={() => goToQuestion(Math.min(questions.length-1, idx+1))} className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-white font-semibold text-sm transition">
                 Następne<ChevronRight className="w-4 h-4"/>
               </button>
             ) : (
               <button
                 onClick={() => setShowReview(true)}
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition"
               >
                 <ListChecks className="w-4 h-4"/>Przejrzyj i wyślij
               </button>
@@ -625,7 +625,7 @@ function ExamRunner() {
                 return (
                   <button key={qq.id} onClick={() => goToQuestion(i)} title={`Pytanie ${i+1}${isFlagged ? " (oznaczone)" : ""}`}
                     className={`relative w-9 h-9 rounded-md text-xs font-mono border transition-all ${
-                      isCurrent ? "bg-cyan-500 text-slate-900 border-cyan-300 ring-2 ring-cyan-300/50 scale-110"
+                      isCurrent ? "bg-cyan-500 text-slate-900 border-accent ring-2 ring-accent/50 scale-110"
                       : isAns ? "bg-emerald-500/20 text-emerald-200 border-emerald-400/30 hover:bg-emerald-500/30"
                       : "bg-white/5 text-white/50 border-white/10 hover:border-white/30"
                     }`}>
@@ -647,7 +647,7 @@ function ExamRunner() {
           {session && (
             <div className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4">
               <h3 className="text-xs uppercase tracking-widest text-white/60 font-semibold mb-2 flex items-center gap-1.5">
-                <Clock className="w-3 h-3 text-cyan-300"/>Czas
+                <Clock className="w-3 h-3 text-accent"/>Czas
               </h3>
               <TimerBreakdown total={session.duration_minutes * 60} left={secondsLeft} />
             </div>
@@ -668,7 +668,7 @@ function ExamRunner() {
             ) : (
               <p className="text-[11px] text-white/40 text-center py-4">Podgląd ukryty</p>
             )}
-            <p className="text-[10px] text-white/40 mt-2">Klatka co 10 s · wysłano: <span className="text-cyan-300 font-mono">{framesSent}</span></p>
+            <p className="text-[10px] text-white/40 mt-2">Klatka co 10 s · wysłano: <span className="text-accent font-mono">{framesSent}</span></p>
           </div>
 
           {/* Quick status */}
@@ -703,7 +703,7 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
           {/* Header */}
           <div className="flex items-start justify-between mb-8">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center shadow-lg shadow-cyan-500/20">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center shadow-lg shadow-accent/20">
                 <FileText className="w-7 h-7 text-slate-900" />
               </div>
               <div>
@@ -717,12 +717,12 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
 
           {/* Student info */}
           <div className="flex flex-wrap gap-3 mb-8">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-400/20 text-sm">
-              <UserIcon className="w-4 h-4 text-cyan-300" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 text-sm">
+              <UserIcon className="w-4 h-4 text-accent" />
               <span className="text-white/90">{session.student_name}</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-500/10 border border-violet-400/20 text-sm">
-              <Clock className="w-4 h-4 text-violet-300" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-accent/10 border border-accent/20 text-sm">
+              <Clock className="w-4 h-4 text-accent" />
               <span className="text-white/90">{session.duration_minutes} min</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-400/20 text-sm">
@@ -734,7 +734,7 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
           {/* Info cards */}
           <div className="grid sm:grid-cols-2 gap-4 mb-8">
             <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-              <h3 className="text-xs uppercase tracking-widest text-cyan-300 font-semibold mb-3 flex items-center gap-1.5">
+              <h3 className="text-xs uppercase tracking-widest text-accent font-semibold mb-3 flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5" />Rodzaje pytań
               </h3>
               <div className="space-y-2">
@@ -764,7 +764,7 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
           </div>
 
           {/* Tips */}
-          <div className="mb-8 p-4 rounded-2xl bg-gradient-to-r from-cyan-500/5 via-violet-500/5 to-amber-500/5 border border-white/[0.06]">
+          <div className="mb-8 p-4 rounded-2xl bg-gradient-to-r from-accent/5 via-accent/5 to-accent/5 border border-white/[0.06]">
             <div className="flex items-start gap-3">
               <Lightbulb className="w-5 h-5 text-amber-300 mt-0.5 shrink-0" />
               <div>
@@ -779,7 +779,7 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
           </div>
 
           {/* CTA */}
-          <button onClick={onStart} className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-violet-500 to-amber-500 hover:brightness-110 text-slate-900 font-bold text-lg transition shadow-xl shadow-cyan-500/20">
+          <button onClick={onStart} className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-bold text-lg transition shadow-xl shadow-accent/20">
             <Zap className="w-5 h-5" />Rozpocznij egzamin
             <ArrowRight className="w-5 h-5" />
           </button>
@@ -805,11 +805,11 @@ function ReviewScreen({
     <div className="min-h-screen bg-aurora text-white p-4 md:p-6">
       <div className="max-w-4xl mx-auto animate-fadeIn">
         {/* Header */}
-        <div className="bg-gradient-to-br from-cyan-500/10 via-violet-500/5 to-amber-500/10 border border-white/10 rounded-3xl p-6 md:p-8 mb-6 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 border border-white/10 rounded-3xl p-6 md:p-8 mb-6 relative overflow-hidden">
           <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-cyan-400/10 blur-3xl" />
           <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/15 border border-cyan-400/30 text-cyan-300 text-[10px] font-mono tracking-wider mb-2">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-accent/15 border border-accent/30 text-accent text-[10px] font-mono tracking-wider mb-2">
                 <ClipboardCheck className="w-3 h-3" />PRZEGLĄD
               </div>
               <h1 className="text-2xl font-display font-bold">{session.exam_title}</h1>
@@ -824,7 +824,7 @@ function ReviewScreen({
                   if (await confirmDialog({ title: "Potwierdź wysłanie", description: unanswered.length > 0 ? `${unanswered.length} pytań bez odpowiedzi. Wysłać mimo to?` : "Wysłać egzamin?" })) onSubmit();
                 }}
                 disabled={submitting}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {submitting ? "Wysyłanie..." : "Potwierdź i wyślij"}
@@ -848,7 +848,7 @@ function ReviewScreen({
             <span>{Math.round((answered/questions.length)*100)}%</span>
           </div>
           <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-violet-400 transition-all" style={{ width: `${(answered/questions.length)*100}%` }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-accent to-blue-500 transition-all" style={{ width: `${(answered/questions.length)*100}%` }} />
           </div>
         </div>
 
@@ -864,7 +864,7 @@ function ReviewScreen({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-xs font-mono text-cyan-300">#{i+1}</span>
+                            <span className="text-xs font-mono text-accent">#{i+1}</span>
                       <span className="inline-flex items-center gap-1 text-[10px] text-white/50 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
                         {typeIcon(q.question_type)}{labelForType(q.question_type)}
                       </span>
@@ -898,7 +898,7 @@ function ReviewScreen({
               if (await confirmDialog({ title: "Potwierdź wysłanie", description: unanswered.length > 0 ? `${unanswered.length} pytań bez odpowiedzi. Wysłać mimo to?` : "Wysłać egzamin?" })) onSubmit();
             }}
             disabled={submitting}
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition shadow-lg shadow-emerald-500/20"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm disabled:opacity-50 transition shadow-lg shadow-accent/20"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {submitting ? "Wysyłanie..." : "Potwierdź i wyślij egzamin"}
@@ -932,7 +932,7 @@ function ResultsScreen({
         <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-white/[0.01] backdrop-blur p-8 text-center mb-6">
           {/* Decorative glow */}
           <div className={`absolute -top-20 -right-20 w-48 h-48 rounded-full bg-gradient-to-br ${gradeColor} opacity-20 blur-3xl`} />
-          <div className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 opacity-10 blur-3xl" />
+          <div className="absolute -bottom-20 -left-20 w-48 h-48 rounded-full bg-gradient-to-br from-accent to-blue-500 opacity-10 blur-3xl" />
 
           <div className="relative">
             <div className={`w-20 h-20 mx-auto mb-4 rounded-3xl bg-gradient-to-br ${gradeColor} grid place-items-center shadow-xl`}>
@@ -993,7 +993,7 @@ function ResultsScreen({
                   />
                   <div className="text-left flex-1">
                     <p className="text-xs text-white/50 mb-1">Nr seryjny</p>
-                    <p className="text-sm font-mono text-cyan-200">{certSerial}</p>
+                    <p className="text-sm font-mono text-accent">{certSerial}</p>
                     <p className="text-[10px] text-white/40 mt-1">Zweryfikuj online lub pobierz PDF</p>
                     <div className="flex gap-2 mt-2">
                       <button
@@ -1030,7 +1030,7 @@ function ResultsScreen({
               className="w-full flex items-center justify-between p-4 hover:bg-white/[0.02] transition"
             >
               <span className="flex items-center gap-2 text-sm font-semibold">
-                <ListChecks className="w-4 h-4 text-cyan-300" />
+                <ListChecks className="w-4 h-4 text-accent" />
                 Szczegółowe wyniki
               </span>
               <ChevronRight className={`w-4 h-4 text-white/40 transition ${showDetails ? "rotate-90" : ""}`} />
@@ -1055,7 +1055,7 @@ function ResultsScreen({
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-mono text-cyan-300">#{i+1}</span>
+                      <span className="text-xs font-mono text-accent">#{i+1}</span>
                             <span className="text-[10px] text-white/50 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
                               {labelForType(q.question_type)}
                             </span>

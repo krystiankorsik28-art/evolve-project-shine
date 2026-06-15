@@ -245,7 +245,7 @@ function Documents() {
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 py-12">
         {/* Back link */}
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-cyan-300 transition mb-8">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-accent transition mb-8">
           <ArrowLeft className="w-4 h-4"/> Powrót do strony głównej
         </Link>
 
@@ -256,7 +256,7 @@ function Documents() {
             const isActive = doc === key;
             return (
               <button key={key} onClick={() => setDoc(key)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? "bg-gradient-to-r from-cyan-400 to-violet-500 text-black shadow-lg" : "bg-white/[0.04] border border-white/10 text-white/60 hover:text-white hover:bg-white/[0.08]"}`}>
+                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? "bg-gradient-to-r from-accent to-blue-500 text-black shadow-lg" : "bg-white/[0.04] border border-white/10 text-white/60 hover:text-white hover:bg-white/[0.08]"}`}>
                 <DIcon className="w-4 h-4"/>{d.title}
               </button>
             );
@@ -266,7 +266,7 @@ function Documents() {
         {/* Document content */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-8">
           <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
               <Icon className="w-6 h-6 text-black" />
             </div>
             <div>
@@ -294,7 +294,7 @@ function Documents() {
 
         {/* Footer note */}
         <div className="mt-8 text-center text-xs text-white/30">
-          <p>W razie pytań dotyczących dokumentów prawnych skontaktuj się z nami: <a href="mailto:kontakt@edunex.pl" className="text-cyan-300 hover:underline">kontakt@edunex.pl</a></p>
+          <p>W razie pytań dotyczących dokumentów prawnych skontaktuj się z nami: <a href="mailto:kontakt@edunex.pl" className="text-accent hover:underline">kontakt@edunex.pl</a></p>
           <p className="mt-1">EduNex Sp. z o.o. · ul. Świętokrzyska 14, 00-050 Warszawa</p>
         </div>
       </div>

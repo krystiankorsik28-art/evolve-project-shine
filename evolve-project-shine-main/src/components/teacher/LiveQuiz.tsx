@@ -43,7 +43,7 @@ export function LiveQuiz() {
        sessions.length === 0 ? <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-white/40 text-sm">Brak sesji</div> :
        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
          {sessions.map(s => (
-           <div key={s.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-cyan-400/30">
+           <div key={s.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 hover:border-accent/30">
              <div className="flex items-start justify-between">
                <Radio className={`w-8 h-8 ${s.status==="active"?"text-emerald-400 animate-pulse":"text-cyan-300"}`}/>
                <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${s.status==="active"?"bg-emerald-500/15 text-emerald-300":s.status==="ended"?"bg-white/5 text-white/40":"bg-amber-500/15 text-amber-300"}`}>{s.status.toUpperCase()}</span>
@@ -138,11 +138,11 @@ function NewSession({ onClose }: { onClose: () => void }) {
         </label>
         <label className="rounded-lg border border-white/10 bg-white/[0.03] p-2.5 flex flex-col">
           <div className="text-[10px] uppercase tracking-wider text-white/50 font-mono flex items-center gap-1"><Shuffle className="w-3 h-3"/>Losuj kolejność</div>
-          <button type="button" onClick={()=>setShuffleQ(v=>!v)} className={`mt-2 px-3 py-1.5 rounded-md text-xs font-semibold ${shuffleQ?"bg-violet-500/20 text-violet-300 border border-violet-400/30":"bg-white/5 text-white/50 border border-white/10"}`}>{shuffleQ?"WŁ.":"WYŁ."}</button>
+          <button type="button" onClick={()=>setShuffleQ(v=>!v)} className={`mt-2 px-3 py-1.5 rounded-md text-xs font-semibold ${shuffleQ?"bg-violet-500/20 text-violet-300 border border-accent/30":"bg-white/5 text-white/50 border border-white/10"}`}>{shuffleQ?"WŁ.":"WYŁ."}</button>
         </label>
       </div>
 
-      <div className="rounded-xl border border-violet-400/30 bg-gradient-to-r from-violet-500/10 to-cyan-500/10 p-3 mb-3">
+      <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-accent/10 p-3 mb-3">
         <div className="flex items-center gap-2 mb-2"><Sparkles className="w-4 h-4 text-violet-300"/><span className="text-sm font-semibold text-white">Generuj pytania AI</span></div>
         <div className="flex flex-wrap gap-2">
           <input value={aiTopic} onChange={(e)=>setAiTopic(e.target.value)} placeholder="Temat quizu, np. Pierwiastki chemiczne" className={inputCls + " flex-1 min-w-[200px]"}/>
@@ -176,7 +176,7 @@ function NewSession({ onClose }: { onClose: () => void }) {
             </div>
           </div>
         ))}
-        <button onClick={()=>setQuestions([...questions, { prompt:"", options:["","","",""], correct:0, time_sec: timePerQuestion }])} className="w-full py-2 rounded-lg border border-dashed border-white/15 text-white/50 hover:text-white hover:border-cyan-400/30 text-sm">+ Dodaj pytanie</button>
+        <button onClick={()=>setQuestions([...questions, { prompt:"", options:["","","",""], correct:0, time_sec: timePerQuestion }])} className="w-full py-2 rounded-lg border border-dashed border-white/15 text-white/50 hover:text-white hover:border-accent/30 text-sm">+ Dodaj pytanie</button>
       </div>
       <div className="flex justify-end gap-2 pt-3">
         <button onClick={onClose} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm">Anuluj</button>
@@ -246,7 +246,7 @@ function SessionView({ s, onClose }: { s: Session; onClose: () => void }) {
 
   return (
     <Modal title={session.title} onClose={onClose} wide>
-      <div className="flex items-center justify-between flex-wrap gap-3 p-4 rounded-xl bg-gradient-to-r from-cyan-500/10 to-violet-500/10 border border-white/10 mb-4">
+      <div className="flex items-center justify-between flex-wrap gap-3 p-4 rounded-xl bg-gradient-to-r from-accent/10 to-accent/10 border border-white/10 mb-4">
         <div>
           <div className="text-xs text-white/50 font-mono">PIN DO DOŁĄCZENIA</div>
           <div className="flex items-center gap-2">
@@ -267,7 +267,7 @@ function SessionView({ s, onClose }: { s: Session; onClose: () => void }) {
       </div>
 
       {currentQ && session.status === "active" && (
-        <div className="rounded-xl border border-cyan-400/30 bg-cyan-500/5 p-4 mb-4">
+        <div className="rounded-xl border border-accent/30 bg-cyan-500/5 p-4 mb-4">
           <div className="flex items-center justify-between mb-2">
             <div className="text-xs font-mono text-cyan-300">PYTANIE {session.current_question_index+1}/{qs.length}</div>
             <div className="flex items-center gap-3">
@@ -276,7 +276,7 @@ function SessionView({ s, onClose }: { s: Session; onClose: () => void }) {
             </div>
           </div>
           <div className="h-1.5 rounded-full bg-white/5 overflow-hidden mb-3">
-            <div className={`h-full transition-all ${remaining < 5 ? "bg-gradient-to-r from-rose-500 to-pink-500" : "bg-gradient-to-r from-cyan-400 to-violet-500"}`} style={{ width: `${100 - pctTime}%` }}/>
+            <div className={`h-full transition-all ${remaining < 5 ? "bg-gradient-to-r from-accent to-blue-500" : "bg-gradient-to-r from-accent to-blue-500"}`} style={{ width: `${100 - pctTime}%` }}/>
           </div>
           <div className="text-lg text-white font-semibold mb-3">{currentQ.prompt}</div>
           <div className="space-y-1.5">
@@ -299,7 +299,7 @@ function SessionView({ s, onClose }: { s: Session; onClose: () => void }) {
       )}
 
       {session.status === "ended" && participants.length > 0 && (
-        <div className="rounded-xl border border-amber-400/30 bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-4 mb-4">
+        <div className="rounded-xl border border-accent/30 bg-gradient-to-r from-accent/10 to-accent/10 p-4 mb-4">
           <h3 className="font-display font-bold text-amber-300 mb-3 inline-flex items-center gap-2"><Medal className="w-5 h-5"/>Podium</h3>
           <div className="grid grid-cols-3 gap-2">
             {participants.slice(0,3).map((p, i) => (

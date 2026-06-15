@@ -125,9 +125,9 @@ export function EDziennik() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-cyan-500/10 via-violet-500/5 to-blue-500/10 p-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+      <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-accent/10 to-accent/10 p-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 grid place-items-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
             <Globe className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -190,7 +190,7 @@ export function EDziennik() {
           {/* Presets */}
           <div className="flex flex-wrap gap-1.5">
             {PRESETS.map((p) => (
-              <button key={p.name} onClick={() => navigate(p.url)} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${rawUrl.startsWith(p.url) ? "bg-cyan-500/20 text-cyan-300 border border-cyan-400/30" : "bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] border border-white/10"}`}>
+              <button key={p.name} onClick={() => navigate(p.url)} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${rawUrl.startsWith(p.url) ? "bg-cyan-500/20 text-cyan-300 border border-accent/30" : "bg-white/[0.04] text-white/60 hover:text-white hover:bg-white/[0.08] border border-white/10"}`}>
                 <span className={`w-2 h-2 rounded-full ${p.color}`} />{p.name}
               </button>
             ))}

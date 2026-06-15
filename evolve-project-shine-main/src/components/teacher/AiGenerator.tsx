@@ -108,7 +108,7 @@ export function AiGenerator({ onClose, onAccept }: { onClose: () => void; onAcce
               const Icon = m.icon;
               const active = mode === m.id;
               return (
-                <button key={m.id} onClick={() => setMode(m.id as typeof mode)} className={`flex-1 p-3 rounded-xl border text-sm inline-flex items-center justify-center gap-2 ${active ? "border-cyan-400/50 bg-cyan-500/10 text-cyan-200" : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20"}`}>
+                <button key={m.id} onClick={() => setMode(m.id as typeof mode)} className={`flex-1 p-3 rounded-xl border text-sm inline-flex items-center justify-center gap-2 ${active ? "border-accent/50 bg-cyan-500/10 text-cyan-200" : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20"}`}>
                   <Icon className="w-4 h-4" />{m.label}
                 </button>
               );
@@ -160,7 +160,7 @@ export function AiGenerator({ onClose, onAccept }: { onClose: () => void; onAcce
                   {ALL_TYPES.map((t) => {
                     const on = types.includes(t);
                     return (
-                      <button key={t} onClick={() => toggleType(t)} className={`text-xs px-3 py-1.5 rounded-full border ${on ? "border-cyan-400/50 bg-cyan-500/15 text-cyan-200" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                      <button key={t} onClick={() => toggleType(t)} className={`text-xs px-3 py-1.5 rounded-full border ${on ? "border-accent/50 bg-cyan-500/15 text-cyan-200" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
                         {TYPE_LABELS[t]}
                       </button>
                     );
@@ -172,7 +172,7 @@ export function AiGenerator({ onClose, onAccept }: { onClose: () => void; onAcce
 
           <div className="flex justify-end gap-2 pt-2">
             <button onClick={onClose} className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 text-sm">Anuluj</button>
-            <button disabled={busy} onClick={generate} className="px-4 py-2 rounded-lg bg-gradient-to-r from-violet-500 to-cyan-500 hover:from-violet-400 hover:to-cyan-400 text-white font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50">
+            <button disabled={busy} onClick={generate} className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white font-semibold text-sm inline-flex items-center gap-2 disabled:opacity-50">
               {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}{busy ? "Generuję..." : "Generuj"}
             </button>
           </div>
@@ -188,7 +188,7 @@ export function AiGenerator({ onClose, onAccept }: { onClose: () => void; onAcce
           </div>
           <div className="space-y-2 max-h-[400px] overflow-auto">
             {generated.map((g, i) => (
-              <div key={i} className={`rounded-lg border p-3 ${picked[i] ? "border-cyan-400/40 bg-cyan-500/5" : "border-white/10 bg-white/[0.02]"}`}>
+              <div key={i} className={`rounded-lg border p-3 ${picked[i] ? "border-accent/40 bg-cyan-500/5" : "border-white/10 bg-white/[0.02]"}`}>
                 <div className="flex items-start gap-3">
                   <button onClick={() => setPicked({ ...picked, [i]: !picked[i] })} className={`mt-0.5 w-5 h-5 rounded grid place-items-center ${picked[i] ? "bg-cyan-500 text-slate-900" : "bg-white/10 text-transparent"}`}>
                     {picked[i] ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}

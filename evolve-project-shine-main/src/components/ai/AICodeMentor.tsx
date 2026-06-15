@@ -94,7 +94,7 @@ export function AICodeMentor() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 grid place-items-center">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
             <Code2 className="w-5 h-5 text-black" />
           </div>
           <div>
@@ -165,7 +165,7 @@ export function AICodeMentor() {
           {showAi && (
             <div className="card-premium rounded-2xl p-4 border-accent/10" style={{ animation: "fadeUp 0.3s ease-out" }}>
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent to-violet-500 grid place-items-center">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
                   <Sparkles className="w-3 h-3 text-black" />
                 </div>
                 <span className="text-xs font-medium text-white/80">AI Mentor</span>

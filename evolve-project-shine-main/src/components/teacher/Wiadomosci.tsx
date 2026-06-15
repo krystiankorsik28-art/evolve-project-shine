@@ -90,7 +90,7 @@ export function Wiadomosci() {
           <div className="flex-1 overflow-y-auto">
             {filtered.length === 0 ? <div className="p-6 text-center text-xs text-white/30">Brak osób</div> : filtered.map((p) => (
               <button key={p.user_id} onClick={() => loadConversation(p)} className={`w-full text-left px-3 py-2.5 flex items-center gap-3 hover:bg-white/5 transition border-l-2 ${active?.user_id === p.user_id ? "bg-white/5 border-cyan-400" : "border-transparent"}`}>
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center text-slate-900 font-bold text-sm shrink-0">{nameOf(p)[0]?.toUpperCase()}</div>
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm shrink-0">{nameOf(p)[0]?.toUpperCase()}</div>
                 <div className="min-w-0 flex-1">
                   <div className="text-sm text-white/90 truncate">{nameOf(p)}</div>
                 </div>
@@ -107,7 +107,7 @@ export function Wiadomosci() {
           ) : (
             <>
               <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 grid place-items-center text-slate-900 font-bold text-sm">{nameOf(active)[0]?.toUpperCase()}</div>
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm">{nameOf(active)[0]?.toUpperCase()}</div>
                 <div><div className="font-medium text-white">{nameOf(active)}</div></div>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -115,7 +115,7 @@ export function Wiadomosci() {
                   const mine = m.sender_id === me;
                   return (
                     <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm ${mine ? "bg-gradient-to-br from-cyan-500/30 to-violet-500/30 text-white rounded-br-sm" : "bg-white/5 text-white/90 rounded-bl-sm"}`}>
+                      <div className={`max-w-[75%] px-3.5 py-2 rounded-2xl text-sm ${mine ? "bg-gradient-to-br from-accent/30 to-accent/20 text-white rounded-br-sm" : "bg-white/5 text-white/90 rounded-bl-sm"}`}>
                         <div className="whitespace-pre-wrap">{m.body}</div>
                         <div className="text-[9px] text-white/40 mt-0.5 font-mono">{new Date(m.created_at).toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}</div>
                       </div>
@@ -126,7 +126,7 @@ export function Wiadomosci() {
               </div>
               <div className="p-3 border-t border-white/5 flex gap-2">
                 <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void send(); } }} placeholder="Napisz wiadomość..." className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-white/30 outline-none focus:border-cyan-400/40"/>
-                <button onClick={send} disabled={!text.trim()} className="px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-violet-500 text-slate-900 font-semibold disabled:opacity-30 inline-flex items-center gap-2"><Send className="w-4 h-4"/></button>
+                <button onClick={send} disabled={!text.trim()} className="px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold disabled:opacity-30 inline-flex items-center gap-2"><Send className="w-4 h-4"/></button>
               </div>
             </>
           )}

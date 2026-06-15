@@ -58,7 +58,7 @@ function VerifyPage() {
   if (status === "loading") {
     return (
       <div className="min-h-screen bg-[#05080f] text-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
       </div>
     );
   }
@@ -121,7 +121,7 @@ function VerifyPage() {
                 <div className="text-[10px] text-white/50">Wynik</div>
               </div>
               <div className="rounded-xl bg-white/[0.02] border border-white/10 p-3">
-                <Award className="w-4 h-4 mx-auto mb-1 text-cyan-300" />
+                <Award className="w-4 h-4 mx-auto mb-1 text-accent" />
                 <div className="text-lg font-bold">{cert?.percent}%</div>
                 <div className="text-[10px] text-white/50">Procent</div>
               </div>
@@ -146,7 +146,7 @@ function VerifyPage() {
             {/* Serial + QR */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6 p-4 rounded-2xl bg-white/[0.02] border border-white/10">
               <div className="text-center">
-                <p className="text-[10px] uppercase tracking-widest text-cyan-300 font-mono mb-2">Kod QR</p>
+                <p className="text-[10px] uppercase tracking-widest text-accent font-mono mb-2">Kod QR</p>
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(getVerifyUrl(serial))}`}
                   alt="QR Code"
@@ -156,8 +156,8 @@ function VerifyPage() {
                 />
               </div>
               <div className="text-center">
-                <p className="text-[10px] uppercase tracking-widest text-cyan-300 font-mono mb-2">Nr seryjny</p>
-                <p className="text-sm font-mono text-cyan-200 bg-white/[0.03] px-3 py-2 rounded-lg border border-white/10">{serial}</p>
+                <p className="text-[10px] uppercase tracking-widest text-accent font-mono mb-2">Nr seryjny</p>
+                <p className="text-sm font-mono text-accent bg-white/[0.03] px-3 py-2 rounded-lg border border-white/10">{serial}</p>
               </div>
             </div>
           </div>
@@ -167,7 +167,7 @@ function VerifyPage() {
         <div className="text-center mt-6 text-xs text-white/30">
           <GraduationCap className="w-4 h-4 mx-auto mb-1 opacity-50" />
           <p>EduNex — platforma egzaminacyjna</p>
-          <Link to="/" className="inline-flex items-center gap-1 text-cyan-300 hover:text-cyan-200 mt-2 transition">
+          <Link to="/" className="inline-flex items-center gap-1 text-accent hover:text-accent mt-2 transition">
             Strona główna <ExternalLink className="w-3 h-3" />
           </Link>
         </div>

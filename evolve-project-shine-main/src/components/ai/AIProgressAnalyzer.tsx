@@ -76,7 +76,7 @@ export function AIProgressAnalyzer() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-cyan-500 grid place-items-center">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
           <BarChart3 className="w-5 h-5 text-black" />
         </div>
         <div>
@@ -99,7 +99,7 @@ export function AIProgressAnalyzer() {
           <button key={s.id} onClick={() => analyzeStudent(s)}
             className={`card-premium rounded-2xl p-4 text-left transition-all hover:scale-[1.02] ${selectedStudent?.id === s.id ? 'border-accent/20 ring-1 ring-accent/20' : ''}`}>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-violet-500 grid place-items-center text-[10px] font-bold text-black shrink-0">{s.avatar}</div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-[10px] font-bold text-black shrink-0">{s.avatar}</div>
               <div className="min-w-0">
                 <div className="text-sm font-semibold text-white truncate">{s.name}</div>
                 <div className="text-[10px] text-white/30">Klasa {s.group} · {s.subject}</div>

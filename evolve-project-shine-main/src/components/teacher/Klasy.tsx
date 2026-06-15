@@ -9,12 +9,12 @@ type Cls = { id: string; name: string; year: string; color: string; created_at: 
 type Student = { id: string; student_name: string | null; student_user_id: string | null; created_at: string };
 
 const COLORS = [
-  "from-cyan-500 to-blue-600",
-  "from-violet-500 to-fuchsia-600",
-  "from-emerald-500 to-teal-600",
-  "from-amber-500 to-orange-600",
-  "from-pink-500 to-rose-600",
-  "from-indigo-500 to-purple-600",
+  "from-accent to-blue-500",
+  "from-accent to-blue-500",
+  "from-accent to-blue-500",
+  "from-accent to-blue-500",
+  "from-accent to-blue-500",
+  "from-accent to-blue-500",
 ];
 
 export function Klasy() {
@@ -53,7 +53,7 @@ export function Klasy() {
        classes.length === 0 ? <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-white/40 text-sm">Brak klas</div> :
        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
          {classes.map(c => (
-           <div key={c.id} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-5 group hover:border-cyan-400/30 transition">
+           <div key={c.id} className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-5 group hover:border-accent/30 transition">
              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.color} grid place-items-center mb-3 shadow-lg`}><Users className="w-6 h-6 text-white"/></div>
              <div className="text-lg font-display font-bold text-white">{c.name}</div>
              <div className="text-xs text-white/40 font-mono">{c.year}</div>
