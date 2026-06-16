@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 const PROVIDERS: { id: AuthProvider; label: string; icon: string }[] = [
   { id: "google", label: "Google", icon: "G" },
+  { id: "apple", label: "Apple", icon: "A" },
   { id: "microsoft", label: "Microsoft", icon: "MS" },
 ];
 
