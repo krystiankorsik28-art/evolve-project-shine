@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Providers } from "./providers";
+import { MotionProvider as Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: "EduNex — AI-Powered Education Platform",

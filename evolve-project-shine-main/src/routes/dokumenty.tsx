@@ -236,55 +236,46 @@ function Documents() {
   const Icon = active.icon;
 
   return (
-    <div className="min-h-screen bg-[#070b17] text-slate-200 font-sans">
-      {/* Background */}
-      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-cyan-500/15 blur-[120px]"/>
-        <div className="absolute top-1/3 -right-32 w-[460px] h-[460px] rounded-full bg-violet-500/15 blur-[120px]"/>
-      </div>
-
-      <div className="relative z-10 max-w-5xl mx-auto px-4 py-12">
-        {/* Back link */}
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-accent transition mb-8">
-          <ArrowLeft className="w-4 h-4"/> Powrót do strony głównej
+    <div className="min-h-screen bg-[#0a0a12] text-white">
+      <div className="max-w-5xl mx-auto px-4 py-12">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition mb-8">
+          <ArrowLeft className="w-4 h-4"/> Back to home
         </Link>
 
-        {/* Document tabs */}
         <div className="flex flex-wrap gap-2 mb-10">
           {(Object.entries(DOCS) as [DocKey, typeof DOCS[DocKey]][]).map(([key, d]) => {
             const DIcon = d.icon;
             const isActive = doc === key;
             return (
               <button key={key} onClick={() => setDoc(key)}
-                className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive ? "bg-gradient-to-r from-accent to-blue-500 text-black shadow-lg" : "bg-white/[0.04] border border-white/10 text-white/60 hover:text-white hover:bg-white/[0.08]"}`}>
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${isActive ? "bg-cyan-400 text-[#0a0a12]" : "bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.08]"}`}>
                 <DIcon className="w-4 h-4"/>{d.title}
               </button>
             );
           })}
         </div>
 
-        {/* Document content */}
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-8">
-          <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center">
-              <Icon className="w-6 h-6 text-black" />
+        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8">
+          <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/[0.06]">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
+              <Icon className="w-5 h-5 text-[#0a0a12]" />
             </div>
             <div>
-              <h1 className="text-2xl font-display font-bold text-white">{active.title}</h1>
-              <p className="text-xs text-white/50 mt-0.5">EduNex.pl · Dokument prawny</p>
+              <h1 className="text-lg font-semibold text-white">{active.title}</h1>
+              <p className="text-xs text-white/40 mt-0.5">EduNex · Legal document</p>
             </div>
-            <div className="ml-auto hidden sm:flex items-center gap-2 text-[10px] text-white/40 font-mono">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Ostatnia aktualizacja: czerwiec 2026
+            <div className="ml-auto hidden sm:flex items-center gap-1.5 text-[10px] text-white/30 font-mono">
+              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Updated: June 2026
             </div>
           </div>
 
-          <div className="prose prose-invert max-w-none">
+          <div className="max-w-none">
             {active.content.map((line, i) => {
               if (!line.trim()) return <br key={i} />;
               const isHeading = line.startsWith("§") || line.startsWith("UMOWA") || line.startsWith("INFORMACJA") || line.startsWith("STATUS") || line.match(/^\d+\./);
               const isSub = line.startsWith("  ") || line.startsWith("   ");
               return (
-                <p key={i} className={`${isHeading ? "text-white font-semibold text-base mt-6 mb-2" : isSub ? "text-white/60 text-sm pl-4" : "text-white/70 text-sm leading-relaxed mb-2"}`}>
+                <p key={i} className={`${isHeading ? "text-white font-medium text-sm mt-6 mb-2" : isSub ? "text-white/50 text-sm pl-4" : "text-white/60 text-sm leading-relaxed mb-2"}`}>
                   {line}
                 </p>
               );
@@ -292,10 +283,9 @@ function Documents() {
           </div>
         </div>
 
-        {/* Footer note */}
         <div className="mt-8 text-center text-xs text-white/30">
-          <p>W razie pytań dotyczących dokumentów prawnych skontaktuj się z nami: <a href="mailto:kontakt@edunex.pl" className="text-accent hover:underline">kontakt@edunex.pl</a></p>
-          <p className="mt-1">EduNex Sp. z o.o. · ul. Świętokrzyska 14, 00-050 Warszawa</p>
+          <p>Questions? <a href="mailto:kontakt@edunex.pl" className="text-cyan-400/60 hover:text-cyan-400">kontakt@edunex.pl</a></p>
+          <p className="mt-1">EduNex · ul. Świętokrzyska 14, 00-050 Warszawa</p>
         </div>
       </div>
     </div>

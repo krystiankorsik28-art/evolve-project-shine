@@ -57,15 +57,15 @@ function VerifyPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen bg-[#05080f] text-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      <div className="min-h-screen bg-[#0a0a12] text-white flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
       </div>
     );
   }
 
   if (status === "invalid" || status === "error") {
     return (
-      <div className="min-h-screen bg-[#05080f] text-white flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#0a0a12] text-white flex items-center justify-center p-6">
         <div className="max-w-md w-full text-center animate-fadeIn">
           <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-red-500/15 border border-red-400/30 grid place-items-center">
             <ShieldX className="w-10 h-10 text-red-300" />
@@ -85,7 +85,7 @@ function VerifyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#05080f] text-white flex items-center justify-center p-4 md:p-6">
+    <div className="min-h-screen bg-[#0a0a12] text-white flex items-center justify-center p-4 md:p-6">
       <div className="max-w-lg w-full animate-fadeIn">
         {/* Verified badge */}
         <div className="text-center mb-6">

@@ -1,29 +1,34 @@
 "use client";
-import { NavBar } from "@/components/hero/NavBar";
-import { Hero } from "@/components/hero/Hero";
-import { BentoFeatures } from "@/components/features/BentoFeatures";
-import { AiDemo } from "@/components/ai/AiDemo";
-import { Testimonials } from "@/components/testimonials/Testimonials";
-import { Pricing } from "@/components/pricing/Pricing";
-import { FAQSection } from "@/components/faq/FAQ";
-import { CtaFooter } from "@/components/cta/CtaFooter";
-import { ScrollProgress } from "@/components/ui/ScrollProgress";
-import { useReducedMotion } from "framer-motion";
+import { NavBar } from "@/components/sections/NavBar";
+import { Hero } from "@/components/sections/Hero";
+import { ProblemSolution } from "@/components/sections/ProblemSolution";
+import { SocialProof } from "@/components/sections/SocialProof";
+import { AIFeatures } from "@/components/sections/AIFeatures";
+import { HowItWorks } from "@/components/sections/HowItWorks";
+import { Pricing } from "@/components/sections/Pricing";
+import { Security } from "@/components/sections/Security";
+import { Integrations } from "@/components/sections/Integrations";
+import { FAQSection } from "@/components/sections/FAQ";
+import { BlogPreview } from "@/components/sections/BlogPreview";
+import { FinalCTA } from "@/components/sections/FinalCTA";
+import { Footer } from "@/components/sections/Footer";
 
 export default function Home() {
-  useReducedMotion();
-
   return (
-    <main className="relative">
-      <ScrollProgress />
+    <main>
       <NavBar />
       <Hero />
-      <BentoFeatures />
-      <AiDemo />
-      <Testimonials />
+      <ProblemSolution />
+      <SocialProof />
+      <AIFeatures />
+      <HowItWorks />
       <Pricing />
+      <Security />
+      <Integrations />
       <FAQSection />
-      <CtaFooter />
+      <BlogPreview />
+      <FinalCTA />
+      <Footer />
     </main>
   );
 }

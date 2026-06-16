@@ -2,18 +2,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  LayoutDashboard, FileText, Sparkles, Library, Users, ClipboardList,
+  LayoutDashboard, FileText, Sparkles, Library, Users, ClipboardList, Bell,
   Calendar, Radio, Activity, BarChart3, Trophy, BookOpen, MessagesSquare,
-  Settings, LogOut, Bell, Search, Sun, Plus, Camera, Brain, Loader2,
+  Settings, LogOut, Search, Plus, Camera, Brain, Loader2,
   Image as ImageIcon, Wand2, ChevronRight, CalendarClock, Command,
   TrendingUp, TrendingDown, Zap, ArrowUpRight, CheckCircle2, Clock,
-  PanelLeftClose, PanelLeft, Rocket, ShieldCheck, Megaphone, MessageCircle, Database,
-  ScrollText, Award, ExternalLink, Globe, Code2, Presentation,
+  PanelLeftClose, PanelLeft, ShieldCheck, Megaphone, MessageCircle, Database,
+  ScrollText, Award, ExternalLink, Globe, Code2, Presentation, Moon, Sun,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { useTheme } from "@/lib/theme";
-import { Moon } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { Egzaminy } from "@/components/teacher/Egzaminy";
 import { BankPytan } from "@/components/teacher/BankPytan";
@@ -187,156 +186,45 @@ function TeacherPanel() {
   const currentNav = ALL_NAV.find((n) => n.k === tab);
 
   return (
-    <div className="min-h-screen bg-[#070b17] text-slate-200 font-sans relative">
-
-      {/* Background glow */}
-      <div className="pointer-events-none fixed inset-0 -z-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-[520px] h-[520px] rounded-full bg-cyan-500/15 blur-[120px]"/>
-        <div className="absolute top-1/3 -right-32 w-[460px] h-[460px] rounded-full bg-violet-500/15 blur-[120px]"/>
-        <div className="absolute bottom-0 left-1/3 w-[420px] h-[420px] rounded-full bg-rose-500/10 blur-[140px]"/>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/5 blur-[180px]"/>
-      </div>
+    <div className="min-h-screen bg-[#0a0a12] text-slate-200 flex">
 
       <Toaster theme={light ? "light" : "dark"} />
-      <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Topbar — full width across viewport */}
-        <div className="h-16 border-b border-white/[0.06] bg-gradient-to-r from-[#0a0f1f]/90 via-[#0c1328]/80 to-[#0a0f1f]/90 backdrop-blur-xl flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
-          <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="shrink-0 flex items-center gap-2">
-              <Logo size="sm" />
-            </div>
-            <div className="hidden md:block w-px h-8 bg-white/[0.06] mx-2"/>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.18em] text-white/35 uppercase">
-                <span>EduNex</span>
-                <ChevronRight className="w-3 h-3"/>
-                <span className="text-accent/70">{currentNav?.l ?? "Pulpit"}</span>
-              </div>
-              <h1 className="text-base lg:text-lg font-display font-bold text-white truncate">
-                {tab === "pulpit" ? `${greet}, ${displayName}!` : currentNav?.l}
-              </h1>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => { setSearchOpen(true); setNotifOpen(false); }}
-              className="hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-lg bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.06] text-xs text-white/50 transition"
-            >
-              <Search className="w-3.5 h-3.5"/>
-              <span>Szukaj sekcji…</span>
-              <span className="ml-3 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/60"><Command className="w-2.5 h-2.5"/>K</span>
-            </button>
-            <div className="hidden lg:flex items-center gap-1.5 px-2 py-1.5 rounded-md bg-white/5 border border-white/10">
-              <span className="inline-block w-2.5 h-3 rounded-sm bg-white" />
-              <span className="inline-block w-2.5 h-3 rounded-sm bg-red-500" />
-            </div>
-            <span className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[10px] tracking-[0.18em] font-mono text-emerald-300">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>SYSTEM ONLINE
-            </span>
-            <div className="relative" ref={notifRef}>
-              <button
-                onClick={() => { setNotifOpen((v) => !v); setSearchOpen(false); }}
-                className={`relative w-9 h-9 grid place-items-center rounded-lg hover:bg-white/[0.06] transition ${notifOpen ? "bg-white/10 text-white" : "text-white/55"}`}
-                aria-label="Powiadomienia"
-              >
-                <Bell className="w-4 h-4"/>
-                {notifications.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-pink-500 ring-2 ring-[#0a0f1f]"/>}
-              </button>
-              {notifOpen && (
-                <div className="absolute right-0 top-11 w-80 rounded-xl border border-white/10 bg-[#0b1224]/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
-                    <div className="text-sm font-semibold text-white">Powiadomienia</div>
-                    <span className="text-[10px] font-mono text-white/40">{notifications.length} nowych</span>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="px-4 py-8 text-center text-xs text-white/40">Brak powiadomień</div>
-                    ) : notifications.map((n) => (
-                      <button
-                        key={n.id}
-                        onClick={() => { setTab("egzaminy"); setNotifOpen(false); }}
-                        className="w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition"
-                      >
-                        <div className="text-sm text-white/90 truncate">{n.title}</div>
-                        <div className="flex items-center justify-between mt-1 text-[10px] text-white/40 font-mono">
-                          <span>{n.sub}</span><span>{n.when}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-            <button
-              onClick={() => { toggle(); toast.success(light ? "Tryb ciemny" : "Tryb jasny"); }}
-              className={`w-9 h-9 grid place-items-center rounded-lg hover:bg-white/[0.06] transition ${light ? "bg-amber-400/15 text-amber-300" : "text-white/55"}`}
-              aria-label="Przełącz motyw"
-            >
-              {light ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-1 min-h-0">
+      <div className="flex flex-1 min-h-screen">
         {/* Sidebar */}
-        <aside className={`${collapsed ? "w-[72px]" : "w-72"} transition-all duration-300 bg-gradient-to-b from-[#0a0f1f]/90 via-[#0c1328]/85 to-[#090e1c]/90 backdrop-blur-xl border-r border-white/[0.06] flex flex-col sticky top-16 h-[calc(100vh-4rem)]`}>
-          <div className="px-3 py-3 border-b border-white/[0.06] flex items-center justify-between gap-2">
-            {!collapsed && (
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="inline-block w-1 h-3 rounded-sm bg-gradient-to-b from-red-500 to-red-600" />
-                <span className="inline-block w-1 h-3 rounded-sm bg-white/90" />
-                <span className="text-[9px] tracking-[0.22em] text-white/55 font-mono ml-1 truncate">PAŃSTWOWA PLATFORMA</span>
-              </div>
-            )}
-            <button
-              onClick={() => setCollapsed((v) => !v)}
-              className="w-7 h-7 grid place-items-center rounded-md text-white/40 hover:text-white hover:bg-white/5 transition shrink-0 ml-auto"
-              aria-label="Zwiń menu"
+        <aside className={`${collapsed ? "w-[68px]" : "w-64"} transition-all duration-300 bg-[#0c0c16]/90 backdrop-blur-xl border-r border-white/[0.06] flex flex-col sticky top-0 h-screen`}>
+          <div className="h-14 flex items-center gap-2.5 px-4 border-b border-white/[0.06]">
+            <Logo size="sm" />
+            {!collapsed && <span className="text-sm font-semibold text-white">EduNex</span>}
+            <button onClick={() => setCollapsed((v) => !v)}
+              className="w-7 h-7 grid place-items-center rounded-md text-white/30 hover:text-white hover:bg-white/5 transition shrink-0 ml-auto"
             >
               {collapsed ? <PanelLeft className="w-4 h-4"/> : <PanelLeftClose className="w-4 h-4"/>}
             </button>
           </div>
 
-
-          {!collapsed && (
-            <div className="px-4 py-2.5 border-b border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"/>SYSTEM ONLINE
-              </span>
-              <span className="text-white/30">V3.3 · {now.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}</span>
-            </div>
-          )}
-
-          <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto scrollbar-thin">
+          <nav className="flex-1 px-2 py-4 space-y-4 overflow-y-auto scrollbar-thin">
             {NAV_GROUPS.map((group) => (
               <div key={group.label}>
                 {!collapsed && (
-                  <div className="px-2 pb-1.5 text-[10px] tracking-[0.22em] text-white/30 font-mono uppercase">{group.label}</div>
+                  <div className="px-3 pb-1 text-[10px] tracking-[0.15em] text-white/25 font-mono uppercase">{group.label}</div>
                 )}
                 <div className="space-y-0.5">
                   {group.items.map((n) => {
                     const active = tab === n.k;
                     return (
-                      <button
-                        key={n.k}
-                        onClick={() => setTab(n.k)}
-                        title={collapsed ? n.l : undefined}
-                        className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition relative ${
-                          active
-                            ? "bg-gradient-to-r from-accent/20 via-accent/10 to-accent/5 text-white border border-accent/20 shadow-[0_0_20px_-8px_rgba(34,211,238,0.15)]"
-                            : "text-white/55 hover:text-white hover:bg-white/[0.04] border border-transparent"
+                      <button key={n.k} onClick={() => setTab(n.k)} title={collapsed ? n.l : undefined}
+                        className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition relative ${
+                          active ? "bg-white/[0.08] text-white font-medium" : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
                         } ${collapsed ? "justify-center" : ""}`}
                       >
-                        {active && <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-1 h-7 rounded-r bg-gradient-to-b from-accent to-blue-500" />}
-                        <n.i className={`w-4 h-4 shrink-0 ${active ? "text-sky-300" : "group-hover:text-sky-200/80"}`} />
+                        {active && !collapsed && <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r bg-cyan-400" />}
+                        <n.i className={`w-4 h-4 shrink-0 ${active ? "text-cyan-300" : ""}`} />
                         {!collapsed && (
                           <>
                             <span className="flex-1 text-left truncate">{n.l}</span>
                             {n.badge && (
                               <span className={`text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded ${
-                                n.badge === "LIVE"
-                                  ? "bg-pink-500/20 text-pink-300 border border-pink-400/30"
-                                  : "bg-cyan-500/15 text-accent border border-cyan-400/25"
+                                n.badge === "LIVE" ? "bg-pink-500/20 text-pink-300" : "bg-cyan-500/15 text-cyan-300"
                               }`}>{n.badge}</span>
                             )}
                           </>
@@ -351,26 +239,83 @@ function TeacherPanel() {
 
           <div className="p-3 border-t border-white/[0.06] space-y-2">
             {!collapsed ? (
-              <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06]">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm shadow-lg shadow-accent/20">{userInitial}</div>
+              <div className="flex items-center gap-3 px-2 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06]">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 grid place-items-center text-[#0a0a12] font-bold text-sm">{userInitial}</div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[9px] tracking-[0.2em] text-accent font-mono">NAUCZYCIEL</div>
-                  <div className="text-xs text-white/80 truncate">{email || "nauczyciel@edunex.pl"}</div>
+                  <div className="text-[9px] tracking-[0.15em] text-cyan-400/60 font-mono">TEACHER</div>
+                  <div className="text-xs text-white/70 truncate">{email || "teacher@edunex.pl"}</div>
                 </div>
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0"/>
               </div>
             ) : (
-              <div className="w-9 h-9 mx-auto rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center text-slate-900 font-bold text-sm">{userInitial}</div>
+              <div className="w-8 h-8 mx-auto rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 grid place-items-center text-[#0a0a12] font-bold text-sm">{userInitial}</div>
             )}
-            <button onClick={logout} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/50 hover:text-white hover:bg-white/5 transition ${collapsed ? "justify-center" : ""}`} title="Wyloguj się">
-              <LogOut className="w-4 h-4"/> {!collapsed && "Wyloguj się"}
+            <button onClick={logout} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition ${collapsed ? "justify-center" : ""}`}>
+              <LogOut className="w-4 h-4"/> {!collapsed && "Sign out"}
             </button>
           </div>
         </aside>
 
         {/* Main */}
         <main className="flex-1 min-w-0 flex flex-col">
-
+          {/* Topbar */}
+          <div className="h-14 border-b border-white/[0.06] bg-[#0a0a12]/80 backdrop-blur-xl flex items-center justify-between px-4 lg:px-6 sticky top-0 z-40">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 text-[10px] font-mono tracking-[0.12em] text-white/30 uppercase">
+                  <span>EduNex</span>
+                  <ChevronRight className="w-3 h-3"/>
+                  <span className="text-cyan-400/60">{currentNav?.l ?? "Dashboard"}</span>
+                </div>
+                <h1 className="text-base font-medium text-white truncate">
+                  {tab === "pulpit" ? `${greet}, ${displayName}` : currentNav?.l}
+                </h1>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button onClick={() => { setSearchOpen(true); setNotifOpen(false); }}
+                className="hidden md:inline-flex items-center gap-2 h-9 pl-3 pr-2 rounded-lg bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.06] text-xs text-white/40 transition"
+              >
+                <Search className="w-3.5 h-3.5"/>
+                <span>Search sections…</span>
+                <span className="ml-3 inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/40"><Command className="w-2.5 h-2.5"/>K</span>
+              </button>
+              <div className="relative" ref={notifRef}>
+                <button onClick={() => { setNotifOpen((v) => !v); setSearchOpen(false); }}
+                  className={`relative w-9 h-9 grid place-items-center rounded-lg hover:bg-white/[0.06] transition ${notifOpen ? "bg-white/10 text-white" : "text-white/40"}`}
+                >
+                  <Bell className="w-4 h-4"/>
+                  {notifications.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-pink-500 ring-2 ring-[#0a0a12]"/>}
+                </button>
+                {notifOpen && (
+                  <div className="absolute right-0 top-11 w-80 rounded-xl border border-white/10 bg-[#0c0c16]/95 backdrop-blur-xl shadow-2xl z-50 overflow-hidden">
+                    <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
+                      <div className="text-sm font-medium text-white">Notifications</div>
+                      <span className="text-[10px] font-mono text-white/30">{notifications.length} new</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="px-4 py-8 text-center text-xs text-white/30">No notifications</div>
+                      ) : notifications.map((n) => (
+                        <button key={n.id} onClick={() => { setTab("egzaminy"); setNotifOpen(false); }}
+                          className="w-full text-left px-4 py-3 border-b border-white/5 hover:bg-white/5 transition"
+                        >
+                          <div className="text-sm text-white/80 truncate">{n.title}</div>
+                          <div className="flex items-center justify-between mt-1 text-[10px] text-white/30 font-mono">
+                            <span>{n.sub}</span><span>{n.when}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <button onClick={() => { toggle(); }}
+                className={`w-9 h-9 grid place-items-center rounded-lg hover:bg-white/[0.06] transition ${light ? "bg-amber-400/15 text-amber-300" : "text-white/40"}`}
+              >
+                {light ? <Sun className="w-4 h-4"/> : <Moon className="w-4 h-4"/>}
+              </button>
+            </div>
+          </div>
 
           {/* Command palette overlay */}
           {searchOpen && (
@@ -435,7 +380,6 @@ function TeacherPanel() {
         </main>
         </div>
       </div>
-    </div>
 
   );
 }

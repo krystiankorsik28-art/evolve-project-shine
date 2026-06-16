@@ -1,0 +1,53 @@
+"use client";
+import { motion } from "framer-motion";
+import { Shield, Lock, Server, Database, FileCheck, Activity } from "lucide-react";
+
+const features = [
+  { icon: Shield, title: "Enterprise Encryption", desc: "End-to-end encryption for all data in transit and at rest. AES-256 standard." },
+  { icon: Lock, title: "GDPR / RODO Compliant", desc: "Full compliance with European data protection regulations. Data stored in EU." },
+  { icon: Server, title: "EU-Based Servers", desc: "All data hosted on secure servers within the European Union. Zero data export." },
+  { icon: Database, title: "Automated Backups", desc: "Daily encrypted backups with 30-day retention. Point-in-time recovery available." },
+  { icon: FileCheck, title: "ISO 27001 Ready", desc: "Information security management aligned with ISO 27001 standards." },
+  { icon: Activity, title: "24/7 Monitoring", desc: "Real-time threat detection, DDoS protection, and automated incident response." },
+];
+
+export function Security() {
+  return (
+    <section className="relative py-24 sm:py-32 border-t border-white/[0.04]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+            Enterprise-Grade Security
+          </h2>
+          <p className="mt-3 text-sm text-white/40">Your data is protected by industry-leading security standards</p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {features.map((f, i) => (
+            <motion.div
+              key={f.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="flex gap-4 p-5 rounded-xl border border-white/[0.06] bg-white/[0.02]"
+            >
+              <div className="shrink-0 w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
+                <f.icon className="w-5 h-5 text-cyan-400" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-white/80">{f.title}</h3>
+                <p className="text-xs text-white/40 mt-1 leading-relaxed">{f.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

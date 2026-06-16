@@ -20,7 +20,8 @@
     "@supabase/supabase-js": "^2.106.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.5.0"
+    "tailwind-merge": "^3.5.0",
+    "@edunex/design-system": "file:../packages/design-system"
   },
   "devDependencies": {
     "@types/node": "^22.16.5",

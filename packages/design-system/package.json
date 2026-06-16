@@ -1,0 +1,34 @@
+{
+  "name": "@edunex/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tokens.css": "./src/tokens.css",
+    "./utils": "./src/utils.ts",
+    "./button": "./src/Button/Button.tsx",
+    "./card": "./src/Card/Card.tsx",
+    "./input": "./src/Input/Input.tsx",
+    "./badge": "./src/Badge/Badge.tsx",
+    "./avatar": "./src/Avatar/Avatar.tsx",
+    "./modal": "./src/Modal/Modal.tsx",
+    "./tabs": "./src/Tabs/Tabs.tsx",
+    "./select": "./src/Select/Select.tsx",
+    "./switch": "./src/Switch/Switch.tsx",
+    "./skeleton": "./src/Skeleton/Skeleton.tsx",
+    "./toast": "./src/Toast/Toast.tsx",
+    "./progress": "./src/Progress/Progress.tsx",
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "^5.8.3"
+  }
+}

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DokumentyRouteImport } from './routes/dokumenty'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -26,6 +27,11 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.
 import { Route as StudentExamAttemptIdRouteImport } from './routes/student.exam.$attemptId'
 import { Route as ApiAdminFixAuthRouteImport } from './routes/api/admin/fix-auth'
 
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DokumentyRoute = DokumentyRouteImport.update({
   id: '/dokumenty',
   path: '/dokumenty',
@@ -109,6 +115,7 @@ const ApiAdminFixAuthRoute = ApiAdminFixAuthRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dokumenty': typeof DokumentyRoute
+  '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
@@ -126,6 +133,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dokumenty': typeof DokumentyRoute
+  '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
@@ -145,6 +153,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
+  '/onboarding': typeof OnboardingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dokumenty'
+    | '/onboarding'
     | '/admin'
     | '/teacher'
     | '/api/ai-tutor-stream'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/dokumenty'
+    | '/onboarding'
     | '/admin'
     | '/teacher'
     | '/api/ai-tutor-stream'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/dokumenty'
+    | '/onboarding'
     | '/_authenticated/admin'
     | '/_authenticated/teacher'
     | '/api/ai-tutor-stream'
@@ -218,6 +230,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   DokumentyRoute: typeof DokumentyRoute
+  OnboardingRoute: typeof OnboardingRoute
   ApiAiTutorStreamRoute: typeof ApiAiTutorStreamRoute
   AuthAdminRoute: typeof AuthAdminRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -233,6 +246,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dokumenty': {
       id: '/dokumenty'
       path: '/dokumenty'
@@ -366,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   DokumentyRoute: DokumentyRoute,
+  OnboardingRoute: OnboardingRoute,
   ApiAiTutorStreamRoute: ApiAiTutorStreamRoute,
   AuthAdminRoute: AuthAdminRoute,
   AuthCallbackRoute: AuthCallbackRoute,
