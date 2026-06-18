@@ -1,4 +1,6 @@
 "use client";
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import { NavBar } from "@/components/sections/NavBar";
 import { Hero } from "@/components/sections/Hero";
 import { ProblemSolution } from "@/components/sections/ProblemSolution";
@@ -13,22 +15,29 @@ import { BlogPreview } from "@/components/sections/BlogPreview";
 import { FinalCTA } from "@/components/sections/FinalCTA";
 import { Footer } from "@/components/sections/Footer";
 
+const EntryScene = dynamic(() => import("@/components/three/EntryScene").then((m) => ({ default: m.EntryScene })), { ssr: false });
+
 export default function Home() {
+  const [showEntry, setShowEntry] = useState(true);
+
   return (
-    <main>
-      <NavBar />
-      <Hero />
-      <ProblemSolution />
-      <SocialProof />
-      <AIFeatures />
-      <HowItWorks />
-      <Pricing />
-      <Security />
-      <Integrations />
-      <FAQSection />
-      <BlogPreview />
-      <FinalCTA />
-      <Footer />
-    </main>
+    <>
+      {showEntry && <EntryScene onComplete={() => setShowEntry(false)} />}
+      <main style={{ opacity: showEntry ? 0 : 1, transition: "opacity 0.8s ease-in" }}>
+        <NavBar />
+        <Hero />
+        <ProblemSolution />
+        <SocialProof />
+        <AIFeatures />
+        <HowItWorks />
+        <Pricing />
+        <Security />
+        <Integrations />
+        <FAQSection />
+        <BlogPreview />
+        <FinalCTA />
+        <Footer />
+      </main>
+    </>
   );
 }

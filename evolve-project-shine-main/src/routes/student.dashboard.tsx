@@ -152,7 +152,7 @@ function StudentDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/auth/student" });
+    navigate({ to: "/auth" });
   };
 
   const sendAiMsg = () => {
@@ -173,73 +173,11 @@ function StudentDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a12] text-white flex">
+    <div>
       <Toaster theme="dark" />
 
-      {/* Sidebar */}
-      <aside className={`${collapsed ? "w-[68px]" : "w-60"} transition-all duration-300 bg-[#0c0c16]/90 backdrop-blur-xl border-r border-white/[0.06] flex flex-col sticky top-0 h-screen`}>
-        <div className="h-14 flex items-center gap-2.5 px-4 border-b border-white/[0.06]">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-white" />
-          </div>
-          {!collapsed && <span className="text-sm font-semibold">EduNex</span>}
-        </div>
-
-        <nav className="flex-1 px-2 py-4 space-y-1">
-          {NAV_ITEMS.map((n) => {
-            const active = tab === n.id;
-            return (
-              <button key={n.id} onClick={() => setTab(n.id)} title={collapsed ? n.label : undefined}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition relative ${
-                  active ? "bg-white/[0.08] text-white font-medium" : "text-white/40 hover:text-white/70 hover:bg-white/[0.04]"
-                } ${collapsed ? "justify-center" : ""}`}
-              >
-                {active && !collapsed && <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-0.5 h-5 rounded-r bg-cyan-400" />}
-                <n.icon className="w-4 h-4 shrink-0" />
-                {!collapsed && <span>{n.label}</span>}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="px-2 py-3 border-t border-white/[0.06] space-y-2">
-          {!collapsed && (
-            <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-white/[0.03]">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-[10px] font-bold text-[#0a0a12] shrink-0">{userInitial}</div>
-              <div className="min-w-0 flex-1">
-                <div className="text-xs text-white/80 truncate">{displayName}</div>
-                <div className="text-[9px] text-white/30">Student</div>
-              </div>
-            </div>
-          )}
-          <button onClick={handleLogout} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition ${collapsed ? "justify-center" : ""}`} title="Sign out">
-            <LogOut className="w-3.5 h-3.5" /> {!collapsed && "Sign out"}
-          </button>
-          <button onClick={() => setCollapsed((v) => !v)} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-white/30 hover:text-white/60 hover:bg-white/[0.04] transition ${collapsed ? "justify-center" : ""}`} title={collapsed ? "Expand" : "Collapse"}>
-            {collapsed ? <PanelLeft className="w-3.5 h-3.5" /> : <><PanelLeftClose className="w-3.5 h-3.5" /> Collapse</>}
-          </button>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        {/* Top bar */}
-        <div className="h-14 flex items-center justify-between px-6 border-b border-white/[0.06] bg-[#0a0a12]/80 backdrop-blur-xl sticky top-0 z-30">
-          <h1 className="text-sm font-medium text-white/90">
-            {NAV_ITEMS.find((n) => n.id === tab)?.label || "Dashboard"}
-          </h1>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs text-amber-400/70 bg-amber-400/10 px-2.5 py-1 rounded-full">
-              <Flame className="w-3.5 h-3.5" /> {streak} day streak
-            </div>
-            <div className="flex items-center gap-1.5 text-xs text-cyan-400/70 bg-cyan-400/10 px-2.5 py-1 rounded-full">
-              <Trophy className="w-3.5 h-3.5" /> Lv.{level}
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
+      {/* Content */}
+      <div className="space-y-6">
           {tab === "dashboard" && (
             <div className="space-y-6">
               {/* Hero */}
@@ -537,7 +475,6 @@ function StudentDashboard() {
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 }

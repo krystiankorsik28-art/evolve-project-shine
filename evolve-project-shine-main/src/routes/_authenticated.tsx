@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Outlet, createRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Route as rootRoute } from "./__root";
+import { AppShell } from "@/components/dashboard/AppShell";
 
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
@@ -17,16 +18,7 @@ function AuthenticatedLayout() {
     let active = true;
 
     const redirectToLogin = async () => {
-      const pathname = window.location.pathname;
-      if (pathname.startsWith("/admin")) {
-        await navigate({ to: "/auth/admin", replace: true });
-        return;
-      }
-      if (pathname.startsWith("/student")) {
-        await navigate({ to: "/auth/student", replace: true });
-        return;
-      }
-      await navigate({ to: "/auth/teacher", replace: true });
+      await navigate({ to: "/auth", replace: true });
     };
 
     const checkAuth = async () => {
@@ -62,11 +54,18 @@ function AuthenticatedLayout() {
 
   if (!ready) {
     return (
-      <div className="grid min-h-screen place-items-center bg-background text-foreground">
-        <div className="text-sm text-muted-foreground">Sprawdzanie sesji…</div>
+      <div className="grid min-h-screen place-items-center bg-bg text-fg-muted">
+        <div className="flex items-center gap-2 text-sm">
+          <div className="w-2 h-2 rounded-full bg-neon animate-pulse" />
+          Checking session...
+        </div>
       </div>
     );
   }
 
-  return <Outlet />;
+  return (
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  );
 }

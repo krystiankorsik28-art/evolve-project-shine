@@ -9,27 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^15.3.1",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "three": "^0.177.0",
-    "@react-three/fiber": "^9.1.1",
-    "@react-three/drei": "^10.0.7",
-    "framer-motion": "^12.10.5",
-    "lucide-react": "^0.575.0",
+    "@edunex/design-system": "file:../packages/design-system",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@react-three/postprocessing": "^3.0.4",
     "@supabase/supabase-js": "^2.106.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.10.5",
+    "lucide-react": "^0.575.0",
+    "next": "^15.3.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwind-merge": "^3.5.0",
-    "@edunex/design-system": "file:../packages/design-system"
+    "three": "^0.177.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@types/three": "^0.177.0",
     "tailwindcss": "^4.2.1",
-    "typescript": "^5.8.3",
-    "@tailwindcss/postcss": "^4.2.1"
+    "typescript": "^5.8.3"
   }
 }

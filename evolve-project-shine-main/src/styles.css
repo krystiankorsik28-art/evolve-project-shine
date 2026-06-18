@@ -27,11 +27,22 @@
   --spacing-32: 8rem;
   --font-display: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-body: "Inter", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --color-bg: oklch(0.04 0.03 260);
+
+  --color-bg: oklch(0.02 0.02 260);
+  --color-bg-alt: oklch(0.05 0.02 260);
   --color-fg: oklch(0.98 0 0);
-  --color-primary-fg: oklch(0.06 0.04 260);
-  --color-glass: oklch(0.12 0.03 260 / 0.3);
-  --color-glass-border: oklch(0.82 0.12 200 / 0.08);
+  --color-fg-muted: oklch(0.60 0.03 260);
+  --color-fg-subtle: oklch(0.35 0.02 260);
+  --color-fg-neon: oklch(0.85 0.18 160);
+  --color-primary-fg: oklch(0.02 0.02 260);
+  --color-neon: oklch(0.85 0.18 160);
+  --color-neon-dim: oklch(0.85 0.18 160 / 0.4);
+  --color-neon-pulse: oklch(0.90 0.15 140);
+  --color-neon-blue: oklch(0.70 0.20 240);
+  --color-neon-purple: oklch(0.65 0.25 290);
+  --color-neon-pink: oklch(0.75 0.22 330);
+  --color-glass: oklch(0.10 0.03 260 / 0.4);
+  --color-glass-border: oklch(0.85 0.18 160 / 0.08);
   --color-danger: oklch(0.72 0.18 30);
   --color-success: oklch(0.75 0.16 150);
   --color-warning: oklch(0.85 0.14 85);
@@ -46,10 +57,18 @@
   --spacing-gap-5xl: 6rem;
   --spacing-gap-6xl: 8rem;
   --radius-full: 9999px;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
   --shadow-md: 0 4px 12px 0 rgb(0 0 0 / 0.4);
   --shadow-lg: 0 8px 32px 0 rgb(0 0 0 / 0.5);
-  --shadow-glow: 0 0 20px oklch(0.82 0.12 200 / 0.15);
+  --glow-neon: 0 0 20px oklch(0.85 0.18 160 / 0.3);
+  --glow-neon-strong: 0 0 40px oklch(0.85 0.18 160 / 0.5);
+  --glow-neon-blue: 0 0 20px oklch(0.70 0.20 240 / 0.3);
+  --glow-neon-purple: 0 0 20px oklch(0.65 0.25 290 / 0.3);
+  --glass-shadow: 0 8px 32px oklch(0 0 0 / 0.4);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 150ms;
   --duration-normal: 250ms;
@@ -57,6 +76,7 @@
   --nav-height: 3.5rem;
   --sidebar-width: 14rem;
   --sidebar-collapsed: 3.5rem;
+  --max-width: 1280px;
 }
 
 :root {
@@ -606,6 +626,39 @@ html { scroll-behavior: smooth; scroll-padding-top: 80px; }
 .light .code-block { background: oklch(0.94 0.01 260); }
 .light .kpi-card { background: oklch(1 0 0); border-color: oklch(0.85 0.02 260); }
 .light .kpi-card:hover { border-color: oklch(0.60 0.12 200 / 0.2); }
+
+/* ──── Glassmorphism Utilities ──── */
+.glass-light { background: oklch(0.98 0 0 / 0.03); backdrop-filter: blur(24px); border: 1px solid oklch(0.98 0 0 / 0.06); }
+.glass-strong { background: oklch(0.06 0.04 260 / 0.7); backdrop-filter: blur(32px); border: 1px solid oklch(0.98 0 0 / 0.08); box-shadow: 0 8px 32px oklch(0 0 0 / 0.4); }
+.glass-neon { background: oklch(0.08 0.03 260 / 0.4); backdrop-filter: blur(24px); border: 1px solid oklch(0.85 0.18 160 / 0.15); box-shadow: 0 0 20px oklch(0.85 0.18 160 / 0.3); }
+.glass-card { background: oklch(0.10 0.03 260 / 0.5); backdrop-filter: blur(20px); border: 1px solid oklch(0.98 0 0 / 0.06); border-radius: 1rem; transition: all 0.3s var(--ease-spring); }
+.glass-card:hover { border-color: oklch(0.85 0.18 160 / 0.3); box-shadow: 0 0 20px oklch(0.85 0.18 160 / 0.3); transform: translateY(-2px); }
+
+/* ──── Neon Utilities ──── */
+.neon-text { color: oklch(0.85 0.18 160); text-shadow: 0 0 10px oklch(0.85 0.18 160 / 0.5), 0 0 20px oklch(0.85 0.18 160 / 0.3); }
+.neon-text-blue { color: oklch(0.70 0.20 240); text-shadow: 0 0 10px oklch(0.70 0.20 240 / 0.5); }
+.neon-border { border: 1px solid oklch(0.85 0.18 160 / 0.3); box-shadow: 0 0 10px oklch(0.85 0.18 160 / 0.2), inset 0 0 10px oklch(0.85 0.18 160 / 0.05); }
+
+/* ──── Glow Pulse ──── */
+@keyframes neonPulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+.neon-pulse { animation: neonPulse 3s ease-in-out infinite; }
+
+/* ──── Ripple Effect ──── */
+@keyframes rippleEffect { 0% { width: 0; height: 0; opacity: 0.5; } 100% { width: 400px; height: 400px; opacity: 0; } }
+.ripple-btn { position: relative; overflow: hidden; }
+.ripple-effect { position: absolute; border-radius: 50%; background: oklch(0.85 0.18 160 / 0.3); transform: translate(-50%, -50%); animation: rippleEffect 0.6s ease-out forwards; pointer-events: none; }
+
+/* ──── Shimmer Loading ──── */
+@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
+.shimmer-bg { background: linear-gradient(90deg, oklch(0.10 0.03 260) 25%, oklch(0.15 0.03 260) 50%, oklch(0.10 0.03 260) 75%); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+
+/* ──── Scan Line (Nvidia-style) ──── */
+@keyframes scanline { 0% { top: -10%; } 100% { top: 110%; } }
+.scanline { position: relative; overflow: hidden; }
+.scanline::after { content: ''; position: absolute; top: -100%; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, oklch(0.85 0.18 160 / 0.4), transparent); animation: scanline 3s linear infinite; pointer-events: none; }
+
+/* ──── Grid Pattern ──── */
+.grid-pattern { background-image: linear-gradient(oklch(0.98 0 0 / 0.02) 1px, transparent 1px), linear-gradient(90deg, oklch(0.98 0 0 / 0.02) 1px, transparent 1px); background-size: 40px 40px; }
 
 /* ──── Reduced Motion ──── */
 @media (prefers-reduced-motion: reduce) {
