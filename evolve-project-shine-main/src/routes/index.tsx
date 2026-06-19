@@ -22,6 +22,12 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { submitContact } from "@/lib/contact.functions";
 import { NexaPayCheckout } from "@/components/NexaPayCheckout";
+import IntroAnimation from "@/components/IntroAnimation";
+import NavBar2 from "@/components/landing/NavBar2";
+import HeroSection from "@/components/landing/HeroSection";
+import StatsSection from "@/components/landing/StatsSection";
+import HowItWorksSection from "@/components/landing/HowItWorks";
+import FinalCTA from "@/components/landing/FinalCTA";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -178,17 +184,17 @@ function Landing() {
 
   return (
     <>
-      <SplashScreen onDone={() => setLoaded(true)} />
+      <IntroAnimation onDone={() => setLoaded(true)} />
       <div className={`min-h-screen bg-canvas selection:bg-accent/30 selection:text-white overflow-x-hidden ${loaded ? "opacity-100" : "opacity-0"} transition-opacity duration-700`}>
         <div ref={progRef} className="scroll-progress" />
         <div ref={glowRef} className="spotlight max-lg:hidden" />
         <Toaster theme="dark" />
         <CookieBanner />
-        <NavBar />
+        <NavBar2 />
         <main className="relative z-10">
-          <Hero />
-          <StatsMarquee />
-          <HowItWorks />
+          <HeroSection />
+          <StatsSection />
+          <HowItWorksSection />
           <FeaturesFlow />
           <DemoShowcase />
           <ForWhomFlow />
@@ -200,7 +206,7 @@ function Landing() {
           <TestimonialsFlow />
           <PricingFlow />
           <FAQFlow />
-          <MobileCtaFlow />
+          <FinalCTA />
           <NewsletterFlow />
           <ContactFlow />
         </main>
@@ -208,33 +214,6 @@ function Landing() {
         <FooterFlow />
       </div>
     </>
-  );
-}
-
-function SplashScreen({ onDone }: { onDone: () => void }) {
-  const [exit, setExit] = useState(false);
-  useEffect(() => {
-    const t1 = setTimeout(() => setExit(true), 1000);
-    const t2 = setTimeout(() => onDone(), 1400);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, [onDone]);
-  return (
-    <div className={`fixed inset-0 z-[9999] grid place-items-center bg-[oklch(0.06_0.03_270)] transition-all duration-700 ${exit ? "opacity-0 pointer-events-none" : ""}`}>
-      <div className="text-center">
-        <div className="mx-auto w-20 h-20 rounded-[28px] bg-gradient-to-br from-accent to-fuchsia-500 p-[2px] shadow-[0_0_80px_-16px_rgba(34,211,238,0.3)]" style={{ animation: "splashPulse 1s ease-in-out infinite" }}>
-          <div className="w-full h-full rounded-[26px] bg-[oklch(0.06_0.03_270)] grid place-items-center">
-            <svg viewBox="0 0 24 24" className="w-9 h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 7l8-4 8 4-8 4-8-4z"/><path d="M4 12l8 4 8-4"/><path d="M4 17l8 4 8-4"/>
-            </svg>
-          </div>
-        </div>
-        <div className="mt-5 text-xl font-semibold text-white/90 tracking-tight" style={{ animation: "splashFade 0.5s 0.2s ease-out forwards" }}>EduNex</div>
-        <div className="mx-auto mt-5 w-32 h-[2px] rounded-full bg-white/[0.06] overflow-hidden" style={{ animation: "splashFade 0.5s 0.3s ease-out forwards" }}>
-          <div className="h-full rounded-full bg-gradient-to-r from-accent to-fuchsia-400" style={{ animation: "splashLoad 1s 0.4s cubic-bezier(0.16,1,0.3,1) forwards", transformOrigin: "left", transform: "scaleX(0)" }} />
-        </div>
-      </div>
-      <style>{`@keyframes splashPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } } @keyframes splashFade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } } @keyframes splashLoad { to { transform:scaleX(1); } }`}</style>
-    </div>
   );
 }
 
@@ -252,217 +231,9 @@ function CookieBanner() {
   );
 }
 
-const NAV_LINKS = [
-  ["#funkcje", "Funkcje"], ["#ai-demo", "AI Demo"], ["#cennik", "Cennik"], ["#opinie", "Opinie"], ["#kontakt", "Kontakt"],
-];
-function NavBar() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const { theme, setTheme } = useTheme();
-  const [isLight, setIsLight] = useState(false);
-  useEffect(() => {
-    const f = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    f(); window.addEventListener("scroll", f, { passive: true }); return () => window.removeEventListener("scroll", f);
-  }, []);
-  const toggleTheme = () => {
-    setTheme(isLight ? "dark" : "light");
-    setIsLight(!isLight);
-  };
-  return (
-    <header className={`nav-premium ${scrolled ? "scrolled" : ""}`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="nav-inner flex items-center justify-between gap-4">
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="w-9 h-9 rounded-[12px] bg-gradient-to-br from-white/10 to-white/5 p-[1.5px] shadow-lg transition-all duration-500 group-hover:scale-105" style={{ animation: "logoPulse 3s ease-in-out infinite" }}>
-              <div className="w-full h-full rounded-[10px] bg-[oklch(0.06_0.04_260)] grid place-items-center">
-                <svg viewBox="0 0 24 24" className="w-4.5 h-4.5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-                </svg>
-              </div>
-            </div>
-            <span className="font-semibold text-base tracking-tight">EduNex</span>
-          </Link>
-          <nav className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map(([h, l]) => (
-              <a key={h} href={h} className="nav-link">{l}</a>
-            ))}
-          </nav>
-          <div className="flex items-center gap-2 shrink-0">
-            <button onClick={toggleTheme} className="btn-ghost p-2 hidden sm:inline-flex" aria-label="Przełącz motyw">
-              {isLight ? <Moon className="w-4 h-4"/> : <Sun className="w-4 h-4"/>}
-            </button>
-            <Link to="/auth/student" className="btn-ghost hidden sm:inline-flex">
-              <GraduationCap className="w-4 h-4"/>Uczeń
-            </Link>
-            <Link to="/auth/teacher" onClick={(e) => burstConfetti(e)} className="btn-primary py-2 px-4 text-xs magnetic-btn">
-              Zaloguj <ArrowRight className="w-3.5 h-3.5"/>
-            </Link>
-            <button onClick={() => setOpen(!open)} className="lg:hidden btn-ghost p-2" aria-label="Menu">
-              {open ? <X className="w-5 h-5"/> : <Menu className="w-5 h-5"/>}
-            </button>
-          </div>
-        </div>
-        {open && (
-          <div className="fixed inset-0 z-40 lg:hidden" onClick={() => setOpen(false)}>
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          </div>
-        )}
-        {open && (
-          <div className="lg:hidden pb-4 flex flex-col gap-1 text-sm relative z-50"
-            style={{ animation: "notifIn 0.3s cubic-bezier(0.16,1,0.3,1)" }}>
-            {["Funkcje", "AI Demo", "Cennik", "Opinie", "Kontakt"].map((l, i) => (
-              <a key={l} onClick={() => setOpen(false)} href={`#${["funkcje","ai-demo","cennik","opinie","kontakt"][i]}`} className="px-4 py-3 rounded-xl hover:bg-white/[0.04] text-white/70">{l}</a>
-            ))}
-            <div className="h-px bg-white/[0.06] my-1"/>
-            <Link onClick={() => setOpen(false)} to="/auth/student" className="px-4 py-3 rounded-xl hover:bg-white/[0.04] text-white/70">Uczeń</Link>
-            <Link onClick={() => setOpen(false)} to="/auth/teacher" className="px-4 py-3 rounded-xl hover:bg-white/[0.04] text-white/70">Nauczyciel</Link>
-          </div>
-        )}
-      </div>
-    </header>
-  );
-}
 
-function Hero() {
-  const headlines = ["w jednym miejscu.", "z AI.", "dla każdego.", "na całym świecie.", "bez instalacji."];
-  const [text, setText] = useState("");
-  const [idx, setIdx] = useState(0);
-  const [char, setChar] = useState(0);
-  useEffect(() => {
-    if (char < headlines[idx].length) {
-      const t = setTimeout(() => { setText(headlines[idx].slice(0, char + 1)); setChar((c) => c + 1); }, 50);
-      return () => clearTimeout(t);
-    }
-    const t = setTimeout(() => { setIdx((i) => (i + 1) % headlines.length); setChar(0); setText(""); }, 2800);
-    return () => clearTimeout(t);
-  }, [char, idx]);
-  return (
-    <section className="relative min-h-screen pt-20 pb-24 sm:pb-32 overflow-hidden">
-      <div className="absolute inset-0" style={{
-        background: 'radial-gradient(ellipse at 50% 20%, oklch(0.82 0.12 200 / 0.04) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.82 0.12 200 / 0.02) 0%, transparent 50%)'
-      }} />
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative">
-        <div className="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-xs text-white/60 mb-10 backdrop-blur-sm">
-          <span className="pulse-dot"><span className="w-1.5 h-1.5 rounded-full bg-accent block" /></span>
-          Globalna platforma edukacyjna nowej generacji
-        </div>
-        <h1 className="hero-premium text-white mb-6 leading-[0.95]">
-          <span>Edukacja</span><br />
-          <span className="text-accent">wzmacniana AI.</span>
-        </h1>
-        <p className="body-premium max-w-2xl mx-auto min-h-[1.8em]">
-          Platforma edukacyjna nowej generacji. AI Tutor, egzaminy online, kursy, certyfikacja i zarządzanie — <span className="text-white/70">{text}<span className="type-cursor" /></span>
-        </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link to="/auth/teacher" onClick={(e) => { burstConfetti(e); addRipple(e); }}
-            className="btn-primary magnetic-btn relative overflow-hidden">
-            Rozpocznij za darmo <ArrowRight className="w-4 h-4"/>
-          </Link>
-          <Link to="/auth/student" className="btn-secondary magnetic-btn">
-            <GraduationCap className="w-4 h-4"/>Wejdź PIN-em
-          </Link>
-        </div>
-        <div className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs text-white/40">
-          {[
-            ["AI Tutor & AI Teacher", BrainCircuit], ["Multi-językowość", Globe2], ["Enterprise Security", Lock], ["99.98% uptime", Activity], ["Global CDN", Zap],
-          ].map(([t, I]) => (
-            <span key={t as string} className="inline-flex items-center gap-1.5"><I className="w-3.5 h-3.5 text-primary/50"/>{t as string}</span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-const STATS_DATA = [
-  { v: 3752, l: "Przeprowadzonych egzaminów", s: "+" },
-  { v: 36140, l: "Uczniów w systemie", s: "+" },
-  { v: 829, l: "Aktywnych nauczycieli", s: "+" },
-  { v: 99.98, l: "Dostępność", s: "%" },
-];
-function CountUp({ target, suffix }: { target: number; suffix: string }) {
-  const [val, setVal] = useState(0);
-  const ref = useRef<HTMLDivElement>(null);
-  const [started, setStarted] = useState(false);
-  const startedRef = useRef(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !startedRef.current) { startedRef.current = true; setStarted(true); } }, { threshold: 0.3 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  useEffect(() => {
-    if (!started) return;
-    let frame: number;
-    const t0 = performance.now();
-    const step = (now: number) => {
-      if (document.hidden) { frame = requestAnimationFrame(step); return; }
-      const pct = Math.min((now - t0) / 2000, 1);
-      const e = 1 - Math.pow(1 - pct, 3);
-      setVal(target > 1000 ? Math.round(e * target) : parseFloat((e * target).toFixed(1)));
-      if (pct < 1) frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [started, target]);
-  return <div ref={ref} className="tabular-nums font-bold">{val.toLocaleString()}{suffix}</div>;
-}
-function StatsMarquee() {
-  return (
-    <section className="relative py-12 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.02] to-transparent" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-          {STATS_DATA.map((s, i) => (
-            <div key={s.l} className="text-center reveal" style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-accent to-blue-500 bg-clip-text text-transparent">
-                <CountUp target={s.v} suffix={s.s} />
-              </div>
-              <div className="text-xs text-white/40 mt-1.5 font-medium">{s.l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
-const STEPS = [
-  { n: "1", t: "Zarejestruj się", d: "2 minuty i gotowe — bez karty, bez zobowiązań. Plan Klasa jest za darmo.", icon: GraduationCap },
-  { n: "2", t: "Dodaj klasę i uczniów", d: "Import z CSV, Vulcan lub Librus. Albo dodaj ręcznie — 3 kliknięcia.", icon: Users },
-  { n: "3", t: "Stwórz egzamin z AI", d: "Wpisz temat, AI generuje pytania. Albo wczytaj zdjęcie — gotowe w 10 sekund.", icon: Sparkles },
-  { n: "4", t: "Monitoruj i analizuj", d: "Wyniki na żywo, alerty o ściąganiu, certyfikaty PDF i raporty automatycznie.", icon: Activity },
-];
-function HowItWorks() {
-  return (
-    <section className="section-premium py-28 sm:py-36 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-16">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Jak to działa</span>
-          <h2 className="display-lg mt-6">
-            <TextReveal text="Zaczynasz w 2 minuty" />
-          </h2>
-          <p className="body-sm mt-4 max-w-lg mx-auto">Cztery proste kroki dzielą Cię od nowoczesnych egzaminów w Twojej szkole.</p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STEPS.map((s, i) => (
-            <div key={s.n} className="reveal" style={{ animationDelay: `${i * 0.12}s` }}>
-              <div className="card-premium rounded-2xl p-6 text-center hover:-translate-y-1">
-                <div className="step-number mx-auto mb-4">{s.n}</div>
-                <div className="w-10 h-10 mx-auto rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 grid place-items-center mb-3">
-                  <s.icon className="w-5 h-5 text-accent" />
-                </div>
-                <h3 className="font-semibold text-sm text-white/90">{s.t}</h3>
-                <p className="mt-2 text-xs text-white/50 leading-relaxed">{s.d}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ──── FEATURES ──── */
 const FEATURE_CATEGORIES = [
@@ -1252,31 +1023,6 @@ function FAQFlow() {
 }
 
 /* ──── BLOG + MARQUEE PARTNERS ──── */
-/* ──── MOBILE ──── */
-function MobileCtaFlow() {
-  return (
-    <section className="relative py-16 overflow-hidden">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="reveal-scale">
-            <div className="relative rounded-3xl bg-gradient-to-br from-accent/10 via-accent/5 to-accent/5 border border-white/[0.06] p-10 sm:p-14 text-center overflow-hidden">
-              <div className="relative">
-                <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-blue-500 grid place-items-center mb-6 shadow-lg">
-                <SmartphoneNfc className="w-8 h-8 text-black"/>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">EduNex w <span className="shimmer">Twojej kieszeni</span></h2>
-              <p className="mt-3 text-white/40 text-sm max-w-md mx-auto">Uczniowie wchodzą PIN-em z dowolnego telefonu. Nauczyciele zarządzają egzaminami z tabletu. Zero instalacji, zero problemów.</p>
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <div className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] text-sm text-white/40"><Smartphone className="w-4 h-4"/>Android · wkrótce</div>
-                <div className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/[0.08] bg-white/[0.03] text-sm text-white/40"><Monitor className="w-4 h-4"/>PWA · dostępne</div>
-                <Link to="/auth/student" className="btn-shine inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shadow-sm magnetic-btn">Wypróbuj <ArrowRight className="w-4 h-4"/></Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ──── NEWSLETTER ──── */
 function NewsletterFlow() {

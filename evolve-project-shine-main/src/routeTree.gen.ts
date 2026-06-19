@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as DokumentyRouteImport } from './routes/dokumenty'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VerifySerialRouteImport } from './routes/verify.$serial'
@@ -37,6 +38,11 @@ const DokumentyRoute = DokumentyRouteImport.update({
   path: '/dokumenty',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -57,34 +63,34 @@ const StudentDashboardRoute = StudentDashboardRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthTeacherRoute = AuthTeacherRouteImport.update({
-  id: '/auth/teacher',
-  path: '/auth/teacher',
-  getParentRoute: () => rootRouteImport,
+  id: '/teacher',
+  path: '/teacher',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthStudentRoute = AuthStudentRouteImport.update({
-  id: '/auth/student',
-  path: '/auth/student',
-  getParentRoute: () => rootRouteImport,
+  id: '/student',
+  path: '/student',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
-  id: '/auth/reset-password',
-  path: '/auth/reset-password',
-  getParentRoute: () => rootRouteImport,
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthParentRoute = AuthParentRouteImport.update({
-  id: '/auth/parent',
-  path: '/auth/parent',
-  getParentRoute: () => rootRouteImport,
+  id: '/parent',
+  path: '/parent',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
-  id: '/auth/callback',
-  path: '/auth/callback',
-  getParentRoute: () => rootRouteImport,
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
 } as any)
 const AuthAdminRoute = AuthAdminRouteImport.update({
-  id: '/auth/admin',
-  path: '/auth/admin',
-  getParentRoute: () => rootRouteImport,
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthRoute,
 } as any)
 const ApiAiTutorStreamRoute = ApiAiTutorStreamRouteImport.update({
   id: '/api/ai-tutor-stream',
@@ -114,6 +120,7 @@ const ApiAdminFixAuthRoute = ApiAdminFixAuthRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/auth': typeof AuthRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/dokumenty'
     | '/onboarding'
     | '/admin'
@@ -190,6 +200,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/dokumenty'
     | '/onboarding'
     | '/admin'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/auth'
     | '/dokumenty'
     | '/onboarding'
     | '/_authenticated/admin'
@@ -229,15 +241,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AuthRoute: typeof AuthRouteWithChildren
   DokumentyRoute: typeof DokumentyRoute
   OnboardingRoute: typeof OnboardingRoute
   ApiAiTutorStreamRoute: typeof ApiAiTutorStreamRoute
-  AuthAdminRoute: typeof AuthAdminRoute
-  AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthParentRoute: typeof AuthParentRoute
-  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
-  AuthStudentRoute: typeof AuthStudentRoute
-  AuthTeacherRoute: typeof AuthTeacherRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   VerifySerialRoute: typeof VerifySerialRoute
   ApiAdminFixAuthRoute: typeof ApiAdminFixAuthRoute
@@ -258,6 +265,13 @@ declare module '@tanstack/react-router' {
       path: '/dokumenty'
       fullPath: '/dokumenty'
       preLoaderRoute: typeof DokumentyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -290,45 +304,45 @@ declare module '@tanstack/react-router' {
     }
     '/auth/teacher': {
       id: '/auth/teacher'
-      path: '/auth/teacher'
+      path: '/teacher'
       fullPath: '/auth/teacher'
       preLoaderRoute: typeof AuthTeacherRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/student': {
       id: '/auth/student'
-      path: '/auth/student'
+      path: '/student'
       fullPath: '/auth/student'
       preLoaderRoute: typeof AuthStudentRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/reset-password': {
       id: '/auth/reset-password'
-      path: '/auth/reset-password'
+      path: '/reset-password'
       fullPath: '/auth/reset-password'
       preLoaderRoute: typeof AuthResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/parent': {
       id: '/auth/parent'
-      path: '/auth/parent'
+      path: '/parent'
       fullPath: '/auth/parent'
       preLoaderRoute: typeof AuthParentRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/callback': {
       id: '/auth/callback'
-      path: '/auth/callback'
+      path: '/callback'
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/auth/admin': {
       id: '/auth/admin'
-      path: '/auth/admin'
+      path: '/admin'
       fullPath: '/auth/admin'
       preLoaderRoute: typeof AuthAdminRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/api/ai-tutor-stream': {
       id: '/api/ai-tutor-stream'
@@ -382,18 +396,33 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  DokumentyRoute: DokumentyRoute,
-  OnboardingRoute: OnboardingRoute,
-  ApiAiTutorStreamRoute: ApiAiTutorStreamRoute,
+interface AuthRouteChildren {
+  AuthAdminRoute: typeof AuthAdminRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthParentRoute: typeof AuthParentRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  AuthStudentRoute: typeof AuthStudentRoute
+  AuthTeacherRoute: typeof AuthTeacherRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
   AuthAdminRoute: AuthAdminRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthParentRoute: AuthParentRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthStudentRoute: AuthStudentRoute,
   AuthTeacherRoute: AuthTeacherRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AuthRoute: AuthRouteWithChildren,
+  DokumentyRoute: DokumentyRoute,
+  OnboardingRoute: OnboardingRoute,
+  ApiAiTutorStreamRoute: ApiAiTutorStreamRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   VerifySerialRoute: VerifySerialRoute,
   ApiAdminFixAuthRoute: ApiAdminFixAuthRoute,
