@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -83,36 +83,171 @@ type AdminView = "login" | "microsoft" | "google" | "recovery" | "device" | "ses
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 30 };
 
-// ─── Background Components ───
+// ─── Premium Background Components ───
 
-function GradientOrb({ index, size, x, y, color }: { index: number; size: number; x: string; y: string; color: string }) {
-  return (
-    <motion.div
-      className="absolute rounded-full pointer-events-none"
-      style={{ width: size, height: size, left: x, top: y, background: `radial-gradient(circle, ${color} 0%, transparent 70%)`, filter: "blur(80px)" }}
-      animate={{ x: [0, 30, -20, 0], y: [0, -25, 15, 0], scale: [1, 1.1, 0.95, 1] }}
-      transition={{ duration: 10 + index * 3, repeat: Infinity, ease: "easeInOut" }}
-    />
-  );
-}
-
-function AuthParticles() {
+function AuroraBackground() {
+  const orbs = [
+    { size: 800, x: "-20%", y: "-15%", color: "oklch(0.7 0.15 200 / 0.04)", dur: 18, xp: [0, 120, -60, -80, 40, 0], yp: [0, -50, 80, -60, 30, 0] },
+    { size: 700, x: "70%", y: "30%", color: "oklch(0.65 0.15 190 / 0.04)", dur: 22, xp: [0, -80, 50, 90, -30, 0], yp: [0, 70, -40, -80, 50, 0] },
+    { size: 600, x: "40%", y: "70%", color: "oklch(0.6 0.2 240 / 0.03)", dur: 15, xp: [0, 60, -100, 40, -50, 0], yp: [0, -90, 50, 70, -40, 0] },
+    { size: 500, x: "10%", y: "60%", color: "oklch(0.6 0.2 280 / 0.03)", dur: 20, xp: [0, -70, 80, -50, 60, 0], yp: [0, 60, -70, 40, -80, 0] },
+    { size: 450, x: "80%", y: "-5%", color: "oklch(0.7 0.15 200 / 0.02)", dur: 25, xp: [0, 90, -40, -100, 30, 0], yp: [0, -40, 90, 50, -60, 0] },
+    { size: 400, x: "50%", y: "90%", color: "oklch(0.65 0.15 190 / 0.02)", dur: 12, xp: [0, -50, 70, -30, 80, 0], yp: [0, 80, -60, -50, 40, 0] },
+    { size: 750, x: "-10%", y: "80%", color: "oklch(0.6 0.2 240 / 0.02)", dur: 17, xp: [0, 40, -90, 60, -20, 0], yp: [0, -70, 40, 90, -30, 0] },
+  ];
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {Array.from({ length: 15 }).map((_, i) => (
+      {orbs.map((o, i) => (
         <motion.div
-          key={i} className="absolute rounded-full"
+          key={i}
+          className="absolute rounded-full"
           style={{
-            width: 2 + Math.random() * 3, height: 2 + Math.random() * 3,
-            left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%`,
-            background: `oklch(0.7 0.15 ${200 + Math.random() * 60} / ${0.05 + Math.random() * 0.15})`,
-            boxShadow: `0 0 ${(2 + Math.random() * 3) * 3}px oklch(0.7 0.15 200 / 0.05)`,
+            width: o.size, height: o.size, left: o.x, top: o.y,
+            background: `radial-gradient(circle, ${o.color} 0%, transparent 70%)`,
+            filter: "blur(100px)",
           }}
-          animate={{ y: [0, (Math.random() - 0.5) * 40, 0], opacity: [0, 0.4 + Math.random() * 0.3, 0], scale: [1, 1.5, 1] }}
-          transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3, ease: "easeInOut" }}
+          animate={{ x: o.xp, y: o.yp, scale: [1, 1.08, 0.92, 1.05, 0.98, 1] }}
+          transition={{ duration: o.dur, repeat: Infinity, ease: "easeInOut" }}
         />
       ))}
     </div>
+  );
+}
+
+function ParticleField() {
+  const mouseRef = useRef({ x: 0.5, y: 0.5 });
+  const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 });
+
+  useEffect(() => {
+    let frame = 0;
+    const handler = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight };
+      if (!frame) {
+        frame = requestAnimationFrame(() => {
+          setMouse(mouseRef.current);
+          frame = 0;
+        });
+      }
+    };
+    window.addEventListener("mousemove", handler, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handler);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  const particles = useMemo(() => Array.from({ length: 50 }, () => {
+    const hue = 200 + Math.random() * 60;
+    return {
+      left: Math.random() * 100, top: Math.random() * 100,
+      size: 1 + Math.random() * 3,
+      color: `oklch(0.7 0.15 ${hue} / ${0.04 + Math.random() * 0.08})`,
+      glow: (1 + Math.random() * 2) * 3,
+      dur: 5 + Math.random() * 6, delay: Math.random() * 4,
+      depth: 0.5 + Math.random() * 0.5,
+      floatY: (Math.random() - 0.5) * 50,
+      peak: 0.5 + Math.random() * 0.35,
+    };
+  }), []);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {particles.map((p, i) => {
+        const dx = (mouse.x - 0.5) * p.depth * 24;
+        const dy = (mouse.y - 0.5) * p.depth * 24;
+        return (
+          <div key={i} style={{ transform: `translate(${dx}px, ${dy}px)` }}>
+            <motion.div
+              className="absolute rounded-full"
+              style={{
+                width: p.size, height: p.size, left: `${p.left}%`, top: `${p.top}%`,
+                background: p.color, boxShadow: `0 0 ${p.glow}px ${p.color}`,
+              }}
+              animate={{ y: [0, p.floatY, 0], opacity: [0.1, p.peak, 0.1] }}
+              transition={{ duration: p.dur, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function FloatingGlassElements() {
+  const items = [
+    { w: 120, h: 80, x: "82%", y: "8%", dur: 18, xp: [0, 30, -20, 15, 0], yp: [0, -25, 15, -30, 0] },
+    { w: 100, h: 60, x: "3%", y: "82%", dur: 20, xp: [0, -20, 25, -10, 0], yp: [0, 20, -15, 25, 0] },
+    { w: 80, h: 80, x: "68%", y: "72%", dur: 15, xp: [0, 15, -30, 10, 0], yp: [0, -10, 20, -15, 0] },
+  ];
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {items.map((el, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-2xl"
+          style={{
+            width: el.w, height: el.h, left: el.x, top: el.y,
+            background: "oklch(1 0 0 / 0.02)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid oklch(1 0 0 / 0.04)",
+          }}
+          animate={{ x: el.xp, y: el.yp }}
+          transition={{ duration: el.dur, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function LightRays() {
+  const rays = [
+    { angle: 30, dur: 10, delay: 0, top: "18%" },
+    { angle: 38, dur: 12, delay: 4, top: "48%" },
+    { angle: 25, dur: 8, delay: 8, top: "78%" },
+  ];
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {rays.map((r, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            width: "200%", height: "2px", left: "-50%", top: r.top,
+            transform: `rotate(${r.angle}deg)`,
+            background: "linear-gradient(90deg, transparent, oklch(0.7 0.15 200 / 0.4), transparent)",
+            opacity: 0.04,
+          }}
+          animate={{ x: ["-100vw", "200vw"] }}
+          transition={{ duration: r.dur, repeat: Infinity, delay: r.delay, ease: "linear" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function NeuralGrid() {
+  const links = useMemo(() => [
+    { x1: "10%", y1: "20%", x2: "50%", y2: "30%", dur: 8, dash: 160 },
+    { x1: "50%", y1: "30%", x2: "85%", y2: "15%", dur: 9, dash: 140 },
+    { x1: "15%", y1: "70%", x2: "55%", y2: "55%", dur: 10, dash: 180 },
+    { x1: "55%", y1: "55%", x2: "90%", y2: "80%", dur: 7, dash: 150 },
+    { x1: "5%", y1: "45%", x2: "40%", y2: "60%", dur: 6, dash: 170 },
+    { x1: "40%", y1: "60%", x2: "75%", y2: "40%", dur: 11, dash: 190 },
+  ], []);
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.025 }}>
+      {links.map((l, i) => (
+        <motion.line
+          key={i}
+          x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2}
+          stroke="oklch(0.7 0.15 200)"
+          strokeWidth="0.5"
+          strokeDasharray={`${l.dash}`}
+          animate={{ strokeDashoffset: [l.dash, 0, l.dash] }}
+          transition={{ duration: l.dur, repeat: Infinity, ease: "linear" }}
+        />
+      ))}
+    </svg>
   );
 }
 
@@ -888,11 +1023,12 @@ function AuthPage() {
 
         {/* Background */}
         <div className="fixed inset-0 pointer-events-none" style={{ background: "oklch(0.035 0.02 270)" }}>
-          <GradientOrb index={0} size={600} x="-15%" y="-10%" color="oklch(0.7 0.15 200 / 0.04)" />
-          <GradientOrb index={1} size={500} x="60%" y="40%" color="oklch(0.6 0.2 240 / 0.04)" />
-          <GradientOrb index={2} size={400} x="30%" y="70%" color="oklch(0.65 0.2 280 / 0.03)" />
+          <AuroraBackground />
+          <ParticleField />
+          <FloatingGlassElements />
+          <LightRays />
+          <NeuralGrid />
           <GridBg />
-          <AuthParticles />
         </div>
 
         {/* LEFT PANEL */}

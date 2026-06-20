@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { motion, useInView, useMotionValue, animate } from "framer-motion";
 import { Users, FileText, GraduationCap, Activity } from "lucide-react";
 
 const STATS = [
@@ -10,9 +10,23 @@ const STATS = [
 ];
 
 function AnimatedCounter({ target, suffix, isInView }: { target: number; suffix: string; isInView: boolean }) {
-  const value = target > 1000
-    ? Math.round(Math.min(target, (target * 1)))
-    : parseFloat((Math.min(target, (target * 1))).toFixed(1));
+  const [display, setDisplay] = useState<string>("0");
+  const count = useMotionValue(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    setDisplay("0");
+    count.set(0);
+    const controls = animate(count, target, {
+      duration: 1.5,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (latest) => {
+        const v = target > 1000 ? Math.round(latest) : parseFloat(latest.toFixed(1));
+        setDisplay(v.toLocaleString());
+      },
+    });
+    return controls.stop;
+  }, [isInView, target, count]);
 
   return (
     <motion.div
@@ -22,7 +36,7 @@ function AnimatedCounter({ target, suffix, isInView }: { target: number; suffix:
       className="tabular-nums font-bold"
       style={{ fontVariantNumeric: "tabular-nums" }}
     >
-      {value.toLocaleString()}{suffix}
+      {display}{suffix}
     </motion.div>
   );
 }

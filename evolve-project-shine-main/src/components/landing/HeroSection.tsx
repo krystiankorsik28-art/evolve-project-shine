@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, GraduationCap, Shield, Zap, Globe2, Activity } from "lucide-react";
@@ -34,6 +34,19 @@ export default function HeroSection() {
   const can3D = useDeviceCan3D();
   const [HeroBg, setHeroBg] = useState<React.ComponentType | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!sectionRef.current) return;
+    requestAnimationFrame(() => {
+      const rect = sectionRef.current!.getBoundingClientRect();
+      setMousePos({
+        x: (e.clientX - rect.left) / rect.width - 0.5,
+        y: (e.clientY - rect.top) / rect.height - 0.5,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (can3D) {
@@ -51,12 +64,63 @@ export default function HeroSection() {
   const headline = "Przyszłość nauki zaczyna się tutaj".split(" ");
 
   return (
-    <section className="relative min-h-screen pt-28 pb-24 sm:pb-32 overflow-hidden flex items-center">
+    <section ref={sectionRef} onMouseMove={handleMouseMove} className="relative min-h-screen pt-28 pb-24 sm:pb-32 overflow-hidden flex items-center">
       <div className="absolute inset-0"
         style={{
           background: "radial-gradient(ellipse at 50% 20%, oklch(0.82 0.12 200 / 0.05) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.82 0.12 200 / 0.03) 0%, transparent 50%)",
         }}
       />
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: [
+            "radial-gradient(ellipse at 20% 40%, oklch(0.7 0.15 200 / 0.07) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 80% 60%, oklch(0.7 0.15 200 / 0.07) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 20% 40%, oklch(0.7 0.15 200 / 0.07) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute pointer-events-none"
+        style={{
+          width: 240, height: 240,
+          border: "1px solid oklch(0.7 0.15 200 / 0.08)",
+          borderRadius: "42% 58% 55% 45% / 45% 52% 48% 55%",
+          top: "12%", right: "8%",
+          background: "oklch(0.7 0.15 200 / 0.03)",
+        }}
+        animate={{
+          y: [0, -24, 0],
+          rotate: [0, 6, 0, -6, 0],
+          scale: [1, 1.03, 1],
+        }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 200 200" style={{ opacity: 0.04 }} aria-hidden="true">
+        <g fill="none" stroke="currentColor" strokeWidth="0.3">
+          <circle cx="30" cy="40" r="1.5" fill="currentColor"/>
+          <circle cx="80" cy="25" r="1.5" fill="currentColor"/>
+          <circle cx="140" cy="35" r="1.5" fill="currentColor"/>
+          <circle cx="170" cy="60" r="1.5" fill="currentColor"/>
+          <circle cx="50" cy="80" r="1.5" fill="currentColor"/>
+          <circle cx="110" cy="70" r="1.5" fill="currentColor"/>
+          <circle cx="160" cy="90" r="1.5" fill="currentColor"/>
+          <circle cx="20" cy="110" r="1.5" fill="currentColor"/>
+          <circle cx="90" cy="120" r="1.5" fill="currentColor"/>
+          <circle cx="150" cy="130" r="1.5" fill="currentColor"/>
+          <line x1="30" y1="40" x2="80" y2="25"/>
+          <line x1="80" y1="25" x2="140" y2="35"/>
+          <line x1="140" y1="35" x2="170" y2="60"/>
+          <line x1="50" y1="80" x2="110" y2="70"/>
+          <line x1="110" y1="70" x2="160" y2="90"/>
+          <line x1="20" y1="110" x2="90" y2="120"/>
+          <line x1="90" y1="120" x2="150" y2="130"/>
+          <line x1="30" y1="40" x2="50" y2="80"/>
+          <line x1="80" y1="25" x2="110" y2="70"/>
+          <line x1="140" y1="35" x2="160" y2="90"/>
+        </g>
+      </svg>
       {HeroBg && <HeroBg />}
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative w-full">
@@ -81,7 +145,11 @@ export default function HeroSection() {
           </span>
         </motion.div>
 
-        <h1 className="max-w-5xl mx-auto">
+        <motion.h1
+          className="max-w-5xl mx-auto"
+          style={{ x: mousePos.x * -20, y: mousePos.y * -12 }}
+          transition={{ type: "spring", stiffness: 50, damping: 30 }}
+        >
           {headline.map((word, i) => (
             <motion.span
               key={i}
@@ -99,7 +167,7 @@ export default function HeroSection() {
               {word}
             </motion.span>
           ))}
-        </h1>
+        </motion.h1>
 
         <motion.p
           custom={headline.length + 1}
