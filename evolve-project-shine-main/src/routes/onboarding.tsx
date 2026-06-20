@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Sparkles, User, GraduationCap, Building2, BookOpen, BarChart3, BrainCircuit, CheckCircle2,
@@ -10,6 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { OnboardingBg } from "@/components/three/OnboardingBg";
 
 export const Route = createFileRoute("/onboarding")({
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw redirect({ to: "/auth", replace: true });
+  },
   component: OnboardingPage,
   head: () => ({ meta: [{ title: "Welcome — EduNex" }] }),
 });

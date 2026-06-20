@@ -78,17 +78,16 @@ function AuthCallback() {
         setMessage("Signed in successfully!");
 
         setTimeout(() => {
-          switch (role) {
-            case "teacher": navigate({ to: "/teacher" }); break;
-            case "admin": navigate({ to: "/admin" }); break;
-            case "parent": navigate({ to: "/student/dashboard" }); break;
-            default: navigate({ to: "/student/dashboard" }); break;
-          }
+          const dash: Record<string, string> = {
+            teacher: "/teacher", admin: "/admin",
+            parent: "/student/dashboard", student: "/student/dashboard",
+          };
+          navigate({ to: dash[role] || "/student/dashboard", replace: true });
         }, 1500);
       } catch (e: any) {
         setStatus("error");
         setMessage(e.message || "Authentication failed");
-        setTimeout(() => navigate({ to: "/auth/student" }), 3000);
+        setTimeout(() => navigate({ to: "/auth", replace: true }), 3000);
       }
     };
     handleCallback();

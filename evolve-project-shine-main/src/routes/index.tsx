@@ -432,7 +432,7 @@ function ForWhomFlow() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <Link to={c.to} className="group card-premium rounded-2xl p-6 hover:-translate-y-1">
+              <Link to={c.to} className="group card-premium rounded-2xl p-6 hover:-translate-y-1 stagger-item">
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${c.accent} grid place-items-center mb-4 shadow-sm transition-transform duration-300 group-hover:scale-110`}>
                   <c.icon className="w-6 h-6 text-black" />
                 </div>
@@ -485,14 +485,6 @@ function ComparisonShowcase() {
             animate={{ backgroundPosition: ["0% 0%", "0% 100%", "0% 0%"] }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
           />
-          <motion.div
-            className="absolute left-6 right-6 h-px pointer-events-none z-10"
-            style={{
-              background: "linear-gradient(90deg, transparent, oklch(0.7 0.15 200 / 0.4), transparent)",
-            }}
-            animate={{ top: ["0%", "100%"] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          />
           <div className="flex items-center gap-3 px-4 sm:px-6 py-2 text-xs text-white/40 font-medium relative">
             <span className="w-8 shrink-0" />
             <span className="flex-1">Obszar</span>
@@ -544,14 +536,7 @@ function AchievementsFlow() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {ACHIEVEMENTS.map((a, i) => (
-            <motion.div
-              key={a.label}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, type: "spring" }}
-              className={`card-premium rounded-2xl p-6 text-center hover:-translate-y-1 hover-glow ${i === 0 || i === 5 ? "sm:col-span-1" : ""}`}
-            >
+              <div key={a.label} className={`reveal card-premium rounded-2xl p-6 text-center hover:-translate-y-1 hover-glow stagger-item ${i === 0 || i === 5 ? "sm:col-span-1" : ""}`} style={{ animationDelay: `${i * 0.06}s` }}>
               <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${a.color} grid place-items-center mb-4`}>
                 <a.icon className="w-6 h-6 text-black" />
               </div>
@@ -559,7 +544,7 @@ function AchievementsFlow() {
                 <span className={`bg-gradient-to-r ${a.color} bg-clip-text text-transparent`}>{a.value}</span>
               </div>
               <div className="text-xs text-white/40 mt-1.5 font-medium">{a.label}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -601,7 +586,7 @@ function AIPlatformFlow() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className={`card-premium rounded-2xl p-5 hover:-translate-y-1 transition-all ${!c.active ? 'opacity-50' : ''}`}
+              className={`card-premium rounded-2xl p-5 hover:-translate-y-1 stagger-item transition-all ${!c.active ? 'opacity-50' : ''}`}
             >
               <motion.div
                 animate={c.active ? { boxShadow: ["0 0 0px oklch(0.7 0.15 200 / 0)", "0 0 20px oklch(0.7 0.15 200 / 0.15)", "0 0 0px oklch(0.7 0.15 200 / 0)"] } : {}}
@@ -700,11 +685,7 @@ function AiDemoShowcase() {
           <p className="mt-3 text-white/40 text-sm">Zadaj pytanie o matematykę, języki, programowanie — AI odpowiada w czasie rzeczywistym.</p>
         </div>
         <div className="reveal-scale max-w-2xl mx-auto">
-          <motion.div
-            className="card-premium rounded-2xl overflow-hidden border border-white/[0.08]"
-            animate={{ borderColor: ["oklch(0.7 0.15 200 / 0.08)", "oklch(0.7 0.15 200 / 0.25)", "oklch(0.7 0.15 200 / 0.08)"] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          >
+          <div className="card-premium rounded-2xl overflow-hidden border border-white/[0.08]">
             <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-violet-500 grid place-items-center">
@@ -713,7 +694,7 @@ function AiDemoShowcase() {
                 <div>
                   <div className="text-sm font-medium text-white/90">AI Tutor</div>
                   <div className="flex items-center gap-1.5">
-                    <motion.span className="status-dot online" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} />
+                    <span className="status-dot online" />
                     <span className="text-[10px] text-white/30">Online · EduNex AI</span>
                   </div>
                 </div>
@@ -765,7 +746,7 @@ function AiDemoShowcase() {
                 <Send className="w-4 h-4" />
               </button>
             </div>
-          </motion.div>
+          </div>
           <div className="mt-4 flex justify-center gap-4 text-[10px] text-white/30">
             <span>Zapytaj o: <button onClick={() => setInput("matematyka")} className="text-accent/70 hover:text-accent underline underline-offset-2">matematykę</button></span>
             <span><button onClick={() => setInput("angielski")} className="text-accent/70 hover:text-accent underline underline-offset-2">angielski</button></span>
@@ -858,20 +839,9 @@ function FAQFlow() {
                   <Plus className="w-3.5 h-3.5"/>
                 </span>
               </button>
-              <AnimatePresence initial={false}>
-                {open === i && (
-                  <motion.div
-                    key="answer"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="overflow-hidden"
-                  >
-                    <p className="px-6 pb-4 text-sm text-white/50 leading-relaxed">{it.a}</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <div className={`overflow-hidden transition-all duration-300 ease-out ${open === i ? "max-h-48" : "max-h-0"}`}>
+                <p className="px-6 pb-4 text-sm text-white/50 leading-relaxed">{it.a}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -890,12 +860,7 @@ function NewsletterFlow() {
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="max-w-lg mx-auto px-4 sm:px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
+        <div className="reveal">
           {sent ? (
             <div className="card-premium rounded-2xl p-8"><CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3"/><h2 className="text-2xl font-bold text-emerald-300">Jesteś zapisany!</h2><p className="mt-2 text-sm text-white/50">Nowości i porady — raz na dwa tygodnie.</p></div>
           ) : (
@@ -909,7 +874,7 @@ function NewsletterFlow() {
               </form>
             </>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -932,11 +897,7 @@ function ContactFlow() {
   return (
     <section id="kontakt" className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <motion.div
-          className="reveal card-premium rounded-2xl p-6 sm:p-10"
-          animate={{ y: [0, -5, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        >
+        <div className="reveal card-premium rounded-2xl p-6 sm:p-10">
           <div className="grid lg:grid-cols-5 gap-8">
             <div className="lg:col-span-2">
               <span className="section-label inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm mb-4">Kontakt</span>
@@ -960,7 +921,7 @@ function ContactFlow() {
               </div>
             </form>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -1019,13 +980,7 @@ function FooterFlow() {
       )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
-          <motion.div
-            className="lg:col-span-2"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0, duration: 0.5 }}
-          >
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-[12px] bg-gradient-to-br from-accent to-fuchsia-500 p-[1.5px] shadow-lg">
                 <div className="w-full h-full rounded-[10px] bg-[oklch(0.06_0.03_270)] grid place-items-center">
@@ -1043,13 +998,8 @@ function FooterFlow() {
                 <a key={i} href="#" className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.06] grid place-items-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all"><Icon className="w-3.5 h-3.5"/></a>
               ))}
             </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-          >
+          </div>
+          <div>
             <div className="section-label text-white/30 mb-4">Platforma</div>
             <ul className="space-y-2 text-sm text-white/40">
               <li><Link to="/auth/student" className="hover:text-white transition-colors">Uczeń</Link></li>
@@ -1057,26 +1007,16 @@ function FooterFlow() {
               <li><a href="#funkcje" className="hover:text-white transition-colors">Funkcje</a></li>
               <li><a href="#cennik" className="hover:text-white transition-colors">Cennik</a></li>
             </ul>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
+          </div>
+          <div>
             <div className="section-label text-white/30 mb-4">Dokumenty</div>
             <ul className="space-y-2 text-sm text-white/40">
               <li><Link to="/dokumenty" className="hover:text-white transition-colors">Regulamin</Link></li>
               <li><Link to="/dokumenty" className="hover:text-white transition-colors">Polityka prywatności</Link></li>
               <li><Link to="/dokumenty" className="hover:text-white transition-colors">RODO</Link></li>
             </ul>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
+          </div>
+          <div>
             <div className="section-label text-white/30 mb-4">Kontakt</div>
             <ul className="space-y-2 text-sm text-white/40">
               <li>kontakt@edunex.pl</li>
@@ -1086,7 +1026,7 @@ function FooterFlow() {
               <span className="inline-flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent"/>online</span>
               <span className="ml-2">v11.1</span>
             </div>
-          </motion.div>
+          </div>
         </div>
         <div className="mt-10 pt-6 border-t border-white/[0.06] text-center text-xs text-white/30">
           &copy; {new Date().getFullYear()} EduNex · Projekt edukacyjny dla polskich szkół

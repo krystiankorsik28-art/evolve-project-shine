@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
 import {
   GraduationCap, LogOut, User, KeyRound, Loader2,
   Clock, CheckCircle2, XCircle, BookOpen, ArrowLeft,
@@ -9,13 +10,16 @@ import {
   Bot, TrendingUp, Flame, Brain, ChevronRight,
   Menu, PanelLeftClose, PanelLeft,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { generateSerial, getQrUrl, downloadCertPdf } from "@/lib/certificate";
 import { toast } from "sonner";
 import { studentPinLogin } from "@/lib/student-auth.functions";
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/student/dashboard")({
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw redirect({ to: "/auth", replace: true });
+  },
   component: StudentDashboard,
   head: () => ({ meta: [{ title: "Panel ucznia | EduNex" }] }),
 });

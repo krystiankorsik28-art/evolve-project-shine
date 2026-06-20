@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, createRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createRoute, useNavigate, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Route as rootRoute } from "./__root";
 import { AppShell } from "@/components/dashboard/AppShell";
@@ -7,49 +7,24 @@ import { AppShell } from "@/components/dashboard/AppShell";
 export const Route = createRoute({
   getParentRoute: () => rootRoute,
   id: "_authenticated",
+  beforeLoad: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw redirect({ to: "/auth", replace: true });
+  },
   component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
   const navigate = useNavigate();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(true);
 
   useEffect(() => {
-    let active = true;
-
-    const redirectToLogin = async () => {
-      await navigate({ to: "/auth", replace: true });
-    };
-
-    const checkAuth = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (!active) return;
-
-      if (error || !data.user) {
-        setReady(false);
-        await redirectToLogin();
-        return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session?.user) {
+        navigate({ to: "/auth", replace: true });
       }
-
-      setReady(true);
-    };
-
-    void checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (!active) return;
-      if (session?.user) {
-        setReady(true);
-        return;
-      }
-      setReady(false);
-      await redirectToLogin();
     });
-
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   if (!ready) {
