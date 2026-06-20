@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 interface IntroAnimationProps {
   onDone: () => void;
@@ -11,21 +11,31 @@ const SEGMENTS = [
 ];
 
 export default function IntroAnimation({ onDone }: IntroAnimationProps) {
-  const [phase, setPhase] = useState<"enter" | "exit">("enter");
-
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("exit"), 800);
-    const t2 = setTimeout(() => onDone(), 1200);
+    if (typeof window !== "undefined" && sessionStorage.getItem("introPlayed")) {
+      onDone();
+      return;
+    }
+    const t1 = setTimeout(() => {
+      const el = document.getElementById("intro-anim");
+      if (el) el.style.opacity = "0";
+    }, 800);
+    const t2 = setTimeout(() => {
+      if (typeof window !== "undefined") sessionStorage.setItem("introPlayed", "1");
+      onDone();
+    }, 1200);
     return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [onDone]);
 
+  if (typeof window !== "undefined" && sessionStorage.getItem("introPlayed")) {
+    return null;
+  }
+
   return (
     <div
-      className="fixed inset-0 z-[9999] grid place-items-center bg-[oklch(0.06_0.03_270)]"
-      style={{
-        opacity: phase === "exit" ? 0 : 1,
-        transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1)",
-      }}
+      id="intro-anim"
+      className="fixed inset-0 z-[9999] grid place-items-center"
+      style={{ background: "oklch(0.06 0.03 270)", transition: "opacity 0.5s cubic-bezier(0.16,1,0.3,1)" }}
     >
       <div className="relative">
         <div className="absolute inset-0 -m-16 rounded-full bg-accent/10 blur-[80px] animate-pulse" />

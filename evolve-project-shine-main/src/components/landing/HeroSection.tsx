@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, GraduationCap, Shield, Zap, Globe2, Activity } from "lucide-react";
@@ -14,54 +14,6 @@ function useDeviceCan3D() {
   return can3D;
 }
 
-function Typewriter({ text, delay = 0 }: { text: string; delay?: number }) {
-  const [displayed, setDisplayed] = useState("");
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setStarted(true), delay);
-    return () => clearTimeout(t);
-  }, [delay]);
-
-  useEffect(() => {
-    if (!started) return;
-    if (displayed.length < text.length) {
-      const t = setTimeout(() => {
-        setDisplayed(text.slice(0, displayed.length + 1));
-      }, 25 + Math.random() * 15);
-      return () => clearTimeout(t);
-    }
-  }, [started, displayed, text]);
-
-  return (
-    <span>
-      {displayed}
-      {displayed.length < text.length && (
-        <span className="inline-block w-[2px] h-[1em] ml-[1px] align-middle"
-          style={{
-            background: "oklch(0.7 0.15 200)",
-            animation: "cursorBlink 0.8s step-end infinite",
-          }}
-        />
-      )}
-    </span>
-  );
-}
-
-const WORD_REVEAL_VARIANTS = {
-  hidden: { y: 60, opacity: 0, rotateX: -15 },
-  visible: (i: number) => ({
-    y: 0,
-    opacity: 1,
-    rotateX: 0,
-    transition: {
-      delay: i * 0.035,
-      duration: 0.7,
-      ease: [0.16, 1, 0.3, 1],
-    },
-  }),
-} as any;
-
 const TRUST_ITEMS = [
   { icon: Shield, label: "RODO & ISO 27001" },
   { icon: Zap, label: "99.98% uptime" },
@@ -69,11 +21,19 @@ const TRUST_ITEMS = [
   { icon: Activity, label: "AI Powered" },
 ];
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+  }),
+};
+
 export default function HeroSection() {
   const can3D = useDeviceCan3D();
   const [HeroBg, setHeroBg] = useState<React.ComponentType | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-  const [headlineRevealed, setHeadlineRevealed] = useState(false);
+  const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     if (can3D) {
@@ -84,118 +44,84 @@ export default function HeroSection() {
   }, [can3D]);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setHeadlineRevealed(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (sectionRef.current) obs.observe(sectionRef.current);
-    return () => obs.disconnect();
+    const t = setTimeout(() => setRevealed(true), 100);
+    return () => clearTimeout(t);
   }, []);
 
+  const headline = "Przyszłość nauki zaczyna się tutaj".split(" ");
+
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-screen pt-24 pb-24 sm:pb-32 overflow-hidden flex items-center"
-    >
+    <section className="relative min-h-screen pt-28 pb-24 sm:pb-32 overflow-hidden flex items-center">
       <div className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse at 50% 20%, oklch(0.82 0.12 200 / 0.04) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.82 0.12 200 / 0.02) 0%, transparent 50%)",
+          background: "radial-gradient(ellipse at 50% 20%, oklch(0.82 0.12 200 / 0.05) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, oklch(0.82 0.12 200 / 0.03) 0%, transparent 50%)",
         }}
       />
       {HeroBg && <HeroBg />}
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center relative w-full">
         <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={headlineRevealed ? { opacity: 1, y: 0, scale: 1 } : {}}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10"
+          custom={0}
+          variants={fadeUp}
+          initial="hidden"
+          animate={revealed ? "visible" : "hidden"}
+          className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full mb-10"
           style={{
             background: "oklch(1 0 0 / 0.04)",
             border: "1px solid oklch(1 0 0 / 0.06)",
-            backdropFilter: "blur(8px)",
+            backdropFilter: "blur(12px)",
           }}
         >
           <span className="relative flex w-2 h-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full" style={{ background: "oklch(0.7 0.15 200)" }} />
             <span className="relative inline-flex rounded-full w-2 h-2" style={{ background: "oklch(0.7 0.15 200)" }} />
           </span>
-          <span className="text-xs" style={{ color: "oklch(1 0 0 / 0.6)" }}>
+          <span className="text-xs font-medium tracking-wide" style={{ color: "oklch(1 0 0 / 0.6)" }}>
             Globalna platforma edukacyjna nowej generacji
           </span>
         </motion.div>
 
-        <h1 className="mb-6 leading-[0.95]" style={{ perspective: "1000px" }}>
-          <span className="sr-only">Przyszłość nauki zaczyna się tutaj</span>
-          <span className="flex flex-wrap items-baseline justify-center gap-x-4 gap-y-2">
-            {"Przyszłość nauki".split(" ").map((word, i) => (
-              <motion.span
-                key={`line1-${i}`}
-                custom={i}
-                variants={WORD_REVEAL_VARIANTS}
-                initial="hidden"
-                animate={headlineRevealed ? "visible" : "hidden"}
-                className="inline-block text-[clamp(2.5rem,8vw,5rem)] font-bold tracking-tight text-white"
-                style={{
-                  textShadow: headlineRevealed ? "0 0 40px oklch(0.7 0.15 200 / 0.15)" : "none",
-                  transition: "text-shadow 0.8s ease 0.4s",
-                }}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </span>
-          <span className="flex flex-wrap items-baseline justify-center gap-x-4 gap-y-2 mt-2">
-            {"zaczyna się tutaj".split(" ").map((word, i) => (
-              <motion.span
-                key={`line2-${i}`}
-                custom={i + 3}
-                variants={WORD_REVEAL_VARIANTS}
-                initial="hidden"
-                animate={headlineRevealed ? "visible" : "hidden"}
-                className="inline-block text-[clamp(2.5rem,8vw,5rem)] font-bold tracking-tight"
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  filter: headlineRevealed ? "drop-shadow(0 0 20px oklch(0.7 0.15 200 / 0.3))" : "none",
-                  transition: "filter 0.8s ease 0.6s",
-                }}
-              >
-                {word}
-              </motion.span>
-            ))}
-          </span>
+        <h1 className="max-w-5xl mx-auto">
+          {headline.map((word, i) => (
+            <motion.span
+              key={i}
+              custom={i + 1}
+              variants={fadeUp}
+              initial="hidden"
+              animate={revealed ? "visible" : "hidden"}
+              className="inline-block text-[clamp(2.8rem,9vw,6.5rem)] font-bold tracking-tight leading-[1.05]"
+              style={{
+                color: i >= 3 ? "oklch(0.75 0.15 200)" : "#fff",
+                textShadow: i >= 3 ? "0 0 30px oklch(0.7 0.15 200 / 0.3)" : "none",
+                marginRight: "0.15em",
+              }}
+            >
+              {word}
+            </motion.span>
+          ))}
         </h1>
 
         <motion.p
-          initial={{ opacity: 0, filter: "blur(8px)" }}
-          animate={headlineRevealed ? { opacity: 1, filter: "blur(0px)" } : {}}
-          transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-lg sm:text-xl max-w-2xl mx-auto min-h-[2em]"
+          custom={headline.length + 1}
+          variants={fadeUp}
+          initial="hidden"
+          animate={revealed ? "visible" : "hidden"}
+          className="text-base sm:text-lg max-w-2xl mx-auto mt-6 leading-relaxed"
           style={{ color: "oklch(1 0 0 / 0.5)" }}
         >
-          <Typewriter
-            text="Wykorzystaj sztuczną inteligencję, aby uczyć się szybciej, skuteczniej i bardziej świadomie niż kiedykolwiek wcześniej."
-            delay={1200}
-          />
+          Wykorzystaj sztuczną inteligencję, aby uczyć się szybciej, skuteczniej i bardziej świadomie niż kiedykolwiek wcześniej.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={headlineRevealed ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 1.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          custom={headline.length + 2}
+          variants={fadeUp}
+          initial="hidden"
+          animate={revealed ? "visible" : "hidden"}
           className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
           <Link
             to="/auth/teacher"
-            className="group relative inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl overflow-hidden transition-all duration-300"
+            className="group relative inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold rounded-xl overflow-hidden transition-all duration-300"
             style={{
               background: "linear-gradient(135deg, oklch(0.7 0.15 200), oklch(0.6 0.2 240))",
               color: "#fff",
@@ -220,7 +146,7 @@ export default function HeroSection() {
               e.preventDefault();
               document.getElementById("funkcje")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300"
+            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium rounded-xl transition-all duration-300"
             style={{
               background: "oklch(1 0 0 / 0.04)",
               color: "oklch(1 0 0 / 0.7)",
@@ -241,9 +167,10 @@ export default function HeroSection() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={headlineRevealed ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 1.8, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          custom={headline.length + 3}
+          variants={fadeUp}
+          initial="hidden"
+          animate={revealed ? "visible" : "hidden"}
           className="mt-14 flex flex-wrap items-center justify-center gap-x-8 gap-y-3"
         >
           {TRUST_ITEMS.map((item) => (
@@ -258,13 +185,6 @@ export default function HeroSection() {
           ))}
         </motion.div>
       </div>
-
-      <style>{`
-        @keyframes cursorBlink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 }
