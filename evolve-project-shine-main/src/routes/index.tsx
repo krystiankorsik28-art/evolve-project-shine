@@ -28,6 +28,9 @@ import HeroSection from "@/components/landing/HeroSection";
 import StatsSection from "@/components/landing/StatsSection";
 import HowItWorksSection from "@/components/landing/HowItWorks";
 import FinalCTA from "@/components/landing/FinalCTA";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import PricingSection from "@/components/landing/PricingSection";
+import FeaturesSection from "@/components/landing/FeaturesSection";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -195,7 +198,7 @@ function Landing() {
           <HeroSection />
           <StatsSection />
           <HowItWorksSection />
-          <FeaturesFlow />
+          <FeaturesSection />
           <DemoShowcase />
           <ForWhomFlow />
           <ComparisonShowcase />
@@ -203,8 +206,8 @@ function Landing() {
           <AIPlatformFlow />
           <AiDemoShowcase />
           <SecurityFlow />
-          <TestimonialsFlow />
-          <PricingFlow />
+          <TestimonialsSection />
+          <PricingSection />
           <FAQFlow />
           <FinalCTA />
           <NewsletterFlow />
@@ -235,104 +238,8 @@ function CookieBanner() {
 
 
 
-/* ──── FEATURES ──── */
-const FEATURE_CATEGORIES = [
-  {
-    id: "egzaminy", label: "Egzaminy", icon: FileText, gradient: "from-accent to-blue-500",
-    items: [
-      { title: "Tworzenie egzaminów", bullets: ["Pytania zamknięte, otwarte, kod, dopasowania", "Szablony z banku — 200+ gotowych zestawów", "Własne kategorie i tagi przedmiotowe", "Ustawienie czasu i progu zaliczenia", "Losowanie kolejności pytań"] },
-      { title: "Sprawdziany błyskawiczne", bullets: ["Kartkówki z 3-5 pytaniami w 2 minuty", "Wyniki widoczne natychmiast po zakończeniu", "Wiele typów w jednym sprawdzianie", "Punkty cząstkowe i suma na żywo"] },
-      { title: "Bank pytań", bullets: ["200+ pytań gotowych do użycia", "Import z Worda / PDF / Excel", "Współdzielenie z nauczycielami", "Filtry po przedmiocie i poziomie"] },
-      { title: "Generator AI", bullets: ["Generuj pytania z 3 słów — AI robi resztę", "Wczytaj zdjęcie — AI odczytuje i tworzy test", "Dopasowanie poziomu trudności", "Generowanie wariantów dla klasy"] },
-      { title: "Certyfikacja", bullets: ["Certyfikat PDF po egzaminie", "Unikalny numer seryjny", "Kod QR — weryfikacja online", "Pobierz i wydrukuj"] },
-    ],
-  },
-  {
-    id: "ai", label: "AI", icon: BrainCircuit, gradient: "from-accent to-blue-500",
-    items: [
-      { title: "Auto-ocena odpowiedzi", bullets: ["Pytania zamknięte — ocena w 0,3s", "AI ocenia otwarte — rozumie kontekst", "Korekta pisowni nie wpływa na ocenę", "Statystyki trudności pytań"] },
-      { title: "Asystent AI nauczyciela", bullets: ["Rozmowa głosowa z asystentem", "Podpowiedzi przy układaniu pytań", "Analiza błędów klasy", "Personalizowane rekomendacje"] },
-      { title: "Wykrywanie ściągania", bullets: ["AI analizuje ruchy myszy", "Wykrywanie opuszczania okna", "Analiza podobieństwa odpowiedzi", "Alerty w czasie rzeczywistym"] },
-      { title: "Inteligentne rekomendacje", bullets: ["AI sugeruje pytania na podstawie wyników", "Personalizowane zestawy powtórkowe", "Automatyczny dobór trudności", "Rekomendacje materiałów"] },
-    ],
-  },
-  {
-    id: "analityka", label: "Analityka", icon: BarChart3, gradient: "from-accent to-blue-500",
-    items: [
-      { title: "Panel nauczyciela", bullets: ["KPI: egzaminy, średnia, alerty", "Wykresy wyników w czasie", "Ranking uczniów", "Filtry dat i przedmiotów"] },
-      { title: "Monitoring na żywo", bullets: ["Postęp ucznia w czasie rzeczywistym", "Aktywni / ryzyko podział", "Zdarzenia i alerty", "Zatrzymanie egzaminu zdalnie"] },
-      { title: "Raporty dla dyrekcji", bullets: ["Zbiorcze zestawienie klas", "Wskaźniki zdawalności", "Eksport PDF / Excel / CSV", "Dziennik audytu"] },
-      { title: "Prognozy i trend", bullets: ["Wykresy predykcyjne", "Mapa cieplna wyników", "Alerty przy spadku wyników", "Raport z rekomendacjami AI"] },
-    ],
-  },
-  {
-    id: "bezpieczenstwo", label: "Bezpieczeństwo", icon: Shield, gradient: "from-accent to-blue-500",
-    items: [
-      { title: "Ochrona danych", bullets: ["Szyfrowanie TLS 1.3", "AES-256 w spoczynku", "Serwery w UE", "Backupy co 6h"] },
-      { title: "Zgodność z RODO", bullets: ["Umowa powierzenia danych", "Dziennik audytu", "Eksport danych na żądanie", "Usunięcie w 48h"] },
-      { title: "Tryb egzaminacyjny", bullets: ["Pełny ekran — blokada kart", "Blokada skrótów (Ctrl+C, Alt+Tab)", "Zapis co 5s", "Monitoring aktywności"] },
-      { title: "Kontrola dostępu", bullets: ["Role: admin, nauczyciel, uczeń", "Dostęp tylko do własnych klas", "2FA dla administratora", "Sesja wygasa po 15 min"] },
-    ],
-  },
-  {
-    id: "integracje", label: "Integracje", icon: Puzzle, gradient: "from-accent to-blue-500",
-    items: [
-      { title: "Dzienniki", bullets: ["Vulcan — synchronizacja ocen", "Librus — import i eksport", "Mobidziennik — wymiana danych"] },
-      { title: "Działanie mobilne", bullets: ["Chrome / Edge / Firefox", "Bez instalacji", "Telefon, tablet, komputer", "Responsywny interfejs"] },
-      { title: "Eksport i import", bullets: ["Import z Word, PDF, Excel", "Export do PDF, Excel, CSV", "API REST dla integracji"] },
-    ],
-  },
-];
 
-function FeaturesFlow() {
-  const [active, setActive] = useState(FEATURE_CATEGORIES[0].id);
-  const [key, setKey] = useState(0);
-  const cat = FEATURE_CATEGORIES.find((c) => c.id === active) ?? FEATURE_CATEGORIES[0];
-  const total = FEATURE_CATEGORIES.reduce((a, c) => a + c.items.reduce((b, i) => b + i.bullets.length, 0), 0);
-  useEffect(() => setKey((k) => k + 1), [active]);
-  return (
-    <section id="funkcje" className="section-dark py-28 sm:py-36 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center max-w-2xl mx-auto mb-16">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Funkcje</span>
-          <h2 className="display-lg mt-6">
-            Ponad <span className="text-accent">{total}+</span> możliwości
-          </h2>
-          <p className="body-sm mt-4 max-w-lg mx-auto">Wszystko, czego potrzebuje nowoczesna szkoła — w jednej, spójnej platformie.</p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {FEATURE_CATEGORIES.map((c) => {
-            const a = active === c.id;
-            return (
-              <button key={c.id} onClick={() => setActive(c.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${a ? "bg-white text-black shadow-sm" : "text-white/40 hover:text-white hover:bg-white/[0.04]"}`}>
-                <c.icon className="w-4 h-4"/>{c.label}
-              </button>
-            );
-          })}
-        </div>
-        <div key={key} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ animation: "fadeUp 0.35s ease-out" }}>
-          {cat.items.map((item, i) => (
-            <div key={item.title} className="card-premium rounded-2xl p-6 hover:-translate-y-1 hover-glow stagger-item" style={{ transitionDelay: `${i * 0.04}s` }}>
-              <h3 className="font-semibold text-sm text-white/90 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-accent to-violet-400"/>
-                {item.title}
-              </h3>
-              <ul className="mt-3 space-y-1.5">
-                {item.bullets.map((b) => (
-                  <li key={b} className="text-xs text-white/50 flex gap-2">
-                    <CheckCircle2 className="w-3 h-3 text-accent/30 shrink-0 mt-0.5"/>{b}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-      <style>{`@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }`}</style>
-    </section>
-  );
-}
+/* ──── FEATURES ──── */
 
 /* ──── DEMO ──── */
 const QUIZ_DATA = [
@@ -867,122 +774,8 @@ function SecurityFlow() {
 }
 
 /* ──── TESTIMONIALS ──── */
-const TESTIMONIALS = [
-  { n: "Katarzyna Mazurek", r: "Matematyka · XIV LO Warszawa", t: "Przed EduNex układałam testy w Wordzie. Teraz robię to dwa razy szybciej. Generator AI to game changer." },
-  { n: "Paweł Górski", r: "Wicedyrektor · III LO Gdynia", t: "Monitoring na żywo to przełom — od razu widzę, kto potrzebuje pomocy, a kto ściąga." },
-  { n: "Magdalena Adamczyk", r: "Polonistka · V LO Kraków", t: "Uczeń widzi wynik od razu i wie co poprawić. Oszczędzam 10 godzin tygodniowo na sprawdzaniu." },
-  { n: "Tomasz Wróblewski", r: "Dyrektor · ZSE Poznań", t: "Spełnia wszystkie wymogi RODO. Koszty druku spadły o 90%, a wyniki są od razu w systemie." },
-  { n: "Anna Jabłońska", r: "Anglistka · VI LO Wrocław", t: "Wczytuję zdjęcie kartkówki i w 10s mam 10 pytań. Uczniowie też to uwielbiają." },
-  { n: "Robert Nowicki", r: "Informatyk · XIII LO Szczecin", t: "Integracja z Librusem działa bezbłędnie. Wdrożenie zajęło 2 dni, a nie 2 miesiące." },
-];
-function TestimonialsFlow() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => { const iv = setInterval(() => setIdx((i) => (i + 1) % TESTIMONIALS.length), 5000); return () => clearInterval(iv); }, []);
-  return (
-    <section id="opinie" className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <div className="reveal mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Opinie</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Co mówią nauczyciele" /></h2>
-        </div>
-        <div key={idx} style={{ animation: "testimonialFade 0.5s cubic-bezier(0.16,1,0.3,1)" }}>
-          <div className="rounded-2xl p-8 sm:p-10 bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06]">
-            <div className="text-5xl text-accent/30 font-serif leading-none mb-4 italic">"</div>
-            <blockquote className="text-white/80 text-base sm:text-lg leading-relaxed">{TESTIMONIALS[idx].t}</blockquote>
-            <div className="mt-6 flex items-center justify-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-accent to-violet-500 grid place-items-center text-black font-semibold text-sm">{TESTIMONIALS[idx].n[0]}</div>
-              <div className="text-left">
-                <div className="font-medium text-sm text-white/90">{TESTIMONIALS[idx].n}</div>
-                <div className="text-xs text-white/40">{TESTIMONIALS[idx].r}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center gap-2 mt-6">
-          {TESTIMONIALS.map((_, i) => (
-            <button key={i} onClick={() => setIdx(i)} className={`h-2 rounded-full transition-all duration-300 ${i === idx ? "bg-white/60 w-6" : "bg-white/20 w-2 hover:bg-white/40"}`} />
-          ))}
-        </div>
-      </div>
-      <style>{`@keyframes testimonialFade { from { opacity:0; transform:translateY(16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }`}</style>
-    </section>
-  );
-}
 
 /* ──── PRICING ──── */
-const PLANS = [
-  { name: "Klasa", price: "0", sub: "na zawsze", lines: ["Do 35 uczniów", "Bank pytań 300+", "Egzaminy bez limitu", "Podstawowe raporty", "Wsparcie e-mail"], feat: false },
-  { name: "Nauczyciel", price: "99", sub: "/mies", lines: ["Do 60 uczniów", "Bank pytań 3000+", "Egzaminy bez limitu", "Generator AI 200 zapytań", "Monitoring na żywo", "Wsparcie priorytetowe"], feat: true },
-  { name: "Szkoła", price: "490", sub: "/mies", lines: ["Do 300 uczniów", "Bank pytań bez limitu", "Anti-cheat + monitoring", "API REST + integracje", "Panel dyrekcji", "Wsparcie 24/7"], feat: false },
-  { name: "Enterprise", price: "Indywidualnie", sub: "", lines: ["Nieograniczona liczba użytkowników", "Dedykowany serwer", "SLA 99,99%", "Szkolenia stacjonarne", "Priorytetowe wsparcie 24/7"], feat: false },
-];
-function PricingFlow() {
-  const navigate = useNavigate();
-  const [yr, setYr] = useState(false);
-  const yp = (p: string) => p === "0" || p === "Indywidualnie" ? p : String(Math.round(parseInt(p) * 0.8));
-  const isContact = (p: string) => p === "Indywidualnie";
-  const isFree = (p: string) => p === "0";
-  return (
-    <section id="cennik" className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Cennik</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Wybierz swój plan" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Płatność kartą, przelewem lub krypto · bez ukrytych kosztów</p>
-        </div>
-        <div className="reveal flex items-center justify-center gap-4 mb-12">
-          <span className={`text-sm font-medium transition-colors ${!yr ? "text-white" : "text-white/40"}`}>Miesięcznie</span>
-          <button onClick={() => setYr((v) => !v)} className={`relative w-14 h-7 rounded-full transition-all ${yr ? "bg-accent shadow-[0_0_16px_oklch(0.65_0.15_240_/_0.4)]" : "bg-white/15 hover:bg-white/25"}`} role="switch" aria-checked={yr}>
-            <span className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all duration-300 ${yr ? "translate-x-7" : ""}`} />
-          </button>
-          <span className={`text-sm font-medium transition-colors ${yr ? "text-white" : "text-white/40"}`}>
-            Rocznie <span className="ml-1.5 text-[10px] font-semibold bg-emerald-400/20 text-emerald-300 px-2 py-0.5 rounded-full">-20%</span>
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 items-start max-w-6xl mx-auto">
-          {PLANS.map((pl) => {
-            const price = yr && !isFree(pl.price) && !isContact(pl.price) ? yp(pl.price) : pl.price;
-            const isFeatured = pl.feat;
-            return (
-              <div key={pl.name} className={`relative rounded-2xl p-7 sm:p-8 flex flex-col h-full transition-all duration-300 ${isFeatured ? "bg-gradient-to-b from-white/[0.1] to-white/[0.03] border border-accent/40 shadow-[0_0_60px_-16px_oklch(0.65_0.15_240_/_0.3)] hover:-translate-y-1.5" : isContact(pl.price) ? "bg-white/[0.04] border border-white/[0.08] hover:border-white/20 hover:bg-white/[0.06] hover:-translate-y-1" : "bg-white/[0.06] border border-white/[0.1] hover:border-white/25 hover:bg-white/[0.09] hover:-translate-y-1"}`}>
-                {isFeatured && (
-                  <>
-                    <div className="absolute -inset-[1px] rounded-2xl pointer-events-none" style={{ background: "linear-gradient(135deg, oklch(0.65 0.15 240 / 0.3), transparent 40%, transparent 60%, oklch(0.65 0.15 240 / 0.3))", zIndex: -1 }} />
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-accent to-fuchsia-500 text-white text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-accent/30"><Star className="w-2.5 h-2.5 fill-white" />Popularny</span>
-                    </div>
-                  </>
-                )}
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-semibold text-white/70">{pl.name}</h3>
-                </div>
-                <div className="mt-4 flex items-baseline gap-1">
-                  <span className={`text-5xl sm:text-6xl font-bold tracking-tight ${isFeatured ? "text-accent" : "text-white"}`}>{price}</span>
-                  <span className="text-sm text-white/40 font-medium">{yr && pl.sub === "/mies" ? "/rok" : pl.sub}</span>
-                </div>
-                {yr && !isFree(pl.price) && !isContact(pl.price) && (
-                  <div className="mt-1 text-xs text-emerald-400/80 font-medium">{pl.price} zł/mies przy płatności rocznej</div>
-                )}
-                <div className="mt-6 border-t border-white/[0.06] pt-5">
-                  <ul className="space-y-3.5 text-sm flex-1">
-                    {pl.lines.map((l) => (
-                      <li key={l} className="flex gap-3 items-start"><CheckCircle2 className={`w-4 h-4 mt-0.5 shrink-0 ${isFeatured ? "text-accent" : "text-white/30"}`} /><span className={isFeatured ? "text-white/85" : "text-white/60"}>{l}</span></li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mt-8">
-                  {isFree(pl.price) && <button onClick={() => navigate({ to: "/auth/teacher" })} className="w-full py-3 rounded-xl text-sm font-semibold bg-white text-black hover:bg-white/90 transition-all shadow-lg shadow-white/10 magnetic-btn">Rozpocznij za darmo</button>}
-                  {!isFree(pl.price) && !isContact(pl.price) && <NexaPayCheckout planName={pl.name} amount={yr ? yp(pl.price) + " zł" : pl.price + " zł"} amountUsd={String(Math.round(parseInt(pl.price) / 4))} />}
-                  {isContact(pl.price) && <button onClick={() => document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" })} className="w-full py-3 rounded-xl text-sm font-semibold border border-white/20 text-white/70 hover:text-white hover:bg-white/10 hover:border-white/40 transition-all magnetic-btn">Poproś o wycenę</button>}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ──── FAQ ──── */
 const FAQ = [

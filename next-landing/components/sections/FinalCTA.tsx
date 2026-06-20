@@ -1,40 +1,141 @@
 "use client";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+
+const TRUST_ITEMS = [
+  "No credit card required",
+  "Cancel anytime — no commitment",
+  "TLS 1.3 encrypted",
+];
 
 export function FinalCTA() {
   return (
-    <section id="contact" className="relative py-24 sm:py-32 border-t border-white/[0.04]">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_oklch(0.82_0.12_200_/_0.04),_transparent_60%)] pointer-events-none" />
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
+    <section className="relative py-24 sm:py-32 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
+          style={{ background: "radial-gradient(circle, oklch(0.7 0.15 200 / 0.08) 0%, transparent 60%)" }} />
+        <div className="absolute inset-0"
+          style={{ backgroundImage: "radial-gradient(oklch(1 0 0 / 0.03) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 30, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="relative rounded-3xl p-10 sm:p-16"
+          style={{
+            background: "linear-gradient(135deg, oklch(0.15 0.05 270 / 0.6), oklch(0.1 0.04 260 / 0.8))",
+            border: "1px solid oklch(1 0 0 / 0.06)",
+            backdropFilter: "blur(20px)",
+          }}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">
-            Ready to Transform Your School?
-          </h2>
-          <p className="mt-4 text-sm text-white/40 max-w-lg mx-auto">
+          <div className="absolute -inset-[1px] rounded-3xl pointer-events-none opacity-50"
+            style={{ background: "linear-gradient(135deg, oklch(0.7 0.15 200 / 0.15), transparent 40%, transparent 60%, oklch(0.7 0.15 200 / 0.15))", zIndex: -1 }} />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
+            style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)" }}
+          >
+            <span className="relative flex w-2 h-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full" style={{ background: "oklch(0.7 0.15 200)" }} />
+              <span className="relative inline-flex rounded-full w-2 h-2" style={{ background: "oklch(0.7 0.15 200)" }} />
+            </span>
+            <span className="text-xs" style={{ color: "oklch(1 0 0 / 0.5)" }}>Get started in 2 minutes</span>
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.05]"
+          >
+            <span className="text-white">Ready to Transform</span><br />
+            <span style={{
+              background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              Your School?
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="mt-4 text-base sm:text-lg max-w-lg mx-auto"
+            style={{ color: "oklch(1 0 0 / 0.45)" }}
+          >
             Join 36,000+ students and 800+ teachers already using EduNex.
-            Start free — no credit card required, no time limit.
-          </p>
-          <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+            Start free — no credit card required.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.55, duration: 0.5 }}
+            className="mt-8 flex flex-wrap items-center justify-center gap-3"
+          >
             <a
               href="/auth/register"
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium bg-white text-[#0a0a12] rounded-lg hover:bg-white/90 transition-all hover:shadow-lg hover:shadow-white/10"
+              className="inline-flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 text-sm font-medium rounded-xl transition-all duration-300"
+              style={{
+                background: "linear-gradient(135deg, oklch(0.7 0.15 200), oklch(0.6 0.2 240))",
+                color: "#fff",
+                boxShadow: "0 0 24px oklch(0.7 0.15 200 / 0.25)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 40px oklch(0.7 0.15 200 / 0.4)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "0 0 24px oklch(0.7 0.15 200 / 0.25)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
-              Start free <ArrowRight className="w-3.5 h-3.5" />
+              Start Free
+              <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="mailto:kontakt@edunex.pl"
-              className="inline-flex items-center gap-2 px-6 py-3 text-sm text-white/60 hover:text-white border border-white/[0.08] rounded-lg hover:bg-white/[0.04] transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium rounded-xl transition-all duration-300"
+              style={{
+                background: "oklch(1 0 0 / 0.04)",
+                color: "oklch(1 0 0 / 0.7)",
+                border: "1px solid oklch(1 0 0 / 0.08)",
+                backdropFilter: "blur(8px)",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.08)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.9)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.04)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.7)"; }}
             >
-              <Mail className="w-3.5 h-3.5" />
-              Contact sales
+              Contact Sales
             </a>
-          </div>
-          <p className="mt-4 text-xs text-white/20">Free plan includes full features for one class. Upgrade anytime.</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.7, duration: 0.5 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2"
+          >
+            {TRUST_ITEMS.map((item) => (
+              <span key={item} className="inline-flex items-center gap-1.5 text-xs" style={{ color: "oklch(1 0 0 / 0.3)" }}>
+                <CheckCircle2 className="w-3.5 h-3.5" style={{ color: "oklch(0.7 0.15 200 / 0.5)" }} />
+                {item}
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
       </div>
     </section>

@@ -37,10 +37,20 @@ export function BlogPreview() {
           className="flex items-center justify-between mb-12"
         >
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Latest from Blog</h2>
-            <p className="mt-2 text-sm text-white/40">Insights, guides, and news from the EduNex team</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Latest from{" "}
+              <span style={{
+                background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
+                Blog
+              </span>
+            </h2>
+            <p className="mt-2 text-sm" style={{ color: "oklch(1 0 0 / 0.4)" }}>Insights, guides, and news from the EduNex team</p>
           </div>
-          <a href="/blog" className="hidden sm:inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors">
+          <a href="/blog" className="hidden sm:inline-flex items-center gap-1.5 text-xs transition-colors" style={{ color: "oklch(1 0 0 / 0.4)" }}>
             View all <ArrowRight className="w-3 h-3" />
           </a>
         </motion.div>
@@ -54,26 +64,30 @@ export function BlogPreview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="group p-6 rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-white/[0.12] transition-all duration-300"
+              className="group p-6 rounded-2xl transition-all duration-300"
+              style={{
+                background: "linear-gradient(180deg, oklch(0.08 0.03 270 / 0.4), oklch(0.04 0.02 270 / 0.2))",
+                border: "1px solid oklch(1 0 0 / 0.06)",
+                backdropFilter: "blur(12px)",
+              }}
             >
-              <div className="w-10 h-10 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-4 group-hover:border-cyan-500/30 transition-colors">
-                <BookOpen className="w-5 h-5 text-white/40 group-hover:text-cyan-400 transition-colors" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-colors"
+                style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
+                <BookOpen className="w-5 h-5" style={{ color: "oklch(1 0 0 / 0.4)" }} />
               </div>
-              <div className="flex items-center gap-2 text-[10px] text-white/20 mb-3">
+              <div className="flex items-center gap-2 text-[10px] mb-3" style={{ color: "oklch(1 0 0 / 0.2)" }}>
                 <span>{post.date}</span>
                 <span>·</span>
                 <span>{post.readTime}</span>
               </div>
-              <h3 className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors mb-2">
-                {post.title}
-              </h3>
-              <p className="text-xs text-white/40 leading-relaxed">{post.excerpt}</p>
+              <h3 className="text-sm font-semibold text-white/80 group-hover:text-white transition-colors mb-2">{post.title}</h3>
+              <p className="text-xs leading-relaxed" style={{ color: "oklch(1 0 0 / 0.4)" }}>{post.excerpt}</p>
             </motion.a>
           ))}
         </div>
 
         <div className="mt-8 text-center sm:hidden">
-          <a href="/blog" className="inline-flex items-center gap-1.5 text-xs text-white/40 hover:text-white/70 transition-colors">
+          <a href="/blog" className="inline-flex items-center gap-1.5 text-xs transition-colors" style={{ color: "oklch(1 0 0 / 0.4)" }}>
             View all articles <ArrowRight className="w-3 h-3" />
           </a>
         </div>

@@ -30,18 +30,27 @@ export function FAQSection() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Frequently Asked Questions
-          </h2>
-          <p className="mt-3 text-sm text-white/40">Everything you need to know about EduNex</p>
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
+              Frequently Asked{" "}
+              <span style={{
+                background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
+                Questions
+              </span>
+            </h2>
+            <p className="mt-3 text-sm" style={{ color: "oklch(1 0 0 / 0.4)" }}>Everything you need to know about EduNex</p>
         </motion.div>
 
-        <div className="divide-y divide-white/[0.06] rounded-xl border border-white/[0.06]">
+        <div className="divide-y rounded-xl overflow-hidden" style={{ border: "1px solid oklch(1 0 0 / 0.06)", "--divider": "oklch(1 0 0 / 0.06)" } as React.CSSProperties}>
           {FAQ.map((item, i) => (
-            <div key={i}>
+            <div key={i} style={{ borderBottom: "1px solid oklch(1 0 0 / 0.06)" }}>
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="flex items-center justify-between w-full px-5 py-4 text-left text-sm text-white/70 hover:text-white transition-colors"
+                className="flex items-center justify-between w-full px-5 py-4 text-left text-sm transition-colors"
+                style={{ color: "oklch(1 0 0 / 0.7)" }}
               >
                 <span>{item.q}</span>
                 <motion.div
@@ -49,7 +58,7 @@ export function FAQSection() {
                   transition={{ duration: 0.3 }}
                   className="shrink-0 ml-4"
                 >
-                  <ChevronDown className="w-4 h-4 text-white/20" />
+                  <ChevronDown className="w-4 h-4" style={{ color: "oklch(1 0 0 / 0.2)" }} />
                 </motion.div>
               </button>
               <AnimatePresence>
@@ -61,7 +70,7 @@ export function FAQSection() {
                     transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                     className="overflow-hidden"
                   >
-                    <p className="px-5 pb-4 text-xs text-white/40 leading-relaxed">{item.a}</p>
+                    <p className="px-5 pb-4 text-xs leading-relaxed" style={{ color: "oklch(1 0 0 / 0.4)" }}>{item.a}</p>
                   </motion.div>
                 )}
               </AnimatePresence>

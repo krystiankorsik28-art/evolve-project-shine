@@ -16,7 +16,10 @@ const solutions = [
 
 export function ProblemSolution() {
   return (
-    <section className="relative py-24 sm:py-32 border-t border-white/[0.04]">
+    <section className="relative py-24 sm:py-32 border-t border-white/[0.04] overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.7 0.15 200 / 0.04) 0%, transparent 60%)" }} />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -25,17 +28,26 @@ export function ProblemSolution() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-            Education Today vs. Education Tomorrow
+            Education Today{" "}
+            <span style={{ color: "oklch(1 0 0 / 0.3)" }}>vs.</span>{" "}
+            <span style={{
+              background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              Education Tomorrow
+            </span>
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           <div>
-            <h3 className="text-sm font-semibold text-red-400/80 mb-6 flex items-center gap-2">
+            <h3 className="text-sm font-semibold mb-6 flex items-center gap-2" style={{ color: "oklch(0.72 0.18 30 / 0.8)" }}>
               <XCircle className="w-4 h-4" />
               The Old Way
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {problems.map((p, i) => (
                 <motion.div
                   key={p.title}
@@ -43,14 +55,20 @@ export function ProblemSolution() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex gap-4 p-4 rounded-lg bg-red-500/[0.03] border border-red-500/10"
+                  className="flex gap-4 p-4 rounded-xl"
+                  style={{
+                    background: "oklch(0.72 0.18 30 / 0.04)",
+                    border: "1px solid oklch(0.72 0.18 30 / 0.1)",
+                    backdropFilter: "blur(8px)",
+                  }}
                 >
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                    <p.icon className="w-5 h-5 text-red-400" />
+                  <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ background: "oklch(0.72 0.18 30 / 0.1)" }}>
+                    <p.icon className="w-5 h-5" style={{ color: "oklch(0.72 0.18 30 / 0.8)" }} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-white/80">{p.title}</h4>
-                    <p className="text-xs text-white/40 mt-1">{p.desc}</p>
+                    <p className="text-xs mt-1" style={{ color: "oklch(1 0 0 / 0.4)" }}>{p.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -58,11 +76,11 @@ export function ProblemSolution() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-cyan-400/80 mb-6 flex items-center gap-2">
+            <h3 className="text-sm font-semibold mb-6 flex items-center gap-2" style={{ color: "oklch(0.7 0.15 200 / 0.8)" }}>
               <CheckCircle2 className="w-4 h-4" />
               EduNex Solution
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {solutions.map((s, i) => (
                 <motion.div
                   key={s.title}
@@ -70,14 +88,20 @@ export function ProblemSolution() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="flex gap-4 p-4 rounded-lg bg-cyan-500/[0.03] border border-cyan-500/10"
+                  className="flex gap-4 p-4 rounded-xl"
+                  style={{
+                    background: "oklch(0.7 0.15 200 / 0.04)",
+                    border: "1px solid oklch(0.7 0.15 200 / 0.1)",
+                    backdropFilter: "blur(8px)",
+                  }}
                 >
-                  <div className="shrink-0 w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                    <s.icon className="w-5 h-5 text-cyan-400" />
+                  <div className="shrink-0 w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ background: "oklch(0.7 0.15 200 / 0.1)" }}>
+                    <s.icon className="w-5 h-5" style={{ color: "oklch(0.7 0.15 200)" }} />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-white/80">{s.title}</h4>
-                    <p className="text-xs text-white/40 mt-1">{s.desc}</p>
+                    <p className="text-xs mt-1" style={{ color: "oklch(1 0 0 / 0.4)" }}>{s.desc}</p>
                   </div>
                 </motion.div>
               ))}
