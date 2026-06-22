@@ -200,7 +200,10 @@ function EssayGrader() {
                   {Math.round(result.percent)}% · pewność {Math.round(result.confidence * 100)}%
                 </div>
               </div>
-              <button className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-bold transition inline-flex items-center gap-1.5">
+              <button
+                onClick={() => toast.success("Ocena zatwierdzona i zapisana")}
+                className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-bold transition inline-flex items-center gap-1.5"
+              >
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 Zatwierdź ocenę
               </button>

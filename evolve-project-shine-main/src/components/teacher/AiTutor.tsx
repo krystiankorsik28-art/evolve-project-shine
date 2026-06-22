@@ -149,7 +149,7 @@ export function AiTutor() {
       loadThreads();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Błąd AI");
-      setMessages((p) => p.slice(0, -1));
+      setMessages((p) => p.slice(0, -2));
     } finally {
       setBusy(false);
     }

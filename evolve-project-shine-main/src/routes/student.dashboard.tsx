@@ -60,10 +60,10 @@ type AttemptSummary = {
 };
 
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "exams", label: "Exams", icon: FileText },
-  { id: "certificates", label: "Certificates", icon: Award },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "dashboard", label: "Pulpit", icon: LayoutDashboard },
+  { id: "exams", label: "Egzaminy", icon: FileText },
+  { id: "certificates", label: "Certyfikaty", icon: Award },
+  { id: "settings", label: "Ustawienia", icon: Settings },
 ];
 
 function StudentDashboard() {
@@ -271,30 +271,30 @@ function StudentDashboard() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               <StatCard
                 icon={Zap}
-                label="Total XP"
+                label="XP"
                 value={String(points)}
-                sub={`${progress}% to Lv.${level + 1}`}
+                sub={`${progress}% do Lv.${level + 1}`}
                 color="from-cyan-400 to-blue-500"
               />
               <StatCard
                 icon={Flame}
-                label="Streak"
+                label="Seria"
                 value={String(streak)}
-                sub="days"
+                sub="dni"
                 color="from-amber-400 to-orange-500"
               />
               <StatCard
                 icon={Trophy}
-                label="Passed"
+                label="Zdane"
                 value={String(passedCount)}
-                sub="exams"
+                sub="egzaminy"
                 color="from-emerald-400 to-teal-500"
               />
               <StatCard
                 icon={TrendingUp}
-                label="Avg. Score"
+                label="Średnia"
                 value={avgScore ? `${avgScore}%` : "—"}
-                sub={avgScore ? "overall" : "no data"}
+                sub={avgScore ? "ogółem" : "brak"}
                 color="from-violet-400 to-purple-500"
               />
             </div>
@@ -614,7 +614,7 @@ function StudentDashboard() {
                         }`}
                       >
                         {h.status === "submitted"
-                          ? "Zaliczony"
+                          ? "Ukończony"
                           : h.status === "in_progress"
                             ? "W trakcie"
                             : h.status}
@@ -675,9 +675,9 @@ function StudentDashboard() {
                       }`}
                     >
                       {h.status === "submitted"
-                        ? "Completed"
+                        ? "Ukończony"
                         : h.status === "in_progress"
-                          ? "In progress"
+                          ? "W trakcie"
                           : h.status}
                     </span>
                   </div>
