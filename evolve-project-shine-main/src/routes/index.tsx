@@ -19,7 +19,8 @@ import {
   Infinity, Computer, Notebook, Radio, GitBranch,
   ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
   SmartphoneNfc, Sun, Moon, Palette, Layers, Network, Cpu, Server,
-  Binary, CircuitBoard, Cctv, Dock,
+  Binary, CircuitBoard, Cctv, Dock, Mic, Paperclip, Calculator, Atom,
+  FlaskConical,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -612,10 +613,10 @@ function DemoShowcase() {
 
 function ForWhomFlow() {
   const cards = [
-    { icon: GraduationCap, accent: "from-accent to-blue-500", to: "/auth/student", title: "Uczeń", lines: ["Wejście PIN-em bez konta", "Czysty interfejs egzaminu", "Wynik widoczny od razu", "Certyfikat PDF + QR"] },
-    { icon: Users, accent: "from-accent to-blue-500", to: "/auth/teacher", title: "Nauczyciel", lines: ["Pytania z AI w 3 sekundy", "Klasy, oceny, dziennik", "Monitoring na żywo", "Eksport PDF/Excel"] },
-    { icon: ShieldCheck, accent: "from-accent to-blue-500", to: "/auth/admin", title: "Dyrekcja", lines: ["Zatwierdzanie nauczycieli", "Raporty zbiorcze", "Audyt i statystyki", "Wgląd w wyniki szkoły"] },
-    { icon: Heart, accent: "from-accent to-blue-500", to: "/auth/parent", title: "Rodzic", lines: ["Wgląd w wyniki dziecka", "Powiadomienia e-mail", "Raport postępów", "Konsultacje online"] },
+    { icon: GraduationCap, accent: "from-accent to-blue-500", to: "/auth/student", title: "Uczeń", lines: ["Wejście PIN-em bez konta", "Czysty interfejs egzaminu", "Wynik widoczny od razu", "Certyfikat PDF + QR", "AI rekomendacje materiałów"] },
+    { icon: Users, accent: "from-accent to-blue-500", to: "/auth/teacher", title: "Nauczyciel", lines: ["Pytania z AI w 3 sekundy", "Klasy, oceny, dziennik", "Monitoring na żywo", "Eksport PDF/Excel", "AI asystent głosowy"] },
+    { icon: ShieldCheck, accent: "from-accent to-blue-500", to: "/auth/admin", title: "Dyrekcja", lines: ["Zatwierdzanie nauczycieli", "Raporty zbiorcze", "Audyt i statystyki", "Wgląd w wyniki szkoły", "Panel nadzoru AI"] },
+    { icon: Heart, accent: "from-accent to-blue-500", to: "/auth/parent", title: "Rodzic", lines: ["Wgląd w wyniki dziecka", "Powiadomienia e-mail", "Raport postępów", "Konsultacje online", "Dostęp przez przeglądarkę"] },
   ];
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
@@ -624,26 +625,27 @@ function ForWhomFlow() {
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Dla kogo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Cztery perspektywy, jedna platforma" /></h2>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
           {cards.map((c, i) => (
             <motion.div
               key={c.title}
+              className="flex"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-              <Link to={c.to} className="group card-premium rounded-2xl p-6 hover:-translate-y-1 stagger-item">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${c.accent} grid place-items-center mb-4 shadow-sm transition-transform duration-300 group-hover:scale-110`}>
+              <Link to={c.to} className="group card-premium rounded-2xl p-6 hover:-translate-y-1 stagger-item flex flex-col w-full">
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${c.accent} grid place-items-center mb-4 shadow-sm transition-transform duration-300 group-hover:scale-110 shrink-0`}>
                   <c.icon className="w-6 h-6 text-black" />
                 </div>
-                <h3 className="text-lg font-bold">{c.title}</h3>
-                <ul className="mt-3 space-y-2 text-sm text-white/50">
+                <h3 className="text-lg font-bold shrink-0">{c.title}</h3>
+                <ul className="mt-3 space-y-2 text-sm text-white/50 flex-1">
                   {c.lines.map((l) => (
-                    <li key={l} className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-accent/40 shrink-0 mt-0.5"/>{l}</li>
+                    <li key={l} className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-accent/40 shrink-0 mt-0.5"/><span>{l}</span></li>
                   ))}
                 </ul>
-                <div className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-white/30 group-hover:text-accent transition-colors">
+                <div className="mt-auto pt-4 inline-flex items-center gap-1 text-xs font-medium text-white/30 group-hover:text-accent transition-colors shrink-0">
                   Przejdź <ArrowUpRight className="w-3 h-3"/>
                 </div>
               </Link>
@@ -834,19 +836,43 @@ function AIPlatformFlow() {
 
 /* ──── INTERACTIVE AI DEMO ──── */
 function AiDemoShowcase() {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([
+  const [messages, setMessages] = useState<{ role: string; content: string; code?: string }[]>([
     { role: "ai", content: "Cześć! Jestem AI Tutor EduNex. Mogę pomóc w nauce matematyki, języków, programowania i nie tylko. O co chcesz zapytać?" }
   ]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [voiceMode, setVoiceMode] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
-  const DEMO_RESPONSES: Record<string, string> = {
-    matematyka: "Funkcja kwadratowa to f(x) = ax² + bx + c, gdzie a ≠ 0. Jej wykresem jest parabola. Wierzchołek ma współrzędne W(p, q), gdzie p = -b/(2a), q = -Δ/(4a). Δ = b² - 4ac nazywamy wyróżnikiem. Chcesz przećwiczyć na przykładzie?",
-    angielski: "Sure! 'Present Perfect' używamy gdy mówimy o przeszłych wydarzeniach mających wpływ na teraźniejszość. Struktura: have/has + past participle. Przykład: 'I have visited Paris.' W przeciwieństwie do Past Simple, tu ważny jest efekt, nie czas wykonania.",
-    programowanie: "W Pythonie list comprehension to elegancki sposób tworzenia list: [x**2 for x in range(10) if x % 2 == 0] zwróci kwadraty parzystych liczb od 0 do 9. To szybsze i czytelniejsze niż tradycyjna pętla for.",
-    domyślne: "Świetne pytanie! Na platformie EduNex możesz korzystać z AI do generowania kursów, testów, analizy postępów i personalizowanych planów nauki. AI Code Mentor pomoże Ci w programowaniu, a AI Teacher w przygotowaniu materiałów.",
+  const DEMO_RESPONSES: Record<string, { text: string; code?: string }> = {
+    matematyka: {
+      text: "Funkcja kwadratowa to f(x) = ax² + bx + c, gdzie a ≠ 0. Jej wykresem jest parabola. Wierzchołek ma współrzędne W(p, q), gdzie p = -b/(2a), q = -Δ/(4a). Δ = b² - 4ac nazywamy wyróżnikiem. Chcesz przećwiczyć na przykładzie?",
+    },
+    angielski: {
+      text: "Sure! 'Present Perfect' używamy gdy mówimy o przeszłych wydarzeniach mających wpływ na teraźniejszość. Struktura: have/has + past participle. Przykład: 'I have visited Paris.'",
+    },
+    programowanie: {
+      text: "W Pythonie list comprehension to elegancki sposób tworzenia list. Oto przykład:",
+      code: `# Kwadraty parzystych liczb od 0 do 9\nparzyste_kwadraty = [x**2 for x in range(10) if x % 2 == 0]\nprint(parzyste_kwadraty)\n# Wynik: [0, 4, 16, 36, 64]`,
+    },
+    fizyka: {
+      text: "Zgodnie z drugą zasadą dynamiki Newtona, siła jest iloczynem masy i przyspieszenia: F = m · a. Jeśli masa wynosi 5 kg, a przyspieszenie 2 m/s², to siła to 10 N.",
+    },
+    chemia: {
+      text: "Masa molowa H₂SO₄ (kwas siarkowy) to: 2·1 + 32 + 4·16 = 98 g/mol. Stechiometria opiera się na proporcjach masowych reagentów w reakcji chemicznej.",
+    },
+    domyślne: {
+      text: "Świetne pytanie! Na platformie EduNex możesz korzystać z AI do generowania kursów, testów, analizy postępów i personalizowanych planów nauki. AI Code Mentor pomoże Ci w programowaniu, a AI Teacher w przygotowaniu materiałów.",
+    },
   };
+
+  const quickActions = [
+    { label: "matematyka", icon: Calculator },
+    { label: "angielski", icon: Globe2 },
+    { label: "programowanie", icon: Code2 },
+    { label: "fizyka", icon: Atom },
+    { label: "chemia", icon: FlaskConical },
+  ];
 
   const handleSend = () => {
     const q = input.trim().toLowerCase();
@@ -854,11 +880,13 @@ function AiDemoShowcase() {
     setMessages(prev => [...prev, { role: "user", content: input.trim() }]);
     setInput("");
     setBusy(true);
+    const now = Date.now();
     setTimeout(() => {
-      const answer = Object.entries(DEMO_RESPONSES).find(([key]) => q.includes(key))?.[1] || DEMO_RESPONSES.domyślne;
-      setMessages(prev => [...prev, { role: "ai", content: answer }]);
+      const matched = Object.entries(DEMO_RESPONSES).find(([key]) => q.includes(key));
+      const answer = matched ? matched[1] : DEMO_RESPONSES.domyślne;
+      setMessages(prev => [...prev, { role: "ai", content: answer.text, code: answer.code }]);
       setBusy(false);
-    }, 1200);
+    }, 800 + Math.random() * 600);
   };
 
   useEffect(() => {
@@ -871,8 +899,17 @@ function AiDemoShowcase() {
         <div className="reveal text-center mb-14">
           <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">AI Demo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Porozmawiaj z AI Tuturem" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Zadaj pytanie o matematykę, języki, programowanie — AI odpowiada w czasie rzeczywistym.</p>
+          <p className="mt-3 text-white/40 text-sm">Zadaj pytanie z dowolnego przedmiotu — AI rozumie kontekst i odpowiada z przykładami.</p>
         </div>
+
+        <div className="flex flex-wrap justify-center gap-2 mb-6 reveal">
+          {quickActions.map((a) => (
+            <button key={a.label} onClick={() => { setInput(a.label); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200" style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(0.7 0.15 200 / 0.3)"; e.currentTarget.style.color = "oklch(0.7 0.15 200)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.4)"; }}>
+              <a.icon className="w-3 h-3" /> {a.label}
+            </button>
+          ))}
+        </div>
+
         <div className="reveal-scale max-w-2xl mx-auto">
           <div className="card-premium rounded-2xl overflow-hidden border border-white/[0.08]">
             <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
@@ -884,15 +921,15 @@ function AiDemoShowcase() {
                   <div className="text-sm font-medium text-white/90">AI Tutor</div>
                   <div className="flex items-center gap-1.5">
                     <span className="status-dot online" />
-                    <span className="text-[10px] text-white/30">Online · EduNex AI</span>
+                    <span className="text-[10px] text-white/30">Online · Gemini 3.5 Flash</span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 text-[10px] text-white/30">
-                <Sparkles className="w-3 h-3 text-accent" />Powered by Gemini
+                <Sparkles className="w-3 h-3 text-accent" />Multi-model
               </div>
             </div>
-            <div ref={chatRef} className="h-72 overflow-y-auto p-5 space-y-4 scroll-smooth">
+            <div ref={chatRef} className="h-80 overflow-y-auto p-5 space-y-4 scroll-smooth">
               {messages.map((m, i) => (
                 <div key={i} className={`flex gap-3 ${m.role === "user" ? "justify-end" : ""}`} style={{ animation: "chatFade 0.3s ease-out" }}>
                   {m.role === "ai" && (
@@ -900,12 +937,26 @@ function AiDemoShowcase() {
                       <BrainCircuit className="w-3.5 h-3.5 text-black" />
                     </div>
                   )}
-                  <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                    m.role === "user"
-                      ? "bg-accent/15 text-white/90 rounded-tr-md"
-                      : "bg-white/[0.04] border border-white/[0.06] text-white/70 rounded-tl-md"
+                  <div className={`max-w-[85%] space-y-2 ${
+                    m.role === "user" ? "items-end" : "items-start"
                   }`}>
-                    {m.content}
+                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+                      m.role === "user"
+                        ? "bg-accent/15 text-white/90 rounded-tr-md"
+                        : "bg-white/[0.04] border border-white/[0.06] text-white/70 rounded-tl-md"
+                    }`}>
+                      {m.content}
+                    </div>
+                    {(m as any).code && (
+                      <div className="rounded-xl overflow-hidden border border-accent/10 bg-[oklch(0.03_0.02_270)]">
+                        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/[0.04]" style={{ background: "oklch(0.06 0.03 270)" }}>
+                          <Code2 className="w-3 h-3 text-accent/60" />
+                          <span className="text-[10px] text-white/30 font-mono">Python</span>
+                          <button onClick={() => { navigator.clipboard.writeText((m as any).code); toast.success("Skopiowano!"); }} className="ml-auto text-[10px] text-white/30 hover:text-white/60 transition-colors">Copy</button>
+                        </div>
+                        <pre className="p-3 text-xs font-mono leading-relaxed overflow-x-auto" style={{ color: "oklch(0.7 0.15 200 / 0.9)" }}>{(m as any).code}</pre>
+                      </div>
+                    )}
                   </div>
                   {m.role === "user" && (
                     <div className="w-7 h-7 rounded-lg bg-white/[0.06] grid place-items-center shrink-0 mt-0.5">
@@ -930,17 +981,24 @@ function AiDemoShowcase() {
               )}
             </div>
             <div className="flex items-center gap-2 p-3 border-t border-white/[0.06] bg-white/[0.01]">
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()} placeholder="Zapytaj AI o matematykę, angielski, programowanie..." className="flex-1 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-accent/30 transition-all" />
+              <button onClick={() => { setVoiceMode(!voiceMode); toast.success(voiceMode ? "Tryb tekstowy" : "Tryb głosowy — powiedz pytanie"); }} className="p-2 rounded-xl transition-all shrink-0" style={{ background: voiceMode ? "oklch(0.7 0.15 200 / 0.2)" : "oklch(1 0 0 / 0.04)", color: voiceMode ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
+                <Mic className="w-4 h-4" />
+              </button>
+              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()} placeholder={voiceMode ? "Powiedz coś lub wpisz..." : "Zapytaj AI o matematykę, angielski, programowanie..."} className="flex-1 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-accent/30 transition-all" />
+              <button onClick={() => { const fileInput = document.createElement("input"); fileInput.type = "file"; fileInput.accept = "image/*,.pdf,.txt"; fileInput.onchange = () => toast.success("Plik przesłany — AI analizuje..."); fileInput.click(); }} className="p-2 rounded-xl transition-all shrink-0" style={{ background: "oklch(1 0 0 / 0.04)", color: "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
+                <Paperclip className="w-4 h-4" />
+              </button>
               <button onClick={handleSend} disabled={busy || !input.trim()} className="p-2.5 rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all">
                 <Send className="w-4 h-4" />
               </button>
             </div>
           </div>
           <div className="mt-4 flex justify-center gap-4 text-[10px] text-white/30">
-            <span>Zapytaj o: <button onClick={() => setInput("matematyka")} className="text-accent/70 hover:text-accent underline underline-offset-2">matematykę</button></span>
-            <span><button onClick={() => setInput("angielski")} className="text-accent/70 hover:text-accent underline underline-offset-2">angielski</button></span>
-            <span><button onClick={() => setInput("programowanie")} className="text-accent/70 hover:text-accent underline underline-offset-2">programowanie</button></span>
+            <span>Przykłady: <button onClick={() => setInput("matematyka")} className="text-accent/70 hover:text-accent underline underline-offset-2">funkcja kwadratowa</button></span>
+            <span><button onClick={() => setInput("angielski")} className="text-accent/70 hover:text-accent underline underline-offset-2">present perfect</button></span>
+            <span><button onClick={() => setInput("programowanie")} className="text-accent/70 hover:text-accent underline underline-offset-2">list comprehension</button></span>
           </div>
+          <div className="mt-2 text-center text-[9px] text-white/20">AI może się mylić. Weryfikuj odpowiedzi z nauczycielem.</div>
         </div>
       </div>
       <style>{`@keyframes chatFade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>
