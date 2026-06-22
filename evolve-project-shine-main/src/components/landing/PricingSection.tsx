@@ -1,6 +1,15 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, useInView, animate, useMotionValue, useTransform } from "framer-motion";
-import { CheckCircle2, Star, ArrowRight, Sparkles, ShieldCheck, Zap, CreditCard, Crown } from "lucide-react";
+import {
+  CheckCircle2,
+  Star,
+  ArrowRight,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  CreditCard,
+  Crown,
+} from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { NexaPayCheckout } from "@/components/NexaPayCheckout";
 
@@ -12,7 +21,13 @@ const PLANS = [
     tagline: "Idealny na start",
     popular: false,
     icon: Sparkles,
-    lines: ["Do 35 uczniów", "Bank pytań 300+", "Egzaminy bez limitu", "Podstawowe raporty", "Wsparcie e-mail"],
+    lines: [
+      "Do 35 uczniów",
+      "Bank pytań 300+",
+      "Egzaminy bez limitu",
+      "Podstawowe raporty",
+      "Wsparcie e-mail",
+    ],
     cta: "Rozpocznij za darmo",
     to: "/auth/teacher",
   },
@@ -23,7 +38,15 @@ const PLANS = [
     tagline: "Wybór profesjonalistów",
     popular: true,
     icon: Zap,
-    lines: ["Do 60 uczniów", "Bank pytań 3000+", "Egzaminy bez limitu", "Generator AI 200 zapytań", "Monitoring na żywo", "Wsparcie priorytetowe", "API REST"],
+    lines: [
+      "Do 60 uczniów",
+      "Bank pytań 3000+",
+      "Egzaminy bez limitu",
+      "Generator AI 200 zapytań",
+      "Monitoring na żywo",
+      "Wsparcie priorytetowe",
+      "API REST",
+    ],
     cta: "Wybierz Nauczyciel",
   },
   {
@@ -33,7 +56,14 @@ const PLANS = [
     tagline: "Dla całej placówki",
     popular: false,
     icon: ShieldCheck,
-    lines: ["Do 300 uczniów", "Bank pytań bez limitu", "Anti-cheat + monitoring", "API REST + integracje", "Panel dyrekcji", "Wsparcie 24/7"],
+    lines: [
+      "Do 300 uczniów",
+      "Bank pytań bez limitu",
+      "Anti-cheat + monitoring",
+      "API REST + integracje",
+      "Panel dyrekcji",
+      "Wsparcie 24/7",
+    ],
     cta: "Wybierz Szkoła",
   },
   {
@@ -43,7 +73,13 @@ const PLANS = [
     tagline: "Skala bez granic",
     popular: false,
     icon: Crown,
-    lines: ["Nieograniczona liczba użytkowników", "Dedykowany serwer", "SLA 99,99%", "Szkolenia stacjonarne", "Priorytetowe wsparcie 24/7"],
+    lines: [
+      "Nieograniczona liczba użytkowników",
+      "Dedykowany serwer",
+      "SLA 99,99%",
+      "Szkolenia stacjonarne",
+      "Priorytetowe wsparcie 24/7",
+    ],
     cta: "Poproś o wycenę",
     contact: true,
   },
@@ -79,7 +115,17 @@ function AnimatedPrice({ value, animateNow }: { value: string; animateNow: boole
   return <>{display}</>;
 }
 
-function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[number]; index: number; yearly: boolean; sectionInView: boolean }) {
+function PricingCard({
+  pl,
+  index,
+  yearly,
+  sectionInView,
+}: {
+  pl: (typeof PLANS)[number];
+  index: number;
+  yearly: boolean;
+  sectionInView: boolean;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const Icon = pl.icon;
 
@@ -88,7 +134,8 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
     return String(Math.round(parseInt(p) * 0.8));
   };
 
-  const price = yearly && pl.price !== "0" && pl.price !== "Indywidualnie" ? yearlyPrice(pl.price) : pl.price;
+  const price =
+    yearly && pl.price !== "0" && pl.price !== "Indywidualnie" ? yearlyPrice(pl.price) : pl.price;
 
   return (
     <motion.div
@@ -101,21 +148,26 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
       style={{
         marginTop: pl.popular ? "-12px" : "0",
         background: pl.popular
-          ? "linear-gradient(165deg, oklch(0.14 0.05 250 / 0.9), oklch(0.07 0.03 260 / 0.7))"
-          : "oklch(0.08 0.03 270 / 0.35)",
-        border: pl.popular ? "1px solid oklch(0.72 0.16 200 / 0.35)" : "1px solid oklch(1 0 0 / 0.07)",
+          ? "linear-gradient(165deg, oklch(0.12 0.05 250), oklch(0.06 0.03 260))"
+          : "oklch(0.05 0.015 270)",
+        border: pl.popular
+          ? "1px solid oklch(0.72 0.16 200 / 0.4)"
+          : "1px solid oklch(0.15 0.02 270)",
         boxShadow: pl.popular
-          ? "0 24px 70px oklch(0.6 0.18 230 / 0.25), 0 0 50px oklch(0.72 0.16 200 / 0.15)"
-          : "0 12px 40px oklch(0 0 0 / 0.3)",
-        transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.35s, box-shadow 0.35s",
+          ? "0 24px 70px oklch(0.6 0.18 230 / 0.3), 0 0 60px oklch(0.72 0.16 200 / 0.12)"
+          : "0 8px 30px oklch(0 0 0 / 0.5)",
+        transition:
+          "transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.35s, box-shadow 0.35s",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = pl.popular ? "translateY(-8px) scale(1.015)" : "translateY(-8px)";
-        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.3)";
+        e.currentTarget.style.transform = pl.popular
+          ? "translateY(-8px) scale(1.015)"
+          : "translateY(-8px)";
+        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.25)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0) scale(1)";
-        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.07)";
+        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.15 0.02 270)";
       }}
     >
       {pl.popular && (
@@ -139,21 +191,32 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
           <span
             className="grid place-items-center w-10 h-10 rounded-xl shrink-0"
             style={{
-              background: pl.popular ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.25), oklch(0.6 0.2 250 / 0.15))" : "oklch(1 0 0 / 0.05)",
-              border: pl.popular ? "1px solid oklch(0.72 0.16 200 / 0.3)" : "1px solid oklch(1 0 0 / 0.08)",
+              background: pl.popular
+                ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.25), oklch(0.6 0.2 250 / 0.15))"
+                : "oklch(0.1 0.02 270)",
+              border: pl.popular
+                ? "1px solid oklch(0.72 0.16 200 / 0.3)"
+                : "1px solid oklch(0.18 0.02 270)",
             }}
           >
-            <Icon className="w-5 h-5" style={{ color: pl.popular ? "oklch(0.78 0.15 200)" : "oklch(1 0 0 / 0.55)" }} />
+            <Icon
+              className="w-5 h-5"
+              style={{ color: pl.popular ? "oklch(0.78 0.15 200)" : "oklch(1 0 0 / 0.55)" }}
+            />
           </span>
           <div>
             <h3 className="text-base font-semibold text-white">{pl.name}</h3>
-            <p className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.4)" }}>{pl.tagline}</p>
+            <p className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+              {pl.tagline}
+            </p>
           </div>
         </div>
 
         {/* price */}
         <div className="mt-6 flex items-baseline gap-1">
-          {pl.price !== "Indywidualnie" && <span className="text-2xl font-semibold text-white/50">zł</span>}
+          {pl.price !== "Indywidualnie" && (
+            <span className="text-2xl font-semibold text-white/50">zł</span>
+          )}
           <span
             className={`leading-none font-bold tracking-tight text-white ${pl.price === "Indywidualnie" ? "text-3xl sm:text-[2rem]" : "text-5xl sm:text-[3.4rem]"}`}
           >
@@ -170,7 +233,7 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
         </div>
 
         {/* features */}
-        <div className="mt-6 pt-5 flex-1" style={{ borderTop: "1px solid oklch(1 0 0 / 0.07)" }}>
+        <div className="mt-6 pt-5 flex-1" style={{ borderTop: "1px solid oklch(0.15 0.02 270)" }}>
           <ul className="space-y-3 text-sm">
             {pl.lines.map((l, li) => (
               <motion.li
@@ -184,12 +247,17 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
                 <span
                   className="grid place-items-center w-[18px] h-[18px] rounded-full mt-0.5 shrink-0"
                   style={{
-                    background: pl.popular ? "oklch(0.72 0.16 200 / 0.18)" : "oklch(1 0 0 / 0.06)",
+                    background: pl.popular ? "oklch(0.72 0.16 200 / 0.18)" : "oklch(0.12 0.02 270)",
                   }}
                 >
-                  <CheckCircle2 className="w-3 h-3" style={{ color: pl.popular ? "oklch(0.78 0.15 200)" : "oklch(1 0 0 / 0.5)" }} />
+                  <CheckCircle2
+                    className="w-3 h-3"
+                    style={{ color: pl.popular ? "oklch(0.78 0.15 200)" : "oklch(1 0 0 / 0.5)" }}
+                  />
                 </span>
-                <span style={{ color: pl.popular ? "oklch(1 0 0 / 0.88)" : "oklch(1 0 0 / 0.6)" }}>{l}</span>
+                <span style={{ color: pl.popular ? "oklch(1 0 0 / 0.88)" : "oklch(1 0 0 / 0.6)" }}>
+                  {l}
+                </span>
               </motion.li>
             ))}
           </ul>
@@ -201,23 +269,51 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
             <Link
               to={pl.to || "/auth/teacher"}
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300"
-              style={{ background: "oklch(1 0 0 / 0.92)", color: "oklch(0.06 0.03 270)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 1)"; e.currentTarget.style.boxShadow = "0 0 30px oklch(1 0 0 / 0.2)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.92)"; e.currentTarget.style.boxShadow = "none"; }}
+              style={{
+                background: "linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.55 0.22 250))",
+                color: "#fff",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 4px 30px oklch(0.6 0.18 230 / 0.5)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "none";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               {pl.cta} <ArrowRight className="w-4 h-4" />
             </Link>
           )}
           {pl.price !== "0" && pl.price !== "Indywidualnie" && (
-            <NexaPayCheckout planName={pl.name} amount={yearly ? yearlyPrice(pl.price) + " zł" : pl.price + " zł"} amountUsd={String(Math.round(parseInt(pl.price) / 4))} />
+            <NexaPayCheckout
+              planName={pl.name}
+              amount={yearly ? yearlyPrice(pl.price) + " zł" : pl.price + " zł"}
+              amountUsd={String(Math.round(parseInt(pl.price) / 4))}
+            />
           )}
           {pl.price === "Indywidualnie" && (
             <button
-              onClick={() => document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" })
+              }
               className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300"
-              style={{ border: "1px solid oklch(1 0 0 / 0.15)", color: "oklch(1 0 0 / 0.65)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.3)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.95)"; e.currentTarget.style.background = "oklch(1 0 0 / 0.04)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.15)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.65)"; e.currentTarget.style.background = "transparent"; }}
+              style={{
+                border: "1px solid oklch(0.72 0.16 200 / 0.25)",
+                color: "oklch(0.78 0.15 200)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.5)";
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.background = "oklch(0.72 0.16 200 / 0.08)";
+                e.currentTarget.style.boxShadow = "0 0 20px oklch(0.6 0.18 230 / 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.25)";
+                e.currentTarget.style.color = "oklch(0.78 0.15 200)";
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.boxShadow = "none";
+              }}
             >
               {pl.cta}
             </button>
@@ -239,11 +335,17 @@ export default function PricingSection() {
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[1100px] h-[700px] rounded-full"
-          style={{ background: "radial-gradient(circle, oklch(0.6 0.18 230 / 0.07) 0%, transparent 60%)", filter: "blur(40px)" }}
+          style={{
+            background: "radial-gradient(circle, oklch(0.6 0.18 230 / 0.07) 0%, transparent 60%)",
+            filter: "blur(40px)",
+          }}
         />
         <div
           className="absolute bottom-0 right-1/4 w-[600px] h-[600px] rounded-full"
-          style={{ background: "radial-gradient(circle, oklch(0.72 0.16 200 / 0.05) 0%, transparent 65%)", filter: "blur(30px)" }}
+          style={{
+            background: "radial-gradient(circle, oklch(0.72 0.16 200 / 0.05) 0%, transparent 65%)",
+            filter: "blur(30px)",
+          }}
         />
       </div>
 
@@ -257,7 +359,11 @@ export default function PricingSection() {
         >
           <span
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-6"
-            style={{ background: "oklch(0.72 0.16 200 / 0.08)", border: "1px solid oklch(0.72 0.16 200 / 0.18)", color: "oklch(0.78 0.15 200)" }}
+            style={{
+              background: "oklch(0.72 0.16 200 / 0.08)",
+              border: "1px solid oklch(0.72 0.16 200 / 0.18)",
+              color: "oklch(0.78 0.15 200)",
+            }}
           >
             <Sparkles className="w-3.5 h-3.5" />
             Cennik
@@ -275,14 +381,21 @@ export default function PricingSection() {
               plan mocy
             </span>
           </h2>
-          <p className="mt-4 text-base max-w-xl mx-auto text-pretty" style={{ color: "oklch(1 0 0 / 0.45)" }}>
-            Od pojedynczej klasy po całą sieć szkół. Skaluj się wtedy, gdy chcesz — bez ukrytych kosztów.
+          <p
+            className="mt-4 text-base max-w-xl mx-auto text-pretty"
+            style={{ color: "oklch(1 0 0 / 0.45)" }}
+          >
+            Od pojedynczej klasy po całą sieć szkół. Skaluj się wtedy, gdy chcesz — bez ukrytych
+            kosztów.
           </p>
         </motion.div>
 
         {/* toggle */}
         <div className="flex items-center justify-center gap-4 mb-14">
-          <span className="text-sm font-medium transition-colors" style={{ color: yearly ? "oklch(1 0 0 / 0.4)" : "oklch(1 0 0 / 0.9)" }}>
+          <span
+            className="text-sm font-medium transition-colors"
+            style={{ color: yearly ? "oklch(1 0 0 / 0.4)" : "oklch(1 0 0 / 0.9)" }}
+          >
             Miesięcznie
           </span>
           <button
@@ -296,11 +409,20 @@ export default function PricingSection() {
             aria-checked={yearly}
             aria-label="Przełącz rozliczenie roczne"
           >
-            <span className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all duration-300" style={{ transform: yearly ? "translateX(28px)" : "translateX(0)" }} />
+            <span
+              className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all duration-300"
+              style={{ transform: yearly ? "translateX(28px)" : "translateX(0)" }}
+            />
           </button>
-          <span className="text-sm font-medium transition-colors flex items-center gap-2" style={{ color: yearly ? "oklch(1 0 0 / 0.9)" : "oklch(1 0 0 / 0.4)" }}>
+          <span
+            className="text-sm font-medium transition-colors flex items-center gap-2"
+            style={{ color: yearly ? "oklch(1 0 0 / 0.9)" : "oklch(1 0 0 / 0.4)" }}
+          >
             Rocznie
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "oklch(0.72 0.16 200 / 0.18)", color: "oklch(0.78 0.15 200)" }}>
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: "oklch(0.72 0.16 200 / 0.18)", color: "oklch(0.78 0.15 200)" }}
+            >
               Oszczędź 20%
             </span>
           </span>
@@ -324,7 +446,11 @@ export default function PricingSection() {
           {TRUST.map((t) => {
             const TI = t.icon;
             return (
-              <div key={t.label} className="flex items-center gap-2 text-sm" style={{ color: "oklch(1 0 0 / 0.5)" }}>
+              <div
+                key={t.label}
+                className="flex items-center gap-2 text-sm"
+                style={{ color: "oklch(1 0 0 / 0.5)" }}
+              >
                 <TI className="w-4 h-4" style={{ color: "oklch(0.78 0.15 200 / 0.8)" }} />
                 {t.label}
               </div>
