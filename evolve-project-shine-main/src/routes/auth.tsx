@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+﻿import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { createFileRoute, useNavigate, Link, redirect } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -73,21 +73,21 @@ export const Route = createFileRoute("/auth")({
     }
   },
   component: AuthPage,
-  head: () => ({ meta: [{ title: "Logowanie — EduNex" }] }),
+  head: () => ({ meta: [{ title: "Logowanie â€” EduNex" }] }),
 });
 
-// ─── Constants ───
+// â”€â”€â”€ Constants â”€â”€â”€
 
 const ROLES = [
-  { id: "student" as const, label: "Uczeń", icon: GraduationCap, desc: "Egzaminy, nauka z AI" },
+  { id: "student" as const, label: "UczeÅ„", icon: GraduationCap, desc: "Egzaminy, nauka z AI" },
   {
     id: "teacher" as const,
     label: "Nauczyciel",
     icon: Users,
-    desc: "Tworzenie egzaminów, monitoring",
+    desc: "Tworzenie egzaminÃ³w, monitoring",
   },
-  { id: "parent" as const, label: "Rodzic", icon: School, desc: "Postępy dziecka" },
-  { id: "admin" as const, label: "Admin", icon: Building2, desc: "Zarządzanie szkołą" },
+  { id: "parent" as const, label: "Rodzic", icon: School, desc: "PostÄ™py dziecka" },
+  { id: "admin" as const, label: "Admin", icon: Building2, desc: "ZarzÄ…dzanie szkoÅ‚Ä…" },
 ];
 
 type RoleId = (typeof ROLES)[number]["id"];
@@ -101,31 +101,31 @@ const TRUST_ITEMS = [
 ];
 
 const STUDENT_PROPS = [
-  "Dołącz do egzaminu jednym PIN-em",
-  "AI Tutor dostępny 24/7",
-  "Śledź swoje postępy",
-  "Ucz się w swoim tempie",
+  "DoÅ‚Ä…cz do egzaminu jednym PIN-em",
+  "AI Tutor dostÄ™pny 24/7",
+  "ÅšledÅº swoje postÄ™py",
+  "Ucz siÄ™ w swoim tempie",
 ];
 
 const TEACHER_PROPS = [
-  "Tworzenie egzaminów w sekundy z AI",
+  "Tworzenie egzaminÃ³w w sekundy z AI",
   "Automatyczne ocenianie z AI",
   "Analityka klas w czasie rzeczywistym",
-  "Bezpieczeństwo klasy enterprise",
+  "BezpieczeÅ„stwo klasy enterprise",
 ];
 
 const PARENT_PROPS = [
-  "Monitoruj postępy dziecka",
+  "Monitoruj postÄ™py dziecka",
   "Powiadomienia o ocenach",
-  "Przeglądaj obecność",
+  "PrzeglÄ…daj obecnoÅ›Ä‡",
   "Komunikacja z nauczycielami",
 ];
 
 const ADMIN_PROPS = [
-  "Pełne zarządzanie szkołą",
-  "Panel bezpieczeństwa",
-  "Administracja użytkowników i ról",
-  "Logi zgodności i audytu",
+  "PeÅ‚ne zarzÄ…dzanie szkoÅ‚Ä…",
+  "Panel bezpieczeÅ„stwa",
+  "Administracja uÅ¼ytkownikÃ³w i rÃ³l",
+  "Logi zgodnoÅ›ci i audytu",
 ];
 
 const ROLE_PROPS: Record<RoleId, string[]> = {
@@ -136,13 +136,13 @@ const ROLE_PROPS: Record<RoleId, string[]> = {
 };
 
 const ROLE_TITLES: Record<RoleId, { title: string; tagline: string }> = {
-  student: { title: "Portal Ucznia", tagline: "Szybki dostęp do egzaminów, lekcji i AI Tutora" },
+  student: { title: "Portal Ucznia", tagline: "Szybki dostÄ™p do egzaminÃ³w, lekcji i AI Tutora" },
   teacher: {
     title: "Panel Nauczyciela",
-    tagline: "Bezpieczny dostęp do klas, egzaminów i analityki",
+    tagline: "Bezpieczny dostÄ™p do klas, egzaminÃ³w i analityki",
   },
-  parent: { title: "Portal Rodzica", tagline: "Bądź na bieżąco z edukacją dziecka" },
-  admin: { title: "Administracja", tagline: "Bezpieczeństwo i pełne zarządzanie szkołą" },
+  parent: { title: "Portal Rodzica", tagline: "BÄ…dÅº na bieÅ¼Ä…co z edukacjÄ… dziecka" },
+  admin: { title: "Administracja", tagline: "BezpieczeÅ„stwo i peÅ‚ne zarzÄ…dzanie szkoÅ‚Ä…" },
 };
 
 type StudentMethod = "pin" | "google" | "email";
@@ -152,11 +152,11 @@ type AdminView = "login" | "microsoft" | "google" | "device" | "sessions";
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 30 };
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PREMIUM BACKGROUND
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
-/* ───── AURORA (7 animated gradient orbs) ───── */
+/* â”€â”€â”€â”€â”€ AURORA (7 animated gradient orbs) â”€â”€â”€â”€â”€ */
 function AuroraBackground() {
   const orbs = useMemo(
     () => [
@@ -248,7 +248,7 @@ function AuroraBackground() {
   );
 }
 
-/* ───── CANVAS PARTICLE SYSTEM (2000+ particles, mouse parallax, neural connections) ───── */
+/* â”€â”€â”€â”€â”€ CANVAS PARTICLE SYSTEM (2000+ particles, mouse parallax, neural connections) â”€â”€â”€â”€â”€ */
 function CanvasParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0.5, y: 0.5 });
@@ -387,7 +387,7 @@ function CanvasParticleField() {
   );
 }
 
-/* ───── FLOATING GLASS ELEMENTS ───── */
+/* â”€â”€â”€â”€â”€ FLOATING GLASS ELEMENTS â”€â”€â”€â”€â”€ */
 function FloatingGlassElements() {
   const items = useMemo(
     () => [
@@ -449,7 +449,7 @@ function FloatingGlassElements() {
   );
 }
 
-/* ───── LIGHT RAYS ───── */
+/* â”€â”€â”€â”€â”€ LIGHT RAYS â”€â”€â”€â”€â”€ */
 function LightRays() {
   const rays = useMemo(
     () => [
@@ -484,7 +484,7 @@ function LightRays() {
   );
 }
 
-/* ───── 3D PERSPECTIVE GRID ───── */
+/* â”€â”€â”€â”€â”€ 3D PERSPECTIVE GRID â”€â”€â”€â”€â”€ */
 function PerspectiveGrid() {
   const lines = useMemo(() => {
     const result = [];
@@ -548,7 +548,7 @@ function PerspectiveGrid() {
   return null;
 }
 
-/* ───── STATIC GRID ───── */
+/* â”€â”€â”€â”€â”€ STATIC GRID â”€â”€â”€â”€â”€ */
 function GridBg({ opacity = 0.015 }: { opacity?: number }) {
   return (
     <div
@@ -564,7 +564,7 @@ function GridBg({ opacity = 0.015 }: { opacity?: number }) {
   );
 }
 
-// ─── Input Component ───
+// â”€â”€â”€ Input Component â”€â”€â”€
 
 function GlassInput({
   icon: Icon,
@@ -751,7 +751,7 @@ function MethodPill({
   );
 }
 
-// ─── Icons ───
+// â”€â”€â”€ Icons â”€â”€â”€
 function MicrosoftIcon() {
   return (
     <svg viewBox="0 0 24 24" className="w-5 h-5 shrink-0">
@@ -786,7 +786,7 @@ function GoogleIcon() {
   );
 }
 
-// ─── Security Badge Row ───
+// â”€â”€â”€ Security Badge Row â”€â”€â”€
 function SecurityBadgeRow() {
   return (
     <div className="flex flex-wrap gap-1.5 mt-3">
@@ -825,17 +825,17 @@ function SecurityStatus() {
       }}
     >
       <ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.65 0.2 150)" }} />
-      <span style={{ color: "oklch(1 0 0 / 0.5)" }}>Połączenie zabezpieczone</span>
+      <span style={{ color: "oklch(1 0 0 / 0.5)" }}>PoÅ‚Ä…czenie zabezpieczone</span>
       <span className="ml-auto" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }}>
-        ● Aktywne
+        â— Aktywne
       </span>
     </motion.div>
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // STUDENT
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
@@ -1014,13 +1014,13 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               >
                 <GoogleIcon />
               </div>
-              <p className="text-sm font-medium text-white mb-1">Continue with Google</p>
+              <p className="text-sm font-medium text-white mb-1">Kontynuuj przez Google</p>
               <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-                Quick and secure — no password needed
+                Quick and secure â€” no password needed
               </p>
             </div>
             <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>
-              Sign in with Google
+              Zaloguj przez Google
             </NeonButton>
           </motion.div>
         )}
@@ -1038,14 +1038,14 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               type="email"
               value={email}
               onChange={(e: any) => setEmail(e.target.value)}
-              placeholder="Email address"
+              placeholder="Adres email"
             />
             <GlassInput
               icon={Lock}
               type="password"
               value={pass}
               onChange={(e: any) => setPass(e.target.value)}
-              placeholder="Password"
+              placeholder="Has&#322;o"
             />
             <div className="flex justify-end">
               <Link
@@ -1057,7 +1057,7 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               </Link>
             </div>
             <NeonButton onClick={submitStudentLogin} loading={busy} icon={ArrowRight}>
-              {busy ? "Signing in..." : "Sign in"}
+              {busy ? "Logowanie..." : "Zaloguj si&#281;"}
             </NeonButton>
           </motion.div>
         )}
@@ -1066,9 +1066,9 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // TEACHER
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
@@ -1138,12 +1138,12 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 {method === "microsoft" ? <MicrosoftIcon /> : <GoogleIcon />}
               </div>
               <p className="text-sm font-medium text-white mb-1">
-                Continue with {method === "microsoft" ? "Microsoft 365" : "Google Workspace"}
+                Kontynuuj przez {method === "microsoft" ? "Microsoft 365" : "Google Workspace"}
               </p>
               <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>
                 {method === "microsoft"
-                  ? "School or work account · Entra ID · Azure AD"
-                  : "Workspace for Education · Secure SSO"}
+                  ? "Konto szkolne lub służbowe · Entra ID · Azure AD"
+                  : "Workspace for Education · Bezpieczne SSO"}
               </p>
             </div>
             <NeonButton
@@ -1152,7 +1152,7 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               }
               icon={ArrowRight}
             >
-              Sign in with {method === "microsoft" ? "Microsoft" : "Google"}
+              Zaloguj przez {method === "microsoft" ? "Microsoft" : "Google"}
             </NeonButton>
           </motion.div>
         )}
@@ -1200,14 +1200,14 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 type="email"
                 value={email}
                 onChange={(e: any) => setEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder="Adres email"
               />
               <GlassInput
                 icon={Lock}
                 type="password"
                 value={pass}
                 onChange={(e: any) => setPass(e.target.value)}
-                placeholder="Password"
+                placeholder="Has&#322;o"
               />
               {tfaEnabled && (
                 <motion.div
@@ -1232,7 +1232,7 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 </Link>
               </div>
               <NeonButton onClick={submitTeacherLogin} loading={busy} icon={ArrowRight}>
-                {busy ? "Signing in..." : "Sign in"}
+                {busy ? "Logowanie..." : "Zaloguj si&#281;"}
               </NeonButton>
             </div>
           </motion.div>
@@ -1242,9 +1242,9 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PARENT
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
@@ -1307,13 +1307,13 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               >
                 <GoogleIcon />
               </div>
-              <p className="text-sm font-medium text-white mb-1">Continue with Google</p>
+              <p className="text-sm font-medium text-white mb-1">Kontynuuj przez Google</p>
               <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-                Quick and secure — no password needed
+                Quick and secure â€” no password needed
               </p>
             </div>
             <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>
-              Sign in with Google
+              Zaloguj przez Google
             </NeonButton>
           </motion.div>
         )}
@@ -1361,14 +1361,14 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 type="email"
                 value={email}
                 onChange={(e: any) => setEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder="Adres email"
               />
               <GlassInput
                 icon={Lock}
                 type="password"
                 value={pass}
                 onChange={(e: any) => setPass(e.target.value)}
-                placeholder="Password"
+                placeholder="Has&#322;o"
               />
               {tfaEnabled && (
                 <motion.div
@@ -1393,7 +1393,7 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 </Link>
               </div>
               <NeonButton onClick={submitParentLogin} loading={busy} icon={ArrowRight}>
-                {busy ? "Signing in..." : "Sign in"}
+                {busy ? "Logowanie..." : "Zaloguj si&#281;"}
               </NeonButton>
             </div>
           </motion.div>
@@ -1403,9 +1403,9 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // ADMIN
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 const RECOVERY_CODES = [
   "X7K2-M9P4",
@@ -1419,50 +1419,50 @@ const RECOVERY_CODES = [
 ];
 const LOGIN_HISTORY = [
   {
-    action: "Successful login",
-    device: "Chrome · Windows 11",
-    location: "Warsaw, PL",
+    action: "PomyÅ›lne logowanie",
+    device: "Chrome Â· Windows 11",
+    location: "Warszawa, PL",
     ip: "83.24.15.2",
-    time: "2 min ago",
+    time: "2 min temu",
     status: "success" as const,
   },
   {
-    action: "Failed attempt",
-    device: "Firefox · Ubuntu",
+    action: "Nieudana prÃ³ba",
+    device: "Firefox Â· Ubuntu",
     location: "Berlin, DE",
     ip: "91.45.2.8",
-    time: "1 hour ago",
+    time: "1 godz. temu",
     status: "error" as const,
   },
   {
-    action: "Successful login",
-    device: "Chrome · macOS",
-    location: "Krakow, PL",
+    action: "PomyÅ›lne logowanie",
+    device: "Chrome Â· macOS",
+    location: "KrakÃ³w, PL",
     ip: "85.12.7.3",
-    time: "3 hours ago",
+    time: "3 godz. temu",
     status: "success" as const,
   },
   {
-    action: "New device detected",
-    device: "Edge · Windows 11",
-    location: "Warsaw, PL",
+    action: "Nowe urzÄ…dzenie",
+    device: "Edge Â· Windows 11",
+    location: "Warszawa, PL",
     ip: "83.24.15.2",
-    time: "1 day ago",
+    time: "1 dzieÅ„ temu",
     status: "warning" as const,
   },
   {
-    action: "Successful login",
-    device: "Safari · iOS",
-    location: "Gdansk, PL",
+    action: "PomyÅ›lne logowanie",
+    device: "Safari Â· iOS",
+    location: "GdaÅ„sk, PL",
     ip: "79.8.3.1",
-    time: "2 days ago",
+    time: "2 dni temu",
     status: "success" as const,
   },
 ];
 const ACTIVE_SESSIONS = [
-  { device: "Chrome · Windows 11", location: "Warsaw, PL", ip: "83.24.15.2", current: true },
-  { device: "Safari · iOS 18", location: "Krakow, PL", ip: "85.12.7.3", current: false },
-  { device: "Edge · Windows 11", location: "Warsaw, PL", ip: "83.24.15.2", current: false },
+  { device: "Chrome Â· Windows 11", location: "Warszawa, PL", ip: "83.24.15.2", current: true },
+  { device: "Safari Â· iOS 18", location: "KrakÃ³w, PL", ip: "85.12.7.3", current: false },
+  { device: "Edge Â· Windows 11", location: "Warszawa, PL", ip: "83.24.15.2", current: false },
 ];
 
 function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
@@ -1577,7 +1577,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   type={showPass ? "text" : "password"}
                   value={pass}
                   onChange={(e: any) => setPass(e.target.value)}
-                  placeholder="Password"
+                  placeholder="Has&#322;o"
                 />
                 <button
                   onClick={() => setShowPass(!showPass)}
@@ -1601,14 +1601,16 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   className="w-3 h-3 shrink-0"
                   style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}
                 />
-                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>Wymagany kod uwierzytelniający</span>
+                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>
+                  Wymagany kod uwierzytelniajÄ…cy
+                </span>
               </div>
               <GlassInput
                 icon={Smartphone}
                 type="text"
                 value={tfaCode}
                 onChange={(e: any) => setTfaCode(e.target.value)}
-                placeholder="6-digit Authenticator code"
+                placeholder="6-cyfrowy kod uwierzytelniaj&#261;cy"
               />
               <div
                 className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px]"
@@ -1621,7 +1623,9 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   className="w-3 h-3 shrink-0"
                   style={{ color: "oklch(0.7 0.15 200 / 0.5)" }}
                 />
-                <span style={{ color: "oklch(1 0 0 / 0.35)" }}>This device is recognized</span>
+                <span style={{ color: "oklch(1 0 0 / 0.35)" }}>
+                  To urz&#261;dzenie jest rozpoznane
+                </span>
                 <CheckCircle2
                   className="w-3 h-3 ml-auto shrink-0"
                   style={{ color: "oklch(0.65 0.2 150)" }}
@@ -1684,7 +1688,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               ))}
             </div>
             <NeonButton onClick={() => auth.signInWithProvider("microsoft")} icon={ExternalLink}>
-              Sign in with Microsoft Entra ID
+              Zaloguj przez Microsoft Entra ID
             </NeonButton>
           </motion.div>
         )}
@@ -1726,7 +1730,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               ))}
             </div>
             <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>
-              Sign in with Google Workspace
+              Zaloguj przez Google Workspace
             </NeonButton>
           </motion.div>
         )}
@@ -1744,13 +1748,13 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               className="flex items-center gap-1 text-xs mb-3"
               style={{ color: "oklch(1 0 0 / 0.4)" }}
             >
-              <ChevronLeft className="w-3 h-3" /> Back to login
+              <ChevronLeft className="w-3 h-3" /> PowrÃ³t
             </button>
             <div className="mb-4">
               <div className="flex items-center gap-1.5 mb-2">
                 <History className="w-3 h-3" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
                 <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>
-                  Login History
+                  Historia logowaÅ„
                 </span>
               </div>
               <div className="space-y-1">
@@ -1780,7 +1784,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                         {entry.action}
                       </div>
                       <div className="truncate" style={{ color: "oklch(1 0 0 / 0.25)" }}>
-                        {entry.device} · {entry.location}
+                        {entry.device} Â· {entry.location}
                       </div>
                     </div>
                     <span className="shrink-0" style={{ color: "oklch(1 0 0 / 0.2)" }}>
@@ -1794,7 +1798,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               <div className="flex items-center gap-1.5 mb-2">
                 <Monitor className="w-3 h-3" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
                 <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>
-                  Active Sessions
+                  Aktywne sesje
                 </span>
                 <button
                   className="ml-auto flex items-center gap-1 text-[9px]"
@@ -1871,9 +1875,9 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // REGISTRATION FORM
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }) {
   const auth = useAuth();
@@ -1885,11 +1889,11 @@ function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }
 
   const submitRegister = async () => {
     if (!fname || !lname || !email || !pass) {
-      toast.error("Fill all fields");
+      toast.error("WypeÅ‚nij wszystkie pola");
       return;
     }
     if (pass.length < 8) {
-      toast.error("Password must be at least 8 characters");
+      toast.error("HasÅ‚o musi mieÄ‡ minimum 8 znakÃ³w");
       return;
     }
     setBusy(true);
@@ -1902,7 +1906,7 @@ function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }
       toast.error(error);
       return;
     }
-    toast.success("Account created! Check your email to confirm.");
+    toast.success("Konto utworzone! SprawdÅº email w celu potwierdzenia.");
   };
 
   return (
@@ -1918,12 +1922,12 @@ function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }
         <GlassInput
           value={fname}
           onChange={(e: any) => setFname(e.target.value)}
-          placeholder="First name"
+          placeholder="ImiÄ™"
         />
         <GlassInput
           value={lname}
           onChange={(e: any) => setLname(e.target.value)}
-          placeholder="Last name"
+          placeholder="Nazwisko"
         />
       </div>
       <GlassInput
@@ -1931,32 +1935,32 @@ function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }
         type="email"
         value={email}
         onChange={(e: any) => setEmail(e.target.value)}
-        placeholder="Email address"
+        placeholder="Adres email"
       />
       <GlassInput
         icon={Lock}
         type="password"
         value={pass}
         onChange={(e: any) => setPass(e.target.value)}
-        placeholder="Password (min. 8 characters)"
+        placeholder="HasÅ‚o (min. 8 znakÃ³w)"
       />
       <NeonButton onClick={submitRegister} loading={busy} icon={User}>
-        Create account
+        UtwÃ³rz konto
       </NeonButton>
       <button
         onClick={onBack}
         className="flex items-center justify-center gap-1 text-xs w-full"
         style={{ color: "oklch(1 0 0 / 0.4)" }}
       >
-        <ChevronLeft className="w-3 h-3" /> Back to sign in
+        <ChevronLeft className="w-3 h-3" /> PowrÃ³t do logowania
       </button>
     </motion.div>
   );
 }
 
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // MAIN AUTH PAGE
-// ══════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -1989,15 +1993,12 @@ function AuthPage() {
       >
         <Toaster theme="dark" />
 
-        {/* ─── PREMIUM BACKGROUND LAYER ─── */}
+        {/* â”€â”€â”€ PREMIUM BACKGROUND LAYER â”€â”€â”€ */}
         <div
           className="fixed inset-0 pointer-events-none"
           style={{ background: "oklch(0.035 0.02 270)" }}
         >
           <AuroraBackground />
-          <CanvasParticleField />
-          <FloatingGlassElements />
-          <LightRays />
           <GridBg />
         </div>
 
@@ -2056,7 +2057,7 @@ function AuthPage() {
                       backgroundClip: "text",
                     }}
                   >
-                    {role === "admin" ? "Centrum Bezpieczeństwa" : "× AI"}
+                    {role === "admin" ? "Centrum BezpieczeÅ„stwa" : "Ã— AI"}
                   </span>
                 </h2>
                 <p
@@ -2107,17 +2108,17 @@ function AuthPage() {
             </div>
             <div className="text-[10px]" style={{ color: "oklch(1 0 0 / 0.25)" }}>
               <span className="font-semibold" style={{ color: "oklch(0.7 0.15 200)" }}>
-                36,000+
+                36 000+
               </span>{" "}
-              students ·{" "}
+              uczniÃ³w Â·{" "}
               <span className="font-semibold" style={{ color: "oklch(0.7 0.15 200)" }}>
                 800+
               </span>{" "}
-              teachers ·{" "}
+              nauczycieli Â·{" "}
               <span className="font-semibold" style={{ color: "oklch(0.7 0.15 200)" }}>
                 120+
               </span>{" "}
-              schools
+              szkÃ³Å‚
             </div>
             <SecurityBadgeRow />
           </div>
@@ -2137,20 +2138,19 @@ function AuthPage() {
               boxShadow: "0 4px 20px oklch(0.6 0.18 230 / 0.2), 0 0 1px oklch(1 0 0 / 0.1)",
             }}
           >
-            <ChevronLeft className="w-4 h-4" /> Strona główna
+            <ChevronLeft className="w-4 h-4" /> Strona gÅ‚Ã³wna
           </Link>
 
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            initial={{ opacity: 0, y: 20, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ ...spring, delay: 0.15 }}
-            className="relative w-full max-w-md rounded-3xl p-8 sm:p-10"
+            className="relative w-full max-w-lg rounded-3xl p-8 sm:p-10"
             style={{
-              background: "linear-gradient(145deg, oklch(0.09 0.04 260), oklch(0.04 0.02 270))",
-              border: "1px solid oklch(0.72 0.16 200 / 0.2)",
-              backdropFilter: "blur(60px)",
+              background: "linear-gradient(160deg, oklch(0.08 0.04 260), oklch(0.03 0.015 270))",
+              border: "1px solid oklch(0.72 0.16 200 / 0.15)",
               boxShadow:
-                "0 30px 80px oklch(0 0 0 / 0.5), 0 0 40px oklch(0.6 0.18 230 / 0.08), inset 0 1px 0 oklch(1 0 0 / 0.05)",
+                "0 40px 100px oklch(0 0 0 / 0.6), 0 0 60px oklch(0.6 0.18 230 / 0.06), inset 0 1px 0 oklch(1 0 0 / 0.04)",
             }}
           >
             <div
@@ -2177,63 +2177,80 @@ function AuthPage() {
 
             <SecurityStatus />
 
-            <div className="mb-5">
-              <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
                 {role === "student" && "Witaj, Uczniu"}
                 {role === "teacher" && "Panel Nauczyciela"}
                 {role === "parent" && "Portal Rodzica"}
                 {role === "admin" && "Administracja"}
               </h1>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.5)" }}>
-                {role === "student" && "Wybierz sposób logowania"}
-                {role === "teacher" && "Wybierz metodę uwierzytelniania"}
-                {role === "parent" && "Wybierz preferowaną metodę logowania"}
-                {role === "admin" && "Wymagane uwierzytelnianie korporacyjne"}
+              <p className="text-sm" style={{ color: "oklch(1 0 0 / 0.45)" }}>
+                {role === "student" && "Wybierz sposÃ³b logowania do platformy"}
+                {role === "teacher" && "Wybierz metodÄ™ uwierzytelniania"}
+                {role === "parent" && "Zaloguj siÄ™ do portalu rodzica"}
+                {role === "admin" && "Uwierzytelnianie korporacyjne"}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5 mb-5">
+            <div className="grid grid-cols-2 gap-3 mb-6">
               {ROLES.map((r) => (
                 <motion.button
                   key={r.id}
                   onClick={() => setRole(r.id)}
-                  whileHover={{ scale: 1.03, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="p-3 rounded-xl text-left transition-all duration-300 relative overflow-hidden"
+                  whileHover={{ scale: 1.04, y: -3 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="p-4 rounded-2xl text-left transition-all duration-300 relative overflow-hidden"
                   style={{
                     background:
                       role === r.id
-                        ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.15), oklch(0.6 0.2 250 / 0.08))"
-                        : "oklch(0.06 0.02 270)",
+                        ? "linear-gradient(135deg, oklch(0.1 0.04 240), oklch(0.06 0.03 260))"
+                        : "oklch(0.04 0.015 270)",
                     border:
                       role === r.id
                         ? "1px solid oklch(0.72 0.16 200 / 0.4)"
-                        : "1px solid oklch(1 0 0 / 0.08)",
+                        : "1px solid oklch(0.12 0.02 270)",
                     boxShadow:
                       role === r.id
-                        ? "0 0 25px oklch(0.6 0.18 230 / 0.2), inset 0 0 20px oklch(0.72 0.16 200 / 0.05)"
-                        : "0 2px 8px oklch(0 0 0 / 0.2)",
+                        ? "0 4px 30px oklch(0.6 0.18 230 / 0.2), 0 0 40px oklch(0.72 0.16 200 / 0.06)"
+                        : "0 2px 8px oklch(0 0 0 / 0.3)",
                   }}
                 >
                   {role === r.id && (
                     <div
-                      className="absolute inset-0 rounded-xl pointer-events-none"
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
                       style={{
                         background:
-                          "radial-gradient(circle at 30% 30%, oklch(0.72 0.16 200 / 0.08), transparent 60%)",
+                          "radial-gradient(circle at 20% 20%, oklch(0.72 0.16 200 / 0.1), transparent 50%)",
                       }}
                     />
                   )}
-                  <r.icon
-                    className={`w-4 h-4 mb-1.5 relative z-10 ${role === r.id ? "text-cyan-300" : "text-white/40"}`}
-                  />
                   <div
-                    className={`text-xs font-semibold relative z-10 ${role === r.id ? "text-white" : "text-white/60"}`}
+                    className={`w-9 h-9 rounded-xl grid place-items-center mb-2.5 relative z-10 ${role === r.id ? "" : ""}`}
+                    style={{
+                      background:
+                        role === r.id
+                          ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.2), oklch(0.55 0.2 250 / 0.1))"
+                          : "oklch(0.08 0.02 270)",
+                      border:
+                        role === r.id
+                          ? "1px solid oklch(0.72 0.16 200 / 0.3)"
+                          : "1px solid oklch(0.15 0.02 270)",
+                    }}
+                  >
+                    <r.icon
+                      className="w-4 h-4"
+                      style={{
+                        color: role === r.id ? "oklch(0.82 0.14 200)" : "oklch(1 0 0 / 0.35)",
+                      }}
+                    />
+                  </div>
+                  <div
+                    className={`text-sm font-semibold relative z-10 ${role === r.id ? "text-white" : "text-white/60"}`}
                   >
                     {r.label}
                   </div>
                   <div
-                    className="text-[9px] mt-0.5 relative z-10"
+                    className="text-[10px] mt-1 relative z-10 leading-relaxed"
                     style={{
                       color: role === r.id ? "oklch(0.78 0.15 200 / 0.7)" : "oklch(1 0 0 / 0.3)",
                     }}
@@ -2267,7 +2284,7 @@ function AuthPage() {
                   >
                     Nie masz konta?{" "}
                     <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>
-                      Zarejestruj się
+                      Zarejestruj siÄ™
                     </span>
                   </button>
                 ) : (
@@ -2276,9 +2293,9 @@ function AuthPage() {
                     className="text-[11px]"
                     style={{ color: "oklch(1 0 0 / 0.35)" }}
                   >
-                    Masz już konto?{" "}
+                    Masz juÅ¼ konto?{" "}
                     <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>
-                      Zaloguj się
+                      Zaloguj siÄ™
                     </span>
                   </button>
                 )}
