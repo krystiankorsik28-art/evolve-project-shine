@@ -583,8 +583,8 @@ function GlassInput({
     <div className="relative flex items-center">
       {Icon && (
         <Icon
-          className="absolute left-3.5 w-4 h-4 pointer-events-none"
-          style={{ color: focused ? "oklch(0.7 0.15 200 / 0.6)" : "oklch(1 0 0 / 0.25)" }}
+          className="absolute left-3.5 w-4 h-4 pointer-events-none transition-colors duration-300"
+          style={{ color: focused ? "oklch(0.78 0.15 200)" : "oklch(1 0 0 / 0.3)" }}
         />
       )}
       <input
@@ -597,12 +597,14 @@ function GlassInput({
           setFocused(false);
           props.onBlur?.(e);
         }}
-        className={`w-full h-11 px-4 text-sm rounded-xl transition-all outline-none ${Icon ? "pl-10" : ""} ${props.className || ""}`}
+        className={`w-full h-12 px-4 text-sm rounded-xl transition-all duration-300 outline-none ${Icon ? "pl-10" : ""} ${props.className || ""}`}
         style={{
-          background: "oklch(1 0 0 / 0.04)",
-          border: focused ? "1px solid oklch(0.7 0.15 200 / 0.4)" : "1px solid oklch(1 0 0 / 0.08)",
+          background: focused ? "oklch(0.06 0.02 270)" : "oklch(0.05 0.02 270)",
+          border: focused ? "1px solid oklch(0.72 0.16 200 / 0.5)" : "1px solid oklch(1 0 0 / 0.1)",
           color: "#fff",
-          boxShadow: focused ? "0 0 10px oklch(0.7 0.15 200 / 0.1)" : "none",
+          boxShadow: focused
+            ? "0 0 20px oklch(0.6 0.18 230 / 0.15), inset 0 0 10px oklch(0.72 0.16 200 / 0.03)"
+            : "0 2px 4px oklch(0 0 0 / 0.2)",
         }}
       />
     </div>
@@ -626,28 +628,33 @@ function NeonButton({
       disabled={disabled || loading}
       whileHover={!disabled && !loading ? { scale: 1.01 } : {}}
       whileTap={!disabled && !loading ? { scale: 0.99 } : {}}
-      className={`w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50 ${className || ""}`}
+      className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 text-sm font-semibold rounded-xl transition-all duration-300 disabled:opacity-50 ${className || ""}`}
       style={
         isPrimary
           ? {
-              background: "linear-gradient(135deg, oklch(0.7 0.15 200), oklch(0.6 0.2 240))",
+              background: "linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.55 0.22 250))",
               color: "#fff",
-              boxShadow: "0 0 20px oklch(0.7 0.15 200 / 0.3)",
+              boxShadow:
+                "0 4px 25px oklch(0.6 0.18 230 / 0.4), 0 0 60px oklch(0.72 0.16 200 / 0.15)",
             }
           : {
-              background: "oklch(1 0 0 / 0.03)",
-              border: "1px solid oklch(1 0 0 / 0.08)",
+              background: "oklch(0.06 0.02 270)",
+              border: "1px solid oklch(1 0 0 / 0.1)",
               color: "oklch(1 0 0 / 0.7)",
             }
       }
       onMouseEnter={(e: any) => {
         if (!disabled && !loading && isPrimary) {
-          e.currentTarget.style.boxShadow = "0 0 40px oklch(0.7 0.15 200 / 0.5)";
+          e.currentTarget.style.boxShadow =
+            "0 6px 40px oklch(0.6 0.18 230 / 0.6), 0 0 80px oklch(0.72 0.16 200 / 0.25)";
+          e.currentTarget.style.transform = "translateY(-1px)";
         }
       }}
       onMouseLeave={(e: any) => {
         if (!disabled && !loading && isPrimary) {
-          e.currentTarget.style.boxShadow = "0 0 20px oklch(0.7 0.15 200 / 0.3)";
+          e.currentTarget.style.boxShadow =
+            "0 4px 25px oklch(0.6 0.18 230 / 0.4), 0 0 60px oklch(0.72 0.16 200 / 0.15)";
+          e.currentTarget.style.transform = "translateY(0)";
         }
       }}
       {...props}
@@ -2123,7 +2130,7 @@ function AuthPage() {
                       backgroundClip: "text",
                     }}
                   >
-                    {role === "admin" ? "Security Center" : "\u00D7 AI"}
+                    {role === "admin" ? "Centrum Bezpieczeństwa" : "× AI"}
                   </span>
                 </h2>
                 <p
@@ -2192,27 +2199,34 @@ function AuthPage() {
 
         {/* RIGHT PANEL */}
         <div className="w-full lg:w-[60%] flex items-center justify-center p-4 sm:p-8 z-10">
+          {/* Back button - TOP LEFT of screen */}
+          <Link
+            to="/"
+            className="fixed top-5 left-5 z-50 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 hover:scale-105"
+            style={{
+              background: "oklch(0.08 0.03 270 / 0.9)",
+              border: "1px solid oklch(0.72 0.16 200 / 0.3)",
+              color: "oklch(0.85 0.12 200)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 4px 20px oklch(0.6 0.18 230 / 0.2), 0 0 1px oklch(1 0 0 / 0.1)",
+            }}
+          >
+            <ChevronLeft className="w-4 h-4" /> Strona główna
+          </Link>
+
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ ...spring, delay: 0.15 }}
             className="relative w-full max-w-md rounded-3xl p-8 sm:p-10"
             style={{
-              background:
-                "linear-gradient(135deg, oklch(0.08 0.03 270 / 0.85), oklch(0.04 0.02 270 / 0.7))",
-              border: "1px solid oklch(1 0 0 / 0.08)",
-              backdropFilter: "blur(40px)",
-              boxShadow: "0 25px 60px oklch(0 0 0 / 0.4), 0 0 1px oklch(1 0 0 / 0.1)",
+              background: "linear-gradient(145deg, oklch(0.09 0.04 260), oklch(0.04 0.02 270))",
+              border: "1px solid oklch(0.72 0.16 200 / 0.2)",
+              backdropFilter: "blur(60px)",
+              boxShadow:
+                "0 30px 80px oklch(0 0 0 / 0.5), 0 0 40px oklch(0.6 0.18 230 / 0.08), inset 0 1px 0 oklch(1 0 0 / 0.05)",
             }}
           >
-            {/* Back to homepage */}
-            <Link
-              to="/"
-              className="absolute top-4 right-4 flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-lg transition-all hover:bg-white/[0.06]"
-              style={{ color: "oklch(1 0 0 / 0.4)" }}
-            >
-              <ChevronLeft className="w-3 h-3" /> Strona główna
-            </Link>
             <div
               className="absolute -inset-[1px] rounded-3xl pointer-events-none opacity-30"
               style={{
@@ -2237,14 +2251,14 @@ function AuthPage() {
 
             <SecurityStatus />
 
-            <div className="mb-4">
-              <h1 className="text-xl font-bold text-white mb-0.5">
+            <div className="mb-5">
+              <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">
                 {role === "student" && "Witaj, Uczniu"}
                 {role === "teacher" && "Panel Nauczyciela"}
                 {role === "parent" && "Portal Rodzica"}
                 {role === "admin" && "Administracja"}
               </h1>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.5)" }}>
                 {role === "student" && "Wybierz sposób logowania"}
                 {role === "teacher" && "Wybierz metodę uwierzytelniania"}
                 {role === "parent" && "Wybierz preferowaną metodę logowania"}
@@ -2252,32 +2266,52 @@ function AuthPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="grid grid-cols-2 gap-2.5 mb-5">
               {ROLES.map((r) => (
                 <motion.button
                   key={r.id}
                   onClick={() => setRole(r.id)}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="p-2.5 rounded-xl text-left transition-all duration-200"
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="p-3 rounded-xl text-left transition-all duration-300 relative overflow-hidden"
                   style={{
-                    background: role === r.id ? "oklch(0.7 0.15 200 / 0.1)" : "oklch(1 0 0 / 0.03)",
+                    background:
+                      role === r.id
+                        ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.15), oklch(0.6 0.2 250 / 0.08))"
+                        : "oklch(0.06 0.02 270)",
                     border:
                       role === r.id
-                        ? "1px solid oklch(0.7 0.15 200 / 0.25)"
-                        : "1px solid oklch(1 0 0 / 0.06)",
-                    boxShadow: role === r.id ? "0 0 15px oklch(0.7 0.15 200 / 0.1)" : "none",
+                        ? "1px solid oklch(0.72 0.16 200 / 0.4)"
+                        : "1px solid oklch(1 0 0 / 0.08)",
+                    boxShadow:
+                      role === r.id
+                        ? "0 0 25px oklch(0.6 0.18 230 / 0.2), inset 0 0 20px oklch(0.72 0.16 200 / 0.05)"
+                        : "0 2px 8px oklch(0 0 0 / 0.2)",
                   }}
                 >
+                  {role === r.id && (
+                    <div
+                      className="absolute inset-0 rounded-xl pointer-events-none"
+                      style={{
+                        background:
+                          "radial-gradient(circle at 30% 30%, oklch(0.72 0.16 200 / 0.08), transparent 60%)",
+                      }}
+                    />
+                  )}
                   <r.icon
-                    className={`w-4 h-4 mb-1 ${role === r.id ? "text-neon" : "text-white/40"}`}
+                    className={`w-4 h-4 mb-1.5 relative z-10 ${role === r.id ? "text-cyan-300" : "text-white/40"}`}
                   />
                   <div
-                    className={`text-xs font-medium ${role === r.id ? "text-white" : "text-white/60"}`}
+                    className={`text-xs font-semibold relative z-10 ${role === r.id ? "text-white" : "text-white/60"}`}
                   >
                     {r.label}
                   </div>
-                  <div className="text-[9px] mt-0.5" style={{ color: "oklch(1 0 0 / 0.3)" }}>
+                  <div
+                    className="text-[9px] mt-0.5 relative z-10"
+                    style={{
+                      color: role === r.id ? "oklch(0.78 0.15 200 / 0.7)" : "oklch(1 0 0 / 0.3)",
+                    }}
+                  >
                     {r.desc}
                   </div>
                 </motion.button>

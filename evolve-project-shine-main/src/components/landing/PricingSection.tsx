@@ -148,14 +148,14 @@ function PricingCard({
       style={{
         marginTop: pl.popular ? "-12px" : "0",
         background: pl.popular
-          ? "linear-gradient(165deg, oklch(0.14 0.05 250), oklch(0.08 0.03 260))"
-          : "oklch(0.06 0.02 270)",
+          ? "linear-gradient(165deg, oklch(0.12 0.05 250), oklch(0.06 0.03 260))"
+          : "oklch(0.05 0.015 270)",
         border: pl.popular
-          ? "1px solid oklch(0.72 0.16 200 / 0.35)"
-          : "1px solid oklch(1 0 0 / 0.1)",
+          ? "1px solid oklch(0.72 0.16 200 / 0.4)"
+          : "1px solid oklch(0.15 0.02 270)",
         boxShadow: pl.popular
-          ? "0 24px 70px oklch(0.6 0.18 230 / 0.25), 0 0 50px oklch(0.72 0.16 200 / 0.15)"
-          : "0 12px 40px oklch(0 0 0 / 0.4)",
+          ? "0 24px 70px oklch(0.6 0.18 230 / 0.3), 0 0 60px oklch(0.72 0.16 200 / 0.12)"
+          : "0 8px 30px oklch(0 0 0 / 0.5)",
         transition:
           "transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.35s, box-shadow 0.35s",
       }}
@@ -163,11 +163,11 @@ function PricingCard({
         e.currentTarget.style.transform = pl.popular
           ? "translateY(-8px) scale(1.015)"
           : "translateY(-8px)";
-        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.3)";
+        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.25)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = "translateY(0) scale(1)";
-        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.07)";
+        if (!pl.popular) e.currentTarget.style.borderColor = "oklch(0.15 0.02 270)";
       }}
     >
       {pl.popular && (
@@ -193,10 +193,10 @@ function PricingCard({
             style={{
               background: pl.popular
                 ? "linear-gradient(135deg, oklch(0.72 0.16 200 / 0.25), oklch(0.6 0.2 250 / 0.15))"
-                : "oklch(1 0 0 / 0.05)",
+                : "oklch(0.1 0.02 270)",
               border: pl.popular
                 ? "1px solid oklch(0.72 0.16 200 / 0.3)"
-                : "1px solid oklch(1 0 0 / 0.08)",
+                : "1px solid oklch(0.18 0.02 270)",
             }}
           >
             <Icon
@@ -233,7 +233,7 @@ function PricingCard({
         </div>
 
         {/* features */}
-        <div className="mt-6 pt-5 flex-1" style={{ borderTop: "1px solid oklch(1 0 0 / 0.07)" }}>
+        <div className="mt-6 pt-5 flex-1" style={{ borderTop: "1px solid oklch(0.15 0.02 270)" }}>
           <ul className="space-y-3 text-sm">
             {pl.lines.map((l, li) => (
               <motion.li
@@ -247,7 +247,7 @@ function PricingCard({
                 <span
                   className="grid place-items-center w-[18px] h-[18px] rounded-full mt-0.5 shrink-0"
                   style={{
-                    background: pl.popular ? "oklch(0.72 0.16 200 / 0.18)" : "oklch(1 0 0 / 0.06)",
+                    background: pl.popular ? "oklch(0.72 0.16 200 / 0.18)" : "oklch(0.12 0.02 270)",
                   }}
                 >
                   <CheckCircle2
@@ -269,14 +269,17 @@ function PricingCard({
             <Link
               to={pl.to || "/auth/teacher"}
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300"
-              style={{ background: "oklch(1 0 0 / 0.92)", color: "oklch(0.06 0.03 270)" }}
+              style={{
+                background: "linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.55 0.22 250))",
+                color: "#fff",
+              }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "oklch(1 0 0 / 1)";
-                e.currentTarget.style.boxShadow = "0 0 30px oklch(1 0 0 / 0.2)";
+                e.currentTarget.style.boxShadow = "0 4px 30px oklch(0.6 0.18 230 / 0.5)";
+                e.currentTarget.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "oklch(1 0 0 / 0.92)";
                 e.currentTarget.style.boxShadow = "none";
+                e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               {pl.cta} <ArrowRight className="w-4 h-4" />
@@ -295,16 +298,21 @@ function PricingCard({
                 document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth" })
               }
               className="w-full py-3.5 rounded-xl text-sm font-semibold transition-all duration-300"
-              style={{ border: "1px solid oklch(1 0 0 / 0.15)", color: "oklch(1 0 0 / 0.65)" }}
+              style={{
+                border: "1px solid oklch(0.72 0.16 200 / 0.25)",
+                color: "oklch(0.78 0.15 200)",
+              }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.3)";
-                e.currentTarget.style.color = "oklch(1 0 0 / 0.95)";
-                e.currentTarget.style.background = "oklch(1 0 0 / 0.04)";
+                e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.5)";
+                e.currentTarget.style.color = "#fff";
+                e.currentTarget.style.background = "oklch(0.72 0.16 200 / 0.08)";
+                e.currentTarget.style.boxShadow = "0 0 20px oklch(0.6 0.18 230 / 0.15)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.15)";
-                e.currentTarget.style.color = "oklch(1 0 0 / 0.65)";
+                e.currentTarget.style.borderColor = "oklch(0.72 0.16 200 / 0.25)";
+                e.currentTarget.style.color = "oklch(0.78 0.15 200)";
                 e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.boxShadow = "none";
               }}
             >
               {pl.cta}
