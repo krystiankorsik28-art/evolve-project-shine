@@ -81,7 +81,6 @@ function AnimatedPrice({ value, animateNow }: { value: string; animateNow: boole
 
 function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[number]; index: number; yearly: boolean; sectionInView: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [coords, setCoords] = useState({ x: 50, y: 50 });
   const Icon = pl.icon;
 
   const yearlyPrice = (p: string) => {
@@ -91,11 +90,6 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
 
   const price = yearly && pl.price !== "0" && pl.price !== "Indywidualnie" ? yearlyPrice(pl.price) : pl.price;
 
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    setCoords({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 });
-  };
-
   return (
     <motion.div
       ref={ref}
@@ -103,7 +97,6 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      onMouseMove={handleMove}
       className="relative rounded-3xl p-7 sm:p-8 flex flex-col h-full group will-change-transform"
       style={{
         marginTop: pl.popular ? "-12px" : "0",
@@ -111,7 +104,6 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
           ? "linear-gradient(165deg, oklch(0.14 0.05 250 / 0.9), oklch(0.07 0.03 260 / 0.7))"
           : "oklch(0.08 0.03 270 / 0.35)",
         border: pl.popular ? "1px solid oklch(0.72 0.16 200 / 0.35)" : "1px solid oklch(1 0 0 / 0.07)",
-        backdropFilter: "blur(12px)",
         boxShadow: pl.popular
           ? "0 24px 70px oklch(0.6 0.18 230 / 0.25), 0 0 50px oklch(0.72 0.16 200 / 0.15)"
           : "0 12px 40px oklch(0 0 0 / 0.3)",
@@ -126,41 +118,19 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
         if (!pl.popular) e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.07)";
       }}
     >
-      {/* mouse spotlight */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{
-          background: `radial-gradient(420px circle at ${coords.x}% ${coords.y}%, oklch(0.72 0.16 200 / 0.12), transparent 45%)`,
-        }}
-      />
-
-      {/* rotating conic border for popular */}
       {pl.popular && (
-        <>
-          <div
-            className="pointer-events-none absolute -inset-px rounded-3xl opacity-50"
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+          <span
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-white"
             style={{
-              background: "conic-gradient(from var(--angle, 0deg), transparent 0%, oklch(0.75 0.16 200 / 0.6) 12%, transparent 25%, transparent 60%, oklch(0.6 0.2 250 / 0.5) 75%, transparent 88%)",
-              animation: "borderSpin 6s linear infinite",
-              WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-              WebkitMaskComposite: "xor",
-              maskComposite: "exclude",
-              padding: "1px",
+              background: "linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.6 0.2 250))",
+              boxShadow: "0 6px 24px oklch(0.65 0.18 230 / 0.5)",
             }}
-          />
-          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
-            <span
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider text-white"
-              style={{
-                background: "linear-gradient(135deg, oklch(0.72 0.16 200), oklch(0.6 0.2 250))",
-                boxShadow: "0 6px 24px oklch(0.65 0.18 230 / 0.5)",
-              }}
-            >
-              <Star className="w-3 h-3 fill-white" />
-              Najpopularniejszy
-            </span>
-          </div>
-        </>
+          >
+            <Star className="w-3 h-3 fill-white" />
+            Najpopularniejszy
+          </span>
+        </div>
       )}
 
       <div className="relative z-10 flex flex-col h-full">
