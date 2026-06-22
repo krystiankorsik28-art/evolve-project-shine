@@ -9,7 +9,7 @@ import {
   Flag, Save, Eye, EyeOff, FileText, HelpCircle, ListChecks,
   CheckSquare, ListOrdered, AlignLeft, Hash, Code, Shuffle, Type,
   Gauge, GraduationCap, Lightbulb, Zap, ArrowRight,
-  Layers, ClipboardCheck, Hourglass, Award, Download, ExternalLink,
+  Layers, ClipboardCheck, Hourglass, Award, Download, ExternalLink, Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";

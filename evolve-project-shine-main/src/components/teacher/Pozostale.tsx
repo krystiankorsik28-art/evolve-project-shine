@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { BarChart3, Trophy, BookOpen, MessagesSquare, Settings, Upload, Trash2, Loader2, Download, Plus, MessageCircle, Send, ChevronDown, ChevronLeft, ChevronRight, Check, Sparkles, X, BookText, GraduationCap, FlaskConical, Atom, Leaf, Globe, History, Monitor, Languages, ShieldCheck, Fingerprint, Building2 } from "lucide-react";
+import { BarChart3, Trophy, BookOpen, MessagesSquare, Settings, Upload, Trash2, Loader2, Download, Plus, MessageCircle, Send, ChevronDown, ChevronLeft, ChevronRight, Check, Sparkles, X, BookText, GraduationCap, FlaskConical, Atom, Leaf, Globe, History, Monitor, Languages, ShieldCheck, Fingerprint, Building2, Users } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Modal, Field, inputCls } from "./Egzaminy";
 import { confirmDialog } from "@/components/ConfirmDialog";

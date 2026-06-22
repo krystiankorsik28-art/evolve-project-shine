@@ -10,7 +10,7 @@ import {
   Lightbulb, Bell, Calendar, Clock, Download, Upload, Search,
   Filter, LayoutDashboard, Share2, Paintbrush, Palette,
   Computer, Notebook, Infinity, Cpu, Server, Binary,
-  Mail, Flame, BookMarked, DollarSign,
+  Mail, Flame, BookMarked, DollarSign, Wifi, Trophy,
 } from "lucide-react";
 import { Terminal } from "lucide-react";
 
