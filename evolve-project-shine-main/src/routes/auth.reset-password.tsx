@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { useAuth } from "@/lib/auth/auth-context";
 
 export const Route = createFileRoute("/auth/reset-password")({
   component: ResetPassword,
@@ -13,6 +14,9 @@ export const Route = createFileRoute("/auth/reset-password")({
 function ResetPassword() {
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { resetPassword } = useAuth();
 
   return (
     <AuthLayout title="Secure & Reliable" subtitle="Reset your password safely. Enterprise-grade security.">
@@ -50,9 +54,23 @@ function ResetPassword() {
                   }}
                 />
               </div>
+              {error && (
+                <p className="text-xs" style={{ color: "oklch(0.6 0.2 25)" }}>{error}</p>
+              )}
               <button
-                onClick={() => email && setSent(true)}
-                disabled={!email}
+                onClick={async () => {
+                  if (!email) return;
+                  setLoading(true);
+                  setError("");
+                  const result = await resetPassword(email);
+                  setLoading(false);
+                  if (result.error) {
+                    setError(result.error);
+                  } else {
+                    setSent(true);
+                  }
+                }}
+                disabled={!email || loading}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 disabled:opacity-50"
                 style={{
                   background: "linear-gradient(135deg, oklch(0.7 0.15 200), oklch(0.6 0.2 240))",
@@ -60,7 +78,7 @@ function ResetPassword() {
                   boxShadow: "0 0 20px oklch(0.7 0.15 200 / 0.3)",
                 }}
                 onMouseEnter={(e) => {
-                  if (email) {
+                  if (email && !loading) {
                     e.currentTarget.style.boxShadow = "0 0 40px oklch(0.7 0.15 200 / 0.5)";
                     e.currentTarget.style.transform = "translateY(-1px)";
                   }
@@ -70,7 +88,7 @@ function ResetPassword() {
                   e.currentTarget.style.transform = "translateY(0)";
                 }}
               >
-                Send reset link <ArrowRight className="w-4 h-4" />
+                {loading ? "Sending..." : "Send reset link"} {!loading && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
             <p className="mt-6 text-center text-xs" style={{ color: "oklch(1 0 0 / 0.25)" }}>

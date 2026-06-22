@@ -18,6 +18,7 @@ interface AuthContextValue {
   signUpWithEmail: (email: string, password: string, role: string, metadata?: Record<string, string>) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
   refreshSession: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error?: string }>;
   updateProfile: (data: Partial<AuthUser>) => Promise<{ error?: string }>;
   sessions: Session[];
   loadSessions: () => Promise<void>;
@@ -112,6 +113,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (session) {
       setState({ user: mapUser(session), session: { ...session, ...mapSession(session) } as unknown as Session, isLoading: false, isAuthenticated: true });
     }
+  }, []);
+
+  const resetPassword = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/update-password`,
+    });
+    if (error) return { error: error.message };
+    return {};
   }, []);
 
   const updateProfile = useCallback(async (data: Partial<AuthUser>) => {
@@ -249,6 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUpWithEmail,
       signOut,
       refreshSession,
+      resetPassword,
       updateProfile,
       sessions,
       loadSessions,
