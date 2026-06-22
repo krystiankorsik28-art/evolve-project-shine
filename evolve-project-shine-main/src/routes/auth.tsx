@@ -148,7 +148,7 @@ const ROLE_TITLES: Record<RoleId, { title: string; tagline: string }> = {
 type StudentMethod = "pin" | "google" | "email";
 type TeacherMethod = "microsoft" | "google" | "email";
 type ParentMethod = "google" | "email";
-type AdminView = "login" | "microsoft" | "google" | "recovery" | "device" | "sessions";
+type AdminView = "login" | "microsoft" | "google" | "device" | "sessions";
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 30 };
 
@@ -1601,14 +1601,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   className="w-3 h-3 shrink-0"
                   style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}
                 />
-                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>Authenticator code required</span>
-                <button
-                  onClick={() => setView("recovery")}
-                  className="ml-auto text-[9px]"
-                  style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}
-                >
-                  Use recovery code
-                </button>
+                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>Wymagany kod uwierzytelniający</span>
               </div>
               <GlassInput
                 icon={Smartphone}
@@ -1635,7 +1628,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 />
               </div>
               <NeonButton onClick={submitAdminLogin} loading={busy} icon={ShieldCheck}>
-                {busy ? "Verifying..." : "Authenticate & Sign In"}
+                {busy ? "Weryfikacja..." : "Uwierzytelnij i zaloguj"}
               </NeonButton>
               <div className="flex gap-2 mt-2">
                 <button
@@ -1647,18 +1640,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                     color: "oklch(1 0 0 / 0.4)",
                   }}
                 >
-                  <History className="w-3 h-3" /> Sessions
-                </button>
-                <button
-                  onClick={() => setView("recovery")}
-                  className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-[10px] transition-all"
-                  style={{
-                    background: "oklch(1 0 0 / 0.03)",
-                    border: "1px solid oklch(1 0 0 / 0.06)",
-                    color: "oklch(1 0 0 / 0.4)",
-                  }}
-                >
-                  <Key className="w-3 h-3" /> Recovery
+                  <History className="w-3 h-3" /> Sesje
                 </button>
               </div>
             </div>
@@ -1748,63 +1730,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
             </NeonButton>
           </motion.div>
         )}
-        {view === "recovery" && (
-          <motion.div
-            key="recovery"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <button
-              onClick={() => setView("login")}
-              className="flex items-center gap-1 text-xs mb-3"
-              style={{ color: "oklch(1 0 0 / 0.4)" }}
-            >
-              <ChevronLeft className="w-3 h-3" /> Back to login
-            </button>
-            <div className="text-center mb-4">
-              <Key
-                className="w-8 h-8 mx-auto mb-2"
-                style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}
-              />
-              <p className="text-xs font-medium text-white">Recovery Codes</p>
-              <p className="text-[10px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-                Use one-time codes when you lose access to Authenticator
-              </p>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 mb-4">
-              {RECOVERY_CODES.map((code) => (
-                <div
-                  key={code}
-                  className="px-3 py-2 rounded-lg text-xs font-mono tracking-wider text-center"
-                  style={{
-                    background: "oklch(1 0 0 / 0.04)",
-                    border: "1px solid oklch(1 0 0 / 0.06)",
-                    color: "oklch(1 0 0 / 0.6)",
-                  }}
-                >
-                  {codesRevealed ? code : code.replace(/[A-Z0-9]/g, "\u2022")}
-                </div>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <NeonButton
-                variant="secondary"
-                onClick={() => setCodesRevealed(!codesRevealed)}
-                icon={codesRevealed ? EyeOff : Eye}
-              >
-                {codesRevealed ? "Hide" : "Reveal"}
-              </NeonButton>
-              <NeonButton onClick={handleCopyCodes} icon={copied ? CheckCircle2 : Copy}>
-                {copied ? "Copied!" : "Copy codes"}
-              </NeonButton>
-            </div>
-            <p className="mt-3 text-[9px] text-center" style={{ color: "oklch(1 0 0 / 0.25)" }}>
-              Store codes securely. Each code can only be used once.
-            </p>
-          </motion.div>
-        )}
+
         {view === "sessions" && (
           <motion.div
             key="sessions"
