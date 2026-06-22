@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/theme";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -6,7 +6,8 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   GraduationCap, Users, Shield, ArrowRight, ArrowUpRight, CheckCircle2, BookOpen,
   Mail, Phone, MapPin, Send, Loader2, Menu, X, FileText, ClipboardList,
-  Library, BarChart3, Lock, Calendar, Sparkles, Zap, Globe2, Activity,   ShieldCheck, ChevronUp, Code2, Presentation,
+  Library, BarChart3, Lock, Calendar, Sparkles, Zap, Globe2, Activity,
+  ShieldCheck, ChevronUp, Code2, Presentation,
   BrainCircuit, Bot, Database, Smartphone, Wifi, Cloud, Download, Upload,
   Timer, Clock, Award, Medal, Star, Trophy, Target, Eye,
   Search, Filter, LayoutDashboard, Share2, Github,
@@ -17,7 +18,8 @@ import {
   Lightbulb, Cable, Workflow, GripVertical, Puzzle, ScrollText, Heart, KeyRound, Video,
   Infinity, Computer, Notebook, Radio, GitBranch,
   ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
-  SmartphoneNfc, Sun, Moon, Palette,
+  SmartphoneNfc, Sun, Moon, Palette, Layers, Network, Cpu, Server,
+  Binary, CircuitBoard, Cctv, Dock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -42,6 +44,209 @@ export const Route = createFileRoute("/")({
     ],
   }),
 });
+
+/* ──── PREMIUM BACKGROUND COMPONENTS ──── */
+
+function AuroraBackground() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+      <motion.div
+        className="absolute -inset-40 opacity-30"
+        style={{
+          background: "linear-gradient(180deg, oklch(0.5 0.15 270 / 0.12) 0%, oklch(0.6 0.18 200 / 0.08) 30%, oklch(0.5 0.15 240 / 0.05) 60%, transparent 100%)",
+          filter: "blur(60px)",
+        }}
+        animate={{
+          y: [0, -80, 0, 60, 0],
+          scale: [1, 1.1, 0.95, 1.05, 1],
+          rotate: [0, 2, -1, 1, 0],
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute -inset-40 opacity-20"
+        style={{
+          background: "linear-gradient(90deg, oklch(0.7 0.2 200 / 0.1) 0%, oklch(0.6 0.18 240 / 0.06) 50%, oklch(0.5 0.15 270 / 0.08) 100%)",
+          filter: "blur(80px)",
+        }}
+        animate={{
+          x: [0, 100, -50, 80, 0],
+          scale: [1, 0.9, 1.05, 0.95, 1],
+        }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
+  );
+}
+
+function CanvasParticleField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animId = 0;
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    const particles: { x: number; y: number; vx: number; vy: number; r: number; o: number }[] = [];
+    const count = Math.min(80, Math.floor((w * h) / 20000));
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+        r: 1 + Math.random() * 1.5, o: 0.2 + Math.random() * 0.4,
+      });
+    }
+    const resize = () => { w = window.innerWidth; h = window.innerHeight; canvas!.width = w; canvas!.height = h; };
+    window.addEventListener("resize", resize);
+    canvas.width = w; canvas.height = h;
+    const draw = () => {
+      ctx!.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx!.fillStyle = `oklch(0.7 0.15 200 / ${p.o})`;
+        ctx!.fill();
+      }
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            ctx!.beginPath();
+            ctx!.moveTo(particles[i].x, particles[i].y);
+            ctx!.lineTo(particles[j].x, particles[j].y);
+            ctx!.strokeStyle = `oklch(0.7 0.15 200 / ${0.06 * (1 - dist / 150)})`;
+            ctx!.lineWidth = 0.5;
+            ctx!.stroke();
+          }
+        }
+      }
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
+}
+
+function FloatingGlassElements() {
+  const shapes = useMemo(() => [
+    { size: 180, top: "15%", left: "10%", dur: 8, delay: 0, color: "oklch(0.7 0.15 200 / 0.04)", radius: "42% 58% 55% 45% / 45% 52% 48% 55%" },
+    { size: 120, top: "60%", left: "85%", dur: 10, delay: 2, color: "oklch(0.6 0.18 240 / 0.04)", radius: "55% 45% 60% 40% / 50% 55% 45% 50%" },
+    { size: 220, top: "75%", left: "20%", dur: 12, delay: 4, color: "oklch(0.5 0.15 270 / 0.03)", radius: "48% 52% 40% 60% / 52% 44% 56% 48%" },
+    { size: 100, top: "30%", left: "75%", dur: 7, delay: 1, color: "oklch(0.7 0.18 190 / 0.03)", radius: "50% 50% 45% 55% / 55% 45% 55% 45%" },
+  ], []);
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+      {shapes.map((s, i) => (
+        <motion.div
+          key={i}
+          className="absolute"
+          style={{
+            width: s.size, height: s.size, top: s.top, left: s.left,
+            borderRadius: s.radius, background: s.color,
+            border: "1px solid oklch(1 0 0 / 0.04)",
+            backdropFilter: "blur(4px)",
+          }}
+          animate={{
+            y: [0, -30, 0, 20, 0],
+            rotate: [0, 5, -3, 8, 0],
+            scale: [1, 1.02, 0.98, 1.01, 1],
+          }}
+          transition={{ duration: s.dur, repeat: Infinity, ease: "easeInOut", delay: s.delay }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function LightRays() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute h-px"
+          style={{
+            width: "200%", left: "-50%",
+            top: `${30 + i * 25}%`,
+            background: `linear-gradient(90deg, transparent 0%, oklch(0.7 0.15 200 / 0.06) 30%, oklch(0.7 0.15 200 / 0.1) 50%, oklch(0.7 0.15 200 / 0.06) 70%, transparent 100%)`,
+          }}
+          animate={{ x: ["-100%", "100%"] }}
+          transition={{ duration: 10 + i * 3, repeat: Infinity, ease: "linear", delay: i * 2 }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function GridBg() {
+  return (
+    <div className="fixed inset-0 pointer-events-none" style={{
+      zIndex: 0,
+      backgroundImage: `
+        linear-gradient(oklch(1 0 0 / 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, oklch(1 0 0 / 0.015) 1px, transparent 1px)
+      `,
+      backgroundSize: "80px 80px",
+      WebkitMaskImage: "radial-gradient(ellipse at 50% 30%, black 30%, transparent 70%)",
+      maskImage: "radial-gradient(ellipse at 50% 30%, black 30%, transparent 70%)",
+    }} />
+  );
+}
+
+function NeuralNetworkBg() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w; canvas.height = h;
+    let animId = 0;
+    const nodes: { x: number; y: number; vx: number; vy: number; r: number }[] = [];
+    const nodeCount = Math.min(30, Math.floor((w * h) / 50000));
+    for (let i = 0; i < nodeCount; i++) {
+      nodes.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2, r: 2 + Math.random() * 3 });
+    }
+    const edges: [number, number][] = [];
+    for (let i = 0; i < nodeCount; i++) {
+      for (let j = i + 1; j < nodeCount; j++) {
+        if (Math.random() < 0.15) edges.push([i, j]);
+      }
+    }
+    const resize = () => { w = window.innerWidth; h = window.innerHeight; canvas!.width = w; canvas!.height = h; };
+    window.addEventListener("resize", resize);
+    const draw = () => {
+      ctx!.clearRect(0, 0, w, h);
+      for (const n of nodes) { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > w) n.vx *= -1; if (n.y < 0 || n.y > h) n.vy *= -1; }
+      for (const [i, j] of edges) {
+        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 250) {
+          ctx!.beginPath(); ctx!.moveTo(nodes[i].x, nodes[i].y); ctx!.lineTo(nodes[j].x, nodes[j].y);
+          ctx!.strokeStyle = `oklch(0.7 0.15 200 / ${0.06 * (1 - dist / 250)})`; ctx!.lineWidth = 0.5; ctx!.stroke();
+          const pulse = Math.sin(Date.now() * 0.003 + i + j) * 0.5 + 0.5;
+          ctx!.beginPath(); ctx!.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI * 2);
+          ctx!.fillStyle = `oklch(0.7 0.15 200 / ${0.15 + pulse * 0.2})`; ctx!.fill();
+          ctx!.beginPath(); ctx!.arc(nodes[j].x, nodes[j].y, nodes[j].r, 0, Math.PI * 2);
+          ctx!.fillStyle = `oklch(0.7 0.15 200 / ${0.15 + pulse * 0.2})`; ctx!.fill();
+        }
+      }
+      animId = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
+  }, []);
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
+}
 
 /* ──── Confetti ──── */
 function burstConfetti(e: React.MouseEvent) {
@@ -95,13 +300,12 @@ function TextReveal({ text, className = "" }: { text: string; className?: string
   );
 }
 
-/* ──── Particle Background ──── */
+/* ──── Main Landing ──── */
 function Landing() {
   const { setTheme } = useTheme();
   const [loaded, setLoaded] = useState(false);
   useEffect(() => { setTheme("dark") }, []);
 
-  /* ──── IntersectionObserver with stagger ──── */
   useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
@@ -126,7 +330,6 @@ function Landing() {
     return () => obs.disconnect();
   }, []);
 
-  /* ──── Scroll Progress ──── */
   const progRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const f = () => {
@@ -138,7 +341,6 @@ function Landing() {
     return () => window.removeEventListener("scroll", f);
   }, []);
 
-  /* ──── Cursor Glow ──── */
   const glowRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
@@ -151,7 +353,6 @@ function Landing() {
     return () => window.removeEventListener("mousemove", f);
   }, []);
 
-  /* ──── Magnetic Buttons ──── */
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
     const btns = document.querySelectorAll<HTMLElement>(".magnetic-btn");
@@ -167,7 +368,6 @@ function Landing() {
     return () => { btns.forEach(b => { b.removeEventListener("mousemove", f); b.removeEventListener("mouseleave", reset); }); };
   }, [loaded]);
 
-  /* ──── Sparkle Trail ──── */
   useEffect(() => {
     if (window.matchMedia("(pointer: coarse)").matches) return;
     let timeout: ReturnType<typeof setTimeout>;
@@ -195,6 +395,16 @@ function Landing() {
         <Toaster theme="dark" />
         <CookieBanner />
         <NavBar2 />
+
+        <div className="fixed inset-0 pointer-events-none" style={{ background: "oklch(0.035 0.02 270)" }}>
+          <AuroraBackground />
+          <CanvasParticleField />
+          <NeuralNetworkBg />
+          <FloatingGlassElements />
+          <LightRays />
+          <GridBg />
+        </div>
+
         <main className="relative z-10">
           <HeroSection />
           <StatsSection />
@@ -235,14 +445,6 @@ function CookieBanner() {
   );
 }
 
-
-
-
-
-
-/* ──── FEATURES ──── */
-
-/* ──── DEMO ──── */
 const QUIZ_DATA = [
   { q: "Ile wynosi pole kwadratu o boku 5 cm?", opts: [["25 cm²", true], ["20 cm²", false], ["10 cm²", false], ["30 cm²", false]], explain: "Pole = 5 × 5 = 25 cm²" },
   { q: "Która liczba jest podzielna przez 3?", opts: [["124", false], ["327", true], ["401", false], ["550", false]], explain: "3+2+7=12, a 12 dzieli się przez 3" },
@@ -344,7 +546,7 @@ function DemoShowcase() {
                   style={{ animation: "splashPulse 1.5s ease-in-out infinite" }}>
                   {score === 3 ? <Award className="w-10 h-10 text-black"/> : score >= 2 ? <Star className="w-10 h-10 text-black"/> : <Target className="w-10 h-10 text-black"/>}
                 </div>
-                <h3 className="text-2xl font-bold">{score === 3 ? "Perfect! 🎉" : score >= 2 ? "Dobra robota! 👏" : "Spróbuj jeszcze raz 💪"}</h3>
+                <h3 className="text-2xl font-bold">{score === 3 ? "Perfect!" : score >= 2 ? "Dobra robota!" : "Spróbuj jeszcze raz"}</h3>
                 <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm">
                   <span className="text-white/40">Wynik:</span>
                   <span className={`font-bold font-mono ${score === 3 ? "text-emerald-300" : score >= 2 ? "text-accent" : "text-amber-300"}`}>{score}/3</span>
@@ -408,7 +610,6 @@ function DemoShowcase() {
   );
 }
 
-/* ──── FOR WHOM ──── */
 function ForWhomFlow() {
   const cards = [
     { icon: GraduationCap, accent: "from-accent to-blue-500", to: "/auth/student", title: "Uczeń", lines: ["Wejście PIN-em bez konta", "Czysty interfejs egzaminu", "Wynik widoczny od razu", "Certyfikat PDF + QR"] },
@@ -454,7 +655,6 @@ function ForWhomFlow() {
   );
 }
 
-/* ──── COMPARISON ──── */
 function ComparisonShowcase() {
   const rows = [
     { l: "Czas przygotowania egzaminu", t: "2–4 godziny", e: "3 minuty", icon: Timer },
@@ -476,15 +676,6 @@ function ComparisonShowcase() {
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Tradycyjnie vs EduNex" /></h2>
         </div>
         <div className="reveal space-y-3 relative">
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: "linear-gradient(180deg, transparent 0%, oklch(0.7 0.15 200 / 0.04) 2%, transparent 5%)",
-              backgroundSize: "100% 20%",
-            }}
-            animate={{ backgroundPosition: ["0% 0%", "0% 100%", "0% 0%"] }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          />
           <div className="flex items-center gap-3 px-4 sm:px-6 py-2 text-xs text-white/40 font-medium relative">
             <span className="w-8 shrink-0" />
             <span className="flex-1">Obszar</span>
@@ -518,7 +709,6 @@ function ComparisonShowcase() {
   );
 }
 
-/* ──── ACHIEVEMENTS ──── */
 const ACHIEVEMENTS = [
   { icon: Trophy, value: "847+", label: "Egzaminów dziennie", color: "from-accent to-blue-500" },
   { icon: School, value: "128+", label: "Aktywnych szkół", color: "from-accent to-blue-500" },
@@ -552,7 +742,6 @@ function AchievementsFlow() {
   );
 }
 
-/* ──── AI PLATFORM SHOWCASE ──── */
 function AIPlatformFlow() {
   const capabilities = [
     { icon: BrainCircuit, title: "AI Tutor", desc: "24/7 asystent do nauki matematyki, języków, programowania", active: true },
@@ -759,8 +948,6 @@ function AiDemoShowcase() {
   );
 }
 
-/* ──── GLOBAL & ENTERPRISE ──── */
-/* ──── SECURITY ──── */
 const SECURITY_ITEMS = [
   { icon: Lock, title: "Szyfrowanie TLS 1.3", desc: "Dane przesyłane z szyfrowaniem klasy bankowej. Certyfikat SSL automatycznie odnawiany.", color: "from-accent to-blue-500" },
   { icon: Shield, title: "Ochrona przed atakami", desc: "WAF, DDoS protection, rate limiting. Monitoring 24/7 przez zespół bezpieczeństwa.", color: "from-accent to-blue-500" },
@@ -808,11 +995,6 @@ function SecurityFlow() {
   );
 }
 
-/* ──── TESTIMONIALS ──── */
-
-/* ──── PRICING ──── */
-
-/* ──── FAQ ──── */
 const FAQ = [
   { q: "Czy uczniowie muszą zakładać konto?", a: "Nie. Uczeń wchodzi przeglądarką, wpisuje PIN i imię. Konto nie jest wymagane — zero rejestracji." },
   { q: "Czy mogę wgrać pytania z dokumentu?", a: "Tak. Wspieramy import z Worda, PDF oraz Excel. Możesz też wczytać zdjęcie — AI odczyta pytania automatycznie." },
@@ -850,9 +1032,6 @@ function FAQFlow() {
   );
 }
 
-/* ──── BLOG + MARQUEE PARTNERS ──── */
-
-/* ──── NEWSLETTER ──── */
 function NewsletterFlow() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -880,7 +1059,6 @@ function NewsletterFlow() {
   );
 }
 
-/* ──── CONTACT ──── */
 function ContactFlow() {
   const submit = useServerFn(submitContact);
   const [busy, setBusy] = useState(false);
@@ -927,7 +1105,6 @@ function ContactFlow() {
   );
 }
 
-/* ──── STICKY CTA ──── */
 function StickyCta() {
   const [visible, setVisible] = useState(false);
   const lastRef = useRef(0);
@@ -965,7 +1142,6 @@ function StickyCta() {
   );
 }
 
-/* ──── FOOTER ──── */
 function FooterFlow() {
   const [showTop, setShowTop] = useState(false);
   useEffect(() => { const f = () => setShowTop(window.scrollY > 400); window.addEventListener("scroll", f, { passive: true }); return () => window.removeEventListener("scroll", f); }, []);
