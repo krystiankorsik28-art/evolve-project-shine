@@ -8,10 +8,21 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+// Fall back to harmless placeholder values when env vars are not configured.
+// This prevents the whole app (incl. SSR) from crashing during render. Auth
+// calls will simply fail gracefully at runtime until real credentials are set.
+const url = SUPABASE_URL && SUPABASE_URL.length > 0 ? SUPABASE_URL : 'https://placeholder.supabase.co';
+const key =
+  SUPABASE_PUBLISHABLE_KEY && SUPABASE_PUBLISHABLE_KEY.length > 0
+    ? SUPABASE_PUBLISHABLE_KEY
+    : 'placeholder-anon-key';
+
+export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+
+export const supabase = createClient<Database>(url, key, {
   auth: {
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
-  }
+  },
 });
