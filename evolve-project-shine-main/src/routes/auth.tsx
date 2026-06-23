@@ -37,51 +37,51 @@ export const Route = createFileRoute("/auth")({
     }
   },
   component: AuthPage,
-  head: () => ({ meta: [{ title: "Sign In — EduNex" }] }),
+  head: () => ({ meta: [{ title: "Logowanie — EduNex" }] }),
 });
 
 // ─── Constants ───
 
 const ROLES = [
-  { id: "student" as const, label: "Student", icon: GraduationCap, desc: "Take exams, learn with AI" },
-  { id: "teacher" as const, label: "Teacher", icon: Users, desc: "Create exams, monitor classes" },
-  { id: "parent" as const, label: "Parent", icon: School, desc: "Monitor progress" },
-  { id: "admin" as const, label: "Admin", icon: Building2, desc: "Manage your school" },
+  { id: "student" as const, label: "Uczeń", icon: GraduationCap, desc: "Egzaminy, nauka z AI" },
+  { id: "teacher" as const, label: "Nauczyciel", icon: Users, desc: "Twórz egzaminy, monitoruj klasy" },
+  { id: "parent" as const, label: "Rodzic", icon: School, desc: "Monitoruj postępy" },
+  { id: "admin" as const, label: "Dyrektor", icon: Building2, desc: "Zarządzaj szkołą" },
 ];
 
 type RoleId = (typeof ROLES)[number]["id"];
 
 const TRUST_ITEMS = [
-  "End-to-end encryption", "GDPR / RODO compliant", "EU-based servers",
-  "ISO 27001 aligned", "99.9% uptime SLA",
+  "Szyfrowanie end-to-end", "Zgodność z GDPR / RODO", "Serwery w UE",
+  "ISO 27001", "99.9% dostępności",
 ];
 
 const STUDENT_PROPS = [
-  "Join exams with one PIN",
-  "AI tutor available 24/7",
-  "Track your progress",
-  "Learn at your own pace",
+  "Dołącz do egzaminów jednym PIN-em",
+  "AI tutor dostępny 24/7",
+  "Śledź swoje postępy",
+  "Ucz się we własnym tempie",
 ];
 
 const TEACHER_PROPS = [
-  "Create exams in seconds with AI",
-  "Auto-grade with AI",
-  "Real-time class analytics",
-  "Enterprise-grade security",
+  "Twórz egzaminy w sekundach z AI",
+  "Automatyczne ocenianie z AI",
+  "Analityka klasy w czasie rzeczywistym",
+  "Bezpieczeństwo na poziomie korporacyjnym",
 ];
 
 const PARENT_PROPS = [
-  "Monitor your child's progress",
-  "Receive grade notifications",
-  "View attendance records",
-  "Communicate with teachers",
+  "Monitoruj postępy swojego dziecka",
+  "Otrzymuj powiadomienia o ocenach",
+  "Przeglądaj frekwencję",
+  "Komunikuj się z nauczycielami",
 ];
 
 const ADMIN_PROPS = [
-  "Full school management",
-  "Security Center dashboard",
-  "User & role administration",
-  "Compliance & audit logs",
+  "Pełne zarządzanie szkołą",
+  "Panel Security Center",
+  "Zarządzanie użytkownikami i rolami",
+  "Logi zgodności i audytu",
 ];
 
 const ROLE_PROPS: Record<RoleId, string[]> = {
@@ -92,16 +92,16 @@ const ROLE_PROPS: Record<RoleId, string[]> = {
 };
 
 const ROLE_TITLES: Record<RoleId, { title: string; tagline: string }> = {
-  student: { title: "Student Portal", tagline: "Fast access to exams, lessons & AI tutor" },
-  teacher: { title: "Teacher Dashboard", tagline: "Secure access to classes, exams & analytics" },
-  parent: { title: "Parent Portal", tagline: "Stay informed about your child's education" },
-  admin: { title: "Administration", tagline: "Enterprise security & full school management" },
+  student: { title: "Panel Ucznia", tagline: "Szybki dostęp do egzaminów, lekcji i AI tutora" },
+  teacher: { title: "Panel Nauczyciela", tagline: "Bezpieczny dostęp do klas, egzaminów i analityki" },
+  parent: { title: "Panel Rodzica", tagline: "Bądź na bieżąco z edukacją swojego dziecka" },
+  admin: { title: "Administracja", tagline: "Bezpieczeństwo korporacyjne i pełne zarządzanie szkołą" },
 };
 
-type StudentMethod = "pin" | "google" | "email";
-type TeacherMethod = "microsoft" | "google" | "email";
-type ParentMethod = "google" | "email";
-type AdminView = "login" | "microsoft" | "google" | "recovery" | "device" | "sessions";
+type StudentMethod = "pin" | "google" | "github" | "email";
+type TeacherMethod = "microsoft" | "google" | "github" | "email";
+type ParentMethod = "google" | "github" | "email";
+type AdminView = "login" | "microsoft" | "google" | "github" | "recovery" | "device" | "sessions";
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 30 };
 
@@ -491,6 +491,14 @@ function GoogleIcon() {
   );
 }
 
+function GithubIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" fill="white">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z" />
+    </svg>
+  );
+}
+
 // ─── Security Badge Row ───
 function SecurityBadgeRow() {
   return (
@@ -499,7 +507,7 @@ function SecurityBadgeRow() {
         { label: "AES-256", icon: Lock },
         { label: "TLS 1.3", icon: Shield },
         { label: "SOC 2", icon: CheckCircle2 },
-        { label: "GDPR", icon: Award },
+        { label: "RODO", icon: Award },
       ].map((b) => (
         <div
           key={b.label}
@@ -543,18 +551,17 @@ function PasskeyLoginButton({ onClick }: { onClick?: () => void }) {
   );
 }
 
-function RememberMeCheckbox() {
-  const [checked, setChecked] = useState(false);
+function RememberMeCheckbox({ checked, onChange }: { checked?: boolean; onChange?: (v: boolean) => void }) {
   return (
     <label className="flex items-center gap-1.5 cursor-pointer group py-0.5">
-      <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="sr-only peer" />
+      <input type="checkbox" checked={checked} onChange={(e) => onChange?.(e.target.checked)} className="sr-only peer" />
       <div className="w-3.5 h-3.5 rounded border transition-all" style={{
         background: checked ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.04)",
         borderColor: checked ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.12)",
       }}>
         {checked && <CheckCircle2 className="w-3 h-3 text-white" style={{ margin: "-1px" }} />}
       </div>
-      <span className="text-[10px] group-hover:text-white/50 transition-colors" style={{ color: "oklch(1 0 0 / 0.3)" }}>Remember me</span>
+      <span className="text-[10px] group-hover:text-white/50 transition-colors" style={{ color: "oklch(1 0 0 / 0.3)" }}>Zapamiętaj mnie</span>
     </label>
   );
 }
@@ -568,10 +575,73 @@ function SecurityStatus() {
       style={{ background: "oklch(0.65 0.2 150 / 0.06)", border: "1px solid oklch(0.65 0.2 150 / 0.1)" }}
     >
       <ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.65 0.2 150)" }} />
-      <span style={{ color: "oklch(1 0 0 / 0.5)" }}>Connection secured</span>
-      <span className="ml-auto" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }}>● Live</span>
+      <span style={{ color: "oklch(1 0 0 / 0.5)" }}>Połączenie zabezpieczone</span>
+      <span className="ml-auto" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }}>● Aktywne</span>
     </motion.div>
   );
+}
+
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000;
+
+function trackFailedAttempt() {
+  const attempts = parseInt(localStorage.getItem("edunex_login_attempts") || "0") + 1;
+  localStorage.setItem("edunex_login_attempts", String(attempts));
+  if (attempts >= MAX_LOGIN_ATTEMPTS) {
+    localStorage.setItem("edunex_lock_until", String(Date.now() + LOCKOUT_DURATION_MS));
+  }
+  localStorage.setItem("edunex_last_attempt", String(Date.now()));
+}
+
+function resetLoginAttempts() {
+  localStorage.removeItem("edunex_login_attempts");
+  localStorage.removeItem("edunex_lock_until");
+  localStorage.removeItem("edunex_last_attempt");
+}
+
+function isRateLimited(): boolean {
+  const lockUntil = parseInt(localStorage.getItem("edunex_lock_until") || "0");
+  if (lockUntil > Date.now()) return true;
+  const lastAttempt = parseInt(localStorage.getItem("edunex_last_attempt") || "0");
+  if (Date.now() - lastAttempt > LOCKOUT_DURATION_MS) {
+    localStorage.removeItem("edunex_login_attempts");
+    localStorage.removeItem("edunex_lock_until");
+  }
+  return false;
+}
+
+function getRemainingAttempts(): number {
+  const attempts = parseInt(localStorage.getItem("edunex_login_attempts") || "0");
+  return Math.max(0, MAX_LOGIN_ATTEMPTS - attempts);
+}
+
+function RateLimitWarning() {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 10000); return () => clearInterval(t); }, []);
+  const lockUntil = parseInt(localStorage.getItem("edunex_lock_until") || "0");
+  if (lockUntil > now) {
+    const remaining = Math.ceil((lockUntil - now) / 1000 / 60);
+    return (
+      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px] mb-2" style={{ background: "oklch(0.6 0.2 30 / 0.1)", border: "1px solid oklch(0.6 0.2 30 / 0.2)" }}>
+          <AlertTriangle className="w-3 h-3 shrink-0" style={{ color: "oklch(0.7 0.2 80)" }} />
+          <span style={{ color: "oklch(0.7 0.2 80)" }}>Zbyt wiele nieudanych prób. Spróbuj ponownie za {remaining} min.</span>
+        </div>
+      </motion.div>
+    );
+  }
+  const remaining = getRemainingAttempts();
+  if (remaining <= 2 && remaining < MAX_LOGIN_ATTEMPTS) {
+    return (
+      <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px] mb-2" style={{ background: "oklch(0.7 0.2 80 / 0.1)", border: "1px solid oklch(0.7 0.2 80 / 0.2)" }}>
+          <AlertTriangle className="w-3 h-3 shrink-0" style={{ color: "oklch(0.7 0.2 80)" }} />
+          <span style={{ color: "oklch(0.7 0.2 80)" }}>Pozostało {remaining} prób logowania przed blokadą.</span>
+        </div>
+      </motion.div>
+    );
+  }
+  return null;
 }
 
 // ══════════════════════════════════════════════════
@@ -581,7 +651,13 @@ function SecurityStatus() {
 function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
   const [method, setMethod] = useState<StudentMethod>("pin");
-  const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("edunex_remember") === "true");
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("edunex_remember") === "true") {
+      return localStorage.getItem("edunex_email") || "";
+    }
+    return "";
+  });
   const [pass, setPass] = useState("");
   const [busy, setBusy] = useState(false);
   const [pinStep, setPinStep] = useState<"name" | "pin">("name");
@@ -595,7 +671,7 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
     const n = [...pin]; n[i] = v.slice(-1); setPin(n);
     if (v && i < 5) pinRefs.current[i + 1]?.focus();
     if (n.every((d) => d)) {
-      toast.success("Logged in with PIN!");
+      toast.success("Zalogowano przez PIN!");
       onNavigate("/student/dashboard");
     }
   };
@@ -604,11 +680,20 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   };
 
   const submitStudentLogin = async () => {
-    if (!email || !pass) { toast.error("Fill all fields"); return; }
+    if (!email || !pass) { toast.error("Wypełnij wszystkie pola"); return; }
+    if (isRateLimited()) { toast.error("Zbyt wiele prób. Spróbuj ponownie za kilka minut."); return; }
     setBusy(true);
     const { error } = await auth.signInWithEmail(email, pass);
     setBusy(false);
-    if (error) { toast.error(error); return; }
+    if (error) { trackFailedAttempt(); toast.error(error); return; }
+    resetLoginAttempts();
+    if (rememberMe) {
+      localStorage.setItem("edunex_email", email);
+      localStorage.setItem("edunex_remember", "true");
+    } else {
+      localStorage.removeItem("edunex_email");
+      localStorage.removeItem("edunex_remember");
+    }
     onNavigate("/student/dashboard");
   };
 
@@ -617,6 +702,7 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
       <div className="flex gap-1.5 mb-4">
         <MethodPill active={method === "pin"} label="PIN" icon={KeyRound} onClick={() => setMethod("pin")} />
         <MethodPill active={method === "google"} label="Google" icon={() => <GoogleIcon />} onClick={() => setMethod("google")} />
+        <MethodPill active={method === "github"} label="GitHub" icon={() => <GithubIcon />} onClick={() => setMethod("github")} />
         <MethodPill active={method === "email"} label="Email" icon={Mail} onClick={() => setMethod("email")} />
       </div>
 
@@ -627,16 +713,16 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               <div className="space-y-3">
                 <div className="text-center mb-2">
                   <KeyRound className="w-8 h-8 mx-auto mb-2" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
-                  <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>Enter your name to join with a PIN</p>
+                  <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>Wpisz swoje imię, aby dołączyć za pomocą PIN-u</p>
                 </div>
-                <GlassInput value={pinName} onChange={(e: any) => setPinName(e.target.value)} placeholder="First name" />
-                <GlassInput value={pinLname} onChange={(e: any) => setPinLname(e.target.value)} placeholder="Last name" />
-                <NeonButton onClick={() => pinName && pinLname ? setPinStep("pin") : toast.error("Enter your name")} disabled={!pinName || !pinLname} icon={ArrowRight}>Continue</NeonButton>
+                <GlassInput value={pinName} onChange={(e: any) => setPinName(e.target.value)} placeholder="Imię" />
+                <GlassInput value={pinLname} onChange={(e: any) => setPinLname(e.target.value)} placeholder="Nazwisko" />
+                <NeonButton onClick={() => pinName && pinLname ? setPinStep("pin") : toast.error("Wpisz swoje imię")} disabled={!pinName || !pinLname} icon={ArrowRight}>Dalej</NeonButton>
               </div>
             ) : (
               <div className="space-y-4 text-center">
                 <KeyRound className="w-8 h-8 mx-auto" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
-                <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>Enter the 6-digit PIN from your teacher</p>
+                <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>Wprowadź 6-cyfrowy PIN od nauczyciela</p>
                 <div className="flex justify-center gap-2">
                   {pin.map((d, i) => (
                     <input key={i} ref={(r) => { pinRefs.current[i] = r; }} type="text" inputMode="numeric" maxLength={1} value={d}
@@ -648,7 +734,7 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   ))}
                 </div>
                 <button onClick={() => setPinStep("name")} className="flex items-center justify-center gap-1 text-xs w-full" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-                  <ChevronLeft className="w-3 h-3" /> Back
+                  <ChevronLeft className="w-3 h-3" /> Wstecz
                 </button>
               </div>
             )}
@@ -658,24 +744,35 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
           <motion.div key="google" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-3">
             <div className="text-center py-4">
               <div className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}><GoogleIcon /></div>
-              <p className="text-sm font-medium text-white mb-1">Continue with Google</p>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Quick and secure — no password needed</p>
+              <p className="text-sm font-medium text-white mb-1">Kontynuuj przez Google</p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Szybko i bezpiecznie — bez hasła</p>
             </div>
-            <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>Sign in with Google</NeonButton>
+            <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>Zaloguj przez Google</NeonButton>
+          </motion.div>
+        )}
+        {method === "github" && (
+          <motion.div key="github" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-3">
+            <div className="text-center py-4">
+              <div className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}><GithubIcon /></div>
+              <p className="text-sm font-medium text-white mb-1">Kontynuuj przez GitHub</p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Szybko i bezpiecznie — bez hasła</p>
+            </div>
+            <NeonButton onClick={() => auth.signInWithProvider("github")} icon={ArrowRight}>Zaloguj przez GitHub</NeonButton>
           </motion.div>
         )}
         {method === "email" && (
           <motion.div key="email" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-3">
-            <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Email address" />
-            <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password" />
+            <RateLimitWarning />
+            <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Adres e-mail" />
+            <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Hasło" />
             <div className="flex items-center justify-between">
-              <RememberMeCheckbox />
-              <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
+              <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
+              <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Nie pamiętasz hasła?</Link>
             </div>
-            <NeonButton onClick={submitStudentLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+            <NeonButton onClick={submitStudentLogin} loading={busy} icon={ArrowRight}>{busy ? "Logowanie..." : "Zaloguj się"}</NeonButton>
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
-              <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+              <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>lub</span></div>
             </div>
             <PasskeyLoginButton />
           </motion.div>
@@ -692,17 +789,32 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
 function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
   const [method, setMethod] = useState<TeacherMethod>("microsoft");
-  const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("edunex_remember") === "true");
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("edunex_remember") === "true") {
+      return localStorage.getItem("edunex_email") || "";
+    }
+    return "";
+  });
   const [pass, setPass] = useState("");
   const [tfaEnabled, setTfaEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submitTeacherLogin = async () => {
-    if (!email || !pass) { toast.error("Fill all fields"); return; }
+    if (!email || !pass) { toast.error("Wypełnij wszystkie pola"); return; }
+    if (isRateLimited()) { toast.error("Zbyt wiele prób. Spróbuj ponownie za kilka minut."); return; }
     setBusy(true);
     const { error } = await auth.signInWithEmail(email, pass);
     setBusy(false);
-    if (error) { toast.error(error); return; }
+    if (error) { trackFailedAttempt(); toast.error(error); return; }
+    resetLoginAttempts();
+    if (rememberMe) {
+      localStorage.setItem("edunex_email", email);
+      localStorage.setItem("edunex_remember", "true");
+    } else {
+      localStorage.removeItem("edunex_email");
+      localStorage.removeItem("edunex_remember");
+    }
     onNavigate("/teacher");
   };
 
@@ -711,25 +823,32 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
       <div className="flex gap-1.5 mb-4">
         <MethodPill active={method === "microsoft"} label="Microsoft" icon={() => <MicrosoftIcon />} onClick={() => setMethod("microsoft")} />
         <MethodPill active={method === "google"} label="Google" icon={() => <GoogleIcon />} onClick={() => setMethod("google")} />
+        <MethodPill active={method === "github"} label="GitHub" icon={() => <GithubIcon />} onClick={() => setMethod("github")} />
         <MethodPill active={method === "email"} label="Email" icon={Mail} onClick={() => setMethod("email")} />
       </div>
       <AnimatePresence mode="wait">
-        {(method === "microsoft" || method === "google") && (
+        {(method === "microsoft" || method === "google" || method === "github") && (
           <motion.div key={method} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <div className="text-center py-6">
               <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}>
-                {method === "microsoft" ? <MicrosoftIcon /> : <GoogleIcon />}
+                {method === "microsoft" ? <MicrosoftIcon /> : method === "google" ? <GoogleIcon /> : <GithubIcon />}
               </div>
-              <p className="text-sm font-medium text-white mb-1">Continue with {method === "microsoft" ? "Microsoft 365" : "Google Workspace"}</p>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>{method === "microsoft" ? "School or work account · Entra ID · Azure AD" : "Workspace for Education · Secure SSO"}</p>
+              <p className="text-sm font-medium text-white mb-1">
+                {method === "microsoft" ? "Kontynuuj przez Microsoft 365" : method === "google" ? "Kontynuuj przez Google Workspace" : "Kontynuuj przez GitHub"}
+              </p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>
+                {method === "microsoft" ? "Konto szkolne lub służbowe · Entra ID · Azure AD" : method === "google" ? "Workspace for Education · Bezpieczne SSO" : "Szybko i bezpiecznie — bez hasła"}
+              </p>
             </div>
-            <NeonButton onClick={() => auth.signInWithProvider(method === "microsoft" ? "microsoft" : "google")} icon={ArrowRight}>Sign in with {method === "microsoft" ? "Microsoft" : "Google"}</NeonButton>
+            <NeonButton onClick={() => auth.signInWithProvider(method === "microsoft" ? "microsoft" : method as any)} icon={ArrowRight}>
+              Zaloguj przez {method === "microsoft" ? "Microsoft" : method === "google" ? "Google" : "GitHub"}
+            </NeonButton>
           </motion.div>
         )}
         {method === "email" && (
           <motion.div key="email" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <div className="flex items-center justify-between mb-3 px-1">
-              <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.35)" }}>Email login</span>
+              <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.35)" }}>Logowanie przez e-mail</span>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input type="checkbox" checked={tfaEnabled} onChange={(e) => setTfaEnabled(e.target.checked)} className="sr-only peer" />
                 <div className="w-7 h-4 rounded-full transition-all" style={{ background: tfaEnabled ? "oklch(0.7 0.15 200 / 0.3)" : "oklch(1 0 0 / 0.1)" }}>
@@ -739,21 +858,22 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               </label>
             </div>
             <div className="space-y-3">
-              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Email address" />
-              <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password" />
+              <RateLimitWarning />
+              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Adres e-mail" />
+              <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Hasło" />
               {tfaEnabled && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-                  <GlassInput icon={Smartphone} type="text" placeholder="2FA code (Authenticator)" />
+                  <GlassInput icon={Smartphone} type="text" placeholder="Kod 2FA (Authenticator)" />
                 </motion.div>
               )}
               <div className="flex items-center justify-between">
-                <RememberMeCheckbox />
-                <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
+                <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
+                <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Nie pamiętasz hasła?</Link>
               </div>
-              <NeonButton onClick={submitTeacherLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+              <NeonButton onClick={submitTeacherLogin} loading={busy} icon={ArrowRight}>{busy ? "Logowanie..." : "Zaloguj się"}</NeonButton>
               <div className="relative my-2">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
-                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>lub</span></div>
               </div>
               <PasskeyLoginButton />
             </div>
@@ -771,17 +891,32 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
 function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
   const [method, setMethod] = useState<ParentMethod>("google");
-  const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("edunex_remember") === "true");
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("edunex_remember") === "true") {
+      return localStorage.getItem("edunex_email") || "";
+    }
+    return "";
+  });
   const [pass, setPass] = useState("");
   const [tfaEnabled, setTfaEnabled] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submitParentLogin = async () => {
-    if (!email || !pass) { toast.error("Fill all fields"); return; }
+    if (!email || !pass) { toast.error("Wypełnij wszystkie pola"); return; }
+    if (isRateLimited()) { toast.error("Zbyt wiele prób. Spróbuj ponownie za kilka minut."); return; }
     setBusy(true);
     const { error } = await auth.signInWithEmail(email, pass);
     setBusy(false);
-    if (error) { toast.error(error); return; }
+    if (error) { trackFailedAttempt(); toast.error(error); return; }
+    resetLoginAttempts();
+    if (rememberMe) {
+      localStorage.setItem("edunex_email", email);
+      localStorage.setItem("edunex_remember", "true");
+    } else {
+      localStorage.removeItem("edunex_email");
+      localStorage.removeItem("edunex_remember");
+    }
     onNavigate("/student/dashboard");
   };
 
@@ -789,23 +924,26 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
     <motion.div key="parent" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={spring}>
       <div className="flex gap-1.5 mb-4">
         <MethodPill active={method === "google"} label="Google" icon={() => <GoogleIcon />} onClick={() => setMethod("google")} />
+        <MethodPill active={method === "github"} label="GitHub" icon={() => <GithubIcon />} onClick={() => setMethod("github")} />
         <MethodPill active={method === "email"} label="Email" icon={Mail} onClick={() => setMethod("email")} />
       </div>
       <AnimatePresence mode="wait">
-        {method === "google" && (
-          <motion.div key="google" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+        {(method === "google" || method === "github") && (
+          <motion.div key={method} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <div className="text-center py-6">
-              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}><GoogleIcon /></div>
-              <p className="text-sm font-medium text-white mb-1">Continue with Google</p>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Quick and secure — no password needed</p>
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}>
+                {method === "google" ? <GoogleIcon /> : <GithubIcon />}
+              </div>
+              <p className="text-sm font-medium text-white mb-1">Kontynuuj przez {method === "google" ? "Google" : "GitHub"}</p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Szybko i bezpiecznie — bez hasła</p>
             </div>
-            <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>Sign in with Google</NeonButton>
+            <NeonButton onClick={() => auth.signInWithProvider(method)} icon={ArrowRight}>Zaloguj przez {method === "google" ? "Google" : "GitHub"}</NeonButton>
           </motion.div>
         )}
         {method === "email" && (
           <motion.div key="email" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <div className="flex items-center justify-between mb-3 px-1">
-              <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.35)" }}>Email login</span>
+              <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.35)" }}>Logowanie przez e-mail</span>
               <label className="flex items-center gap-1.5 cursor-pointer">
                 <input type="checkbox" checked={tfaEnabled} onChange={(e) => setTfaEnabled(e.target.checked)} className="sr-only peer" />
                 <div className="w-7 h-4 rounded-full transition-all" style={{ background: tfaEnabled ? "oklch(0.7 0.15 200 / 0.3)" : "oklch(1 0 0 / 0.1)" }}>
@@ -815,21 +953,22 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               </label>
             </div>
             <div className="space-y-3">
-              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Email address" />
-              <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password" />
+              <RateLimitWarning />
+              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Adres e-mail" />
+              <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Hasło" />
               {tfaEnabled && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="overflow-hidden">
-                  <GlassInput icon={Smartphone} type="text" placeholder="2FA code (Authenticator)" />
+                  <GlassInput icon={Smartphone} type="text" placeholder="Kod 2FA (Authenticator)" />
                 </motion.div>
               )}
               <div className="flex items-center justify-between">
-                <RememberMeCheckbox />
-                <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
+                <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
+                <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Nie pamiętasz hasła?</Link>
               </div>
-              <NeonButton onClick={submitParentLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+              <NeonButton onClick={submitParentLogin} loading={busy} icon={ArrowRight}>{busy ? "Logowanie..." : "Zaloguj się"}</NeonButton>
               <div className="relative my-2">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
-                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>lub</span></div>
               </div>
               <PasskeyLoginButton />
             </div>
@@ -846,11 +985,11 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
 
 const RECOVERY_CODES = ["X7K2-M9P4", "R3N8-J1W5", "F6H2-L9Q7", "B4D1-V8K3", "T5M2-C7N9", "P8R4-E2G1", "Y3L6-Z4X7", "W9Q1-A5H8"];
 const LOGIN_HISTORY = [
-  { action: "Successful login", device: "Chrome · Windows 11", location: "Warsaw, PL", ip: "83.24.15.2", time: "2 min ago", status: "success" as const },
-  { action: "Failed attempt", device: "Firefox · Ubuntu", location: "Berlin, DE", ip: "91.45.2.8", time: "1 hour ago", status: "error" as const },
-  { action: "Successful login", device: "Chrome · macOS", location: "Krakow, PL", ip: "85.12.7.3", time: "3 hours ago", status: "success" as const },
-  { action: "New device detected", device: "Edge · Windows 11", location: "Warsaw, PL", ip: "83.24.15.2", time: "1 day ago", status: "warning" as const },
-  { action: "Successful login", device: "Safari · iOS", location: "Gdansk, PL", ip: "79.8.3.1", time: "2 days ago", status: "success" as const },
+  { action: "Udane logowanie", device: "Chrome · Windows 11", location: "Warszawa, PL", ip: "83.24.15.2", time: "2 min temu", status: "success" as const },
+  { action: "Nieudana próba", device: "Firefox · Ubuntu", location: "Berlin, DE", ip: "91.45.2.8", time: "1 godz. temu", status: "error" as const },
+  { action: "Udane logowanie", device: "Chrome · macOS", location: "Kraków, PL", ip: "85.12.7.3", time: "3 godz. temu", status: "success" as const },
+  { action: "Nowe urządzenie", device: "Edge · Windows 11", location: "Warszawa, PL", ip: "83.24.15.2", time: "1 dzień temu", status: "warning" as const },
+  { action: "Udane logowanie", device: "Safari · iOS", location: "Gdańsk, PL", ip: "79.8.3.1", time: "2 dni temu", status: "success" as const },
 ];
 const ACTIVE_SESSIONS = [
   { device: "Chrome · Windows 11", location: "Warsaw, PL", ip: "83.24.15.2", current: true },
@@ -861,7 +1000,13 @@ const ACTIVE_SESSIONS = [
 function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const auth = useAuth();
   const [view, setView] = useState<AdminView>("login");
-  const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(() => localStorage.getItem("edunex_remember") === "true");
+  const [email, setEmail] = useState(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("edunex_remember") === "true") {
+      return localStorage.getItem("edunex_email") || "";
+    }
+    return "";
+  });
   const [pass, setPass] = useState("");
   const [tfaCode, setTfaCode] = useState("");
   const [busy, setBusy] = useState(false);
@@ -870,12 +1015,21 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
   const [copied, setCopied] = useState(false);
 
   const submitAdminLogin = async () => {
-    if (!email || !pass) { toast.error("Fill all fields"); return; }
-    if (!tfaCode) { toast.error("2FA code required for admin access"); return; }
+    if (!email || !pass) { toast.error("Wypełnij wszystkie pola"); return; }
+    if (!tfaCode) { toast.error("Kod 2FA wymagany dla dostępu administracyjnego"); return; }
+    if (isRateLimited()) { toast.error("Zbyt wiele prób. Spróbuj ponownie za kilka minut."); return; }
     setBusy(true);
     const { error } = await auth.signInWithEmail(email, pass);
     setBusy(false);
-    if (error) { toast.error(error); return; }
+    if (error) { trackFailedAttempt(); toast.error(error); return; }
+    resetLoginAttempts();
+    if (rememberMe) {
+      localStorage.setItem("edunex_email", email);
+      localStorage.setItem("edunex_remember", "true");
+    } else {
+      localStorage.removeItem("edunex_email");
+      localStorage.removeItem("edunex_remember");
+    }
     onNavigate("/admin");
   };
 
@@ -883,7 +1037,7 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
     navigator.clipboard.writeText(RECOVERY_CODES.join("\n"));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success("Recovery codes copied");
+    toast.success("Kody odzyskiwania skopiowane");
   };
 
   return (
@@ -891,11 +1045,11 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
       <motion.div className="flex items-center gap-2 px-3 py-2 rounded-xl mb-4" style={{ background: "oklch(0.7 0.15 200 / 0.06)", border: "1px solid oklch(0.7 0.15 200 / 0.12)" }}>
         <Shield className="w-4 h-4" style={{ color: "oklch(0.7 0.15 200)" }} />
         <div className="flex-1 min-w-0">
-          <div className="text-xs font-medium text-white">Security Center</div>
-          <div className="text-[9px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>Enterprise-grade authentication</div>
+          <div className="text-xs font-medium text-white">Centrum Bezpieczeństwa</div>
+          <div className="text-[9px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>Uwierzytelnianie korporacyjne</div>
         </div>
         <div className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px]" style={{ background: "oklch(0.65 0.2 150 / 0.1)", color: "oklch(0.65 0.2 150)" }}>
-          <ShieldCheck className="w-2.5 h-2.5" />Protected
+          <ShieldCheck className="w-2.5 h-2.5" />Chronione
         </div>
       </motion.div>
 
@@ -903,37 +1057,42 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
         <MethodPill active={view === "login"} label="Email + 2FA" icon={Mail} onClick={() => setView("login")} />
         <MethodPill active={view === "microsoft"} label="Entra ID" icon={() => <MicrosoftIcon />} onClick={() => setView("microsoft")} />
         <MethodPill active={view === "google"} label="Google SSO" icon={() => <GoogleIcon />} onClick={() => setView("google")} />
+        <MethodPill active={view === "github"} label="GitHub" icon={() => <GithubIcon />} onClick={() => setView("github")} />
       </div>
 
       <AnimatePresence mode="wait">
         {view === "login" && (
           <motion.div key="login" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
             <div className="space-y-3">
-              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="School email address" />
+              <RateLimitWarning />
+              <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Adres e-mail szkoły" />
               <div className="relative">
-                <GlassInput icon={Lock} type={showPass ? "text" : "password"} value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password" />
+                <GlassInput icon={Lock} type={showPass ? "text" : "password"} value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Hasło" />
                 <button onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2">
                   {showPass ? <EyeOff className="w-3.5 h-3.5" style={{ color: "oklch(1 0 0 / 0.25)" }} /> : <Eye className="w-3.5 h-3.5" style={{ color: "oklch(1 0 0 / 0.25)" }} />}
                 </button>
               </div>
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px]" style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(0.65 0.2 150 / 0.12)" }}>
                 <Smartphone className="w-3 h-3 shrink-0" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
-                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>Authenticator code required</span>
-                <button onClick={() => setView("recovery")} className="ml-auto text-[9px]" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Use recovery code</button>
+                <span style={{ color: "oklch(1 0 0 / 0.45)" }}>Kod Authenticator wymagany</span>
+                <button onClick={() => setView("recovery")} className="ml-auto text-[9px]" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Użyj kodu odzyskiwania</button>
               </div>
-              <GlassInput icon={Smartphone} type="text" value={tfaCode} onChange={(e: any) => setTfaCode(e.target.value)} placeholder="6-digit Authenticator code" />
+              <GlassInput icon={Smartphone} type="text" value={tfaCode} onChange={(e: any) => setTfaCode(e.target.value)} placeholder="6-cyfrowy kod Authenticator" />
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg text-[10px]" style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
                 <Monitor className="w-3 h-3 shrink-0" style={{ color: "oklch(0.7 0.15 200 / 0.5)" }} />
-                <span style={{ color: "oklch(1 0 0 / 0.35)" }}>This device is recognized</span>
+                <span style={{ color: "oklch(1 0 0 / 0.35)" }}>To urządzenie jest rozpoznane</span>
                 <CheckCircle2 className="w-3 h-3 ml-auto shrink-0" style={{ color: "oklch(0.65 0.2 150)" }} />
               </div>
-              <NeonButton onClick={submitAdminLogin} loading={busy} icon={ShieldCheck}>{busy ? "Verifying..." : "Authenticate & Sign In"}</NeonButton>
+              <div className="flex items-center justify-between">
+                <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
+              </div>
+              <NeonButton onClick={submitAdminLogin} loading={busy} icon={ShieldCheck}>{busy ? "Weryfikacja..." : "Uwierzytelnij i Zaloguj się"}</NeonButton>
               <div className="flex gap-2 mt-2">
                 <button onClick={() => setView("sessions")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-[10px] transition-all" style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }}>
-                  <History className="w-3 h-3" /> Sessions
+                  <History className="w-3 h-3" /> Sesje
                 </button>
                 <button onClick={() => setView("recovery")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-[10px] transition-all" style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }}>
-                  <Key className="w-3 h-3" /> Recovery
+                  <Key className="w-3 h-3" /> Odzyskiwanie
                 </button>
               </div>
             </div>
@@ -944,14 +1103,14 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
             <div className="text-center py-6">
               <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}><MicrosoftIcon /></div>
               <p className="text-sm font-medium text-white mb-1">Microsoft Entra ID / Azure AD</p>
-              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Enterprise SSO with conditional access & MFA</p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Korporacyjne SSO z dostępem warunkowym i MFA</p>
             </div>
             <div className="space-y-2 mb-4 px-2">
-              {["Conditional Access enforced", "MFA required", "Device compliance check", "Location verification"].map((item) => (
+              {["Dostęp warunkowy wymuszony", "MFA wymagane", "Zgodność urządzenia", "Weryfikacja lokalizacji"].map((item) => (
                 <div key={item} className="flex items-center gap-2 text-[10px]" style={{ color: "oklch(1 0 0 / 0.4)" }}><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }} />{item}</div>
               ))}
             </div>
-            <NeonButton onClick={() => auth.signInWithProvider("microsoft")} icon={ExternalLink}>Sign in with Microsoft Entra ID</NeonButton>
+            <NeonButton onClick={() => auth.signInWithProvider("microsoft")} icon={ExternalLink}>Zaloguj przez Microsoft Entra ID</NeonButton>
           </motion.div>
         )}
         {view === "google" && (
@@ -966,16 +1125,31 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                 <div key={item} className="flex items-center gap-2 text-[10px]" style={{ color: "oklch(1 0 0 / 0.4)" }}><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }} />{item}</div>
               ))}
             </div>
-            <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>Sign in with Google Workspace</NeonButton>
+            <NeonButton onClick={() => auth.signInWithProvider("google")} icon={ArrowRight}>Zaloguj przez Google Workspace</NeonButton>
+          </motion.div>
+        )}
+        {view === "github" && (
+          <motion.div key="github" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+            <div className="text-center py-6">
+              <div className="w-14 h-14 mx-auto mb-3 rounded-2xl flex items-center justify-center" style={{ background: "oklch(1 0 0 / 0.04)" }}><GithubIcon /></div>
+              <p className="text-sm font-medium text-white mb-1">GitHub OAuth</p>
+              <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Bezpieczne logowanie przez GitHub</p>
+            </div>
+            <div className="space-y-2 mb-4 px-2">
+              {["Szyfrowane połączenie", "Bezpieczne SSO", "Automatyczne tworzenie konta"].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-[10px]" style={{ color: "oklch(1 0 0 / 0.4)" }}><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.65 0.2 150 / 0.6)" }} />{item}</div>
+              ))}
+            </div>
+            <NeonButton onClick={() => auth.signInWithProvider("github")} icon={ArrowRight}>Zaloguj przez GitHub</NeonButton>
           </motion.div>
         )}
         {view === "recovery" && (
           <motion.div key="recovery" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-            <button onClick={() => setView("login")} className="flex items-center gap-1 text-xs mb-3" style={{ color: "oklch(1 0 0 / 0.4)" }}><ChevronLeft className="w-3 h-3" /> Back to login</button>
+            <button onClick={() => setView("login")} className="flex items-center gap-1 text-xs mb-3" style={{ color: "oklch(1 0 0 / 0.4)" }}><ChevronLeft className="w-3 h-3" /> Powrót do logowania</button>
             <div className="text-center mb-4">
               <Key className="w-8 h-8 mx-auto mb-2" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
-              <p className="text-xs font-medium text-white">Recovery Codes</p>
-              <p className="text-[10px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>Use one-time codes when you lose access to Authenticator</p>
+              <p className="text-xs font-medium text-white">Kody Odzyskiwania</p>
+              <p className="text-[10px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>Użyj jednorazowych kodów, gdy stracisz dostęp do Authenticatora</p>
             </div>
             <div className="grid grid-cols-2 gap-1.5 mb-4">
               {RECOVERY_CODES.map((code) => (
@@ -985,17 +1159,17 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
               ))}
             </div>
             <div className="flex gap-2">
-              <NeonButton variant="secondary" onClick={() => setCodesRevealed(!codesRevealed)} icon={codesRevealed ? EyeOff : Eye}>{codesRevealed ? "Hide" : "Reveal"}</NeonButton>
-              <NeonButton onClick={handleCopyCodes} icon={copied ? CheckCircle2 : Copy}>{copied ? "Copied!" : "Copy codes"}</NeonButton>
+              <NeonButton variant="secondary" onClick={() => setCodesRevealed(!codesRevealed)} icon={codesRevealed ? EyeOff : Eye}>{codesRevealed ? "Ukryj" : "Pokaż"}</NeonButton>
+              <NeonButton onClick={handleCopyCodes} icon={copied ? CheckCircle2 : Copy}>{copied ? "Skopiowano!" : "Kopiuj kody"}</NeonButton>
             </div>
-            <p className="mt-3 text-[9px] text-center" style={{ color: "oklch(1 0 0 / 0.25)" }}>Store codes securely. Each code can only be used once.</p>
+            <p className="mt-3 text-[9px] text-center" style={{ color: "oklch(1 0 0 / 0.25)" }}>Przechowuj kody bezpiecznie. Każdy kod można użyć tylko raz.</p>
           </motion.div>
         )}
         {view === "sessions" && (
           <motion.div key="sessions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-            <button onClick={() => setView("login")} className="flex items-center gap-1 text-xs mb-3" style={{ color: "oklch(1 0 0 / 0.4)" }}><ChevronLeft className="w-3 h-3" /> Back to login</button>
+            <button onClick={() => setView("login")} className="flex items-center gap-1 text-xs mb-3" style={{ color: "oklch(1 0 0 / 0.4)" }}><ChevronLeft className="w-3 h-3" /> Powrót do logowania</button>
             <div className="mb-4">
-              <div className="flex items-center gap-1.5 mb-2"><History className="w-3 h-3" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} /><span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>Login History</span></div>
+              <div className="flex items-center gap-1.5 mb-2"><History className="w-3 h-3" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} /><span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>Historia Logowania</span></div>
               <div className="space-y-1">
                 {LOGIN_HISTORY.map((entry, i) => (
                   <div key={i} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px]" style={{ background: "oklch(1 0 0 / 0.03)" }}>
@@ -1014,8 +1188,8 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
             <div className="mb-4">
               <div className="flex items-center gap-1.5 mb-2">
                 <Monitor className="w-3 h-3" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }} />
-                <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>Active Sessions</span>
-                <button className="ml-auto flex items-center gap-1 text-[9px]" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}><RefreshCw className="w-2.5 h-2.5" /> Force logout all</button>
+                <span className="text-[10px] font-medium" style={{ color: "oklch(1 0 0 / 0.5)" }}>Aktywne Sesje</span>
+                <button className="ml-auto flex items-center gap-1 text-[9px]" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}><RefreshCw className="w-2.5 h-2.5" /> Wyloguj wszystkie</button>
               </div>
               <div className="space-y-1">
                 {ACTIVE_SESSIONS.map((session, i) => (
@@ -1028,12 +1202,12 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                       </div>
                       <div style={{ color: "oklch(1 0 0 / 0.25)" }}>{session.location}</div>
                     </div>
-                    {!session.current && <button className="shrink-0 text-[9px] px-1.5 py-0.5 rounded" style={{ color: "oklch(0.6 0.2 30 / 0.6)" }}>Revoke</button>}
+                    {!session.current && <button className="shrink-0 text-[9px] px-1.5 py-0.5 rounded" style={{ color: "oklch(0.6 0.2 30 / 0.6)" }}>Odwołaj</button>}
                   </div>
                 ))}
               </div>
             </div>
-            <NeonButton variant="secondary" onClick={() => setView("login")} icon={ChevronLeft}>Back to sign in</NeonButton>
+            <NeonButton variant="secondary" onClick={() => setView("login")} icon={ChevronLeft}>Powrót do logowania</NeonButton>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1041,8 +1215,8 @@ function AdminAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
       <motion.div className="mt-3 flex items-start gap-2 px-3 py-2 rounded-lg" style={{ background: "oklch(0.6 0.2 30 / 0.06)", border: "1px solid oklch(0.6 0.2 30 / 0.1)" }}>
         <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" style={{ color: "oklch(0.7 0.2 80)" }} />
         <div className="text-[9px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-          Suspicious login attempt detected from Berlin, DE.{" "}
-          <button style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Review</button>
+          Wykryto podejrzaną próbę logowania z Berlina, DE.{" "}
+          <button style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Sprawdź</button>
         </div>
       </motion.div>
     </motion.div>
@@ -1062,28 +1236,28 @@ function RegistrationForm({ role, onBack }: { role: RoleId; onBack: () => void }
   const [busy, setBusy] = useState(false);
 
   const submitRegister = async () => {
-    if (!fname || !lname || !email || !pass) { toast.error("Fill all fields"); return; }
-    if (pass.length < 8) { toast.error("Password must be at least 8 characters"); return; }
+    if (!fname || !lname || !email || !pass) { toast.error("Wypełnij wszystkie pola"); return; }
+    if (pass.length < 8) { toast.error("Hasło musi mieć co najmniej 8 znaków"); return; }
     setBusy(true);
     const { error } = await auth.signUpWithEmail(email, pass, role, {
       first_name: fname, last_name: lname,
     });
     setBusy(false);
     if (error) { toast.error(error); return; }
-    toast.success("Account created! Check your email to confirm.");
+    toast.success("Konto utworzone! Sprawdź swoją pocztę e-mail, aby potwierdzić.");
   };
 
   return (
     <motion.div key="register" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={spring} className="space-y-3">
       <div className="flex gap-3">
-        <GlassInput value={fname} onChange={(e: any) => setFname(e.target.value)} placeholder="First name" />
-        <GlassInput value={lname} onChange={(e: any) => setLname(e.target.value)} placeholder="Last name" />
+        <GlassInput value={fname} onChange={(e: any) => setFname(e.target.value)} placeholder="Imię" />
+        <GlassInput value={lname} onChange={(e: any) => setLname(e.target.value)} placeholder="Nazwisko" />
       </div>
-      <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Email address" />
-      <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password (min. 8 characters)" />
-      <NeonButton onClick={submitRegister} loading={busy} icon={User}>Create account</NeonButton>
+      <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Adres e-mail" />
+      <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Hasło (min. 8 znaków)" />
+      <NeonButton onClick={submitRegister} loading={busy} icon={User}>Utwórz konto</NeonButton>
       <button onClick={onBack} className="flex items-center justify-center gap-1 text-xs w-full" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-        <ChevronLeft className="w-3 h-3" /> Back to sign in
+        <ChevronLeft className="w-3 h-3" /> Powrót do logowania
       </button>
     </motion.div>
   );
@@ -1260,21 +1434,21 @@ function AuthPage() {
             <SecurityStatus />
 
             <button onClick={() => navigate({ to: "/" })} className="flex items-center gap-1 text-xs mb-4" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-              <ChevronLeft className="w-3 h-3" /> Back to home
+              <ChevronLeft className="w-3 h-3" /> Powrót do strony głównej
             </button>
 
             <div className="mb-4">
               <h1 className="text-xl font-bold text-white mb-0.5">
-                {role === "student" && "Welcome, Student"}
-                {role === "teacher" && "Teacher Access"}
-                {role === "parent" && "Parent Portal"}
-                {role === "admin" && "Administrator Access"}
+                {role === "student" && "Witaj, Uczniu"}
+                {role === "teacher" && "Panel Nauczyciela"}
+                {role === "parent" && "Panel Rodzica"}
+                {role === "admin" && "Panel Administracyjny"}
               </h1>
               <p className="text-xs" style={{ color: "oklch(1 0 0 / 0.45)" }}>
-                {role === "student" && "Choose how you'd like to sign in"}
-                {role === "teacher" && "Select your authentication method"}
-                {role === "parent" && "Choose your preferred sign-in method"}
-                {role === "admin" && "Enterprise authentication required"}
+                {role === "student" && "Wybierz sposób logowania"}
+                {role === "teacher" && "Wybierz metodę uwierzytelniania"}
+                {role === "parent" && "Wybierz preferowaną metodę logowania"}
+                {role === "admin" && "Wymagane uwierzytelnianie korporacyjne"}
               </p>
             </div>
 
@@ -1312,11 +1486,11 @@ function AuthPage() {
               <div className="text-center mt-4">
                 {mode === "login" ? (
                   <button onClick={() => setMode("register")} className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-                    Don't have an account? <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>Register</span>
+                    Nie masz konta? <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>Zarejestruj się</span>
                   </button>
                 ) : (
                   <button onClick={() => setMode("login")} className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-                    Already have an account? <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>Sign in</span>
+                    Masz już konto? <span className="underline" style={{ color: "oklch(0.7 0.15 200)" }}>Zaloguj się</span>
                   </button>
                 )}
               </div>
