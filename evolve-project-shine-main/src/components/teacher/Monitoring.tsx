@@ -412,6 +412,17 @@ export function Monitoring() {
                       : <button onClick={() => removeMonitor(r)} className="px-2 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/60 text-xs inline-flex items-center justify-center gap-1">
                           <ShieldOff className="w-3.5 h-3.5"/>Usuń
                         </button>}
+                    <button onClick={async () => {
+                      try {
+                        const { approveReentry } = await import("@/lib/student-auth.functions");
+                        await approveReentry({ data: { attempt_id: r.attempt_id } });
+                        toast.success("Zatwierdzono ponowne wejście");
+                      } catch (e) {
+                        toast.error(e instanceof Error ? e.message : "Błąd");
+                      }
+                    }} className="px-2 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs inline-flex items-center justify-center gap-1">
+                      <Fingerprint className="w-3.5 h-3.5"/>Zatwierdź wejście
+                    </button>
                     <button onClick={() => removeAttempt(r)} className="col-span-2 px-2 py-1.5 rounded-lg bg-pink-500/10 hover:bg-pink-500/20 text-pink-300 text-xs inline-flex items-center justify-center gap-1">
                       <Trash2 className="w-3.5 h-3.5"/>Usuń podejście
                     </button>

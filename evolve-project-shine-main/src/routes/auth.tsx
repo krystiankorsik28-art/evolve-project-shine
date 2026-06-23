@@ -1106,7 +1106,7 @@ function AuthPage() {
                     background: "linear-gradient(135deg, oklch(0.75 0.15 200), oklch(0.6 0.2 240))",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                   }}>
-                    {role === "admin" ? "Security Center" : "\u00D7 AI"}
+                    {role === "admin" ? "Security Center" : "· AI"}
                   </span>
                 </h2>
                 <p className="text-sm leading-relaxed max-w-sm mb-3" style={{ color: "oklch(1 0 0 / 0.45)" }}>
@@ -1179,6 +1179,10 @@ function AuthPage() {
             </div>
 
             <SecurityStatus />
+
+            <button onClick={() => navigate({ to: "/" })} className="flex items-center gap-1 text-xs mb-4" style={{ color: "oklch(1 0 0 / 0.35)" }}>
+              <ChevronLeft className="w-3 h-3" /> Back to home
+            </button>
 
             <div className="mb-4">
               <h1 className="text-xl font-bold text-white mb-0.5">

@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { submitStudentAttempt } from "@/lib/student-exam.functions";
+import { checkAttemptStatus } from "@/lib/student-auth.functions";
 import {
   Loader2, Clock, Send, AlertTriangle, CheckCircle2, XCircle,
   ChevronLeft, ChevronRight, Maximize, Trophy, MonitorUp, ScreenShare,
@@ -48,6 +49,7 @@ function ExamRunner() {
   const { attemptId } = Route.useParams();
   const navigate = useNavigate();
   const submitFn = useServerFn(submitStudentAttempt);
+  const checkStatusFn = useServerFn(checkAttemptStatus);
 
   const [session, setSession] = useState<Session | null>(null);
   const [questions, setQuestions] = useState<Question[] | null>(null);
@@ -88,6 +90,34 @@ function ExamRunner() {
     setSession(s);
     setSecondsLeft(s.duration_minutes * 60);
     (async () => {
+      // Re-entry check: attempt already submitted?
+      try {
+        const { status } = await checkStatusFn({ data: { attempt_id: attemptId } });
+        if (status !== "in_progress") {
+          setError("Ten egzamin został już ukończony. Nie możesz do niego wrócić.");
+          return;
+        }
+      } catch {
+        // ignore – proceed
+      }
+
+      // Log device fingerprint for re-entry tracking
+      try {
+        const fp = [
+          navigator.userAgent,
+          navigator.language,
+          screen.width,
+          screen.height,
+          screen.colorDepth,
+          new Date().getTimezoneOffset(),
+        ].join("||");
+        await supabase.from("proctoring_events").insert({
+          attempt_id: attemptId,
+          event_type: "exam_entry",
+          metadata: { device_fingerprint: fp, timestamp: Date.now() } as never,
+        });
+      } catch { /* ignore */ }
+
       const { data, error } = await supabase
         .from("questions")
         .select("id, prompt, question_type, options, points, media_url, order_index")

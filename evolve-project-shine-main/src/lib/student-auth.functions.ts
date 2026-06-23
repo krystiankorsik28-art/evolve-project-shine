@@ -10,7 +10,7 @@ const PinSchema = z.object({
 
 export const studentPinLogin = createServerFn({ method: "POST" })
   .inputValidator((input) => PinSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, request }) => {
     const { first_name, last_name, pin } = data;
 
     const { data: pinRow, error: pinErr } = await supabaseAdmin
@@ -42,6 +42,49 @@ export const studentPinLogin = createServerFn({ method: "POST" })
 
     const student_name = `${first_name} ${last_name}`;
 
+    const { data: existingAttempt } = await supabaseAdmin
+      .from("attempts")
+      .select("id, status")
+      .eq("student_name", student_name)
+      .eq("exam_id", pinRow.exam_id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingAttempt) {
+      if (existingAttempt.status === "submitted") {
+        throw new Error("Już ukończyłeś ten egzamin. Ponowne podejście wymaga zgody nauczyciela.");
+      }
+
+      const { data: approval } = await supabaseAdmin
+        .from("proctoring_events")
+        .select("id")
+        .eq("attempt_id", existingAttempt.id)
+        .eq("event_type", "reentry_approved")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!approval) {
+        throw new Error("Masz już rozpoczęte podejście do tego egzaminu. Nauczyciel musi zatwierdzić ponowne wejście.");
+      }
+
+      await supabaseAdmin
+        .from("proctoring_events")
+        .delete()
+        .eq("id", approval.id);
+
+      return {
+        attempt_id: existingAttempt.id,
+        exam_id: pinRow.exam_id,
+        student_name,
+        exam_title: exam.title,
+        duration_minutes: exam.duration_minutes,
+      };
+    }
+
+    const clientIp = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+
     const { data: attempt, error: attErr } = await supabaseAdmin
       .from("attempts")
       .insert({
@@ -60,6 +103,14 @@ export const studentPinLogin = createServerFn({ method: "POST" })
       .update({ used_count: pinRow.used_count + 1 })
       .eq("id", pinRow.id);
 
+    await supabaseAdmin
+      .from("proctoring_events")
+      .insert({
+        attempt_id: attempt.id,
+        event_type: "exam_created",
+        metadata: { ip: clientIp, student_name, first_name, last_name } as never,
+      });
+
     return {
       attempt_id: attempt.id,
       exam_id: attempt.exam_id,
@@ -67,4 +118,32 @@ export const studentPinLogin = createServerFn({ method: "POST" })
       exam_title: exam.title,
       duration_minutes: exam.duration_minutes,
     };
+  });
+
+/** Nauczyciel zatwierdza ponowne wejście ucznia do egzaminu. */
+export const approveReentry = createServerFn({ method: "POST" })
+  .inputValidator((i) => z.object({ attempt_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin
+      .from("proctoring_events")
+      .insert({
+        attempt_id: data.attempt_id,
+        event_type: "reentry_approved",
+        metadata: { approved_at: new Date().toISOString() } as never,
+      });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+/** Sprawdza czy podejście zostało już zakończone. */
+export const checkAttemptStatus = createServerFn({ method: "GET" })
+  .inputValidator((i) => z.object({ attempt_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data }) => {
+    const { data: attempt } = await supabaseAdmin
+      .from("attempts")
+      .select("status, student_name")
+      .eq("id", data.attempt_id)
+      .maybeSingle();
+    if (!attempt) throw new Error("Podejście nie istnieje");
+    return attempt;
   });

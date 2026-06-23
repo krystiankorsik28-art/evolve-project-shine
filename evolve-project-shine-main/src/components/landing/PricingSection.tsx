@@ -101,8 +101,8 @@ function PricingCard({ pl, index, yearly, sectionInView }: { pl: (typeof PLANS)[
       style={{
         marginTop: pl.popular ? "-12px" : "0",
         background: pl.popular
-          ? "linear-gradient(165deg, oklch(0.14 0.05 250 / 0.9), oklch(0.07 0.03 260 / 0.7))"
-          : "oklch(0.08 0.03 270 / 0.35)",
+          ? "linear-gradient(165deg, oklch(0.14 0.05 250), oklch(0.07 0.03 260))"
+          : "oklch(0.08 0.03 270)",
         border: pl.popular ? "1px solid oklch(0.72 0.16 200 / 0.35)" : "1px solid oklch(1 0 0 / 0.07)",
         boxShadow: pl.popular
           ? "0 24px 70px oklch(0.6 0.18 230 / 0.25), 0 0 50px oklch(0.72 0.16 200 / 0.15)"
