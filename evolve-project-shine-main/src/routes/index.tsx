@@ -409,6 +409,7 @@ function Landing() {
         <main className="relative z-10">
           <HeroSection />
           <StatsSection />
+          <TrustBar />
           <HowItWorksSection />
           <FeaturesSection />
           <DemoShowcase />
@@ -419,6 +420,7 @@ function Landing() {
           <AiDemoShowcase />
           <SecurityFlow />
           <TestimonialsSection />
+          <CaseStudiesCarousel />
           <PricingSection />
           <FAQFlow />
           <FinalCTA />
@@ -1084,6 +1086,102 @@ function FAQFlow() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustBar() {
+  const logos = [
+    { label: "Ministerstwo Edukacji", sub: "Zgodność z podstawą programową", icon: Scale },
+    { label: "RODO", sub: "Pełna zgodność z ochroną danych", icon: ShieldCheck },
+    { label: "ISO 27001", sub: "Certyfikat bezpieczeństwa", icon: Shield },
+    { label: "AWS", sub: "Cloud Infrastructure", icon: Server },
+    { label: "Google for Education", sub: "Integration Partner", icon: GraduationCap },
+    { label: "Resend", sub: "Email Infrastructure", icon: Mail },
+  ];
+  return (
+    <section className="relative py-12 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-center mb-6"
+        >
+          <span className="text-[10px] tracking-[0.2em] text-white/30 uppercase font-mono">Zaufali nam</span>
+        </motion.div>
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+          {logos.map((l, i) => (
+            <motion.div key={l.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.1] transition"
+            >
+              <l.icon className="w-5 h-5 text-cyan-400/60" />
+              <span className="text-[10px] text-white/50 text-center font-medium leading-tight">{l.label}</span>
+              <span className="text-[8px] text-white/20 text-center">{l.sub}</span>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CaseStudiesCarousel() {
+  const studies = [
+    { school: "SP nr 3 im. Mikołaja Kopernika", city: "Warszawa", students: "420", quote: "EduNex skrócił czas przygotowania egzaminów z 3 godzin do 15 minut. Monitoring AI działa bezbłędnie.", author: "mgr Anna Nowak", role: "Dyrektor szkoły", improvement: "78%" },
+    { school: "Zespół Szkół nr 7", city: "Kraków", students: "890", quote: "Po wdrożeniu EduNex średnia ocen wzrosła o 15%. Uczniowie chętniej podchodzą do egzaminów.", author: "dr Piotr Wiśniewski", role: "Wicedyrektor", improvement: "92%" },
+    { school: "Liceum Ogólnokształcące nr 5", city: "Wrocław", students: "650", quote: "Automatyczne ocenianie AI oszczędza nauczycielom 12 godzin tygodniowo. Rewolucja w edukacji.", author: "mgr Katarzyna Lewandowska", role: "Nauczyciel matematyki", improvement: "95%" },
+  ];
+  const [current, setCurrent] = useState(0);
+  const s = studies[current];
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrent((p) => (p + 1) % studies.length), 5000);
+    return () => clearInterval(timer);
+  }, [studies.length]);
+
+  return (
+    <section className="relative py-20 overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
+        <div className="reveal text-center mb-10">
+          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Case Studies</span>
+          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Szkoły, które wybrały EduNex" /></h2>
+        </div>
+        <div className="reveal-scale relative">
+          <AnimatePresence mode="wait">
+            <motion.div key={current} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="card-premium rounded-2xl p-6 sm:p-8"
+            >
+              <div className="flex items-start gap-4 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white/90">{s.school}</div>
+                  <div className="text-xs text-white/40 mt-0.5">{s.city} · {s.students} uczniów</div>
+                </div>
+                <div className="ml-auto shrink-0 text-center">
+                  <div className="text-2xl font-bold font-mono text-emerald-400">{s.improvement}</div>
+                  <div className="text-[10px] text-white/30">efektywności</div>
+                </div>
+              </div>
+              <div className="relative pl-4 border-l-2 border-cyan-400/30">
+                <p className="text-sm text-white/70 leading-relaxed italic">"{s.quote}"</p>
+                <div className="mt-3">
+                  <div className="text-xs font-medium text-white/80">{s.author}</div>
+                  <div className="text-[10px] text-white/40">{s.role}</div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+          <div className="flex items-center justify-center gap-2 mt-4">
+            {studies.map((_, i) => (
+              <button key={i} onClick={() => setCurrent(i)}
+                className={`w-2 h-2 rounded-full transition-all ${i === current ? "w-6 bg-cyan-400" : "bg-white/20"}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

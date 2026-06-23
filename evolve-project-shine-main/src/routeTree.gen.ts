@@ -25,6 +25,7 @@ import { Route as AuthAdminRouteImport } from './routes/auth.admin'
 import { Route as ApiAiTutorStreamRouteImport } from './routes/api/ai-tutor-stream'
 import { Route as AuthenticatedTeacherRouteImport } from './routes/_authenticated.teacher'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
+import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated.parent'
 import { Route as StudentExamAttemptIdRouteImport } from './routes/student.exam.$attemptId'
 import { Route as ApiAdminFixAuthRouteImport } from './routes/api/admin/fix-auth'
 
@@ -107,6 +108,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedParentRoute = AuthenticatedParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const StudentExamAttemptIdRoute = StudentExamAttemptIdRouteImport.update({
   id: '/student/exam/$attemptId',
   path: '/student/exam/$attemptId',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/parent': typeof AuthenticatedParentRoute
   '/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
   '/auth/admin': typeof AuthAdminRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/parent': typeof AuthenticatedParentRoute
   '/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
   '/auth/admin': typeof AuthAdminRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/dokumenty': typeof DokumentyRoute
   '/onboarding': typeof OnboardingRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/teacher': typeof AuthenticatedTeacherRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
   '/auth/admin': typeof AuthAdminRoute
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/dokumenty'
     | '/onboarding'
     | '/admin'
+    | '/parent'
     | '/teacher'
     | '/api/ai-tutor-stream'
     | '/auth/admin'
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/dokumenty'
     | '/onboarding'
     | '/admin'
+    | '/parent'
     | '/teacher'
     | '/api/ai-tutor-stream'
     | '/auth/admin'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/dokumenty'
     | '/onboarding'
     | '/_authenticated/admin'
+    | '/_authenticated/parent'
     | '/_authenticated/teacher'
     | '/api/ai-tutor-stream'
     | '/auth/admin'
@@ -358,6 +370,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTeacherRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/parent': {
+      id: '/_authenticated/parent'
+      path: '/parent'
+      fullPath: '/parent'
+      preLoaderRoute: typeof AuthenticatedParentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -384,11 +403,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedParentRoute: typeof AuthenticatedParentRoute
   AuthenticatedTeacherRoute: typeof AuthenticatedTeacherRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedParentRoute: AuthenticatedParentRoute,
   AuthenticatedTeacherRoute: AuthenticatedTeacherRoute,
 }
 

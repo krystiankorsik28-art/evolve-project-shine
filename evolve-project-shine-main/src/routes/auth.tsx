@@ -514,6 +514,51 @@ function SecurityBadgeRow() {
   );
 }
 
+function AuthSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse">
+      <div className="flex gap-2 mb-4">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-8 flex-1 rounded-lg" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+        ))}
+      </div>
+      <div className="h-11 rounded-xl" style={{ background: "oklch(1 0 0 / 0.04)" }} />
+      <div className="h-11 rounded-xl" style={{ background: "oklch(1 0 0 / 0.04)" }} />
+      <div className="h-11 rounded-xl" style={{ background: "oklch(1 0 0 / 0.04)" }} />
+      <div className="h-11 rounded-xl" style={{ background: "oklch(1 0 0 / 0.04)" }} />
+    </div>
+  );
+}
+
+function PasskeyLoginButton({ onClick }: { onClick?: () => void }) {
+  const [supported] = useState(() => typeof window !== "undefined" && typeof window.PublicKeyCredential !== "undefined");
+  if (!supported) return null;
+  return (
+    <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
+      onClick={onClick} className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-medium rounded-xl transition-all"
+      style={{ background: "oklch(0.7 0.15 200 / 0.08)", border: "1px solid oklch(0.7 0.15 200 / 0.2)", color: "oklch(0.8 0.12 200)" }}
+    >
+      <Fingerprint className="w-4 h-4" /> Sign in with Passkey
+    </motion.button>
+  );
+}
+
+function RememberMeCheckbox() {
+  const [checked, setChecked] = useState(false);
+  return (
+    <label className="flex items-center gap-1.5 cursor-pointer group py-0.5">
+      <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="sr-only peer" />
+      <div className="w-3.5 h-3.5 rounded border transition-all" style={{
+        background: checked ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.04)",
+        borderColor: checked ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.12)",
+      }}>
+        {checked && <CheckCircle2 className="w-3 h-3 text-white" style={{ margin: "-1px" }} />}
+      </div>
+      <span className="text-[10px] group-hover:text-white/50 transition-colors" style={{ color: "oklch(1 0 0 / 0.3)" }}>Remember me</span>
+    </label>
+  );
+}
+
 function SecurityStatus() {
   return (
     <motion.div
@@ -623,10 +668,16 @@ function StudentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
           <motion.div key="email" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-3">
             <GlassInput icon={Mail} type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} placeholder="Email address" />
             <GlassInput icon={Lock} type="password" value={pass} onChange={(e: any) => setPass(e.target.value)} placeholder="Password" />
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between">
+              <RememberMeCheckbox />
               <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
             </div>
             <NeonButton onClick={submitStudentLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+            <div className="relative my-2">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
+              <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+            </div>
+            <PasskeyLoginButton />
           </motion.div>
         )}
       </AnimatePresence>
@@ -695,10 +746,16 @@ function TeacherAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   <GlassInput icon={Smartphone} type="text" placeholder="2FA code (Authenticator)" />
                 </motion.div>
               )}
-              <div className="flex justify-end">
+              <div className="flex items-center justify-between">
+                <RememberMeCheckbox />
                 <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
               </div>
               <NeonButton onClick={submitTeacherLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
+                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+              </div>
+              <PasskeyLoginButton />
             </div>
           </motion.div>
         )}
@@ -765,10 +822,16 @@ function ParentAuth({ onNavigate }: { onNavigate: (to: string) => void }) {
                   <GlassInput icon={Smartphone} type="text" placeholder="2FA code (Authenticator)" />
                 </motion.div>
               )}
-              <div className="flex justify-end">
+              <div className="flex items-center justify-between">
+                <RememberMeCheckbox />
                 <Link to="/auth/reset-password" className="text-[10px] transition-colors" style={{ color: "oklch(0.7 0.15 200 / 0.6)" }}>Forgot password?</Link>
               </div>
               <NeonButton onClick={submitParentLogin} loading={busy} icon={ArrowRight}>{busy ? "Signing in..." : "Sign in"}</NeonButton>
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t" style={{ borderColor: "oklch(1 0 0 / 0.06)" }} /></div>
+                <div className="relative flex justify-center"><span className="px-2 text-[9px]" style={{ background: "oklch(0.06 0.03 270)", color: "oklch(1 0 0 / 0.2)" }}>or</span></div>
+              </div>
+              <PasskeyLoginButton />
             </div>
           </motion.div>
         )}
@@ -1166,6 +1229,22 @@ function AuthPage() {
               border: "1px solid oklch(1 0 0 / 0.06)", backdropFilter: "blur(24px)",
             }}
           >
+            {/* Auth loading skeleton shown briefly before content appears */}
+            <AnimatePresence>
+              {showEntry && (
+                <motion.div initial={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 z-20 p-8 sm:p-10 rounded-3xl"
+                  style={{ background: "oklch(0.06 0.03 270)" }}
+                >
+                  <div className="flex items-center gap-2.5 mb-8">
+                    <div className="w-8 h-8 rounded-lg skeleton-pulse" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+                    <div className="w-20 h-4 rounded skeleton-pulse" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+                  </div>
+                  <div className="h-4 w-24 rounded mb-2 skeleton-pulse" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+                  <div className="h-3 w-48 rounded mb-6 skeleton-pulse" style={{ background: "oklch(1 0 0 / 0.04)" }} />
+                  <AuthSkeleton />
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div
               className="absolute -inset-[1px] rounded-3xl pointer-events-none opacity-30"
               style={{ background: "linear-gradient(135deg, oklch(0.7 0.15 200 / 0.1), transparent 40%, transparent 60%, oklch(0.7 0.15 200 / 0.1))", zIndex: -1 }}
