@@ -7,7 +7,11 @@ import { ProblemSolution } from "@/components/sections/ProblemSolution";
 import { SocialProof } from "@/components/sections/SocialProof";
 import { AIFeatures } from "@/components/sections/AIFeatures";
 import { HowItWorks } from "@/components/sections/HowItWorks";
-import { Pricing } from "@/components/sections/Pricing";
+import { PricingExpanded } from "@/components/sections/PricingExpanded";
+import { DemoQuiz } from "@/components/sections/DemoQuiz";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { UseCasesSection } from "@/components/sections/UseCasesSection";
+import { QuickStartSection } from "@/components/sections/QuickStartSection";
 import { Security } from "@/components/sections/Security";
 import { Integrations } from "@/components/sections/Integrations";
 import { FAQSection } from "@/components/sections/FAQ";
@@ -29,8 +33,12 @@ export default function Home() {
         <ProblemSolution />
         <SocialProof />
         <AIFeatures />
+        <UseCasesSection />
         <HowItWorks />
-        <Pricing />
+        <QuickStartSection />
+        <DemoQuiz />
+        <TestimonialsSection />
+        <PricingExpanded />
         <Security />
         <Integrations />
         <FAQSection />
