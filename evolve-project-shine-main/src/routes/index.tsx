@@ -14,7 +14,7 @@ import {
   School, BookMarked, MessageSquare,
   DollarSign, BadgeCheck, Verified, Monitor,
   Laptop, Rocket, Flag, Compass, PenTool,
-  ArrowLeft, Play, ChevronRight, ChevronDown, Plus, Tablet, Headphones, Bell,
+  ArrowLeft, Play, ChevronRight, ChevronDown, Tablet, Headphones, Bell,
   Lightbulb, Cable, Workflow, GripVertical, Puzzle, ScrollText, Heart, KeyRound, Video,
   Infinity, Computer, Notebook, Radio, GitBranch,
   ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
@@ -35,6 +35,8 @@ import FinalCTA from "@/components/landing/FinalCTA";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import PricingSection from "@/components/landing/PricingSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
+import TextReveal from "@/components/landing/TextReveal";
+import FAQFlow from "@/components/landing/FAQFlow";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -272,33 +274,6 @@ function addRipple(e: React.MouseEvent) {
   r.style.top = `${e.clientY - rect.top}px`;
   t.appendChild(r);
   setTimeout(() => r.remove(), 700);
-}
-
-/* ──── Text Reveal ──── */
-function TextReveal({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [revealed, setRevealed] = useState(false);
-  useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { setRevealed(true); obs.disconnect(); }
-    }, { threshold: 0.3 });
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <span ref={ref} className={className} style={{ display: "inline" }}>
-      {text.split(" ").map((w, i) => (
-        <span key={i} className="inline-block" style={{
-          opacity: revealed ? 1 : 0,
-          transform: revealed ? "translateY(0) rotate(0deg)" : "translateY(40px) rotate(4deg)",
-          transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${i * 0.06}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${i * 0.06}s`
-        }}>
-          {w}{i < text.split(" ").length - 1 ? "\u00A0" : ""}
-        </span>
-      ))}
-    </span>
-  );
 }
 
 /* ──── Main Landing ──── */
@@ -1047,43 +1022,6 @@ function SecurityFlow() {
           {[["Zgodność z MEN", Scale], ["RODO", Shield], ["ISO 27001", ShieldCheck], ["TLS 1.3", Lock], ["Serwery UE", Globe], ["99.98% SLA", Activity]].map(([n, I]) => (
             <div key={n as string} className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] transition-all">
               <I className="w-5 h-5 text-accent/60"/><span className="text-[10px] text-white/50 text-center font-medium">{n as string}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-const FAQ = [
-  { q: "Czy uczniowie muszą zakładać konto?", a: "Nie. Uczeń wchodzi przeglądarką, wpisuje PIN i imię. Konto nie jest wymagane — zero rejestracji." },
-  { q: "Czy mogę wgrać pytania z dokumentu?", a: "Tak. Wspieramy import z Worda, PDF oraz Excel. Możesz też wczytać zdjęcie — AI odczyta pytania automatycznie." },
-  { q: "Jak szybko mogę zacząć?", a: "Rejestracja trwa 2 minuty. Dla planu Klasa — dostęp od razu, bez karty płatniczej." },
-  { q: "Jak AI wykrywa ściąganie?", a: "AI analizuje ruchy myszy, wykrywa opuszczanie okna, porównuje odpowiedzi uczniów i wysyła alerty na żywo." },
-  { q: "Czy platforma działa na telefonie?", a: "Tak. EduNex działa w każdej przeglądarce — komputer, tablet, telefon. Bez instalacji." },
-  { q: "Czy mogę przetestować przed zakupem?", a: "Tak. Plan Klasa jest całkowicie darmowy — bez limitu czasu, bez karty, bez zobowiązań." },
-];
-function FAQFlow() {
-  const [open, setOpen] = useState<number | null>(0);
-  return (
-    <section id="faq" className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">FAQ</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Wątpliwości? Wyjaśniamy" /></h2>
-        </div>
-        <div className="reveal space-y-3">
-          {FAQ.map((it, i) => (
-            <div key={it.q} className="card-premium rounded-2xl overflow-hidden">
-              <button onClick={() => setOpen(open === i ? null : i)} className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left transition-colors hover:bg-white/[0.02]">
-                <span className="text-sm font-medium text-white/80 pr-4">{it.q}</span>
-                <span className={`shrink-0 w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.06] grid place-items-center transition-all duration-300 ${open === i ? "border-accent/30 text-accent rotate-45" : "text-white/30"}`}>
-                  <Plus className="w-3.5 h-3.5"/>
-                </span>
-              </button>
-              <div className={`overflow-hidden transition-all duration-300 ease-out ${open === i ? "max-h-48" : "max-h-0"}`}>
-                <p className="px-6 pb-4 text-sm text-white/50 leading-relaxed">{it.a}</p>
-              </div>
             </div>
           ))}
         </div>

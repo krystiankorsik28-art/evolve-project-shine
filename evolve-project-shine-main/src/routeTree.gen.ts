@@ -24,8 +24,8 @@ import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthAdminRouteImport } from './routes/auth.admin'
 import { Route as ApiAiTutorStreamRouteImport } from './routes/api/ai-tutor-stream'
 import { Route as AuthenticatedTeacherRouteImport } from './routes/_authenticated.teacher'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated.parent'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as StudentExamAttemptIdRouteImport } from './routes/student.exam.$attemptId'
 import { Route as ApiAdminFixAuthRouteImport } from './routes/api/admin/fix-auth'
 
@@ -103,14 +103,14 @@ const AuthenticatedTeacherRoute = AuthenticatedTeacherRouteImport.update({
   path: '/teacher',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedParentRoute = AuthenticatedParentRouteImport.update({
   id: '/parent',
   path: '/parent',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const StudentExamAttemptIdRoute = StudentExamAttemptIdRouteImport.update({
