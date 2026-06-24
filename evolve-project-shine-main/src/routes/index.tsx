@@ -62,13 +62,22 @@ function PremiumBg() {
         }}
       />
       <motion.div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full"
-        style={{
-          background: "radial-gradient(ellipse, oklch(0.82 0.12 200 / 0.04) 0%, transparent 60%)",
-          filter: "blur(60px)",
-        }}
-        animate={{ opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-5%] left-[15%] w-[500px] h-[500px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.82 0.12 200 / 0.05) 0%, transparent 60%)", filter: "blur(60px)" }}
+        animate={{ x: [0, 60, -30, 0], y: [0, -40, 20, 0], scale: [1, 1.05, 0.95, 1] }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.7 0.2 240 / 0.035) 0%, transparent 60%)", filter: "blur(60px)" }}
+        animate={{ x: [0, -40, 50, 0], y: [0, 30, -20, 0], scale: [1, 0.95, 1.05, 1] }}
+        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute top-[40%] right-[25%] w-[300px] h-[300px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.65 0.25 290 / 0.025) 0%, transparent 60%)", filter: "blur(60px)" }}
+        animate={{ x: [0, 30, -40, 0], y: [0, -20, 30, 0], opacity: [0.3, 0.7, 0.3] }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );
