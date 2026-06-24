@@ -53,41 +53,32 @@ export const Route = createFileRoute("/auth")({
 
 function GlassBackground() {
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden" style={{
-      background: "radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a2e 40%, #06030f 100%)",
-    }}>
+    <div className="absolute inset-0 -z-10 overflow-hidden" style={{ background: "oklch(0.035 0.02 270)" }}>
       <motion.div
         animate={{ x: [0, 40, -20, 0], y: [0, -30, 20, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-[-20%] left-[-10%] w-[800px] h-[800px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(120,80,255,0.28), transparent 60%)", filter: "blur(70px)" }}
+        style={{ background: "radial-gradient(circle, oklch(0.7 0.2 240 / 0.12), transparent 60%)", filter: "blur(70px)" }}
       />
       <motion.div
         animate={{ x: [0, -30, 30, 0], y: [0, 20, -20, 0] }}
         transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
         className="absolute bottom-[-20%] right-[-10%] w-[700px] h-[700px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(60,180,255,0.20), transparent 60%)", filter: "blur(70px)" }}
+        style={{ background: "radial-gradient(circle, oklch(0.82 0.12 200 / 0.08), transparent 60%)", filter: "blur(70px)" }}
       />
       <motion.div
-        animate={{ opacity: [0.25, 0.5, 0.25] }}
+        animate={{ opacity: [0.15, 0.3, 0.15] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full"
-        style={{ background: "radial-gradient(circle, rgba(255,180,120,0.10), transparent 60%)", filter: "blur(80px)" }}
+        style={{ background: "radial-gradient(circle, oklch(0.8 0.1 60 / 0.05), transparent 60%)", filter: "blur(80px)" }}
       />
-      <div className="absolute inset-0 opacity-[0.04]" style={{
-        backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
+      <div className="absolute inset-0" style={{
+        backgroundImage: `linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.025) 1px, transparent 1px)`,
         backgroundSize: "48px 48px",
       }} />
     </div>
   );
 }
-
-const glassPanel: React.CSSProperties = {
-  background: "rgba(255,255,255,0.06)",
-  backdropFilter: "blur(28px) saturate(180%)",
-  border: "1px solid rgba(255,255,255,0.14)",
-  boxShadow: "0 30px 90px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.14)",
-};
 
 function Field({ icon: Icon, type = "text", value, onChange, placeholder, autoComplete, rightSlot }: {
   icon: any; type?: string; value: string; onChange: (v: string) => void;
@@ -95,25 +86,25 @@ function Field({ icon: Icon, type = "text", value, onChange, placeholder, autoCo
 }) {
   return (
     <div className="relative flex items-center">
-      <Icon className="absolute left-3.5 w-4 h-4 pointer-events-none text-white/40" />
+      <Icon className="absolute left-3.5 w-4 h-4 pointer-events-none" style={{ color: "oklch(1 0 0 / 0.3)" }} />
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="w-full h-12 pl-10 pr-12 text-sm rounded-xl outline-none transition-all text-white placeholder:text-white/30"
+        className="w-full h-12 pl-10 pr-12 text-sm rounded-xl outline-none transition-all text-white placeholder:text-white/25"
         style={{
-          background: "rgba(255,255,255,0.05)",
-          border: "1px solid rgba(255,255,255,0.12)",
+          background: "oklch(1 0 0 / 0.04)",
+          border: "1px solid oklch(1 0 0 / 0.08)",
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+          e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.3)";
+          e.currentTarget.style.background = "oklch(1 0 0 / 0.06)";
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)";
-          e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+          e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.08)";
+          e.currentTarget.style.background = "oklch(1 0 0 / 0.04)";
         }}
       />
       {rightSlot && <div className="absolute right-2">{rightSlot}</div>}
@@ -126,11 +117,11 @@ function PrimaryButton({ children, loading, ...props }: any) {
     <button
       {...props}
       disabled={loading || props.disabled}
-      className="w-full h-12 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+      className="w-full h-12 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
       style={{
-        background: "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(220,230,255,0.85))",
-        color: "rgba(15,15,30,1)",
-        boxShadow: "0 10px 30px rgba(255,255,255,0.18)",
+        background: "oklch(1 0 0)",
+        color: "oklch(0.06 0.04 260)",
+        boxShadow: "0 8px 24px oklch(1 0 0 / 0.08)",
       }}
     >
       {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : children}
@@ -142,13 +133,24 @@ function SSOButton({ label, icon, onClick }: { label: string; icon: React.ReactN
   return (
     <button
       onClick={onClick}
-      className="h-12 flex items-center justify-center gap-2.5 rounded-xl text-sm font-medium text-white/90 transition-all"
+      className="flex items-center justify-center gap-2.5 rounded-xl text-sm font-medium transition-all duration-300 h-12"
       style={{
-        background: "rgba(255,255,255,0.05)",
-        border: "1px solid rgba(255,255,255,0.14)",
+        background: "oklch(1 0 0 / 0.04)",
+        border: "1px solid oklch(1 0 0 / 0.08)",
+        color: "oklch(1 0 0 / 0.7)",
       }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)"; }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "oklch(1 0 0 / 0.08)";
+        e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.2)";
+        e.currentTarget.style.color = "oklch(1 0 0)";
+        e.currentTarget.style.boxShadow = "0 0 20px oklch(0.82 0.12 200 / 0.15)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "oklch(1 0 0 / 0.04)";
+        e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.08)";
+        e.currentTarget.style.color = "oklch(1 0 0 / 0.7)";
+        e.currentTarget.style.boxShadow = "none";
+      }}
     >
       {icon}
       <span>{label}</span>
@@ -180,7 +182,7 @@ function MicrosoftIcon() {
 
 function GitHubIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white">
+    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
       <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 015.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.68.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z"/>
     </svg>
   );
@@ -304,7 +306,7 @@ function AuthPage() {
       <Toaster theme="dark" position="top-center" />
       <GlassBackground />
 
-      <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors">
+      <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors z-10">
         <ChevronLeft className="w-4 h-4" /> Strona główna
       </Link>
 
@@ -312,32 +314,37 @@ function AuthPage() {
         initial={{ opacity: 0, y: 20, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md rounded-3xl p-7 sm:p-8 relative"
-        style={glassPanel}
+        className="w-full max-w-md rounded-3xl p-7 sm:p-8 relative overflow-hidden"
+        style={{
+          background: "oklch(1 0 0 / 0.04)",
+          backdropFilter: "blur(28px) saturate(180%)",
+          WebkitBackdropFilter: "blur(28px) saturate(180%)",
+          border: "1px solid oklch(1 0 0 / 0.08)",
+          boxShadow: "0 30px 80px oklch(0 0 0 / 0.4), inset 0 1px 0 oklch(1 0 0 / 0.1)",
+        }}
       >
         <div className="flex items-center gap-3 mb-7">
           <div className="w-11 h-11 rounded-2xl grid place-items-center" style={{
-            background: "linear-gradient(135deg, rgba(160,140,255,0.9), rgba(100,180,255,0.9))",
-            boxShadow: "0 8px 24px rgba(120,100,255,0.4)",
+            background: "linear-gradient(135deg, oklch(0.82 0.12 200), oklch(0.7 0.20 240))",
+            boxShadow: "0 8px 24px oklch(0.82 0.12 200 / 0.3)",
           }}>
-            <Sparkles className="w-5 h-5 text-white" />
+            <Sparkles className="w-5 h-5 text-black" />
           </div>
           <div>
             <div className="text-base font-bold text-white tracking-tight">EduNex</div>
-            <div className="text-[11px] text-white/50">Platforma edukacyjna</div>
+            <div className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.4)" }}>Platforma edukacyjna</div>
           </div>
         </div>
 
-        <div className="relative grid grid-cols-2 gap-1 p-1 rounded-2xl mb-6"
-          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+        <div className="relative grid grid-cols-2 gap-1 p-1 rounded-2xl mb-6" style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
           <motion.div
             layout
             className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-xl"
             style={{
               left: tab === "quick" ? 4 : "calc(50% + 0px)",
-              background: "linear-gradient(135deg, rgba(160,140,255,0.35), rgba(100,180,255,0.30))",
-              border: "1px solid rgba(255,255,255,0.25)",
-              boxShadow: "0 8px 24px rgba(120,100,255,0.25)",
+              background: "oklch(0.82 0.12 200 / 0.2)",
+              border: "1px solid oklch(1 0 0 / 0.15)",
+              boxShadow: "0 4px 16px oklch(0.82 0.12 200 / 0.2)",
               transition: "left 0.35s cubic-bezier(0.16,1,0.3,1)",
             }}
           />
@@ -345,7 +352,7 @@ function AuthPage() {
             type="button"
             onClick={() => setTab("quick")}
             className="relative z-10 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-colors"
-            style={{ color: tab === "quick" ? "#fff" : "rgba(255,255,255,0.55)" }}
+            style={{ color: tab === "quick" ? "#fff" : "oklch(1 0 0 / 0.4)" }}
           >
             <Hash className="w-3.5 h-3.5" /> Wejście kodem
           </button>
@@ -353,7 +360,7 @@ function AuthPage() {
             type="button"
             onClick={() => setTab("account")}
             className="relative z-10 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-semibold transition-colors"
-            style={{ color: tab === "account" ? "#fff" : "rgba(255,255,255,0.55)" }}
+            style={{ color: tab === "account" ? "#fff" : "oklch(1 0 0 / 0.4)" }}
           >
             <Mail className="w-3.5 h-3.5" /> Konto e-mail
           </button>
@@ -368,12 +375,12 @@ function AuthPage() {
           >
             <div className="flex items-start gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl grid place-items-center shrink-0"
-                style={{ background: "rgba(120,200,150,0.18)", border: "1px solid rgba(120,200,150,0.35)" }}>
-                <GraduationCap className="w-5 h-5" style={{ color: "rgb(160,230,180)" }} />
+                style={{ background: "oklch(0.7 0.2 150 / 0.15)", border: "1px solid oklch(0.7 0.2 150 / 0.3)" }}>
+                <GraduationCap className="w-5 h-5" style={{ color: "oklch(0.75 0.2 150)" }} />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white tracking-tight">Szybkie wejście dla ucznia</h1>
-                <p className="text-[12px] text-white/55 mt-0.5">
+                <p className="text-[12px] mt-0.5" style={{ color: "oklch(1 0 0 / 0.45)" }}>
                   Wpisz imię, nazwisko i 6-cyfrowy kod otrzymany od nauczyciela.
                 </p>
               </div>
@@ -397,7 +404,7 @@ function AuthPage() {
                     key={i}
                     animate={{
                       scale: i < qPin.length ? 1.15 : 1,
-                      backgroundColor: i < qPin.length ? "rgba(160,230,180,0.9)" : "rgba(255,255,255,0.15)",
+                      backgroundColor: i < qPin.length ? "oklch(0.75 0.2 150 / 0.9)" : "oklch(1 0 0 / 0.12)",
                     }}
                     transition={{ type: "spring", stiffness: 400, damping: 20 }}
                     className="w-2 h-2 rounded-full"
@@ -409,7 +416,7 @@ function AuthPage() {
                   Dołącz do egzaminu <ArrowRight className="w-4 h-4" />
                 </PrimaryButton>
               </div>
-              <p className="text-[11px] text-center text-white/40 pt-1">
+              <p className="text-[11px] text-center pt-1" style={{ color: "oklch(1 0 0 / 0.3)" }}>
                 Nie tworzymy konta — kod działa raz, dla jednego egzaminu.
               </p>
             </form>
@@ -431,7 +438,7 @@ function AuthPage() {
               {mode === "register" && "Załóż konto"}
               {mode === "forgot" && "Reset hasła"}
             </h1>
-            <p className="text-sm text-white/50 mt-1">
+            <p className="text-sm mt-1" style={{ color: "oklch(1 0 0 / 0.4)" }}>
               {mode === "login" && "Witaj z powrotem! Zaloguj się do swojego konta."}
               {mode === "register" && "Dołącz do EduNex w kilka sekund."}
               {mode === "forgot" && "Wyślemy link do zmiany hasła na Twój e-mail."}
@@ -441,7 +448,7 @@ function AuthPage() {
 
         {mode !== "forgot" && (
           <div className="mt-6">
-            <label className="block text-[11px] uppercase tracking-wider font-semibold text-white/40 mb-2">Wybierz rolę</label>
+            <label className="block text-[11px] uppercase tracking-wider font-semibold mb-2" style={{ color: "oklch(1 0 0 / 0.3)" }}>Wybierz rolę</label>
             <div className="grid grid-cols-2 gap-2">
               {ROLES.map((r) => {
                 const Ic = r.icon;
@@ -453,19 +460,19 @@ function AuthPage() {
                     onClick={() => setRole(r.id)}
                     className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left"
                     style={{
-                      background: active ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.04)",
-                      border: `1px solid ${active ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.10)"}`,
-                      color: active ? "rgba(255,255,255,1)" : "rgba(255,255,255,0.7)",
+                      background: active ? "oklch(1 0 0 / 0.1)" : "oklch(1 0 0 / 0.03)",
+                      border: `1px solid ${active ? "oklch(1 0 0 / 0.25)" : "oklch(1 0 0 / 0.06)"}`,
+                      color: active ? "oklch(1 0 0)" : "oklch(1 0 0 / 0.6)",
                     }}
                   >
                     <Ic className="w-4 h-4 shrink-0" />
                     <span className="truncate">{r.label}</span>
-                    {active && <CheckCircle2 className="w-3.5 h-3.5 ml-auto opacity-80" />}
+                    {active && <CheckCircle2 className="w-3.5 h-3.5 ml-auto" style={{ opacity: 0.7 }} />}
                   </button>
                 );
               })}
             </div>
-            <p className="text-[11px] text-white/40 mt-2">{roleMeta.desc}</p>
+            <p className="text-[11px] mt-2" style={{ color: "oklch(1 0 0 / 0.3)" }}>{roleMeta.desc}</p>
           </div>
         )}
 
@@ -475,15 +482,15 @@ function AuthPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-4 flex items-start gap-2 p-3 rounded-xl text-[11px]"
             style={{
-              background: "rgba(255,180,60,0.10)",
-              border: "1px solid rgba(255,180,60,0.30)",
-              color: "rgba(255,220,150,0.95)",
+              background: "oklch(0.7 0.2 80 / 0.1)",
+              border: "1px solid oklch(0.7 0.2 80 / 0.25)",
+              color: "oklch(0.8 0.15 80)",
             }}
           >
             <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
             <span>
               Logowanie administratora wymaga dodatkowego kodu weryfikacyjnego (2FA)
-              oraz akceptacji polityki bezpieczeństwa. Sesje admin są krótsze i logowane.
+              oraz akceptacji polityki bezpieczeństwa.
             </span>
           </motion.div>
         )}
@@ -517,7 +524,7 @@ function AuthPage() {
                 autoComplete={mode === "login" ? "current-password" : "new-password"}
                 rightSlot={
                   <button type="button" onClick={() => setShowPass((s) => !s)}
-                    className="p-2 text-white/40 hover:text-white/80 transition-colors">
+                    className="p-2 transition-colors" style={{ color: "oklch(1 0 0 / 0.3)" }}>
                     {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 }
@@ -537,27 +544,27 @@ function AuthPage() {
                   placeholder="Kod 2FA administratora"
                   autoComplete="one-time-code"
                 />
-                <label className="flex items-start gap-2 text-[11px] text-white/65 cursor-pointer leading-snug">
+                <label className="flex items-start gap-2 text-[11px] cursor-pointer leading-snug" style={{ color: "oklch(1 0 0 / 0.5)" }}>
                   <input
                     type="checkbox"
                     checked={adminConsent}
                     onChange={(e) => setAdminConsent(e.target.checked)}
                     className="w-3.5 h-3.5 accent-white rounded mt-0.5 shrink-0"
                   />
-                  Potwierdzam, że logowanie odbywa się z zaufanego urządzenia i akceptuję politykę bezpieczeństwa szkoły.
+                  Potwierdzam, że logowanie odbywa się z zaufanego urządzenia.
                 </label>
               </>
             )}
 
             {mode === "login" && (
               <div className="flex items-center justify-between text-xs pt-1">
-                <label className="flex items-center gap-2 text-white/60 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer" style={{ color: "oklch(1 0 0 / 0.5)" }}>
                   <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)}
                     className="w-3.5 h-3.5 accent-white rounded" />
                   Pamiętaj mnie
                 </label>
                 <button type="button" onClick={() => setMode("forgot")}
-                  className="text-white/70 hover:text-white transition-colors font-medium">
+                  className="font-medium transition-colors" style={{ color: "oklch(1 0 0 / 0.5)" }}>
                   Nie pamiętam hasła
                 </button>
               </div>
@@ -576,9 +583,9 @@ function AuthPage() {
         {mode !== "forgot" && !isAdmin && (
           <>
             <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.12)" }} />
-              <span className="text-[11px] uppercase tracking-wider text-white/40">lub kontynuuj przez</span>
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.12)" }} />
+              <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.08)" }} />
+              <span className="text-[11px] uppercase tracking-wider" style={{ color: "oklch(1 0 0 / 0.3)" }}>lub kontynuuj przez</span>
+              <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.08)" }} />
             </div>
             <div className="grid grid-cols-3 gap-2">
               <SSOButton label="Google" icon={<GoogleIcon />} onClick={() => handleSSO("google")} />
@@ -588,7 +595,7 @@ function AuthPage() {
           </>
         )}
 
-        <div className="mt-6 text-center text-sm text-white/50">
+        <div className="mt-6 text-center text-sm" style={{ color: "oklch(1 0 0 / 0.4)" }}>
           {mode === "login" && (
             <>Nie masz konta?{" "}
               <button onClick={() => setMode("register")} className="text-white font-semibold hover:underline">
@@ -612,10 +619,10 @@ function AuthPage() {
         </>
         )}
 
-        <div className="mt-7 pt-5 flex items-center justify-center gap-4 text-[10px] text-white/35" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Szyfrowanie E2E</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> RODO</span>
-          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" /> Serwery UE</span>
+        <div className="mt-7 pt-5 flex items-center justify-center gap-4 text-[10px]" style={{ color: "oklch(1 0 0 / 0.25)", borderTop: "1px solid oklch(1 0 0 / 0.06)" }}>
+          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.82 0.12 200 / 0.5)" }} /> Szyfrowanie E2E</span>
+          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.82 0.12 200 / 0.5)" }} /> RODO</span>
+          <span className="flex items-center gap-1.5"><ShieldCheck className="w-3 h-3" style={{ color: "oklch(0.82 0.12 200 / 0.5)" }} /> Serwery UE</span>
         </div>
       </motion.div>
     </div>

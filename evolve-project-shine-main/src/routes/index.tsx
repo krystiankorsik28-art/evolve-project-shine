@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/lib/theme";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -20,7 +20,7 @@ import {
   ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
   SmartphoneNfc, Sun, Moon, Palette, Layers, Network, Cpu, Server,
   Binary, CircuitBoard, Cctv, Dock, Mic, Paperclip, Calculator, Atom,
-  FlaskConical,
+  FlaskConical, User, Hash, X as XIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -48,235 +48,32 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-/* ──── PREMIUM BACKGROUND COMPONENTS ──── */
-
-function AuroraBackground() {
+function PremiumBg() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-      <motion.div
-        className="absolute -inset-40 opacity-30"
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+      <div className="absolute inset-0" style={{ background: "oklch(0.035 0.02 270)" }} />
+      <div
+        className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, oklch(0.5 0.15 270 / 0.12) 0%, oklch(0.6 0.18 200 / 0.08) 30%, oklch(0.5 0.15 240 / 0.05) 60%, transparent 100%)",
+          backgroundImage: `linear-gradient(oklch(1 0 0 / 0.012) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.012) 1px, transparent 1px)`,
+          backgroundSize: "80px 80px",
+          WebkitMaskImage: "radial-gradient(ellipse at 50% 20%, black 35%, transparent 70%)",
+          maskImage: "radial-gradient(ellipse at 50% 20%, black 35%, transparent 70%)",
+        }}
+      />
+      <motion.div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full"
+        style={{
+          background: "radial-gradient(ellipse, oklch(0.82 0.12 200 / 0.04) 0%, transparent 60%)",
           filter: "blur(60px)",
         }}
-        animate={{
-          y: [0, -80, 0, 60, 0],
-          scale: [1, 1.1, 0.95, 1.05, 1],
-          rotate: [0, 2, -1, 1, 0],
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute -inset-40 opacity-20"
-        style={{
-          background: "linear-gradient(90deg, oklch(0.7 0.2 200 / 0.1) 0%, oklch(0.6 0.18 240 / 0.06) 50%, oklch(0.5 0.15 270 / 0.08) 100%)",
-          filter: "blur(80px)",
-        }}
-        animate={{
-          x: [0, 100, -50, 80, 0],
-          scale: [1, 0.9, 1.05, 0.95, 1],
-        }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );
 }
 
-function CanvasParticleField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let animId = 0;
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    const particles: { x: number; y: number; vx: number; vy: number; r: number; o: number }[] = [];
-    const count = Math.min(80, Math.floor((w * h) / 20000));
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
-        r: 1 + Math.random() * 1.5, o: 0.2 + Math.random() * 0.4,
-      });
-    }
-    const resize = () => { w = window.innerWidth; h = window.innerHeight; canvas!.width = w; canvas!.height = h; };
-    window.addEventListener("resize", resize);
-    canvas.width = w; canvas.height = h;
-    const draw = () => {
-      ctx!.clearRect(0, 0, w, h);
-      for (const p of particles) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-        ctx!.beginPath();
-        ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx!.fillStyle = `oklch(0.7 0.15 200 / ${p.o})`;
-        ctx!.fill();
-      }
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx!.beginPath();
-            ctx!.moveTo(particles[i].x, particles[i].y);
-            ctx!.lineTo(particles[j].x, particles[j].y);
-            ctx!.strokeStyle = `oklch(0.7 0.15 200 / ${0.06 * (1 - dist / 150)})`;
-            ctx!.lineWidth = 0.5;
-            ctx!.stroke();
-          }
-        }
-      }
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
-  }, []);
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
-}
-
-function FloatingGlassElements() {
-  const shapes = useMemo(() => [
-    { size: 180, top: "15%", left: "10%", dur: 8, delay: 0, color: "oklch(0.7 0.15 200 / 0.04)", radius: "42% 58% 55% 45% / 45% 52% 48% 55%" },
-    { size: 120, top: "60%", left: "85%", dur: 10, delay: 2, color: "oklch(0.6 0.18 240 / 0.04)", radius: "55% 45% 60% 40% / 50% 55% 45% 50%" },
-    { size: 220, top: "75%", left: "20%", dur: 12, delay: 4, color: "oklch(0.5 0.15 270 / 0.03)", radius: "48% 52% 40% 60% / 52% 44% 56% 48%" },
-    { size: 100, top: "30%", left: "75%", dur: 7, delay: 1, color: "oklch(0.7 0.18 190 / 0.03)", radius: "50% 50% 45% 55% / 55% 45% 55% 45%" },
-  ], []);
-  return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-      {shapes.map((s, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            width: s.size, height: s.size, top: s.top, left: s.left,
-            borderRadius: s.radius, background: s.color,
-            border: "1px solid oklch(1 0 0 / 0.04)",
-            backdropFilter: "blur(4px)",
-          }}
-          animate={{
-            y: [0, -30, 0, 20, 0],
-            rotate: [0, 5, -3, 8, 0],
-            scale: [1, 1.02, 0.98, 1.01, 1],
-          }}
-          transition={{ duration: s.dur, repeat: Infinity, ease: "easeInOut", delay: s.delay }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function LightRays() {
-  return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
-      {[0, 1, 2].map((i) => (
-        <motion.div
-          key={i}
-          className="absolute h-px"
-          style={{
-            width: "200%", left: "-50%",
-            top: `${30 + i * 25}%`,
-            background: `linear-gradient(90deg, transparent 0%, oklch(0.7 0.15 200 / 0.06) 30%, oklch(0.7 0.15 200 / 0.1) 50%, oklch(0.7 0.15 200 / 0.06) 70%, transparent 100%)`,
-          }}
-          animate={{ x: ["-100%", "100%"] }}
-          transition={{ duration: 10 + i * 3, repeat: Infinity, ease: "linear", delay: i * 2 }}
-        />
-      ))}
-    </div>
-  );
-}
-
-function GridBg() {
-  return (
-    <div className="fixed inset-0 pointer-events-none" style={{
-      zIndex: 0,
-      backgroundImage: `
-        linear-gradient(oklch(1 0 0 / 0.015) 1px, transparent 1px),
-        linear-gradient(90deg, oklch(1 0 0 / 0.015) 1px, transparent 1px)
-      `,
-      backgroundSize: "80px 80px",
-      WebkitMaskImage: "radial-gradient(ellipse at 50% 30%, black 30%, transparent 70%)",
-      maskImage: "radial-gradient(ellipse at 50% 30%, black 30%, transparent 70%)",
-    }} />
-  );
-}
-
-function NeuralNetworkBg() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let w = window.innerWidth, h = window.innerHeight;
-    canvas.width = w; canvas.height = h;
-    let animId = 0;
-    const nodes: { x: number; y: number; vx: number; vy: number; r: number }[] = [];
-    const nodeCount = Math.min(30, Math.floor((w * h) / 50000));
-    for (let i = 0; i < nodeCount; i++) {
-      nodes.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2, r: 2 + Math.random() * 3 });
-    }
-    const edges: [number, number][] = [];
-    for (let i = 0; i < nodeCount; i++) {
-      for (let j = i + 1; j < nodeCount; j++) {
-        if (Math.random() < 0.15) edges.push([i, j]);
-      }
-    }
-    const resize = () => { w = window.innerWidth; h = window.innerHeight; canvas!.width = w; canvas!.height = h; };
-    window.addEventListener("resize", resize);
-    const draw = () => {
-      ctx!.clearRect(0, 0, w, h);
-      for (const n of nodes) { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > w) n.vx *= -1; if (n.y < 0 || n.y > h) n.vy *= -1; }
-      for (const [i, j] of edges) {
-        const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 250) {
-          ctx!.beginPath(); ctx!.moveTo(nodes[i].x, nodes[i].y); ctx!.lineTo(nodes[j].x, nodes[j].y);
-          ctx!.strokeStyle = `oklch(0.7 0.15 200 / ${0.06 * (1 - dist / 250)})`; ctx!.lineWidth = 0.5; ctx!.stroke();
-          const pulse = Math.sin(Date.now() * 0.003 + i + j) * 0.5 + 0.5;
-          ctx!.beginPath(); ctx!.arc(nodes[i].x, nodes[i].y, nodes[i].r, 0, Math.PI * 2);
-          ctx!.fillStyle = `oklch(0.7 0.15 200 / ${0.15 + pulse * 0.2})`; ctx!.fill();
-          ctx!.beginPath(); ctx!.arc(nodes[j].x, nodes[j].y, nodes[j].r, 0, Math.PI * 2);
-          ctx!.fillStyle = `oklch(0.7 0.15 200 / ${0.15 + pulse * 0.2})`; ctx!.fill();
-        }
-      }
-      animId = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener("resize", resize); };
-  }, []);
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }} />;
-}
-
-/* ──── Confetti ──── */
-function burstConfetti(e: React.MouseEvent) {
-  const colors = ["#22d3ee", "#06b6d4", "#0891b2", "#67e8f9", "#22d3ee", "#06b6d4"];
-  for (let i = 0; i < 30; i++) {
-    const el = document.createElement("div");
-    el.className = "confetti-piece";
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    el.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:${4 + Math.random() * 4}px;height:${4 + Math.random() * 4}px;background:${color};animation-delay:${Math.random() * 0.2}s;animation-duration:${1.2 + Math.random() * 0.8}s`;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2500);
-  }
-}
-
-/* ──── Ripple ──── */
-function addRipple(e: React.MouseEvent) {
-  const t = e.currentTarget as HTMLElement;
-  const r = document.createElement("span");
-  r.className = "ripple-effect";
-  const rect = t.getBoundingClientRect();
-  r.style.left = `${e.clientX - rect.left}px`;
-  r.style.top = `${e.clientY - rect.top}px`;
-  t.appendChild(r);
-  setTimeout(() => r.remove(), 700);
-}
-
-/* ──── Main Landing ──── */
 function Landing() {
   const { setTheme } = useTheme();
   const [loaded, setLoaded] = useState(false);
@@ -317,70 +114,15 @@ function Landing() {
     return () => window.removeEventListener("scroll", f);
   }, []);
 
-  const glowRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-    const f = (e: MouseEvent) => {
-      if (!glowRef.current) return;
-      glowRef.current.style.left = `${e.clientX}px`;
-      glowRef.current.style.top = `${e.clientY}px`;
-    };
-    window.addEventListener("mousemove", f, { passive: true });
-    return () => window.removeEventListener("mousemove", f);
-  }, []);
-
-  useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-    const btns = document.querySelectorAll<HTMLElement>(".magnetic-btn");
-    const f = (e: MouseEvent) => {
-      const btn = e.currentTarget as HTMLElement;
-      const r = btn.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width / 2) * 0.15;
-      const y = (e.clientY - r.top - r.height / 2) * 0.15;
-      btn.style.translate = `${x}px ${y}px`;
-    };
-    const reset = (e: MouseEvent) => { (e.currentTarget as HTMLElement).style.translate = "0px 0px"; };
-    btns.forEach(b => { b.addEventListener("mousemove", f); b.addEventListener("mouseleave", reset); });
-    return () => { btns.forEach(b => { b.removeEventListener("mousemove", f); b.removeEventListener("mouseleave", reset); }); };
-  }, [loaded]);
-
-  useEffect(() => {
-    if (window.matchMedia("(pointer: coarse)").matches) return;
-    let timeout: ReturnType<typeof setTimeout>;
-    const f = (e: MouseEvent) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        const s = document.createElement("div");
-        s.className = "sparkle";
-        s.style.left = `${e.clientX}px`; s.style.top = `${e.clientY}px`;
-        s.style.background = `oklch(0.75 0.18 ${200 + Math.random() * 130})`;
-        document.body.appendChild(s);
-        setTimeout(() => s.remove(), 700);
-      }, 60);
-    };
-    window.addEventListener("mousemove", f, { passive: true });
-    return () => { window.removeEventListener("mousemove", f); clearTimeout(timeout); };
-  }, []);
-
   return (
     <>
       <IntroAnimation onDone={() => setLoaded(true)} />
       <div className={`min-h-screen bg-canvas selection:bg-accent/30 selection:text-white overflow-x-hidden ${loaded ? "opacity-100" : "opacity-0"} transition-opacity duration-700`}>
         <div ref={progRef} className="scroll-progress" />
-        <div ref={glowRef} className="spotlight max-lg:hidden" />
         <Toaster theme="dark" />
         <CookieBanner />
         <NavBar2 />
-
-        <div className="fixed inset-0 pointer-events-none" style={{ background: "oklch(0.035 0.02 270)" }}>
-          <AuroraBackground />
-          <CanvasParticleField />
-          <NeuralNetworkBg />
-          <FloatingGlassElements />
-          <LightRays />
-          <GridBg />
-        </div>
-
+        <PremiumBg />
         <main className="relative z-10">
           <HeroSection />
           <StatsSection />
@@ -460,7 +202,7 @@ function DemoShowcase() {
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Demo na żywo</span>
+          <span className="section-label">Demo na żywo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Rozwiąż mini egzamin" /></h2>
           <p className="mt-3 text-white/40 text-sm">Zobacz jak działa platforma — 3 pytania z matematyki pod presją czasu.</p>
         </div>
@@ -474,7 +216,7 @@ function DemoShowcase() {
                   <span className="flex items-center gap-1"><Timer className="w-3.5 h-3.5"/>~30s na pytanie</span>
                   <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5"/>3 pytania</span>
                 </div>
-                <button onClick={() => { startTime.current = Date.now(); setStep("q1"); }} className="mt-8 btn-shine inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-medium text-sm bg-white text-black hover:bg-white/90 transition-all shadow-sm magnetic-btn">Rozpocznij quiz <Play className="w-4 h-4"/></button>
+                <button onClick={() => { startTime.current = Date.now(); setStep("q1"); }} className="mt-8 btn-shine inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-medium text-sm bg-white text-black hover:bg-white/90 transition-all shadow-sm">Rozpocznij quiz <Play className="w-4 h-4"/></button>
               </div>
             )}
             {qData && (step === "q1" || step === "q2" || step === "q3") && (
@@ -501,14 +243,13 @@ function DemoShowcase() {
                   {qData.opts.map(([t, isC]) => {
                     const selected = correct !== null;
                     const isThis = selected && isC;
-                    const isWrong = selected && correct === false && isC === false;
                     return (
                       <button key={t as string} disabled={selected}
                         onClick={() => pick(isC as boolean)}
-                        className={`text-left px-5 py-3.5 rounded-xl border text-sm transition-all duration-300 ${selected ? (isThis ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-200" : "border-white/[0.04] bg-white/[0.01] text-white/30") : "border-white/[0.06] bg-white/[0.02] text-white/60 hover:border-accent/30 hover:bg-accent/[0.04] hover:text-white hover:scale-[1.01]"}`}>
+                        className={`text-left px-5 py-3.5 rounded-xl border text-sm transition-all duration-300 ${selected ? (isThis ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-200" : "border-white/[0.04] bg-white/[0.01] text-white/30") : "border-white/[0.06] bg-white/[0.02] text-white/60 hover:border-accent/30 hover:bg-accent/[0.04] hover:text-white"}`}>
                         <span className="flex items-center gap-3">
                           {selected && isThis && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
-                          {selected && !isThis && !isC && <X className="w-4 h-4 text-rose-400/50 shrink-0" />}
+                          {selected && !isThis && !isC && <XIcon className="w-4 h-4 text-rose-400/50 shrink-0" />}
                           {t as string}
                         </span>
                       </button>
@@ -599,7 +340,7 @@ function ForWhomFlow() {
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Dla kogo</span>
+          <span className="section-label">Dla kogo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Cztery perspektywy, jedna platforma" /></h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
@@ -651,7 +392,7 @@ function ComparisonShowcase() {
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Porównanie</span>
+          <span className="section-label">Porównanie</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Tradycyjnie vs EduNex" /></h2>
         </div>
         <div className="reveal space-y-3 relative">
@@ -662,14 +403,14 @@ function ComparisonShowcase() {
             <span className="w-28 sm:w-40 text-right text-accent/70">EduNex</span>
           </div>
           {rows.map((r, i) => (
-              <div key={r.l} className="card-premium rounded-2xl px-4 sm:px-6 py-3 hover:-translate-y-[1px] transition-all cursor-default hover-glow stagger-item" style={{ animationDelay: `${i * 0.04}s` }}>
+              <div key={r.l} className="card-premium rounded-2xl px-4 sm:px-6 py-3 hover:-translate-y-[1px] transition-all cursor-default stagger-item" style={{ animationDelay: `${i * 0.04}s` }}>
               <div className="flex items-center gap-3 text-sm">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent/10 to-violet-400/10 grid place-items-center shrink-0">
                   <r.icon className="w-3.5 h-3.5 text-accent/60" />
                 </div>
                 <span className="flex-1 text-white/70 text-xs sm:text-sm font-medium">{r.l}</span>
                 <span className="w-28 sm:w-36 text-right text-rose-300/40 text-xs sm:text-sm flex items-center justify-end gap-1">
-                  <X className="w-3 h-3 opacity-50 shrink-0"/>{r.t}
+                  <XIcon className="w-3 h-3 opacity-50 shrink-0"/>{r.t}
                 </span>
                 <span className="w-28 sm:w-40 text-right text-cyan-200/80 text-xs sm:text-sm flex items-center justify-end gap-1 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400/70 shrink-0"/>{r.e}
@@ -699,13 +440,13 @@ function AchievementsFlow() {
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Osiągnięcia</span>
+          <span className="section-label">Osiągnięcia</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Platforma w liczbach" /></h2>
           <p className="mt-3 text-white/40 text-sm">Ponad 36 000 użytkowników i ciągle rośniemy.</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {ACHIEVEMENTS.map((a, i) => (
-              <div key={a.label} className={`reveal card-premium rounded-2xl p-6 text-center hover:-translate-y-1 hover-glow stagger-item ${i === 0 || i === 5 ? "sm:col-span-1" : ""}`} style={{ animationDelay: `${i * 0.06}s` }}>
+              <div key={a.label} className={`reveal card-premium rounded-2xl p-6 text-center stagger-item ${i === 0 || i === 5 ? "sm:col-span-1" : ""}`} style={{ animationDelay: `${i * 0.06}s` }}>
               <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${a.color} grid place-items-center mb-4`}>
                 <a.icon className="w-6 h-6 text-black" />
               </div>
@@ -732,12 +473,11 @@ function AIPlatformFlow() {
     { icon: BookOpen, title: "Course Generator", desc: "Automatyczne tworzenie kursów z dowolnego tematu", active: false },
     { icon: Presentation, title: "Presentation Maker", desc: "Generowanie prezentacji z AI w kilka sekund", active: false },
   ];
-
   return (
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center max-w-3xl mx-auto mb-16">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Platforma AI</span>
+          <span className="section-label">Platforma AI</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight">
             <TextReveal text="Potęga sztucznej inteligencji w edukacji" />
           </h2>
@@ -745,7 +485,6 @@ function AIPlatformFlow() {
             EduNex wykorzystuje najnowsze modele AI do automatyzacji nauczania, oceniania i personalizacji ścieżek edukacyjnych.
           </p>
         </div>
-
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {capabilities.map((c, i) => (
             <motion.div
@@ -754,15 +493,11 @@ function AIPlatformFlow() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className={`card-premium rounded-2xl p-5 hover:-translate-y-1 stagger-item transition-all ${!c.active ? 'opacity-50' : ''}`}
+              className={`card-premium rounded-2xl p-5 stagger-item transition-all ${!c.active ? 'opacity-50' : ''}`}
             >
-              <motion.div
-                animate={c.active ? { boxShadow: ["0 0 0px oklch(0.7 0.15 200 / 0)", "0 0 20px oklch(0.7 0.15 200 / 0.15)", "0 0 0px oklch(0.7 0.15 200 / 0)"] } : {}}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className={`w-10 h-10 rounded-xl grid place-items-center mb-4 ${c.active ? 'bg-gradient-to-br from-accent to-blue-500' : 'bg-white/[0.04]'}`}
-              >
+              <div className={`w-10 h-10 rounded-xl grid place-items-center mb-4 ${c.active ? 'bg-gradient-to-br from-accent to-blue-500' : 'bg-white/[0.04]'}`}>
                 <c.icon className={`w-5 h-5 ${c.active ? 'text-black' : 'text-white/30'}`} />
-              </motion.div>
+              </div>
               <h3 className="text-sm font-semibold text-white">{c.title}</h3>
               <p className="text-xs text-white/40 mt-1.5 leading-relaxed">{c.desc}</p>
               <div className="mt-3 flex items-center gap-1.5">
@@ -781,7 +516,6 @@ function AIPlatformFlow() {
             </motion.div>
           ))}
         </div>
-
         <div className="reveal-scale mt-12 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -793,7 +527,7 @@ function AIPlatformFlow() {
                 ))}
               </div>
               <div>
-                <div className="text-sm font-medium text-white/80">Modele AI: Gemini 3.5 Flash · GPT-4o · Claude 3.5</div>
+                <div className="text-sm font-medium text-white/80">Modele AI: Gemini 1.5 Flash · GPT-4o · Claude 3.5</div>
                 <div className="text-xs text-white/30 mt-0.5">Własny gateway AI z automatycznym routingiem i fallbackiem</div>
               </div>
             </div>
@@ -811,7 +545,6 @@ function AIPlatformFlow() {
   );
 }
 
-/* ──── INTERACTIVE AI DEMO ──── */
 function AiDemoShowcase() {
   const [messages, setMessages] = useState<{ role: string; content: string; code?: string }[]>([
     { role: "ai", content: "Cześć! Jestem AI Tutor EduNex. Mogę pomóc w nauce matematyki, języków, programowania i nie tylko. O co chcesz zapytać?" }
@@ -822,25 +555,12 @@ function AiDemoShowcase() {
   const chatRef = useRef<HTMLDivElement>(null);
 
   const DEMO_RESPONSES: Record<string, { text: string; code?: string }> = {
-    matematyka: {
-      text: "Funkcja kwadratowa to f(x) = ax² + bx + c, gdzie a ≠ 0. Jej wykresem jest parabola. Wierzchołek ma współrzędne W(p, q), gdzie p = -b/(2a), q = -Δ/(4a). Δ = b² - 4ac nazywamy wyróżnikiem. Chcesz przećwiczyć na przykładzie?",
-    },
-    angielski: {
-      text: "Sure! 'Present Perfect' używamy gdy mówimy o przeszłych wydarzeniach mających wpływ na teraźniejszość. Struktura: have/has + past participle. Przykład: 'I have visited Paris.'",
-    },
-    programowanie: {
-      text: "W Pythonie list comprehension to elegancki sposób tworzenia list. Oto przykład:",
-      code: `# Kwadraty parzystych liczb od 0 do 9\nparzyste_kwadraty = [x**2 for x in range(10) if x % 2 == 0]\nprint(parzyste_kwadraty)\n# Wynik: [0, 4, 16, 36, 64]`,
-    },
-    fizyka: {
-      text: "Zgodnie z drugą zasadą dynamiki Newtona, siła jest iloczynem masy i przyspieszenia: F = m · a. Jeśli masa wynosi 5 kg, a przyspieszenie 2 m/s², to siła to 10 N.",
-    },
-    chemia: {
-      text: "Masa molowa H₂SO₄ (kwas siarkowy) to: 2·1 + 32 + 4·16 = 98 g/mol. Stechiometria opiera się na proporcjach masowych reagentów w reakcji chemicznej.",
-    },
-    domyślne: {
-      text: "Świetne pytanie! Na platformie EduNex możesz korzystać z AI do generowania kursów, testów, analizy postępów i personalizowanych planów nauki. AI Code Mentor pomoże Ci w programowaniu, a AI Teacher w przygotowaniu materiałów.",
-    },
+    matematyka: { text: "Funkcja kwadratowa to f(x) = ax² + bx + c, gdzie a ≠ 0. Jej wykresem jest parabola. Wierzchołek ma współrzędne W(p, q), gdzie p = -b/(2a), q = -Δ/(4a). Δ = b² - 4ac nazywamy wyróżnikiem. Chcesz przećwiczyć na przykładzie?" },
+    angielski: { text: "Sure! 'Present Perfect' używamy gdy mówimy o przeszłych wydarzeniach mających wpływ na teraźniejszość. Struktura: have/has + past participle. Przykład: 'I have visited Paris.'" },
+    programowanie: { text: "W Pythonie list comprehension to elegancki sposób tworzenia list. Oto przykład:", code: `# Kwadraty parzystych liczb od 0 do 9\nparzyste_kwadraty = [x**2 for x in range(10) if x % 2 == 0]\nprint(parzyste_kwadraty)\n# Wynik: [0, 4, 16, 36, 64]` },
+    fizyka: { text: "Zgodnie z drugą zasadą dynamiki Newtona, siła jest iloczynem masy i przyspieszenia: F = m · a. Jeśli masa wynosi 5 kg, a przyspieszenie 2 m/s², to siła to 10 N." },
+    chemia: { text: "Masa molowa H₂SO₄ (kwas siarkowy) to: 2·1 + 32 + 4·16 = 98 g/mol. Stechiometria opiera się na proporcjach masowych reagentów w reakcji chemicznej." },
+    domyślne: { text: "Świetne pytanie! Na platformie EduNex możesz korzystać z AI do generowania kursów, testów, analizy postępów i personalizowanych planów nauki. AI Code Mentor pomoże Ci w programowaniu, a AI Teacher w przygotowaniu materiałów." },
   };
 
   const quickActions = [
@@ -857,7 +577,6 @@ function AiDemoShowcase() {
     setMessages(prev => [...prev, { role: "user", content: input.trim() }]);
     setInput("");
     setBusy(true);
-    const now = Date.now();
     setTimeout(() => {
       const matched = Object.entries(DEMO_RESPONSES).find(([key]) => q.includes(key));
       const answer = matched ? matched[1] : DEMO_RESPONSES.domyślne;
@@ -874,14 +593,19 @@ function AiDemoShowcase() {
     <section id="ai-demo" className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">AI Demo</span>
+          <span className="section-label">AI Demo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Porozmawiaj z AI Tuturem" /></h2>
           <p className="mt-3 text-white/40 text-sm">Zadaj pytanie z dowolnego przedmiotu — AI rozumie kontekst i odpowiada z przykładami.</p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-6 reveal">
           {quickActions.map((a) => (
-            <button key={a.label} onClick={() => { setInput(a.label); }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200" style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(0.7 0.15 200 / 0.3)"; e.currentTarget.style.color = "oklch(0.7 0.15 200)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.4)"; }}>
+            <button key={a.label} onClick={() => { setInput(a.label); }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200"
+              style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(0.7 0.15 200 / 0.3)"; e.currentTarget.style.color = "oklch(0.7 0.15 200)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.4)"; }}
+            >
               <a.icon className="w-3 h-3" /> {a.label}
             </button>
           ))}
@@ -898,7 +622,7 @@ function AiDemoShowcase() {
                   <div className="text-sm font-medium text-white/90">AI Tutor</div>
                   <div className="flex items-center gap-1.5">
                     <span className="status-dot online" />
-                    <span className="text-[10px] text-white/30">Online · Gemini 3.5 Flash</span>
+                    <span className="text-[10px] text-white/30">Online · Gemini 1.5 Flash</span>
                   </div>
                 </div>
               </div>
@@ -914,14 +638,8 @@ function AiDemoShowcase() {
                       <BrainCircuit className="w-3.5 h-3.5 text-black" />
                     </div>
                   )}
-                  <div className={`max-w-[85%] space-y-2 ${
-                    m.role === "user" ? "items-end" : "items-start"
-                  }`}>
-                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
-                      m.role === "user"
-                        ? "bg-accent/15 text-white/90 rounded-tr-md"
-                        : "bg-white/[0.04] border border-white/[0.06] text-white/70 rounded-tl-md"
-                    }`}>
+                  <div className={`max-w-[85%] space-y-2 ${m.role === "user" ? "items-end" : "items-start"}`}>
+                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${m.role === "user" ? "bg-accent/15 text-white/90 rounded-tr-md" : "bg-white/[0.04] border border-white/[0.06] text-white/70 rounded-tl-md"}`}>
                       {m.content}
                     </div>
                     {(m as any).code && (
@@ -958,14 +676,16 @@ function AiDemoShowcase() {
               )}
             </div>
             <div className="flex items-center gap-2 p-3 border-t border-white/[0.06] bg-white/[0.01]">
-              <button onClick={() => { setVoiceMode(!voiceMode); toast.success(voiceMode ? "Tryb tekstowy" : "Tryb głosowy — powiedz pytanie"); }} className="p-2 rounded-xl transition-all shrink-0" style={{ background: voiceMode ? "oklch(0.7 0.15 200 / 0.2)" : "oklch(1 0 0 / 0.04)", color: voiceMode ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
+              <button onClick={() => { setVoiceMode(!voiceMode); toast.success(voiceMode ? "Tryb tekstowy" : "Tryb głosowy — powiedz pytanie"); }}
+                className="p-2 rounded-xl transition-all shrink-0"
+                style={{ background: voiceMode ? "oklch(0.7 0.15 200 / 0.2)" : "oklch(1 0 0 / 0.04)", color: voiceMode ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
                 <Mic className="w-4 h-4" />
               </button>
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()} placeholder={voiceMode ? "Powiedz coś lub wpisz..." : "Zapytaj AI o matematykę, angielski, programowanie..."} className="flex-1 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-accent/30 transition-all" />
-              <button onClick={() => { const fileInput = document.createElement("input"); fileInput.type = "file"; fileInput.accept = "image/*,.pdf,.txt"; fileInput.onchange = () => toast.success("Plik przesłany — AI analizuje..."); fileInput.click(); }} className="p-2 rounded-xl transition-all shrink-0" style={{ background: "oklch(1 0 0 / 0.04)", color: "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
-                <Paperclip className="w-4 h-4" />
-              </button>
-              <button onClick={handleSend} disabled={busy || !input.trim()} className="p-2.5 rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all">
+              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()}
+                placeholder={voiceMode ? "Powiedz coś lub wpisz..." : "Zapytaj AI o matematykę, angielski, programowanie..."}
+                className="flex-1 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-accent/30 transition-all" />
+              <button onClick={handleSend} disabled={busy || !input.trim()}
+                className="p-2.5 rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all">
                 <Send className="w-4 h-4" />
               </button>
             </div>
@@ -998,7 +718,7 @@ function SecurityFlow() {
     <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-14">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Bezpieczeństwo</span>
+          <span className="section-label">Bezpieczeństwo</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Dane bezpieczne jak w banku" /></h2>
           <p className="mt-3 text-white/40 text-sm">Certyfikaty, szyfrowanie i procedury — wszystko, czego wymaga nowoczesna szkoła.</p>
         </div>
@@ -1010,7 +730,7 @@ function SecurityFlow() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="card-premium rounded-2xl p-6 hover:-translate-y-1 hover-glow"
+              className="card-premium rounded-2xl p-6"
             >
               <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${it.color} grid place-items-center mb-4`}><it.icon className="w-5 h-5 text-black"/></div>
               <h3 className="font-semibold text-sm text-white/90">{it.title}</h3>
@@ -1020,7 +740,7 @@ function SecurityFlow() {
         </div>
         <div className="reveal mt-8 grid grid-cols-3 sm:grid-cols-6 gap-3 max-w-2xl mx-auto">
           {[["Zgodność z MEN", Scale], ["RODO", Shield], ["ISO 27001", ShieldCheck], ["TLS 1.3", Lock], ["Serwery UE", Globe], ["99.98% SLA", Activity]].map(([n, I]) => (
-            <div key={n as string} className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] transition-all">
+            <div key={n as string} className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] transition-all">
               <I className="w-5 h-5 text-accent/60"/><span className="text-[10px] text-white/50 text-center font-medium">{n as string}</span>
             </div>
           ))}
@@ -1051,7 +771,7 @@ function TrustBar() {
           {logos.map((l, i) => (
             <motion.div key={l.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.1] transition"
+              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] transition"
             >
               <l.icon className="w-5 h-5 text-cyan-400/60" />
               <span className="text-[10px] text-white/50 text-center font-medium leading-tight">{l.label}</span>
@@ -1082,7 +802,7 @@ function CaseStudiesCarousel() {
     <section className="relative py-20 overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="reveal text-center mb-10">
-          <span className="section-label inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm">Case Studies</span>
+          <span className="section-label">Case Studies</span>
           <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Szkoły, które wybrały EduNex" /></h2>
         </div>
         <div className="reveal-scale relative">
@@ -1142,8 +862,12 @@ function NewsletterFlow() {
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Bądź na bieżąco</h2>
               <p className="mt-3 text-white/40 text-sm">Nowe funkcje, porady i aktualności — raz na dwa tygodnie, zero spamu.</p>
               <form onSubmit={onSubmit} className="mt-6 flex items-center gap-2 max-w-sm mx-auto">
-                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="Twój e-mail" className="flex-1 px-5 py-3 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
-                <button type="submit" className="btn-shine px-5 py-3 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shrink-0 magnetic-btn"><Send className="w-4 h-4"/></button>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="Twój e-mail"
+                  className="flex-1 px-5 py-3 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
+                <button type="submit"
+                  className="btn-shine px-5 py-3 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shrink-0">
+                  <Send className="w-4 h-4"/>
+                </button>
               </form>
             </>
           )}
@@ -1172,7 +896,7 @@ function ContactFlow() {
         <div className="reveal card-premium rounded-2xl p-6 sm:p-10">
           <div className="grid lg:grid-cols-5 gap-8">
             <div className="lg:col-span-2">
-              <span className="section-label inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 backdrop-blur-sm mb-4">Kontakt</span>
+              <span className="section-label mb-4">Kontakt</span>
               <h2 className="text-3xl font-bold tracking-tight">Napisz do nas</h2>
               <p className="mt-2 text-sm text-white/40">Odpowiadamy w 24h w dni robocze.</p>
               <ul className="mt-6 space-y-4 text-sm">
@@ -1187,7 +911,8 @@ function ContactFlow() {
               <textarea name="message" rows={4} required placeholder="Treść wiadomości" className="sm:col-span-2 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all resize-none" />
               <div className="sm:col-span-2 flex items-center justify-between gap-3">
                 <p className="text-xs text-white/40">Zgoda na kontakt zwrotny.</p>
-                <button disabled={busy} type="submit" className="btn-shine inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 disabled:opacity-50 transition-all relative magnetic-btn">
+                <button disabled={busy} type="submit"
+                  className="btn-shine inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 disabled:opacity-50 transition-all relative">
                   {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Send className="w-4 h-4"/>} Wyślij
                 </button>
               </div>
@@ -1227,7 +952,7 @@ function StickyCta() {
             <span className="text-sm text-white/60 max-sm:hidden"><span className="text-white font-medium">Ponad 36 000</span> użytkowników już korzysta</span>
             <span className="text-sm text-white/60 sm:hidden">36 000+ użytkowników</span>
           </div>
-          <Link to="/auth/teacher" className="btn-shine inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shadow-sm shrink-0 magnetic-btn">
+          <Link to="/auth/teacher" className="btn-shine inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shadow-sm shrink-0">
             Rozpocznij za darmo <ArrowRight className="w-4 h-4"/>
           </Link>
         </div>
@@ -1304,4 +1029,16 @@ function FooterFlow() {
       </div>
     </footer>
   );
+}
+
+function burstConfetti(e: React.MouseEvent) {
+  const colors = ["#22d3ee", "#06b6d4", "#0891b2", "#67e8f9", "#22d3ee", "#06b6d4"];
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement("div");
+    el.className = "confetti-piece";
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    el.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:${4 + Math.random() * 4}px;height:${4 + Math.random() * 4}px;background:${color};animation-delay:${Math.random() * 0.2}s;animation-duration:${1.2 + Math.random() * 0.8}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2500);
+  }
 }
