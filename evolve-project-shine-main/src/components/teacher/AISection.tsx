@@ -38,7 +38,7 @@ const AI_SUB_TABS = [
 
 function TabBtn({ active, onClick, icon: Icon, label }: { active: boolean; onClick: ()=>void; icon: React.ComponentType<{ className?: string }>; label: string }) {
   return (
-    <button onClick={onClick} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition ${active?"bg-cyan-500 text-slate-900":"bg-white/5 text-white/70 hover:bg-white/10 border border-white/10"}`}>
+    <button onClick={onClick} className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition ${active?"bg-cyan-500 text-slate-900":"bg-[var(--surface)] text-[var(--color-fg)] hover:bg-[var(--surface)] border border-[var(--border)]"}`}>
       <Icon className="w-4 h-4"/>{label}
     </button>
   );
@@ -96,7 +96,7 @@ function ResultActions({ qs, single }: { qs: AiQ[]; single?: boolean }) {
       <button disabled={busy!==null} onClick={bank} className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-xs font-semibold disabled:opacity-50">
         {busy==="bank" ? "Zapisuję..." : `Zapisz do banku${single?"":` (${qs.length})`}`}
       </button>
-      <select value={examId} onChange={e=>setExamId(e.target.value)} className="px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white">
+      <select value={examId} onChange={e=>setExamId(e.target.value)} className="px-2 py-1.5 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-xs text-[var(--color-fg)]">
         <option value="" className="bg-slate-900">— wybierz egzamin —</option>
         {exams.map(e => <option key={e.id} value={e.id} className="bg-slate-900">{e.title}</option>)}
       </select>
@@ -110,16 +110,16 @@ function ResultActions({ qs, single }: { qs: AiQ[]; single?: boolean }) {
 function QPreview({ q, idx }: { q: AiQ; idx: number }) {
   const correct = Array.isArray(q.correct_answer) ? q.correct_answer.join(", ") : String(q.correct_answer);
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 space-y-2">
+    <div className="rounded-xl border border-[var(--border)] bg-white/[0.02] p-4 space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono text-accent">PYT. {idx+1} · {q.question_type.toUpperCase()} · {q.difficulty.toUpperCase()} · {q.points}p</span>
+        <span className="text-[10px] font-mono text-[var(--accent)]">PYT. {idx+1} · {q.question_type.toUpperCase()} · {q.difficulty.toUpperCase()} · {q.points}p</span>
       </div>
-      <div className="text-sm text-white font-medium">{q.prompt}</div>
+      <div className="text-sm text-[var(--color-fg)] font-medium">{q.prompt}</div>
       {q.options && q.options.length > 0 && (
-        <ul className="text-xs text-white/70 space-y-0.5 pl-4 list-disc">{q.options.map((o,i)=><li key={i}>{o}</li>)}</ul>
+        <ul className="text-xs text-[var(--color-fg)] space-y-0.5 pl-4 list-disc">{q.options.map((o,i)=><li key={i}>{o}</li>)}</ul>
       )}
       <div className="text-xs text-emerald-300"><b>Odp:</b> {correct}</div>
-      {q.explanation && <div className="text-xs text-white/50 italic">{q.explanation}</div>}
+      {q.explanation && <div className="text-xs text-[var(--color-fg-muted)] italic">{q.explanation}</div>}
     </div>
   );
 }
@@ -140,23 +140,23 @@ function AIImage() {
   };
   return (
     <div className="grid lg:grid-cols-2 gap-5">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6 space-y-4">
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-accent mb-2 block font-mono">Opis ilustracji</span>
-          <textarea rows={5} value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="np. Schemat układu krwionośnego człowieka" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
+          <span className="text-xs uppercase tracking-wider text-[var(--accent)] mb-2 block font-mono">Opis ilustracji</span>
+          <textarea rows={5} value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="np. Schemat układu krwionośnego człowieka" className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)] placeholder-[var(--color-fg-subtle)]"/>
         </label>
         <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50">
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "Generuję..." : "Wygeneruj ilustrację"}
         </button>
       </div>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><ImageIcon className="w-4 h-4 text-accent"/>Podgląd</h3>
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6">
+        <h3 className="font-semibold text-[var(--color-fg)] mb-3 flex items-center gap-2"><ImageIcon className="w-4 h-4 text-[var(--accent)]"/>Podgląd</h3>
         {url ? (
           <div className="space-y-3">
-            <img src={url} alt="generated" className="w-full rounded-lg border border-white/10"/>
+            <img src={url} alt="generated" className="w-full rounded-lg border border-[var(--border)]"/>
             <a href={url} download="ilustracja.png" className="inline-block px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-900 text-xs font-semibold">Pobierz</a>
           </div>
-        ) : (<p className="text-sm text-white/40">Ilustracja pojawi się tutaj.</p>)}
+        ) : (<p className="text-sm text-[var(--color-fg-muted)]">Ilustracja pojawi się tutaj.</p>)}
       </div>
     </div>
   );
@@ -190,25 +190,25 @@ function AIPhoto() {
 
   return (
     <div className="grid lg:grid-cols-2 gap-5">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6 space-y-4">
         <div>
-          <div className="text-xs uppercase tracking-wider text-accent mb-2 font-mono">Krok 1</div>
-          <label className="block border-2 border-dashed border-white/15 rounded-xl p-8 text-center cursor-pointer hover:border-cyan-400/40 hover:bg-white/[0.02] transition">
+          <div className="text-xs uppercase tracking-wider text-[var(--accent)] mb-2 font-mono">Krok 1</div>
+          <label className="block border-2 border-dashed border-[var(--border)] rounded-xl p-8 text-center cursor-pointer hover:border-[var(--accent)]/40 hover:bg-white/[0.02] transition">
             <input type="file" accept="image/*" onChange={(e)=>onFile(e.target.files?.[0] ?? null)} className="hidden"/>
-            {preview ? <img src={preview} alt="podgląd" className="max-h-64 mx-auto rounded-lg"/> : (<><ImageIcon className="w-10 h-10 mx-auto text-white/30 mb-2"/><p className="text-sm text-white/50">Kliknij lub przeciągnij zdjęcie zadania</p></>)}
+            {preview ? <img src={preview} alt="podgląd" className="max-h-64 mx-auto rounded-lg"/> : (<><ImageIcon className="w-10 h-10 mx-auto text-[var(--color-fg-subtle)] mb-2"/><p className="text-sm text-[var(--color-fg-muted)]">Kliknij lub przeciągnij zdjęcie zadania</p></>)}
           </label>
         </div>
         <div>
           <div className="text-xs uppercase tracking-wider text-violet-300 mb-2 font-mono">Krok 2</div>
-          <textarea rows={3} value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="np. Pytanie ABCD do klasy 2 LO o sile tarcia." className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
+          <textarea rows={3} value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="np. Pytanie ABCD do klasy 2 LO o sile tarcia." className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)] placeholder-[var(--color-fg-subtle)]"/>
         </div>
         <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 transition hover:scale-[1.01]">
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj pytanie"}
         </button>
       </div>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-accent"/>Wynik</h3>
-        {result ? (<><QPreview q={result} idx={0}/><ResultActions qs={[result]} single/></>) : (<p className="text-sm text-white/40">Wynik pojawi się tutaj.</p>)}
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6">
+        <h3 className="font-semibold text-[var(--color-fg)] mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[var(--accent)]"/>Wynik</h3>
+        {result ? (<><QPreview q={result} idx={0}/><ResultActions qs={[result]} single/></>) : (<p className="text-sm text-[var(--color-fg-muted)]">Wynik pojawi się tutaj.</p>)}
       </div>
     </div>
   );
@@ -236,19 +236,19 @@ function AIGenerate() {
 
   return (
     <div className="grid lg:grid-cols-2 gap-5">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 space-y-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6 space-y-4">
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-accent mb-2 block font-mono">Temat</span>
-          <input value={topic} onChange={(e)=>setTopic(e.target.value)} placeholder="np. II wojna światowa — 1939" className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30"/>
+          <span className="text-xs uppercase tracking-wider text-[var(--accent)] mb-2 block font-mono">Temat</span>
+          <input value={topic} onChange={(e)=>setTopic(e.target.value)} placeholder="np. II wojna światowa — 1939" className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)] placeholder-[var(--color-fg-subtle)]"/>
         </label>
         <div className="grid grid-cols-2 gap-3">
           <label className="block">
             <span className="text-xs uppercase tracking-wider text-violet-300 mb-2 block font-mono">Liczba pytań</span>
-            <input type="number" min={1} max={30} value={count} onChange={(e)=>setCount(Number(e.target.value))} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white"/>
+            <input type="number" min={1} max={30} value={count} onChange={(e)=>setCount(Number(e.target.value))} className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)]"/>
           </label>
           <label className="block">
             <span className="text-xs uppercase tracking-wider text-emerald-300 mb-2 block font-mono">Trudność</span>
-            <select value={difficulty} onChange={(e)=>setDifficulty(e.target.value as "easy"|"medium"|"hard")} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white">
+            <select value={difficulty} onChange={(e)=>setDifficulty(e.target.value as "easy"|"medium"|"hard")} className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)]">
               <option value="easy" className="bg-slate-900">Łatwa</option>
               <option value="medium" className="bg-slate-900">Średnia</option>
               <option value="hard" className="bg-slate-900">Trudna</option>
@@ -259,14 +259,14 @@ function AIGenerate() {
           {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Brain className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj"}
         </button>
       </div>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h3 className="font-semibold text-white mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-accent"/>Wynik</h3>
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6">
+        <h3 className="font-semibold text-[var(--color-fg)] mb-3 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[var(--accent)]"/>Wynik</h3>
         {result ? (
           <div className="space-y-2 max-h-[500px] overflow-auto pr-1">
             {result.map((q,i) => <QPreview key={i} q={q} idx={i}/>)}
             <ResultActions qs={result}/>
           </div>
-        ) : (<p className="text-sm text-white/40">Wynik pojawi się tutaj.</p>)}
+        ) : (<p className="text-sm text-[var(--color-fg-muted)]">Wynik pojawi się tutaj.</p>)}
       </div>
     </div>
   );
@@ -277,11 +277,11 @@ export function AISection() {
   const [mode, setMode] = useState<"photo" | "topic" | "image">("topic");
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2 bg-white/[0.02] border border-white/[0.06] rounded-2xl p-1.5">
+      <div className="flex flex-wrap items-center gap-2 bg-white/[0.02] border border-[var(--border)] rounded-2xl p-1.5">
         {AI_SUB_TABS.map(t => (
           <button key={t.id} onClick={() => setAiTab(t.id)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all
-              ${aiTab === t.id ? 'bg-accent/15 text-accent border border-accent/20 shadow-sm' : 'text-white/40 hover:text-white/70 border border-transparent'}`}>
+              ${aiTab === t.id ? 'bg-[var(--accent)]/15 text-[var(--accent)] border border-[var(--accent)]/20 shadow-sm' : 'text-[var(--color-fg-muted)] hover:text-[var(--color-fg)] border border-transparent'}`}>
             <t.icon className="w-3.5 h-3.5" />{t.label}
           </button>
         ))}
@@ -289,12 +289,12 @@ export function AISection() {
 
       {aiTab === "generator" && (
         <>
-          <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6">
+          <div className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-accent/10 via-accent/5 to-accent/10 p-6">
             <div className="flex items-center gap-3 mb-1">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Sparkles className="w-5 h-5 text-slate-900"/></div>
               <div>
-                <h2 className="text-xl font-display font-bold text-white">AI Generator</h2>
-                <p className="text-xs text-white/50">Gemini · pytania ze zdjęcia, z tematu, lub ilustracje do pytań — z zapisem do banku lub bezpośrednio do egzaminu.</p>
+                <h2 className="text-xl font-display font-bold text-[var(--color-fg)]">AI Generator</h2>
+                <p className="text-xs text-[var(--color-fg-muted)]">Gemini · pytania ze zdjęcia, z tematu, lub ilustracje do pytań — z zapisem do banku lub bezpośrednio do egzaminu.</p>
               </div>
             </div>
           </div>

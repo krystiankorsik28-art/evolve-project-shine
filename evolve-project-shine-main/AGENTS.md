@@ -11,7 +11,7 @@ Polish-language teacher/student/admin platform with Gemini AI, Vercel hosting, S
 - **Framework:** TanStack Start (React + Vite)
 - **Build:** Bun (configured in vercel.json: `bun run build`)
 - **Auth:** Supabase (project: `mrkgwbcqbcjwuwcbhizy`)
-- **AI:** Gemini 3.5 Flash (`gemini-3.5-flash` model)
+- **AI:** Gemini 1.5 Flash (`gemini-1.5-flash` model, supports images)
 - **Email:** Resend (via fetch API, no SDK)
 - **Payments:** NexaPay (DirectCryptoPay widget from CDN)
 - **PDF:** jspdf

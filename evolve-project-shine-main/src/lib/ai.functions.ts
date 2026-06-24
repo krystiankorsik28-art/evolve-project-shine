@@ -33,7 +33,7 @@ export const aiQuestionFromPhoto = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-3.5-flash");
+    const model = createGeminiProvider(key)("gemini-1.5-flash");
 
     const { experimental_output } = await generateText({
       model,
@@ -75,7 +75,7 @@ export const aiGenerateQuestions = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-3.5-flash");
+    const model = createGeminiProvider(key)("gemini-1.5-flash");
 
     const typeHelp = `Dozwolone typy: ${data.types.join(", ")}.
 Reguły struktury (POLE options/correct_answer):
@@ -122,28 +122,25 @@ export const aiGenerateQuestionImage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${key}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{
-            parts: [{ text: `Wygeneruj klarowną, edukacyjną ilustrację do pytania egzaminacyjnego: ${data.prompt}. Czysty styl, dobra czytelność, bez tekstu. Odpowiedz JSON: {"image_url": "data:image/png;base64,..."}` }],
-          }],
-          generationConfig: { responseModalities: ["TEXT"] },
+          instances: [{ prompt: `Edukacyjna ilustracja: ${data.prompt}. Czysty styl, dobra czytelność, bez tekstu.` }],
+          parameters: { sampleCount: 1 },
         }),
       },
     );
 
     if (!res.ok) {
       const t = await res.text();
-      throw new Error(`Gemini API error ${res.status}: ${t.slice(0, 200)}`);
+      throw new Error(`Imagen API error ${res.status}: ${t.slice(0, 200)}`);
     }
-    const json = await res.json() as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
-    const text = json.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-    const match = text.match(/https?:\/\/[^\s"]+/);
-    if (!match) throw new Error("Brak obrazka w odpowiedzi AI");
-    return { image_url: match[0] };
+    const json = await res.json() as { predictions?: Array<{ bytesBase64Encoded?: string }> };
+    const b64 = json.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error("Brak obrazka w odpowiedzi Imagen");
+    return { image_url: `data:image/png;base64,${b64}` };
   });
 
 /* ───────────────────────────── AI EXAM AGENT ─────────────────────────────
@@ -169,7 +166,7 @@ export const aiExamAgent = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-3.5-flash");
+    const model = createGeminiProvider(key)("gemini-1.5-flash");
 
     const imgCount = data.images_base64.length;
     const imageHelp = imgCount > 0
@@ -226,7 +223,7 @@ export const aiGradeEssay = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
-    const model = createGeminiProvider(key)("gemini-3.5-flash");
+    const model = createGeminiProvider(key)("gemini-1.5-flash");
 
     const { experimental_output } = await generateText({
       model,
@@ -282,7 +279,7 @@ export const aiExamInsights = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
-    const model = createGeminiProvider(key)("gemini-3.5-flash");
+    const model = createGeminiProvider(key)("gemini-1.5-flash");
 
     const { experimental_output } = await generateText({
       model,

@@ -4,7 +4,7 @@ import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const getModel = (m = "gemini-3.5-flash") => {
+const getModel = (m = "gemini-1.5-flash") => {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("Brak GEMINI_API_KEY");
   return createGeminiProvider(key)(m);
@@ -132,7 +132,7 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
     chatMessages.push({ role: "user", parts: userParts });
 
     const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -264,7 +264,7 @@ export const aiGradeAnswer = createServerFn({ method: "POST" })
     const q = (ans as unknown as { questions: Qref }).questions;
     const max = Number(q.points || 1);
 
-    const model = getModel("google/gemini-3.5-flash");
+    const model = getModel("google/gemini-1.5-flash");
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -318,7 +318,7 @@ export const aiPredictStudent = createServerFn({ method: "POST" })
       return { exam: ex?.title, subject: ex?.subject, score: a.score, max: a.max_score, status: a.status, when: a.started_at };
     });
 
-    const model = getModel("google/gemini-3.5-flash");
+    const model = getModel("google/gemini-1.5-flash");
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -368,7 +368,7 @@ export const aiGenerateLessonPlan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => PlanIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel("google/gemini-3.5-flash");
+    const model = getModel("google/gemini-1.5-flash");
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -421,7 +421,7 @@ export const aiLibrarySearch = createServerFn({ method: "POST" })
       .limit(20);
     if (!rows || rows.length === 0) return { results: [], answer: "Nie znaleziono materiałów." };
 
-    const model = getModel("google/gemini-3.5-flash-lite");
+    const model = getModel("google/gemini-1.5-flash-lite");
     const { text } = await generateText({
       model,
       prompt: `Jesteś bibliotekarzem AI. Odpowiedz krótko po polsku na pytanie nauczyciela na podstawie fragmentów biblioteki.

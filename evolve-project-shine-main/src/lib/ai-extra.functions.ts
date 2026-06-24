@@ -11,9 +11,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
    istniejących ai.functions.ts ani ai-advanced.functions.ts.
    ========================================================================= */
 
-const MODEL_FAST = "gemini-3.5-flash";
-const MODEL_LITE = "gemini-3.1-flash-lite";
-const MODEL_PRO = "gemini-3.5-flash";
+const MODEL_FAST = "gemini-1.5-flash";
+const MODEL_LITE = "gemini-1.5-flash-8b";
+const MODEL_PRO = "gemini-1.5-pro";
 
 function getModel(name: string = MODEL_FAST) {
   const key = process.env.GEMINI_API_KEY;

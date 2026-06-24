@@ -15,20 +15,20 @@ type TabKey =
 
 function KPI({ icon: Icon, label, value, delta, trend, color }: { icon: React.ComponentType<{className?:string}>; label: string; value: number | string; delta: string; trend: "up"|"down"|"flat"; color: string }) {
   const TrendIcon = trend === "up" ? TrendingUp : trend === "down" ? TrendingDown : Activity;
-  const trendColor = trend === "up" ? "text-emerald-400 bg-emerald-500/10 border-emerald-400/20" : trend === "down" ? "text-pink-400 bg-pink-500/10 border-pink-400/20" : "text-white/50 bg-white/5 border-white/10";
+  const trendColor = trend === "up" ? "text-emerald-400 bg-emerald-500/10 border-emerald-400/20" : trend === "down" ? "text-pink-400 bg-pink-500/10 border-pink-400/20" : "text-[var(--color-fg-muted)] bg-[var(--surface)] border-[var(--border)]";
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur p-5 group hover:border-white/[0.12] transition">
+    <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-white/[0.02] backdrop-blur p-5 group hover:border-[var(--accent)]/20 transition">
       <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full bg-gradient-to-br ${color} opacity-20 blur-2xl group-hover:opacity-30 transition`} />
       <div className="flex items-start justify-between relative">
         <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${color} grid place-items-center shadow-lg`}>
-          <Icon className="w-5 h-5 text-white"/>
+          <Icon className="w-5 h-5 text-[var(--color-fg)]"/>
         </div>
         <span className={`inline-flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded border ${trendColor}`}>
           <TrendIcon className="w-3 h-3"/>{delta}
         </span>
       </div>
-      <div className="mt-4 text-3xl font-display font-bold text-white tracking-tight">{value}</div>
-      <div className="text-xs text-white/45 mt-0.5">{label}</div>
+      <div className="mt-4 text-3xl font-display font-bold text-[var(--color-fg)] tracking-tight">{value}</div>
+      <div className="text-xs text-[var(--color-fg-muted)] mt-0.5">{label}</div>
     </div>
   );
 }
@@ -41,10 +41,10 @@ function Sparkline({ values }: { values: number[] }) {
   const d = pts.map((p, i) => `${i===0?"M":"L"} ${p[0]} ${p[1]}`).join(" ");
   const area = `${d} L ${pts[pts.length-1][0]} ${h-pad} L ${pts[0][0]} ${h-pad} Z`;
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur">
+    <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-4 backdrop-blur">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-mono tracking-wider text-accent">TWORZENIE EGZAMINÓW · 12D</span>
-        <span className="text-[10px] font-mono text-white/40">{values.reduce((a,b)=>a+b,0)} total</span>
+        <span className="text-[10px] font-mono tracking-wider text-[var(--accent)]">TWORZENIE EGZAMINÓW · 12D</span>
+        <span className="text-[10px] font-mono text-[var(--color-fg-muted)]">{values.reduce((a,b)=>a+b,0)} total</span>
       </div>
       <svg width={w} height={h} className="block">
         <defs>
@@ -70,9 +70,9 @@ function BarChart({ values }: { values: number[] }) {
         return (
           <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
             <div className="w-full rounded-t-md bg-gradient-to-t from-accent/60 to-accent/40 hover:from-accent hover:to-blue-500 transition-all relative" style={{ height: `${h}%` }}>
-              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-mono text-white/60 opacity-0 group-hover:opacity-100 transition">{v}</span>
+              <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-mono text-[var(--color-fg-muted)] opacity-0 group-hover:opacity-100 transition">{v}</span>
             </div>
-            <span className="text-[9px] font-mono text-white/30">d-{values.length-i}</span>
+            <span className="text-[9px] font-mono text-[var(--color-fg-subtle)]">d-{values.length-i}</span>
           </div>
         );
       })}
@@ -82,9 +82,9 @@ function BarChart({ values }: { values: number[] }) {
 
 function QuickAction({ icon: Icon, label, onClick }: { icon: React.ComponentType<{className?:string}>; label: string; onClick: () => void }) {
   return (
-    <button onClick={onClick} className="flex flex-col items-start gap-2 p-3 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-cyan-400/30 transition group">
+    <button onClick={onClick} className="flex flex-col items-start gap-2 p-3 rounded-xl bg-white/[0.03] hover:bg-[var(--surface)] border border-[var(--border)] hover:border-[var(--accent)]/30 transition group">
       <Icon className="w-4 h-4 text-accent group-hover:scale-110 transition"/>
-      <span className="text-xs text-white/80 font-medium">{label}</span>
+      <span className="text-xs text-[var(--color-fg)] font-medium">{label}</span>
     </button>
   );
 }
@@ -93,7 +93,7 @@ function StatusPill({ status }: { status: string }) {
   const s = status === "published"
     ? { l: "Opublikowany", c: "text-emerald-300 bg-emerald-500/10 border-emerald-400/25" }
     : status === "archived"
-      ? { l: "Zarchiwizowany", c: "text-white/40 bg-white/5 border-white/10" }
+      ? { l: "Zarchiwizowany", c: "text-[var(--color-fg-muted)] bg-[var(--surface)] border-[var(--border)]" }
       : { l: "Szkic", c: "text-amber-300 bg-amber-500/10 border-amber-400/25" };
   return <span className={`text-[10px] font-mono tracking-wider px-2 py-0.5 rounded border ${s.c}`}>{s.l}</span>;
 }
@@ -101,11 +101,11 @@ function StatusPill({ status }: { status: string }) {
 function EmptyState({ icon: Icon, title, desc, cta, onClick }: { icon: React.ComponentType<{className?:string}>; title: string; desc: string; cta: string; onClick: () => void }) {
   return (
     <div className="py-10 text-center">
-      <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/20 border border-white/10 grid place-items-center mb-3">
-        <Icon className="w-5 h-5 text-accent"/>
+      <div className="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-br from-accent/20 to-accent/20 border border-[var(--border)] grid place-items-center mb-3">
+        <Icon className="w-5 h-5 text-[var(--accent)]"/>
       </div>
-      <div className="text-sm font-semibold text-white">{title}</div>
-      <div className="text-xs text-white/45 mt-1 max-w-sm mx-auto">{desc}</div>
+      <div className="text-sm font-semibold text-[var(--color-fg)]">{title}</div>
+      <div className="text-xs text-[var(--color-fg-muted)] mt-1 max-w-sm mx-auto">{desc}</div>
       <button onClick={onClick} className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 text-xs font-semibold transition">
         <Sparkles className="w-3.5 h-3.5"/>{cta}
       </button>
@@ -131,9 +131,9 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
 
   return (
     <div className="space-y-6">
-      <div className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#0d1530] via-[#0a0f1f] to-[#0a0f1f] p-6 lg:p-8">
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[#0d1530] via-[#0a0f1f] to-[#0a0f1f] p-6 lg:p-8">
         <div className="absolute inset-0 opacity-40 [background:radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_55%),radial-gradient(circle_at_bottom_left,rgba(167,139,250,0.18),transparent_55%)]"/>
-        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-cyan-400/10 blur-3xl"/>
+        <div className="absolute top-0 right-0 w-72 h-72 rounded-full bg-[var(--accent)]/10 blur-3xl"/>
         <div className="absolute -top-4 -right-4 w-20 h-24 opacity-[0.08] pointer-events-none">
           <svg viewBox="0 0 400 500" fill="white" className="w-full h-full">
             <path d="M200 20C180 20 160 35 155 55L150 70C145 80 140 85 130 90L120 95C110 100 105 110 105 120L105 135C105 145 110 150 120 150L125 150C130 150 135 145 140 140L145 135C150 130 155 130 160 135L165 140C170 145 175 145 180 140L185 135C190 130 195 130 200 135C205 130 210 130 215 135L220 140C225 145 230 145 235 140L240 135C245 130 250 130 255 135L260 140C265 145 270 150 275 150L280 150C290 150 295 145 295 135L295 120C295 110 290 100 280 95L270 90C260 85 255 80 250 70L245 55C240 35 220 20 200 20Z" />
@@ -151,21 +151,21 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
         </div>
         <div className="relative flex flex-col lg:flex-row lg:items-center gap-6 justify-between">
           <div className="space-y-3 max-w-xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-mono tracking-[0.2em] text-red-300 uppercase">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--surface)] border border-[var(--border)] text-[10px] font-mono tracking-[0.2em] text-red-300 uppercase">
               <ShieldCheck className="w-3 h-3"/> Panel Nauczyciela · EduNex
             </div>
-            <h2 className="text-2xl lg:text-3xl font-display font-bold text-white leading-tight">
+            <h2 className="text-2xl lg:text-3xl font-display font-bold text-[var(--color-fg)] leading-tight">
               Twoja klasa czeka. <span className="bg-gradient-to-r from-accent via-white to-accent bg-clip-text text-transparent">Zacznijmy nową lekcję.</span>
             </h2>
-            <p className="text-sm text-white/55">Wygeneruj egzamin AI w 60 sekund, uruchom Live Quiz w czasie rzeczywistym lub przejdź do analityki postępów uczniów.</p>
+            <p className="text-sm text-[var(--color-fg-muted)]">Wygeneruj egzamin AI w 60 sekund, uruchom Live Quiz w czasie rzeczywistym lub przejdź do analityki postępów uczniów.</p>
             <div className="flex flex-wrap gap-2 pt-1">
               <button onClick={() => go("ai")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm transition shadow-lg shadow-accent/20">
                 <Sparkles className="w-4 h-4"/> Nowy egzamin AI
               </button>
-              <button onClick={() => go("live")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition">
+              <button onClick={() => go("live")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface)] border border-[var(--border)] text-sm transition">
                 <Radio className="w-4 h-4 text-pink-300"/> Uruchom Live Quiz
               </button>
-              <button onClick={() => go("monitoring")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-sm transition">
+              <button onClick={() => go("monitoring")} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--surface)] hover:bg-[var(--surface)] border border-[var(--border)] text-sm transition">
                 <Activity className="w-4 h-4 text-emerald-300"/> Monitoring
               </button>
             </div>
@@ -176,9 +176,9 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-gradient-to-r from-accent/5 via-accent/5 to-accent/5 border border-white/10">
-        <span className="text-[10px] font-mono uppercase tracking-widest text-white/40 self-center mr-2">Szybkie tworzenie:</span>
-        <button onClick={() => go("ai")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 text-accent text-xs transition">
+      <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-gradient-to-r from-accent/5 via-accent/5 to-accent/5 border border-[var(--border)]">
+        <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--color-fg-muted)] self-center mr-2">Szybkie tworzenie:</span>
+        <button onClick={() => go("ai")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--accent)]/15 hover:bg-[var(--accent)]/25 text-[var(--accent)] text-xs transition">
           <Sparkles className="w-3.5 h-3.5" />Egzamin AI
         </button>
         <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-violet-500/15 hover:bg-violet-500/25 text-violet-300 text-xs transition">
@@ -201,13 +201,13 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur p-6">
+        <div className="lg:col-span-2 rounded-2xl border border-[var(--border)] bg-white/[0.02] backdrop-blur p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="flex items-center gap-2 text-lg font-display font-bold text-white"><FileText className="w-5 h-5 text-sky-400"/>Ostatnie egzaminy</h3>
-              <p className="text-xs text-white/45">{exams.length} egzaminów · {published} opublikowanych · {drafts} szkiców</p>
+              <h3 className="flex items-center gap-2 text-lg font-display font-bold text-[var(--color-fg)]"><FileText className="w-5 h-5 text-sky-400"/>Ostatnie egzaminy</h3>
+              <p className="text-xs text-[var(--color-fg-muted)]">{exams.length} egzaminów · {published} opublikowanych · {drafts} szkiców</p>
             </div>
-            <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1 text-xs text-accent hover:text-cyan-200 transition">
+            <button onClick={() => go("egzaminy")} className="inline-flex items-center gap-1 text-xs text-[var(--accent)] hover:text-[var(--accent)] transition">
               Zobacz wszystkie <ArrowUpRight className="w-3.5 h-3.5"/>
             </button>
           </div>
@@ -227,19 +227,19 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
                   onClick={() => go("egzaminy")}
                   className="w-full flex items-center gap-4 py-3 text-left hover:bg-white/[0.02] -mx-2 px-2 rounded-lg transition group"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 border border-white/10 grid place-items-center text-accent shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent/20 to-accent/10 border border-[var(--border)] grid place-items-center text-[var(--accent)] shrink-0">
                     <FileText className="w-4 h-4"/>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-white truncate">{e.title}</div>
-                    <div className="text-[11px] text-white/40 font-mono mt-0.5 flex items-center gap-2">
+                    <div className="text-sm font-medium text-[var(--color-fg)] truncate">{e.title}</div>
+                    <div className="text-[11px] text-[var(--color-fg-muted)] font-mono mt-0.5 flex items-center gap-2">
                       <Clock className="w-3 h-3"/>
                       {new Date(e.created_at).toLocaleString("pl-PL", { dateStyle: "medium", timeStyle: "short" })}
                       {e.subject && <><span>·</span><span>{e.subject}</span></>}
                     </div>
                   </div>
                   <StatusPill status={e.status}/>
-                  <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition"/>
+                  <ChevronRight className="w-4 h-4 text-[var(--color-fg-subtle)] group-hover:text-[var(--color-fg-muted)] transition"/>
                 </button>
               ))}
             </div>
@@ -247,19 +247,19 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
         </div>
 
         <div className="space-y-5">
-          <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/15 via-accent/5 to-accent/5 backdrop-blur p-6">
+          <div className="rounded-2xl border border-[var(--accent)]/20 bg-gradient-to-br from-accent/15 via-accent/5 to-accent/5 backdrop-blur p-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="flex items-center gap-2 text-base font-display font-bold text-accent"><Activity className="w-4 h-4"/>Live monitoring</h3>
-              <span className="text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded bg-accent/20 text-accent border border-accent/30">ACTIVE</span>
+              <h3 className="flex items-center gap-2 text-base font-display font-bold text-[var(--accent)]"><Activity className="w-4 h-4"/>Live monitoring</h3>
+              <span className="text-[9px] font-mono tracking-wider px-1.5 py-0.5 rounded bg-[var(--accent)]/20 text-[var(--accent)] border border-[var(--accent)]/30">ACTIVE</span>
             </div>
-            <p className="text-xs text-white/55 mb-4">Obserwuj uczniów w trakcie egzaminu w czasie rzeczywistym — postęp i wykrywanie nieuczciwych zachowań.</p>
-            <button onClick={() => go("monitoring")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent/80 text-slate-900 font-semibold text-sm transition">
+            <p className="text-xs text-[var(--color-fg-muted)] mb-4">Obserwuj uczniów w trakcie egzaminu w czasie rzeczywistym — postęp i wykrywanie nieuczciwych zachowań.</p>
+            <button onClick={() => go("monitoring")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent)]/80 text-slate-900 font-semibold text-sm transition">
               Otwórz monitoring <ChevronRight className="w-4 h-4"/>
             </button>
           </div>
 
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur p-6">
-            <h3 className="flex items-center gap-2 text-base font-display font-bold text-white mb-3"><Zap className="w-4 h-4 text-amber-300"/>Szybkie akcje</h3>
+          <div className="rounded-2xl border border-[var(--border)] bg-white/[0.02] backdrop-blur p-6">
+            <h3 className="flex items-center gap-2 text-base font-display font-bold text-[var(--color-fg)] mb-3"><Zap className="w-4 h-4 text-amber-300"/>Szybkie akcje</h3>
             <div className="grid grid-cols-2 gap-2">
               <QuickAction icon={Brain} label="AI Tutor" onClick={() => go("tutor")} />
               <QuickAction icon={Library} label="Bank pytań" onClick={() => go("bank")} />
@@ -273,20 +273,20 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
       </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
-        <div className="lg:col-span-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur p-6">
+        <div className="lg:col-span-2 rounded-2xl border border-[var(--border)] bg-white/[0.02] backdrop-blur p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="flex items-center gap-2 text-base font-display font-bold text-white"><BarChart3 className="w-4 h-4 text-sky-400"/>Aktywność (ostatnie 12 dni)</h3>
-            <span className="text-[10px] font-mono text-white/40">UPDATED · {new Date().toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"})}</span>
+            <h3 className="flex items-center gap-2 text-base font-display font-bold text-[var(--color-fg)]"><BarChart3 className="w-4 h-4 text-sky-400"/>Aktywność (ostatnie 12 dni)</h3>
+            <span className="text-[10px] font-mono text-[var(--color-fg-muted)]">UPDATED · {new Date().toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"})}</span>
           </div>
           <BarChart values={spark}/>
         </div>
-          <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 p-6">
-          <h3 className="flex items-center gap-2 text-base font-display font-bold text-white mb-2"><Brain className="w-4 h-4 text-accent"/>AI Tutor 24/7</h3>
-          <p className="text-xs text-white/55 mb-4">Twój asystent dostępny w każdej chwili — pomaga generować scenariusze lekcji, wyjaśnia trudne tematy i przygotowuje uczniów.</p>
+          <div className="rounded-2xl border border-[var(--accent)]/20 bg-gradient-to-br from-accent/15 via-accent/10 to-accent/5 p-6">
+          <h3 className="flex items-center gap-2 text-base font-display font-bold text-[var(--color-fg)] mb-2"><Brain className="w-4 h-4 text-[var(--accent)]"/>AI Tutor 24/7</h3>
+          <p className="text-xs text-[var(--color-fg-muted)] mb-4">Twój asystent dostępny w każdej chwili — pomaga generować scenariusze lekcji, wyjaśnia trudne tematy i przygotowuje uczniów.</p>
             <button onClick={() => go("tutor")} className="w-full inline-flex justify-center items-center gap-2 px-4 py-2.5 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:brightness-110 text-slate-900 font-semibold text-sm transition">
             Porozmawiaj z AI <ChevronRight className="w-4 h-4"/>
           </button>
-          <div className="mt-4 text-[10px] font-mono text-white/30 tracking-wider">{email ? `ID · ${email}` : ""}</div>
+          <div className="mt-4 text-[10px] font-mono text-[var(--color-fg-subtle)] tracking-wider">{email ? `ID · ${email}` : ""}</div>
         </div>
       </div>
     </div>
