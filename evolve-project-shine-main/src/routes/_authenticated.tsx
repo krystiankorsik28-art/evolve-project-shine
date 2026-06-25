@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Outlet, createRoute, useNavigate, redirect } from "@tanstack/react-router";
+import { Outlet, createRoute, useNavigate, redirect, useLocation } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Route as rootRoute } from "./__root";
 import { AppShell } from "@/components/dashboard/AppShell";
@@ -56,7 +56,9 @@ function useIdleTimeout() {
 
 function AuthenticatedLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [ready, setReady] = useState(true);
+  const isTeacher = location.pathname.startsWith("/teacher");
 
   useIdleTimeout();
 
@@ -79,6 +81,8 @@ function AuthenticatedLayout() {
       </div>
     );
   }
+
+  if (isTeacher) return <Outlet />;
 
   return (
     <AppShell>
