@@ -51,63 +51,37 @@ export const Route = createFileRoute("/auth")({
   }),
 });
 
-function HeroBg() {
+function BgAnimation() {
   return (
-    <div className="hidden lg:block absolute inset-0 lg:static lg:w-[55%] h-full overflow-hidden">
-      <div className="absolute inset-0" style={{ background: "oklch(0.03 0.02 270)" }} />
-      <motion.div
-        className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.82 0.12 200 / 0.08), transparent 60%)", filter: "blur(80px)" }}
-        animate={{ x: [0, 30, -20, 0], y: [0, -20, 30, 0] }}
-        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.7 0.2 240 / 0.06), transparent 60%)", filter: "blur(80px)" }}
-        animate={{ x: [0, -20, 30, 0], y: [0, 30, -20, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-1/3 left-1/3 w-[400px] h-[400px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.8 0.1 60 / 0.04), transparent 60%)", filter: "blur(60px)" }}
-        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
+    <div className="absolute inset-0 -z-10 overflow-hidden" style={{ background: "oklch(0.035 0.02 270)" }}>
       <div className="absolute inset-0" style={{
         backgroundImage: `linear-gradient(oklch(1 0 0 / 0.02) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.02) 1px, transparent 1px)`,
         backgroundSize: "64px 64px",
       }} />
-      <div className="absolute inset-0" style={{
-        background: "linear-gradient(180deg, transparent 0%, oklch(0.035 0.02 270) 100%)",
-      }} />
-      <div className="absolute inset-0 flex items-center justify-center p-16">
-        <div className="text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <h2 className="text-4xl font-bold text-white/90 tracking-tight leading-tight">
-              Przyszłość edukacji<br />
-              <span style={{
-                background: "linear-gradient(135deg, oklch(0.88 0.10 200), oklch(0.7 0.20 240))",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>napędzana przez AI</span>
-            </h2>
-            <p className="mt-4 text-sm" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-              Egzaminy, AI Tutor, certyfikacja i zarządzanie szkołą w jednej platformie.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+      <motion.div
+        className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.82 0.12 200 / 0.06), transparent 60%)", filter: "blur(80px)" }}
+        animate={{ x: [0, 40, -30, 0], y: [0, -30, 20, 0] }}
+        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute bottom-[-10%] right-[20%] w-[500px] h-[500px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.7 0.2 240 / 0.04), transparent 60%)", filter: "blur(80px)" }}
+        animate={{ x: [0, -30, 40, 0], y: [0, 30, -20, 0] }}
+        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute top-[30%] right-[30%] w-[300px] h-[300px] rounded-full"
+        style={{ background: "radial-gradient(circle, oklch(0.8 0.1 60 / 0.03), transparent 60%)", filter: "blur(60px)" }}
+        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
     </div>
   );
 }
 
-function Field({ icon: Icon, type = "text", value, onChange, placeholder, autoComplete, rightSlot }: {
-  icon: any; type?: string; value: string; onChange: (v: string) => void;
+function Field({ type = "text", value, onChange, placeholder, autoComplete, rightSlot }: {
+  type?: string; value: string; onChange: (v: string) => void;
   placeholder: string; autoComplete?: string; rightSlot?: React.ReactNode;
 }) {
   return (
@@ -120,16 +94,16 @@ function Field({ icon: Icon, type = "text", value, onChange, placeholder, autoCo
         autoComplete={autoComplete}
         className="w-full h-12 px-4 text-sm rounded-lg outline-none transition-all duration-200 text-white placeholder:text-white/20"
         style={{
-          background: "oklch(1 0 0 / 0.03)",
+          background: "oklch(1 0 0 / 0.04)",
           border: "1px solid oklch(1 0 0 / 0.1)",
         }}
         onFocus={(e) => {
           e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.3)";
-          e.currentTarget.style.background = "oklch(1 0 0 / 0.05)";
+          e.currentTarget.style.background = "oklch(1 0 0 / 0.06)";
         }}
         onBlur={(e) => {
           e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.1)";
-          e.currentTarget.style.background = "oklch(1 0 0 / 0.03)";
+          e.currentTarget.style.background = "oklch(1 0 0 / 0.04)";
         }}
       />
       {rightSlot && <div className="absolute right-3 top-1/2 -translate-y-1/2">{rightSlot}</div>}
@@ -149,7 +123,7 @@ function PrimaryButton({ children, loading, ...props }: any) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.background = "oklch(0.85 0.12 200)";
-        e.currentTarget.style.boxShadow = "0 0 20px oklch(0.82 0.12 200 / 0.3)";
+        e.currentTarget.style.boxShadow = "0 0 24px oklch(0.82 0.12 200 / 0.3)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.background = "oklch(0.82 0.12 200)";
@@ -305,331 +279,245 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className="min-h-screen relative flex items-center justify-center p-4">
       <Toaster theme="dark" position="top-center" />
+      <BgAnimation />
 
-      <Link to="/" className="absolute top-6 left-6 z-20 flex items-center gap-2 text-sm transition-colors" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+      <Link to="/" className="absolute top-6 left-6 z-10 flex items-center gap-2 text-sm transition-colors" style={{ color: "oklch(1 0 0 / 0.35)" }}>
         <ChevronLeft className="w-4 h-4" /> Strona główna
       </Link>
 
-      <div className="relative w-full lg:w-[45%] min-h-screen flex items-center justify-center p-6 sm:p-10">
-        <div className="absolute inset-0" style={{ background: "oklch(0.045 0.03 270)" }} />
-        <div className="absolute inset-0" style={{
-          backgroundImage: `linear-gradient(oklch(1 0 0 / 0.015) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.015) 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
-        }} />
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-md"
-        >
-          <div className="flex items-center gap-2.5 mb-8">
-            <div className="w-8 h-8 rounded-lg grid place-items-center" style={{
-              background: "linear-gradient(135deg, oklch(0.82 0.12 200), oklch(0.7 0.20 240))",
-            }}>
-              <Sparkles className="w-4 h-4 text-black" />
-            </div>
-            <span className="text-base font-bold text-white tracking-tight">EduNex</span>
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[420px] rounded-2xl p-8"
+        style={{
+          background: "oklch(0.055 0.03 270)",
+          border: "1px solid oklch(1 0 0 / 0.08)",
+          boxShadow: "0 24px 80px oklch(0 0 0 / 0.5)",
+        }}
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-9 h-9 rounded-[10px] grid place-items-center" style={{
+            background: "linear-gradient(135deg, oklch(0.82 0.12 200), oklch(0.7 0.20 240))",
+          }}>
+            <Sparkles className="w-[18px] h-[18px] text-black" />
           </div>
-
-          <div className="relative flex gap-1 p-0.5 rounded-lg mb-7" style={{ background: "oklch(1 0 0 / 0.04)" }}>
-            <motion.div
-              layout
-              className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-md"
-              style={{
-                left: tab === "quick" ? 2 : "calc(50% + 0px)",
-                background: "oklch(1 0 0 / 0.08)",
-                transition: "left 0.3s cubic-bezier(0.16,1,0.3,1)",
-              }}
-            />
-            <button
-              type="button"
-              onClick={() => setTab("quick")}
-              className="relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors"
-              style={{ color: tab === "quick" ? "#fff" : "oklch(1 0 0 / 0.35)" }}
-            >
-              <Hash className="w-3.5 h-3.5" /> Wejście kodem
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("account")}
-              className="relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors"
-              style={{ color: tab === "account" ? "#fff" : "oklch(1 0 0 / 0.35)" }}
-            >
-              <Mail className="w-3.5 h-3.5" /> Konto e-mail
-            </button>
+          <div>
+            <div className="text-base font-bold text-white tracking-tight">EduNex</div>
+            <div className="text-xs" style={{ color: "oklch(1 0 0 / 0.35)" }}>Platforma edukacyjna nowej generacji</div>
           </div>
+        </div>
 
-          {tab === "quick" && (
-            <motion.div
-              key="quick-tab"
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <h1 className="text-xl font-bold text-white tracking-tight">Szybkie wejście</h1>
-              <p className="text-sm mt-1.5 mb-6" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-                Wpisz imię, nazwisko i 6-cyfrowy kod od nauczyciela.
-              </p>
+        <div className="relative flex gap-1 p-0.5 rounded-lg mb-6" style={{ background: "oklch(1 0 0 / 0.04)" }}>
+          <motion.div
+            layout
+            className="absolute top-0.5 bottom-0.5 w-[calc(50%-2px)] rounded-md"
+            style={{
+              left: tab === "quick" ? 2 : "calc(50% + 0px)",
+              background: "oklch(1 0 0 / 0.08)",
+              transition: "left 0.3s cubic-bezier(0.16,1,0.3,1)",
+            }}
+          />
+          <button type="button" onClick={() => setTab("quick")}
+            className="relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors"
+            style={{ color: tab === "quick" ? "#fff" : "oklch(1 0 0 / 0.35)" }}>
+            <Hash className="w-3.5 h-3.5" /> Wejście kodem
+          </button>
+          <button type="button" onClick={() => setTab("account")}
+            className="relative z-10 flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors"
+            style={{ color: tab === "account" ? "#fff" : "oklch(1 0 0 / 0.35)" }}>
+            <Mail className="w-3.5 h-3.5" /> Konto e-mail
+          </button>
+        </div>
 
-              <form onSubmit={handleQuickLogin} className="space-y-3">
-                <div className="grid grid-cols-2 gap-2">
-                  <Field icon={User} value={qFirst} onChange={setQFirst} placeholder="Imię" autoComplete="given-name" />
-                  <Field icon={User} value={qLast} onChange={setQLast} placeholder="Nazwisko" autoComplete="family-name" />
-                </div>
-                <Field
-                  icon={Hash}
-                  value={qPin}
-                  onChange={(v) => setQPin(v.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="Kod (6 cyfr)"
-                  autoComplete="one-time-code"
-                />
-                <div className="flex justify-center gap-1.5 pt-1 pb-2">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{
-                        scale: i < qPin.length ? 1.15 : 1,
-                        backgroundColor: i < qPin.length ? "oklch(0.75 0.2 150 / 0.9)" : "oklch(1 0 0 / 0.12)",
-                      }}
-                      transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                      className="w-2 h-2 rounded-full"
-                    />
-                  ))}
-                </div>
-                <PrimaryButton loading={loading}>
-                  Dołącz do egzaminu <ArrowRight className="w-4 h-4" />
-                </PrimaryButton>
-                <p className="text-xs text-center" style={{ color: "oklch(1 0 0 / 0.3)" }}>
-                  Nie tworzymy konta — kod działa raz, dla jednego egzaminu.
-                </p>
-              </form>
-            </motion.div>
-          )}
-
-          {tab === "account" && (
-          <>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={mode}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-            >
-              <h1 className="text-xl font-bold text-white tracking-tight">
-                {mode === "login" && "Zaloguj się"}
-                {mode === "register" && "Załóż konto"}
-                {mode === "forgot" && "Reset hasła"}
-              </h1>
-              <p className="text-sm mt-1.5" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-                {mode === "login" && "Witaj z powrotem!"}
-                {mode === "register" && "Dołącz do EduNex w kilka sekund."}
-                {mode === "forgot" && "Wyślemy link do zmiany hasła."}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-
-          {mode !== "forgot" && (
-            <div className="mt-6">
-              <label className="block text-xs font-medium mb-2" style={{ color: "oklch(1 0 0 / 0.4)" }}>Rola</label>
-              <div className="grid grid-cols-2 gap-1.5">
-                {ROLES.map((r) => {
-                  const Ic = r.icon;
-                  const active = role === r.id;
-                  return (
-                    <button
-                      key={r.id}
-                      type="button"
-                      onClick={() => setRole(r.id)}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-left"
-                      style={{
-                        background: active ? "oklch(1 0 0 / 0.08)" : "oklch(1 0 0 / 0.02)",
-                        border: `1px solid ${active ? "oklch(1 0 0 / 0.2)" : "oklch(1 0 0 / 0.06)"}`,
-                        color: active ? "oklch(1 0 0)" : "oklch(1 0 0 / 0.5)",
-                      }}
-                    >
-                      <Ic className="w-4 h-4 shrink-0" />
-                      <span className="truncate text-xs">{r.label}</span>
-                    </button>
-                  );
-                })}
+        {tab === "quick" && (
+          <motion.div key="quick" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
+            <h1 className="text-lg font-bold text-white tracking-tight">Szybkie wejście</h1>
+            <p className="text-sm mt-1 mb-5" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+              Wpisz imię, nazwisko i 6-cyfrowy kod od nauczyciela.
+            </p>
+            <form onSubmit={handleQuickLogin} className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <Field value={qFirst} onChange={setQFirst} placeholder="Imię" autoComplete="given-name" />
+                <Field value={qLast} onChange={setQLast} placeholder="Nazwisko" autoComplete="family-name" />
               </div>
-            </div>
-          )}
+              <Field value={qPin} onChange={(v) => setQPin(v.replace(/\D/g, "").slice(0, 6))} placeholder="Kod (6 cyfr)" autoComplete="one-time-code" />
+              <div className="flex justify-center gap-1.5 pt-1 pb-2">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <motion.div key={i} animate={{ scale: i < qPin.length ? 1.15 : 1, backgroundColor: i < qPin.length ? "oklch(0.75 0.2 150 / 0.9)" : "oklch(1 0 0 / 0.12)" }} transition={{ type: "spring", stiffness: 400, damping: 20 }} className="w-2 h-2 rounded-full" />
+                ))}
+              </div>
+              <PrimaryButton loading={loading}>
+                Dołącz do egzaminu <ArrowRight className="w-4 h-4" />
+              </PrimaryButton>
+              <p className="text-xs text-center" style={{ color: "oklch(1 0 0 / 0.25)" }}>Kod działa raz, dla jednego egzaminu.</p>
+            </form>
+          </motion.div>
+        )}
 
-          {mode === "login" && isAdmin && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-4 flex items-start gap-2 p-3 rounded-lg text-xs"
-              style={{
-                background: "oklch(0.7 0.2 80 / 0.08)",
-                border: "1px solid oklch(0.7 0.2 80 / 0.2)",
-                color: "oklch(0.8 0.15 80)",
-              }}
-            >
-              <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-              <span>Logowanie administratora wymaga dodatkowego kodu 2FA.</span>
-            </motion.div>
-          )}
+        {tab === "account" && (
+        <>
+        <AnimatePresence mode="wait">
+          <motion.div key={mode} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.15 }}>
+            <h1 className="text-lg font-bold text-white tracking-tight">
+              {mode === "login" && "Zaloguj się"}
+              {mode === "register" && "Załóż konto"}
+              {mode === "forgot" && "Reset hasła"}
+            </h1>
+            <p className="text-sm mt-1 mb-5" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+              {mode === "login" && "Witaj z powrotem!"}
+              {mode === "register" && "Dołącz do EduNex w kilka sekund."}
+              {mode === "forgot" && "Wyślemy link do zmiany hasła."}
+            </p>
+          </motion.div>
+        </AnimatePresence>
 
-          <AnimatePresence mode="wait">
-            <motion.form
-              key={mode}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.15 }}
-              onSubmit={mode === "login" ? handleLogin : mode === "register" ? handleRegister : handleForgot}
-              className="mt-5 space-y-3"
-            >
-              {mode === "register" && (
-                <div className="grid grid-cols-2 gap-2">
-                  <Field icon={UserPlus} value={firstName} onChange={setFirstName} placeholder="Imię" autoComplete="given-name" />
-                  <Field icon={UserPlus} value={lastName} onChange={setLastName} placeholder="Nazwisko" autoComplete="family-name" />
-                </div>
-              )}
-
-              <Field icon={Mail} type="email" value={email} onChange={setEmail} placeholder="Adres e-mail" autoComplete="email" />
-
-              {mode !== "forgot" && (
-                <Field
-                  icon={Lock}
-                  type={showPass ? "text" : "password"}
-                  value={password}
-                  onChange={setPassword}
-                  placeholder="Hasło"
-                  autoComplete={mode === "login" ? "current-password" : "new-password"}
-                  rightSlot={
-                    <button type="button" onClick={() => setShowPass((s) => !s)}
-                      className="transition-colors" style={{ color: "oklch(1 0 0 / 0.25)" }}>
-                      {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  }
-                />
-              )}
-
-              {mode === "register" && (
-                <Field icon={Lock} type={showPass ? "text" : "password"} value={confirm} onChange={setConfirm} placeholder="Powtórz hasło" autoComplete="new-password" />
-              )}
-
-              {mode === "login" && isAdmin && (
-                <>
-                  <Field
-                    icon={Fingerprint}
-                    value={adminCode}
-                    onChange={(v) => setAdminCode(v.replace(/\D/g, "").slice(0, 8))}
-                    placeholder="Kod 2FA administratora"
-                    autoComplete="one-time-code"
-                  />
-                  <label className="flex items-start gap-2 text-xs cursor-pointer leading-snug" style={{ color: "oklch(1 0 0 / 0.45)" }}>
-                    <input
-                      type="checkbox"
-                      checked={adminConsent}
-                      onChange={(e) => setAdminConsent(e.target.checked)}
-                      className="w-3.5 h-3.5 accent-white rounded mt-0.5 shrink-0"
-                    />
-                    Potwierdzam, że logowanie odbywa się z zaufanego urządzenia.
-                  </label>
-                </>
-              )}
-
-              {mode === "login" && (
-                <div className="flex items-center justify-between text-xs pt-1">
-                  <label className="flex items-center gap-2 cursor-pointer" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-                    <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)}
-                      className="w-3.5 h-3.5 accent-white rounded" />
-                    Pamiętaj mnie
-                  </label>
-                  <button type="button" onClick={() => setMode("forgot")}
-                    className="font-medium transition-colors" style={{ color: "oklch(1 0 0 / 0.4)" }}>
-                    Nie pamiętam hasła
+        {mode !== "forgot" && (
+          <div className="mb-5">
+            <label className="text-xs font-medium mb-2 block" style={{ color: "oklch(1 0 0 / 0.35)" }}>Rola</label>
+            <div className="grid grid-cols-2 gap-1.5">
+              {ROLES.map((r) => {
+                const Ic = r.icon;
+                const active = role === r.id;
+                return (
+                  <button key={r.id} type="button" onClick={() => setRole(r.id)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all text-left"
+                    style={{
+                      background: active ? "oklch(1 0 0 / 0.08)" : "oklch(1 0 0 / 0.02)",
+                      border: `1px solid ${active ? "oklch(1 0 0 / 0.2)" : "oklch(1 0 0 / 0.06)"}`,
+                      color: active ? "oklch(1 0 0)" : "oklch(1 0 0 / 0.5)",
+                    }}
+                  >
+                    <Ic className="w-4 h-4 shrink-0" />
+                    <span className="truncate">{r.label}</span>
                   </button>
-                </div>
-              )}
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-              <div className="pt-1">
-                <PrimaryButton loading={loading}>
-                  {mode === "login" && <>Zaloguj się <ArrowRight className="w-4 h-4" /></>}
-                  {mode === "register" && <>Utwórz konto <ArrowRight className="w-4 h-4" /></>}
-                  {mode === "forgot" && <>Wyślij link <KeyRound className="w-4 h-4" /></>}
-                </PrimaryButton>
-              </div>
-            </motion.form>
-          </AnimatePresence>
+        {mode === "login" && isAdmin && (
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+            className="mb-4 flex items-start gap-2 p-3 rounded-lg text-xs"
+            style={{ background: "oklch(0.7 0.2 80 / 0.08)", border: "1px solid oklch(0.7 0.2 80 / 0.2)", color: "oklch(0.8 0.15 80)" }}>
+            <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+            <span>Logowanie administratora wymaga dodatkowego kodu 2FA.</span>
+          </motion.div>
+        )}
 
-          {mode !== "forgot" && !isAdmin && (
-            <>
-              <div className="flex items-center gap-3 my-5">
-                <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.06)" }} />
-                <span className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.25)" }}>lub</span>
-                <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+        <AnimatePresence mode="wait">
+          <motion.form key={mode} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}
+            onSubmit={mode === "login" ? handleLogin : mode === "register" ? handleRegister : handleForgot} className="space-y-3"
+          >
+            {mode === "register" && (
+              <div className="grid grid-cols-2 gap-2">
+                <Field value={firstName} onChange={setFirstName} placeholder="Imię" autoComplete="given-name" />
+                <Field value={lastName} onChange={setLastName} placeholder="Nazwisko" autoComplete="family-name" />
               </div>
-              <div className="space-y-2">
-                <button onClick={() => handleSSO("google")}
-                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
-                >
-                  <GoogleIcon /> Kontynuuj z Google
-                </button>
-                <button onClick={() => handleSSO("microsoft")}
-                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
-                >
-                  <MicrosoftIcon /> Kontynuuj z Microsoft
-                </button>
-                <button onClick={() => handleSSO("github")}
-                  className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
-                  style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
-                >
-                  <GitHubIcon /> Kontynuuj z GitHub
-                </button>
-              </div>
-            </>
-          )}
-
-          <div className="mt-6 text-center text-sm" style={{ color: "oklch(1 0 0 / 0.35)" }}>
-            {mode === "login" && (
-              <>Nie masz konta?{" "}
-                <button onClick={() => setMode("register")} className="text-white font-medium hover:underline">
-                  Zarejestruj się
-                </button>
-              </>
+            )}
+            <Field type="email" value={email} onChange={setEmail} placeholder="Adres e-mail" autoComplete="email" />
+            {mode !== "forgot" && (
+              <Field type={showPass ? "text" : "password"} value={password} onChange={setPassword}
+                placeholder="Hasło" autoComplete={mode === "login" ? "current-password" : "new-password"}
+                rightSlot={
+                  <button type="button" onClick={() => setShowPass((s) => !s)} className="transition-colors" style={{ color: "oklch(1 0 0 / 0.25)" }}>
+                    {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
             )}
             {mode === "register" && (
-              <>Masz już konto?{" "}
-                <button onClick={() => setMode("login")} className="text-white font-medium hover:underline">
-                  Zaloguj się
-                </button>
+              <Field type={showPass ? "text" : "password"} value={confirm} onChange={setConfirm} placeholder="Powtórz hasło" autoComplete="new-password" />
+            )}
+            {mode === "login" && isAdmin && (
+              <>
+                <Field value={adminCode} onChange={(v) => setAdminCode(v.replace(/\D/g, "").slice(0, 8))} placeholder="Kod 2FA administratora" autoComplete="one-time-code" />
+                <label className="flex items-start gap-2 text-xs cursor-pointer leading-snug" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+                  <input type="checkbox" checked={adminConsent} onChange={(e) => setAdminConsent(e.target.checked)} className="w-3.5 h-3.5 accent-white rounded mt-0.5 shrink-0" />
+                  Potwierdzam, że logowanie odbywa się z zaufanego urządzenia.
+                </label>
               </>
             )}
-            {mode === "forgot" && (
-              <button onClick={() => setMode("login")} className="text-white/70 hover:text-white font-medium">
-                ← Wróć do logowania
-              </button>
+            {mode === "login" && (
+              <div className="flex items-center justify-between text-xs pt-1">
+                <label className="flex items-center gap-2 cursor-pointer" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+                  <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="w-3.5 h-3.5 accent-white rounded" />
+                  Pamiętaj mnie
+                </label>
+                <button type="button" onClick={() => setMode("forgot")} className="font-medium transition-colors" style={{ color: "oklch(1 0 0 / 0.4)" }}>
+                  Nie pamiętam hasła
+                </button>
+              </div>
             )}
-          </div>
+            <div className="pt-1">
+              <PrimaryButton loading={loading}>
+                {mode === "login" && <>Zaloguj się <ArrowRight className="w-4 h-4" /></>}
+                {mode === "register" && <>Utwórz konto <ArrowRight className="w-4 h-4" /></>}
+                {mode === "forgot" && <>Wyślij link <KeyRound className="w-4 h-4" /></>}
+              </PrimaryButton>
+            </div>
+          </motion.form>
+        </AnimatePresence>
+
+        {mode !== "forgot" && !isAdmin && (
+          <>
+            <div className="flex items-center gap-3 my-5">
+              <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+              <span className="text-[11px]" style={{ color: "oklch(1 0 0 / 0.25)" }}>lub</span>
+              <div className="flex-1 h-px" style={{ background: "oklch(1 0 0 / 0.06)" }} />
+            </div>
+            <div className="space-y-2">
+              <button onClick={() => handleSSO("google")}
+                className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
+                style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
+              >
+                <GoogleIcon /> Kontynuuj z Google
+              </button>
+              <button onClick={() => handleSSO("microsoft")}
+                className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
+                style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
+              >
+                <MicrosoftIcon /> Kontynuuj z Microsoft
+              </button>
+              <button onClick={() => handleSSO("github")}
+                className="w-full flex items-center justify-center gap-2.5 h-11 rounded-lg text-sm font-medium transition-all duration-200"
+                style={{ background: "oklch(1 0 0 / 0.03)", border: "1px solid oklch(1 0 0 / 0.08)", color: "oklch(1 0 0 / 0.6)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.03)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.6)"; }}
+              >
+                <GitHubIcon /> Kontynuuj z GitHub
+              </button>
+            </div>
           </>
+        )}
+
+        <div className="mt-6 text-center text-sm" style={{ color: "oklch(1 0 0 / 0.35)" }}>
+          {mode === "login" && (
+            <>Nie masz konta?{" "}<button onClick={() => setMode("register")} className="text-white font-medium hover:underline">Zarejestruj się</button></>
           )}
+          {mode === "register" && (
+            <>Masz już konto?{" "}<button onClick={() => setMode("login")} className="text-white font-medium hover:underline">Zaloguj się</button></>
+          )}
+          {mode === "forgot" && (
+            <button onClick={() => setMode("login")} className="text-white/70 hover:text-white font-medium">← Wróć do logowania</button>
+          )}
+        </div>
+        </>
+        )}
 
-          <div className="mt-8 pt-5 flex items-center justify-center gap-4 text-[10px]" style={{ color: "oklch(1 0 0 / 0.2)", borderTop: "1px solid oklch(1 0 0 / 0.05)" }}>
-            <span>Szyfrowanie E2E</span>
-            <span>RODO</span>
-            <span>Serwery UE</span>
-          </div>
-        </motion.div>
-      </div>
-
-      <HeroBg />
+        <div className="mt-6 pt-4 flex items-center justify-center gap-4 text-[10px]" style={{ color: "oklch(1 0 0 / 0.2)", borderTop: "1px solid oklch(1 0 0 / 0.05)" }}>
+          <span>Szyfrowanie E2E</span>
+          <span>RODO</span>
+          <span>Serwery UE</span>
+        </div>
+      </motion.div>
     </div>
   );
 }
