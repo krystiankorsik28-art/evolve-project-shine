@@ -425,7 +425,7 @@ function AuthPage() {
           transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
           className={`grid w-full max-w-6xl overflow-hidden rounded-[28px] border transition-colors duration-300 lg:grid-cols-[1.05fr_0.95fr] ${panelClass}`}
         >
-          <aside className="relative hidden min-h-[720px] overflow-hidden bg-[#0f172a] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+          <aside className="relative hidden min-h-[720px] overflow-hidden bg-[#0f172a] p-10 text-white lg:flex lg:flex-col lg:justify-start">
             <div
               className="absolute inset-0"
               style={{
@@ -480,7 +480,7 @@ function AuthPage() {
               </div>
             </div>
 
-            <div className="relative z-10 rounded-3xl border border-white/10 bg-white/[0.075] p-5 backdrop-blur-xl">
+            <div className="relative z-10 mt-10 rounded-3xl border border-white/10 bg-white/[0.075] p-5 backdrop-blur-xl">
               <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
                 <Fingerprint className="h-4 w-4 text-[#50e6ff]" /> Aktualny tryb
               </div>
