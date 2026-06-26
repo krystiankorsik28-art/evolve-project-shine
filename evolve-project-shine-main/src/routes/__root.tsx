@@ -11,6 +11,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 import appCss from "../styles.css?url";
+import ultraCss from "../ultra.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
@@ -118,6 +119,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: appCss,
+      },
+      {
+        rel: "stylesheet",
+        href: ultraCss,
       },
     ],
   }),
