@@ -1,1053 +1,567 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "@/lib/theme";
+import { useEffect, useMemo, useRef, useState, type ComponentType, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+import { motion } from "framer-motion";
 import {
-  GraduationCap, Users, Shield, ArrowRight, ArrowUpRight, CheckCircle2, BookOpen,
-  Mail, Phone, MapPin, Send, Loader2, Menu, X, FileText, ClipboardList,
-  Library, BarChart3, Lock, Calendar, Sparkles, Zap, Globe2, Activity,
-  ShieldCheck, ChevronUp, Code2, Presentation,
-  BrainCircuit, Bot, Database, Smartphone, Wifi, Cloud, Download, Upload,
-  Timer, Clock, Award, Medal, Star, Trophy, Target, Eye,
-  Search, Filter, LayoutDashboard, Share2, Github,
-  School, BookMarked, MessageSquare,
-  DollarSign, BadgeCheck, Verified, Monitor,
-  Laptop, Rocket, Flag, Compass, PenTool,
-  ArrowLeft, Play, ChevronRight, ChevronDown, Tablet, Headphones, Bell,
-  Lightbulb, Cable, Workflow, GripVertical, Puzzle, ScrollText, Heart, KeyRound, Video,
-  Infinity, Computer, Notebook, Radio, GitBranch,
-  ScanFace, Building2, Scale, Fingerprint, Tv, Globe, Paintbrush,
-  SmartphoneNfc, Sun, Moon, Palette, Layers, Network, Cpu, Server,
-  Binary, CircuitBoard, Cctv, Dock, Mic, Paperclip, Calculator, Atom,
-  FlaskConical, User, Hash, X as XIcon,
+  Activity,
+  ArrowRight,
+  BadgeCheck,
+  BarChart3,
+  Bell,
+  BookOpen,
+  Bot,
+  BrainCircuit,
+  Building2,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  ClipboardList,
+  Cloud,
+  Database,
+  Eye,
+  FileText,
+  Fingerprint,
+  Github,
+  GraduationCap,
+  Hash,
+  KeyRound,
+  Layers,
+  Library,
+  Lightbulb,
+  Lock,
+  Mail,
+  Menu,
+  Moon,
+  Network,
+  Palette,
+  Play,
+  Rocket,
+  School,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Sun,
+  Target,
+  Timer,
+  Trophy,
+  Users,
+  Workflow,
+  X,
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { submitContact } from "@/lib/contact.functions";
-import { NexaPayCheckout } from "@/components/NexaPayCheckout";
-import IntroAnimation from "@/components/IntroAnimation";
-import NavBar2 from "@/components/landing/NavBar2";
-import HeroSection from "@/components/landing/HeroSection";
-import StatsSection from "@/components/landing/StatsSection";
-import HowItWorksSection from "@/components/landing/HowItWorks";
-import FinalCTA from "@/components/landing/FinalCTA";
-import TestimonialsSection from "@/components/landing/TestimonialsSection";
-import PricingSection from "@/components/landing/PricingSection";
-import FeaturesSection from "@/components/landing/FeaturesSection";
-import TextReveal from "@/components/landing/TextReveal";
-import FAQFlow from "@/components/landing/FAQFlow";
+import { useTheme } from "@/lib/theme";
+
+type IconType = ComponentType<{ className?: string }>;
 
 export const Route = createFileRoute("/")({
   component: Landing,
   head: () => ({
     meta: [
-      { title: "EduNex — Globalna platforma edukacyjna nowej generacji z AI" },
-      { name: "description", content: "EduNex — globalna platforma edukacyjna nowej generacji. Egzaminy online, AI Tutor, kursy, certyfikacja i zarządzanie szkołami. Dla uczniów, nauczycieli, szkół i firm na całym świecie." },
+      { title: "EduNex — nowoczesna platforma egzaminacyjna dla szkół" },
+      {
+        name: "description",
+        content:
+          "EduNex to profesjonalna platforma dla szkół: egzaminy online, sprawdziany, PIN dla ucznia, panel nauczyciela, AI, raporty, certyfikaty, bezpieczeństwo i integracje.",
+      },
     ],
   }),
 });
 
-function PremiumBg() {
-  return (
-    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
-      <div className="absolute inset-0" style={{ background: "oklch(0.035 0.02 270)" }} />
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: `linear-gradient(oklch(1 0 0 / 0.012) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.012) 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
-          WebkitMaskImage: "radial-gradient(ellipse at 50% 20%, black 35%, transparent 70%)",
-          maskImage: "radial-gradient(ellipse at 50% 20%, black 35%, transparent 70%)",
-        }}
-      />
-      <motion.div
-        className="absolute top-[-5%] left-[15%] w-[500px] h-[500px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.82 0.12 200 / 0.05) 0%, transparent 60%)", filter: "blur(60px)" }}
-        animate={{ x: [0, 60, -30, 0], y: [0, -40, 20, 0], scale: [1, 1.05, 0.95, 1] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.7 0.2 240 / 0.035) 0%, transparent 60%)", filter: "blur(60px)" }}
-        animate={{ x: [0, -40, 50, 0], y: [0, 30, -20, 0], scale: [1, 0.95, 1.05, 1] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute top-[40%] right-[25%] w-[300px] h-[300px] rounded-full"
-        style={{ background: "radial-gradient(circle, oklch(0.65 0.25 290 / 0.025) 0%, transparent 60%)", filter: "blur(60px)" }}
-        animate={{ x: [0, 30, -40, 0], y: [0, -20, 30, 0], opacity: [0.3, 0.7, 0.3] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
-}
+const stats = [
+  ["99,9%", "gotowość platformy"],
+  ["6 cyfr", "bezpieczny PIN ucznia"],
+  ["AI", "generator pytań i analiza"],
+  ["UE", "RODO i audyt zdarzeń"],
+];
+
+const pillars: { icon: IconType; title: string; text: string }[] = [
+  { icon: ClipboardList, title: "Egzaminy i sprawdziany", text: "Twórz testy, sprawdziany, sesje PIN, limity czasu i różne typy pytań." },
+  { icon: Users, title: "Panel nauczyciela", text: "Biblioteka prac, aktywne sesje, wyniki live, średnie, eksporty i klasy." },
+  { icon: GraduationCap, title: "Panel ucznia", text: "Czytelny tryb egzaminu, timer, pasek postępu, media i ekran wyniku." },
+  { icon: BrainCircuit, title: "AI w edukacji", text: "Asystent generowania pytań, ocena esejów, wskazówki i analiza słabych punktów." },
+  { icon: ShieldCheck, title: "Bezpieczeństwo", text: "2FA, OTP, powiadomienia logowania, kontrola urządzeń i logi aktywności." },
+  { icon: Database, title: "Supabase i dane", text: "Auth, storage multimediów, wyniki, próby egzaminacyjne i role użytkowników." },
+];
+
+const roles: { icon: IconType; title: string; desc: string; points: string[] }[] = [
+  {
+    icon: School,
+    title: "Uczeń",
+    desc: "Wchodzi kodem PIN albo kontem, rozwiązuje egzamin bez chaosu.",
+    points: ["PIN 6-cyfrowy", "Timer i postęp", "Wynik po zakończeniu"],
+  },
+  {
+    icon: Users,
+    title: "Nauczyciel",
+    desc: "Startuje sesje, kontroluje odpowiedzi i widzi wyniki klasy na żywo.",
+    points: ["Generator PIN", "Biblioteka pytań", "Raporty i eksporty"],
+  },
+  {
+    icon: Building2,
+    title: "Admin szkoły",
+    desc: "Zarządza użytkownikami, bezpieczeństwem, klasami i ustawieniami placówki.",
+    points: ["2FA admina", "Role i uprawnienia", "Audyt zdarzeń"],
+  },
+];
+
+const modules: { icon: IconType; label: string }[] = [
+  { icon: FileText, label: "Testy wyboru" },
+  { icon: Timer, label: "Limit czasu" },
+  { icon: Hash, label: "Sesje PIN" },
+  { icon: BookOpen, label: "Eseje" },
+  { icon: Eye, label: "Podgląd live" },
+  { icon: Bell, label: "Powiadomienia" },
+  { icon: Cloud, label: "Storage plików" },
+  { icon: BadgeCheck, label: "Certyfikaty" },
+  { icon: Search, label: "Wyszukiwarka" },
+  { icon: BarChart3, label: "Analityka" },
+  { icon: KeyRound, label: "Reset OTP" },
+  { icon: Network, label: "Integracje" },
+];
+
+const workflow = [
+  { nr: "01", title: "Tworzysz egzamin", text: "Nauczyciel wybiera typ, pytania, punktację, multimedia i limit czasu." },
+  { nr: "02", title: "Startujesz sesję", text: "System generuje PIN i aktywuje egzamin dla klasy lub wybranej grupy." },
+  { nr: "03", title: "Uczeń rozwiązuje", text: "Uczeń wpisuje imię, nazwisko i PIN albo loguje się przez konto." },
+  { nr: "04", title: "Analizujesz wyniki", text: "Panel pokazuje wynik, czas, średnią, problemy i gotowy raport." },
+];
+
+const security = ["2FA dla administratora", "OTP resetu hasła", "Powiadomienia o logowaniu", "Role i uprawnienia", "Rejestr aktywności", "RODO-ready architektura"];
+
+const plans = [
+  { name: "Klasa", price: "0 zł", tag: "Start", items: ["Podstawowe egzaminy", "PIN ucznia", "Wyniki klasy"] },
+  { name: "Nauczyciel", price: "99 zł", tag: "Najlepszy start", items: ["Biblioteka pytań", "AI generator", "Raporty i eksport"] },
+  { name: "Szkoła", price: "490 zł", tag: "Dla placówek", items: ["Wiele klas", "Panel admina", "Bezpieczeństwo 2FA"] },
+];
+
+const faqs = [
+  ["Czy uczeń musi mieć konto?", "Nie zawsze. Do egzaminu może wejść szybkim kodem PIN wygenerowanym przez nauczyciela."],
+  ["Czy można dodać obrazy, audio i wideo?", "Tak. System jest przygotowany pod multimedia i storage plików dla pytań oraz materiałów."],
+  ["Czy platforma ma AI?", "Tak. EduNex może wspierać tworzenie pytań, analizę wyników i ocenę dłuższych odpowiedzi."],
+  ["Czy można używać w szkole?", "Taki jest cel: role, panele, PIN, bezpieczeństwo, raporty i panel administracyjny."],
+];
 
 function Landing() {
-  const { setTheme } = useTheme();
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => { setTheme("dark") }, []);
+  const { theme, setTheme, toggle } = useTheme();
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeRole, setActiveRole] = useState(0);
+  const [activeFaq, setActiveFaq] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const isLight = theme === "light";
 
   useEffect(() => {
-    const obs = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) {
-          e.target.classList.add("revealed");
-          const children = e.target.querySelectorAll(".stagger-item");
-          children.forEach((c, i) => {
-            const delay = Math.min(i, 12);
-            (c as HTMLElement).style.transitionDelay = `${delay * 0.06}s`;
-          });
-        }
-      });
-    }, { threshold: 0.08, rootMargin: "0px 0px -60px 0px" });
-    setTimeout(() => {
-      document.querySelectorAll(".reveal, .reveal-scale, .reveal-left, .reveal-right").forEach((el) => obs.observe(el));
-      if (document.documentElement.getBoundingClientRect().top > -200) {
-        document.querySelectorAll(".reveal, .reveal-scale, .reveal-left, .reveal-right").forEach((el) => {
-          if (el.getBoundingClientRect().top < window.innerHeight + 200) el.classList.add("revealed");
-        });
-      }
-    }, 100);
-    return () => obs.disconnect();
-  }, []);
+    const stored = localStorage.getItem("edunex.home.theme");
+    if (stored === "light" || stored === "dark") setTheme(stored);
+  }, [setTheme]);
 
-  const progRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const f = () => {
-      if (!progRef.current) return;
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      progRef.current.style.transform = `scaleX(${Math.min(window.scrollY / h, 1)})`;
+    localStorage.setItem("edunex.home.theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (!progressRef.current) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressRef.current.style.transform = `scaleX(${Math.min(window.scrollY / Math.max(max, 1), 1)})`;
     };
-    window.addEventListener("scroll", f, { passive: true });
-    return () => window.removeEventListener("scroll", f);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return (
-    <>
-      <IntroAnimation onDone={() => setLoaded(true)} />
-      <div className={`min-h-screen bg-canvas selection:bg-accent/30 selection:text-white overflow-x-hidden ${loaded ? "opacity-100" : "opacity-0"} transition-opacity duration-700`}>
-        <div ref={progRef} className="scroll-progress" />
-        <Toaster theme="dark" />
-        <CookieBanner />
-        <NavBar2 />
-        <PremiumBg />
-        <main className="relative z-10">
-          <HeroSection />
-          <StatsSection />
-          <TrustBar />
-          <HowItWorksSection />
-          <FeaturesSection />
-          <DemoShowcase />
-          <ForWhomFlow />
-          <ComparisonShowcase />
-          <AchievementsFlow />
-          <AIPlatformFlow />
-          <AiDemoShowcase />
-          <SecurityFlow />
-          <TestimonialsSection />
-          <CaseStudiesCarousel />
-          <PricingSection />
-          <FAQFlow />
-          <FinalCTA />
-          <NewsletterFlow />
-          <ContactFlow />
-        </main>
-        <StickyCta />
-        <FooterFlow />
-      </div>
-    </>
+  const palette = useMemo(
+    () => ({
+      page: isLight ? "bg-[#f4f7fb] text-[#111827]" : "bg-[#020617] text-white",
+      muted: isLight ? "text-slate-600" : "text-white/62",
+      soft: isLight ? "border-slate-200 bg-white/84 shadow-[0_20px_80px_rgba(15,23,42,0.10)]" : "border-white/10 bg-white/[0.055] shadow-[0_24px_90px_rgba(0,0,0,0.35)]",
+      soft2: isLight ? "border-slate-200 bg-white/68" : "border-white/10 bg-white/[0.04]",
+      nav: isLight ? "border-slate-200 bg-white/78 text-slate-900" : "border-white/10 bg-[#020617]/78 text-white",
+      chip: isLight ? "border-slate-200 bg-white text-slate-700" : "border-white/10 bg-white/[0.06] text-white/72",
+    }),
+    [isLight],
   );
-}
 
-function CookieBanner() {
-  const [v, setV] = useState(true);
-  useEffect(() => { if (typeof window !== "undefined" && localStorage.getItem("cookies-ok")) setV(false); }, []);
-  if (!v) return null;
-  return (
-    <div className="fixed bottom-0 inset-x-0 z-50 bg-black/70 backdrop-blur-2xl border-t border-white/[0.06] cookie-banner">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p className="text-xs text-white/50">Używamy plików cookie, aby zapewnić najlepsze doświadczenia.</p>
-        <button onClick={() => { localStorage.setItem("cookies-ok", "1"); setV(false) }} className="btn-primary text-xs">Akceptuję</button>
-      </div>
-    </div>
-  );
-}
+  const goAuth = () => navigate({ to: "/auth" });
 
-const QUIZ_DATA = [
-  { q: "Ile wynosi pole kwadratu o boku 5 cm?", opts: [["25 cm²", true], ["20 cm²", false], ["10 cm²", false], ["30 cm²", false]], explain: "Pole = 5 × 5 = 25 cm²" },
-  { q: "Która liczba jest podzielna przez 3?", opts: [["124", false], ["327", true], ["401", false], ["550", false]], explain: "3+2+7=12, a 12 dzieli się przez 3" },
-  { q: "Jaki jest pierwiastek kwadratowy z 144?", opts: [["10", false], ["14", false], ["12", true], ["16", false]], explain: "12 × 12 = 144" },
-];
-function DemoShowcase() {
-  const [step, setStep] = useState<"start" | "q1" | "q2" | "q3" | "done">("start");
-  const [answers, setAnswers] = useState<boolean[]>([false, false, false]);
-  const [correct, setCorrect] = useState<boolean | null>(null);
-  const [showExplain, setShowExplain] = useState(false);
-  const [totalTime, setTotalTime] = useState(0);
-  const startTime = useRef(0);
-  const qi = step === "q1" ? 0 : step === "q2" ? 1 : step === "q3" ? 2 : 0;
-  const qData = step.startsWith("q") ? QUIZ_DATA[qi] : null;
-  const score = answers.filter(Boolean).length;
-  const pick = (isCorrect: boolean) => {
-    const now = Date.now();
-    if (startTime.current) setTotalTime((t) => t + (now - startTime.current));
-    setCorrect(isCorrect);
-    setShowExplain(true);
-    setTimeout(() => {
-      const newAnswers = [...answers];
-      newAnswers[qi] = isCorrect;
-      setAnswers(newAnswers);
-      setCorrect(null);
-      setShowExplain(false);
-      if (step === "q1") setStep("q2");
-      else if (step === "q2") setStep("q3");
-      else if (step === "q3") { setStep("done"); burstConfetti({ clientX: window.innerWidth / 2, clientY: window.innerHeight / 2 } as React.MouseEvent); }
-      startTime.current = Date.now();
-    }, 900);
-  };
-  const restart = () => { setStep("start"); setAnswers([false, false, false]); setCorrect(null); setShowExplain(false); setTotalTime(0); };
   return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">Demo na żywo</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Rozwiąż mini egzamin" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Zobacz jak działa platforma — 3 pytania z matematyki pod presją czasu.</p>
-        </div>
-        <div className="reveal-scale max-w-xl mx-auto">
-          <div className="card-premium rounded-2xl p-8 sm:p-10 relative overflow-hidden">
-            {step === "start" && (
-              <div className="text-center" style={{ animation: "quizFade 0.4s ease-out" }}>
-                <div className="w-20 h-20 mx-auto rounded-[24px] bg-gradient-to-br from-accent to-violet-500 grid place-items-center mb-6 shadow-lg"><Notebook className="w-8 h-8 text-black"/></div>
-                <h3 className="text-2xl font-bold">Matematyka — Klasa 6</h3>
-                <div className="mt-3 flex justify-center gap-4 text-xs text-white/40">
-                  <span className="flex items-center gap-1"><Timer className="w-3.5 h-3.5"/>~30s na pytanie</span>
-                  <span className="flex items-center gap-1"><Target className="w-3.5 h-3.5"/>3 pytania</span>
-                </div>
-                <button onClick={() => { startTime.current = Date.now(); setStep("q1"); }} className="mt-8 btn-shine inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-medium text-sm bg-white text-black hover:bg-white/90 transition-all shadow-sm">Rozpocznij quiz <Play className="w-4 h-4"/></button>
-              </div>
-            )}
-            {qData && (step === "q1" || step === "q2" || step === "q3") && (
-              <div key={step} style={{ animation: "quizFade 0.35s ease-out" }}>
-                <div className="flex items-center justify-between gap-4 mb-6">
-                  <div className="flex items-center gap-2 text-xs text-white/40">
-                    <span className="w-2 h-2 rounded-full bg-accent"/>
-                    Pytanie {qi + 1}/3
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-white/30 font-mono">
-                    <Timer className="w-3 h-3"/> {totalTime > 0 ? `${Math.round(totalTime / 1000)}s` : "00s"}
-                  </div>
-                </div>
-                <div className="flex gap-1 mb-6">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className="flex-1 h-1 rounded-full bg-white/[0.06] overflow-hidden">
-                      <div className={`h-full rounded-full transition-all duration-700 ${i < qi ? "bg-accent" : i === qi && correct === true ? "bg-emerald-400" : i === qi && correct === false ? "bg-rose-400" : i === qi ? "bg-white/20" : ""}`}
-                        style={{ width: i === qi ? "100%" : i < qi ? "100%" : "0%" }} />
-                    </div>
-                  ))}
-                </div>
-                <p className="text-lg sm:text-xl font-medium text-white/90 leading-relaxed">{qData.q}</p>
-                <div className="mt-5 grid gap-2.5">
-                  {qData.opts.map(([t, isC]) => {
-                    const selected = correct !== null;
-                    const isThis = selected && isC;
-                    return (
-                      <button key={t as string} disabled={selected}
-                        onClick={() => pick(isC as boolean)}
-                        className={`text-left px-5 py-3.5 rounded-xl border text-sm transition-all duration-300 ${selected ? (isThis ? "border-emerald-400/50 bg-emerald-400/10 text-emerald-200" : "border-white/[0.04] bg-white/[0.01] text-white/30") : "border-white/[0.06] bg-white/[0.02] text-white/60 hover:border-accent/30 hover:bg-accent/[0.04] hover:text-white"}`}>
-                        <span className="flex items-center gap-3">
-                          {selected && isThis && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
-                          {selected && !isThis && !isC && <XIcon className="w-4 h-4 text-rose-400/50 shrink-0" />}
-                          {t as string}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {showExplain && <div className="mt-4 text-xs text-accent/60 animate-pulse">{qData.explain}</div>}
-              </div>
-            )}
-            {step === "done" && (
-              <div className="text-center" style={{ animation: "quizFade 0.5s ease-out" }}>
-                <div className="w-24 h-24 mx-auto rounded-[28px] grid place-items-center mb-6 shadow-lg bg-gradient-to-br from-accent to-blue-500"
-                  style={{ animation: "splashPulse 1.5s ease-in-out infinite" }}>
-                  {score === 3 ? <Award className="w-10 h-10 text-black"/> : score >= 2 ? <Star className="w-10 h-10 text-black"/> : <Target className="w-10 h-10 text-black"/>}
-                </div>
-                <h3 className="text-2xl font-bold">{score === 3 ? "Perfect!" : score >= 2 ? "Dobra robota!" : "Spróbuj jeszcze raz"}</h3>
-                <div className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm">
-                  <span className="text-white/40">Wynik:</span>
-                  <span className={`font-bold font-mono ${score === 3 ? "text-emerald-300" : score >= 2 ? "text-accent" : "text-amber-300"}`}>{score}/3</span>
-                </div>
-                {totalTime > 0 && <p className="mt-2 text-xs text-white/30 font-mono">Czas: {Math.round(totalTime / 1000)}s</p>}
-                <div className="mt-6 flex items-center justify-center gap-3">
-                  <button onClick={restart} className="px-6 py-2.5 rounded-full text-sm font-medium border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.04] transition-all">Rozwiąż ponownie</button>
-                  <Link to="/auth/teacher" className="btn-shine inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shadow-sm">Załóż konto <ArrowRight className="w-4 h-4"/></Link>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 text-center text-xs text-white/30">W rzeczywistym egzaminie AI sprawdza odpowiedzi otwarte i wykrywa ściąganie.</div>
-        </div>
-        <style>{`@keyframes quizFade { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }`}</style>
-        <div className="mt-16 reveal">
-          <div className="card-premium rounded-2xl p-6 sm:p-8">
-            <div className="grid lg:grid-cols-2 gap-6 items-center">
-              <div>
-                <h3 className="text-lg font-bold flex items-center gap-2"><Radio className="w-5 h-5 text-accent"/> Monitoring na żywo</h3>
-                <p className="mt-2 text-sm text-white/40">Widzisz postęp każdego ucznia w czasie rzeczywistym. AI wykrywa nieprawidłowości.</p>
-                <ul className="mt-4 space-y-2 text-sm text-white/50">
-                  {[["Postęp na żywo", "Widzisz kto skończył, a kto utknął"], ["Wykrywanie ściągania", "AI analizuje ruchy myszy i ostrzega"], ["Kontrola zdalna", "Możesz zatrzymać lub przedłużyć egzamin"]].map(([t, d]) => (
-                    <li key={t} className="flex gap-2"><span className="grad-dot"/><div><span className="text-white/80">{t}</span> — {d}</div></li>
-                  ))}
-                </ul>
-              </div>
-              <div className="relative">
-                <div className="absolute -inset-3 bg-gradient-to-r from-accent/5 to-fuchsia-400/5 rounded-3xl blur-xl" />
-                <div className="relative rounded-2xl bg-[oklch(0.06_0.03_270)] border border-white/[0.06] overflow-hidden">
-                  <div className="flex items-center gap-1.5 px-4 py-3 border-b border-white/[0.06]">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/60"/><span className="w-2.5 h-2.5 rounded-full bg-amber-500/60"/><span className="w-2.5 h-2.5 rounded-full bg-emerald-500/60"/>
-                    <span className="ml-2 text-[9px] text-white/30 font-mono">Panel · monitoring</span>
-                  </div>
-                  <div className="p-4 sm:p-5 space-y-3">
-                    <div className="flex items-center justify-between pb-2 border-b border-white/[0.06]">
-                      <div className="flex items-center gap-2"><span className="pulse-dot"><span className="w-1.5 h-1.5 rounded-full bg-accent block"/></span><span className="text-xs text-white/50">Na żywo: <span className="text-white font-medium">24 uczniów</span></span></div>
-                      <span className="text-xs text-white/40">Średnia: <span className="text-accent font-mono">73%</span></span>
-                    </div>
-                    {[
-                      { n: "Kowalski J.", p: 88, c: "#34d399" }, { n: "Nowak A.", p: 72, c: "#22d3ee" },
-                      { n: "Wiśniewska Z.", p: 95, c: "#34d399" }, { n: "Kamiński P.", p: 45, c: "#fb7185" },
-                      { n: "Lewandowska M.", p: 68, c: "#fbbf24" },
-                    ].map((s) => (
-                      <div key={s.n} className="flex items-center gap-3">
-                        <span className="text-xs text-white/50 w-20 truncate">{s.n}</span>
-                        <div className="flex-1 h-2 rounded-full bg-white/[0.06] overflow-hidden">
-                          <div className="h-full rounded-full prog-fill" style={{ width: `${s.p}%`, background: s.c, opacity: 0.7 }} />
-                        </div>
-                        <span className="text-xs font-mono w-8 text-right text-white/50">{s.p}%</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+    <div className={`min-h-screen overflow-x-hidden selection:bg-[#0078d4]/30 ${palette.page}`}>
+      <Toaster theme={isLight ? "light" : "dark"} position="top-center" />
+      <div ref={progressRef} className="fixed left-0 top-0 z-[80] h-1 w-full origin-left scale-x-0 bg-[#0078d4]" />
+      <Background isLight={isLight} />
+      <TopNav isLight={isLight} palette={palette} menuOpen={menuOpen} setMenuOpen={setMenuOpen} toggle={toggle} />
 
-function ForWhomFlow() {
-  const cards = [
-    { icon: GraduationCap, accent: "from-accent to-blue-500", to: "/auth/student", title: "Uczeń", lines: ["Wejście PIN-em bez konta", "Czysty interfejs egzaminu", "Wynik widoczny od razu", "Certyfikat PDF + QR", "AI rekomendacje materiałów"] },
-    { icon: Users, accent: "from-accent to-blue-500", to: "/auth/teacher", title: "Nauczyciel", lines: ["Pytania z AI w 3 sekundy", "Klasy, oceny, dziennik", "Monitoring na żywo", "Eksport PDF/Excel", "AI asystent głosowy"] },
-    { icon: ShieldCheck, accent: "from-accent to-blue-500", to: "/auth/admin", title: "Dyrekcja", lines: ["Zatwierdzanie nauczycieli", "Raporty zbiorcze", "Audyt i statystyki", "Wgląd w wyniki szkoły", "Panel nadzoru AI"] },
-    { icon: Heart, accent: "from-accent to-blue-500", to: "/auth/parent", title: "Rodzic", lines: ["Wgląd w wyniki dziecka", "Powiadomienia e-mail", "Raport postępów", "Konsultacje online", "Dostęp przez przeglądarkę"] },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">Dla kogo</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Cztery perspektywy, jedna platforma" /></h2>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-fr">
-          {cards.map((c, i) => (
-            <motion.div
-              key={c.title}
-              className="flex"
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Link to={c.to} className="group card-premium rounded-2xl p-6 hover:-translate-y-1 stagger-item flex flex-col w-full">
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${c.accent} grid place-items-center mb-4 shadow-sm transition-transform duration-300 group-hover:scale-110 shrink-0`}>
-                  <c.icon className="w-6 h-6 text-black" />
-                </div>
-                <h3 className="text-lg font-bold shrink-0">{c.title}</h3>
-                <ul className="mt-3 space-y-2 text-sm text-white/50 flex-1">
-                  {c.lines.map((l) => (
-                    <li key={l} className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-accent/40 shrink-0 mt-0.5"/><span>{l}</span></li>
-                  ))}
-                </ul>
-                <div className="mt-auto pt-4 inline-flex items-center gap-1 text-xs font-medium text-white/30 group-hover:text-accent transition-colors shrink-0">
-                  Przejdź <ArrowUpRight className="w-3 h-3"/>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+      <main className="relative z-10">
+        <section className="mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-center px-5 pb-20 pt-32 sm:px-8 lg:px-10">
+          <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }}>
+              <Badge isLight={isLight} icon={Sparkles}>Platforma egzaminacyjna nowej generacji</Badge>
+              <h1 className="mt-7 max-w-4xl text-5xl font-semibold leading-[0.95] tracking-[-0.07em] sm:text-7xl lg:text-[88px]">
+                EduNex robi z egzaminów system klasy premium.
+              </h1>
+              <p className={`mt-7 max-w-2xl text-lg leading-8 sm:text-xl ${palette.muted}`}>
+                Strona dla szkół, nauczycieli i uczniów: szybkie sesje PIN, panel nauczyciela, sprawdziany, AI, analityka, bezpieczeństwo i nowoczesny wygląd w jednym miejscu.
+              </p>
 
-function ComparisonShowcase() {
-  const rows = [
-    { l: "Czas przygotowania egzaminu", t: "2–4 godziny", e: "3 minuty", icon: Timer },
-    { l: "Sprawdzanie prac", t: "5–15 godzin", e: "0.3s (automat)", icon: FileText },
-    { l: "Koszty druku / mies.", t: "200–500 zł", e: "0 zł", icon: DollarSign },
-    { l: "Ryzyko ściągania", t: "Wysokie", e: "AI wykrywa", icon: ShieldCheck },
-    { l: "Dostęp do wyników", t: "1–2 tygodnie", e: "Natychmiast", icon: Zap },
-    { l: "Archiwizacja", t: "Segregator", e: "Chmura · RODO", icon: Database },
-    { l: "Certyfikaty", t: "Ręcznie", e: "PDF + QR auto", icon: ScrollText },
-    { l: "Analiza statystyk", t: "Excel ręcznie", e: "Automatyczne wykresy", icon: BarChart3 },
-    { l: "Kontrola postępów", t: "Brak", e: "Na żywo · dashboard", icon: Activity },
-    { l: "Migracja danych", t: "Godziny", e: "Import 1 klik", icon: Upload },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">Porównanie</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Tradycyjnie vs EduNex" /></h2>
-        </div>
-        <div className="reveal space-y-3 relative">
-          <div className="flex items-center gap-3 px-4 sm:px-6 py-2 text-xs text-white/40 font-medium relative">
-            <span className="w-8 shrink-0" />
-            <span className="flex-1">Obszar</span>
-            <span className="w-28 sm:w-36 text-right text-rose-300/50">Tradycyjnie</span>
-            <span className="w-28 sm:w-40 text-right text-accent/70">EduNex</span>
-          </div>
-          {rows.map((r, i) => (
-              <div key={r.l} className="card-premium rounded-2xl px-4 sm:px-6 py-3 hover:-translate-y-[1px] transition-all cursor-default stagger-item" style={{ animationDelay: `${i * 0.04}s` }}>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent/10 to-violet-400/10 grid place-items-center shrink-0">
-                  <r.icon className="w-3.5 h-3.5 text-accent/60" />
-                </div>
-                <span className="flex-1 text-white/70 text-xs sm:text-sm font-medium">{r.l}</span>
-                <span className="w-28 sm:w-36 text-right text-rose-300/40 text-xs sm:text-sm flex items-center justify-end gap-1">
-                  <XIcon className="w-3 h-3 opacity-50 shrink-0"/>{r.t}
-                </span>
-                <span className="w-28 sm:w-40 text-right text-cyan-200/80 text-xs sm:text-sm flex items-center justify-end gap-1 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400/70 shrink-0"/>{r.e}
-                </span>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <button onClick={goAuth} className="group inline-flex items-center justify-center gap-2 rounded-full bg-[#0078d4] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_18px_42px_rgba(0,120,212,0.28)] transition hover:bg-[#106ebe]">
+                  Przejdź do panelu <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+                </button>
+                <a href="#demo" className={`inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3.5 text-sm font-semibold backdrop-blur transition ${palette.chip}`}>
+                  <Play className="h-4 w-4" /> Zobacz demo systemu
+                </a>
               </div>
-            </div>
-          ))}
-          <div className="text-center pt-2">
-            <Link to="/auth/teacher" className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-medium text-accent/70 hover:text-cyan-200 transition-colors">
-              Zobacz pełne porównanie <ArrowRight className="w-3 h-3"/>
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
-const ACHIEVEMENTS = [
-  { icon: Trophy, value: "847+", label: "Egzaminów dziennie", color: "from-accent to-blue-500" },
-  { icon: School, value: "128+", label: "Aktywnych szkół", color: "from-accent to-blue-500" },
-  { icon: Award, value: "18 920", label: "Certyfikatów", color: "from-accent to-blue-500" },
-  { icon: Heart, value: "97.8%", label: "Zadowolonych uczniów", color: "from-accent to-blue-500" },
-];
-function AchievementsFlow() {
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">Osiągnięcia</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Platforma w liczbach" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Ponad 36 000 użytkowników i ciągle rośniemy.</p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {ACHIEVEMENTS.map((a, i) => (
-              <div key={a.label} className={`reveal card-premium rounded-2xl p-6 text-center stagger-item ${i === 0 || i === 5 ? "sm:col-span-1" : ""}`} style={{ animationDelay: `${i * 0.06}s` }}>
-              <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${a.color} grid place-items-center mb-4`}>
-                <a.icon className="w-6 h-6 text-black" />
-              </div>
-              <div className="text-3xl sm:text-4xl font-bold">
-                <span className={`bg-gradient-to-r ${a.color} bg-clip-text text-transparent`}>{a.value}</span>
-              </div>
-              <div className="text-xs text-white/40 mt-1.5 font-medium">{a.label}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AIPlatformFlow() {
-  const capabilities = [
-    { icon: BrainCircuit, title: "AI Tutor", desc: "24/7 asystent do nauki matematyki, języków, programowania", active: true },
-    { icon: FileText, title: "AI Generator", desc: "Generuj pytania egzaminacyjne z tematu, zdjęcia lub ilustracji", active: true },
-    { icon: Sparkles, title: "AI Ocenianie", desc: "Automatyczna ocena wypracowań i odpowiedzi otwartych", active: true },
-    { icon: Code2, title: "Code Mentor", desc: "Nauka programowania z interaktywnym asystentem kodu", active: true },
-    { icon: BarChart3, title: "Progress Analyzer", desc: "Analiza postępów z predykcją wyników AI", active: true },
-    { icon: ShieldCheck, title: "Plagiarism Detector", desc: "Wykrywanie plagiatów i AI-generated content", active: false },
-    { icon: BookOpen, title: "Course Generator", desc: "Automatyczne tworzenie kursów z dowolnego tematu", active: false },
-    { icon: Presentation, title: "Presentation Maker", desc: "Generowanie prezentacji z AI w kilka sekund", active: false },
-  ];
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center max-w-3xl mx-auto mb-16">
-          <span className="section-label">Platforma AI</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight">
-            <TextReveal text="Potęga sztucznej inteligencji w edukacji" />
-          </h2>
-          <p className="mt-3 text-white/40 text-sm max-w-2xl mx-auto">
-            EduNex wykorzystuje najnowsze modele AI do automatyzacji nauczania, oceniania i personalizacji ścieżek edukacyjnych.
-          </p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {capabilities.map((c, i) => (
-            <motion.div
-              key={c.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className={`card-premium rounded-2xl p-5 stagger-item transition-all ${!c.active ? 'opacity-50' : ''}`}
-            >
-              <div className={`w-10 h-10 rounded-xl grid place-items-center mb-4 ${c.active ? 'bg-gradient-to-br from-accent to-blue-500' : 'bg-white/[0.04]'}`}>
-                <c.icon className={`w-5 h-5 ${c.active ? 'text-black' : 'text-white/30'}`} />
-              </div>
-              <h3 className="text-sm font-semibold text-white">{c.title}</h3>
-              <p className="text-xs text-white/40 mt-1.5 leading-relaxed">{c.desc}</p>
-              <div className="mt-3 flex items-center gap-1.5">
-                {c.active ? (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                    <span className="text-[10px] text-emerald-300/70 font-medium">Dostępne</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400/50" />
-                    <span className="text-[10px] text-amber-300/50 font-medium">Wkrótce</span>
-                  </>
-                )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        <div className="reveal-scale mt-12 rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 sm:p-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="flex -space-x-2">
-                {[Bot, BrainCircuit, Zap].map((Icon, i) => (
-                  <div key={i} className={`w-9 h-9 rounded-full border-2 border-[oklch(0.06_0.03_270)] grid place-items-center ${i === 0 ? 'bg-accent/20 text-accent' : i === 1 ? 'bg-violet-500/20 text-violet-300' : 'bg-amber-500/20 text-amber-300'}`}>
-                    <Icon className="w-4 h-4" />
+              <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {stats.map(([value, label]) => (
+                  <div key={label} className={`rounded-2xl border p-4 backdrop-blur ${palette.soft2}`}>
+                    <div className="text-2xl font-semibold tracking-tight">{value}</div>
+                    <div className={`mt-1 text-xs ${palette.muted}`}>{label}</div>
                   </div>
                 ))}
               </div>
-              <div>
-                <div className="text-sm font-medium text-white/80">Modele AI: Gemini 1.5 Flash · GPT-4o · Claude 3.5</div>
-                <div className="text-xs text-white/30 mt-0.5">Własny gateway AI z automatycznym routingiem i fallbackiem</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-white/40">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>99.9% uptime</span>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <Zap className="w-3.5 h-3.5 text-accent" />
-              <span>&lt;200ms latency</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function AiDemoShowcase() {
-  const [messages, setMessages] = useState<{ role: string; content: string; code?: string }[]>([
-    { role: "ai", content: "Cześć! Jestem AI Tutor EduNex. Mogę pomóc w nauce matematyki, języków, programowania i nie tylko. O co chcesz zapytać?" }
-  ]);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [voiceMode, setVoiceMode] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
-
-  const DEMO_RESPONSES: Record<string, { text: string; code?: string }> = {
-    matematyka: { text: "Funkcja kwadratowa to f(x) = ax² + bx + c, gdzie a ≠ 0. Jej wykresem jest parabola. Wierzchołek ma współrzędne W(p, q), gdzie p = -b/(2a), q = -Δ/(4a). Δ = b² - 4ac nazywamy wyróżnikiem. Chcesz przećwiczyć na przykładzie?" },
-    angielski: { text: "Sure! 'Present Perfect' używamy gdy mówimy o przeszłych wydarzeniach mających wpływ na teraźniejszość. Struktura: have/has + past participle. Przykład: 'I have visited Paris.'" },
-    programowanie: { text: "W Pythonie list comprehension to elegancki sposób tworzenia list. Oto przykład:", code: `# Kwadraty parzystych liczb od 0 do 9\nparzyste_kwadraty = [x**2 for x in range(10) if x % 2 == 0]\nprint(parzyste_kwadraty)\n# Wynik: [0, 4, 16, 36, 64]` },
-    fizyka: { text: "Zgodnie z drugą zasadą dynamiki Newtona, siła jest iloczynem masy i przyspieszenia: F = m · a. Jeśli masa wynosi 5 kg, a przyspieszenie 2 m/s², to siła to 10 N." },
-    chemia: { text: "Masa molowa H₂SO₄ (kwas siarkowy) to: 2·1 + 32 + 4·16 = 98 g/mol. Stechiometria opiera się na proporcjach masowych reagentów w reakcji chemicznej." },
-    domyślne: { text: "Świetne pytanie! Na platformie EduNex możesz korzystać z AI do generowania kursów, testów, analizy postępów i personalizowanych planów nauki. AI Code Mentor pomoże Ci w programowaniu, a AI Teacher w przygotowaniu materiałów." },
-  };
-
-  const quickActions = [
-    { label: "matematyka", icon: Calculator },
-    { label: "angielski", icon: Globe2 },
-    { label: "programowanie", icon: Code2 },
-    { label: "fizyka", icon: Atom },
-    { label: "chemia", icon: FlaskConical },
-  ];
-
-  const handleSend = () => {
-    const q = input.trim().toLowerCase();
-    if (!q || busy) return;
-    setMessages(prev => [...prev, { role: "user", content: input.trim() }]);
-    setInput("");
-    setBusy(true);
-    setTimeout(() => {
-      const matched = Object.entries(DEMO_RESPONSES).find(([key]) => q.includes(key));
-      const answer = matched ? matched[1] : DEMO_RESPONSES.domyślne;
-      setMessages(prev => [...prev, { role: "ai", content: answer.text, code: answer.code }]);
-      setBusy(false);
-    }, 800 + Math.random() * 600);
-  };
-
-  useEffect(() => {
-    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
-  }, [messages]);
-
-  return (
-    <section id="ai-demo" className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">AI Demo</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Porozmawiaj z AI Tuturem" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Zadaj pytanie z dowolnego przedmiotu — AI rozumie kontekst i odpowiada z przykładami.</p>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-2 mb-6 reveal">
-          {quickActions.map((a) => (
-            <button key={a.label} onClick={() => { setInput(a.label); }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] transition-all duration-200"
-              style={{ background: "oklch(1 0 0 / 0.04)", border: "1px solid oklch(1 0 0 / 0.06)", color: "oklch(1 0 0 / 0.4)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "oklch(0.7 0.15 200 / 0.3)"; e.currentTarget.style.color = "oklch(0.7 0.15 200)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.06)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.4)"; }}
-            >
-              <a.icon className="w-3 h-3" /> {a.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="reveal-scale max-w-2xl mx-auto">
-          <div className="card-premium rounded-2xl overflow-hidden border border-white/[0.08]">
-            <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-accent to-violet-500 grid place-items-center">
-                  <BrainCircuit className="w-4 h-4 text-black" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-white/90">AI Tutor</div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="status-dot online" />
-                    <span className="text-[10px] text-white/30">Online · Gemini 1.5 Flash</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 text-[10px] text-white/30">
-                <Sparkles className="w-3 h-3 text-accent" />Multi-model
-              </div>
-            </div>
-            <div ref={chatRef} className="h-80 overflow-y-auto p-5 space-y-4 scroll-smooth">
-              {messages.map((m, i) => (
-                <div key={i} className={`flex gap-3 ${m.role === "user" ? "justify-end" : ""}`} style={{ animation: "chatFade 0.3s ease-out" }}>
-                  {m.role === "ai" && (
-                    <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-violet-500 grid place-items-center shrink-0 mt-0.5">
-                      <BrainCircuit className="w-3.5 h-3.5 text-black" />
-                    </div>
-                  )}
-                  <div className={`max-w-[85%] space-y-2 ${m.role === "user" ? "items-end" : "items-start"}`}>
-                    <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${m.role === "user" ? "bg-accent/15 text-white/90 rounded-tr-md" : "bg-white/[0.04] border border-white/[0.06] text-white/70 rounded-tl-md"}`}>
-                      {m.content}
-                    </div>
-                    {(m as any).code && (
-                      <div className="rounded-xl overflow-hidden border border-accent/10 bg-[oklch(0.03_0.02_270)]">
-                        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-white/[0.04]" style={{ background: "oklch(0.06 0.03 270)" }}>
-                          <Code2 className="w-3 h-3 text-accent/60" />
-                          <span className="text-[10px] text-white/30 font-mono">Python</span>
-                          <button onClick={() => { navigator.clipboard.writeText((m as any).code); toast.success("Skopiowano!"); }} className="ml-auto text-[10px] text-white/30 hover:text-white/60 transition-colors">Copy</button>
-                        </div>
-                        <pre className="p-3 text-xs font-mono leading-relaxed overflow-x-auto" style={{ color: "oklch(0.7 0.15 200 / 0.9)" }}>{(m as any).code}</pre>
-                      </div>
-                    )}
-                  </div>
-                  {m.role === "user" && (
-                    <div className="w-7 h-7 rounded-lg bg-white/[0.06] grid place-items-center shrink-0 mt-0.5">
-                      <span className="text-[10px] text-white/50 font-medium">U</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-              {busy && (
-                <div className="flex gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-accent to-violet-500 grid place-items-center shrink-0">
-                    <BrainCircuit className="w-3.5 h-3.5 text-black" />
-                  </div>
-                  <div className="px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.06]">
-                    <div className="flex gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/30 animate-bounce" style={{ animationDelay: "300ms" }} />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2 p-3 border-t border-white/[0.06] bg-white/[0.01]">
-              <button onClick={() => { setVoiceMode(!voiceMode); toast.success(voiceMode ? "Tryb tekstowy" : "Tryb głosowy — powiedz pytanie"); }}
-                className="p-2 rounded-xl transition-all shrink-0"
-                style={{ background: voiceMode ? "oklch(0.7 0.15 200 / 0.2)" : "oklch(1 0 0 / 0.04)", color: voiceMode ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.3)", border: "1px solid oklch(1 0 0 / 0.06)" }}>
-                <Mic className="w-4 h-4" />
-              </button>
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()}
-                placeholder={voiceMode ? "Powiedz coś lub wpisz..." : "Zapytaj AI o matematykę, angielski, programowanie..."}
-                className="flex-1 px-4 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-accent/30 transition-all" />
-              <button onClick={handleSend} disabled={busy || !input.trim()}
-                className="p-2.5 rounded-xl bg-accent text-accent-foreground hover:bg-accent/90 disabled:opacity-30 transition-all">
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-          <div className="mt-4 flex justify-center gap-4 text-[10px] text-white/30">
-            <span>Przykłady: <button onClick={() => setInput("matematyka")} className="text-accent/70 hover:text-accent underline underline-offset-2">funkcja kwadratowa</button></span>
-            <span><button onClick={() => setInput("angielski")} className="text-accent/70 hover:text-accent underline underline-offset-2">present perfect</button></span>
-            <span><button onClick={() => setInput("programowanie")} className="text-accent/70 hover:text-accent underline underline-offset-2">list comprehension</button></span>
-          </div>
-          <div className="mt-2 text-center text-[9px] text-white/20">AI może się mylić. Weryfikuj odpowiedzi z nauczycielem.</div>
-        </div>
-      </div>
-      <style>{`@keyframes chatFade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }`}</style>
-    </section>
-  );
-}
-
-const SECURITY_ITEMS = [
-  { icon: Lock, title: "Szyfrowanie TLS 1.3", desc: "Dane przesyłane z szyfrowaniem klasy bankowej. Certyfikat SSL automatycznie odnawiany.", color: "from-accent to-blue-500" },
-  { icon: Shield, title: "Ochrona przed atakami", desc: "WAF, DDoS protection, rate limiting. Monitoring 24/7 przez zespół bezpieczeństwa.", color: "from-accent to-blue-500" },
-  { icon: Fingerprint, title: "RODO — pełna zgodność", desc: "Umowa powierzenia danych, dziennik audytu, prawo do bycia zapomnianym.", color: "from-accent to-blue-500" },
-  { icon: Database, title: "Backupy co 6h", desc: "Automatyczne kopie na 3 niezależnych serwerach w różnych lokalizacjach w UE.", color: "from-accent to-blue-500" },
-  { icon: ScanFace, title: "Tryb egzaminacyjny", desc: "Blokada skrótów, pełny ekran, monitoring aktywności, losowanie pytań.", color: "from-accent to-blue-500" },
-  { icon: Building2, title: "Serwery w Polsce", desc: "Dane przechowywane w Warszawie i Krakowie. Poza jurysdykcją CLOUD Act.", color: "from-accent to-blue-500" },
-  { icon: Users, title: "Kontrola dostępu RBAC", desc: "Role: admin, dyrektor, nauczyciel. 2FA dla administratora, dostęp tylko do własnych zasobów.", color: "from-accent to-blue-500" },
-  { icon: Radio, title: "Monitoring 24/7", desc: "Automatyczne skanowanie podatności, testy penetracyjne co kwartał, SOC.", color: "from-accent to-blue-500" },
-];
-function SecurityFlow() {
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-14">
-          <span className="section-label">Bezpieczeństwo</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Dane bezpieczne jak w banku" /></h2>
-          <p className="mt-3 text-white/40 text-sm">Certyfikaty, szyfrowanie i procedury — wszystko, czego wymaga nowoczesna szkoła.</p>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {SECURITY_ITEMS.map((it, i) => (
-            <motion.div
-              key={it.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="card-premium rounded-2xl p-6"
-            >
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${it.color} grid place-items-center mb-4`}><it.icon className="w-5 h-5 text-black"/></div>
-              <h3 className="font-semibold text-sm text-white/90">{it.title}</h3>
-              <p className="mt-1.5 text-xs text-white/50 leading-relaxed">{it.desc}</p>
             </motion.div>
-          ))}
-        </div>
-        <div className="reveal mt-8 grid grid-cols-3 sm:grid-cols-6 gap-3 max-w-2xl mx-auto">
-          {[["Zgodność z MEN", Scale], ["RODO", Shield], ["ISO 27001", ShieldCheck], ["TLS 1.3", Lock], ["Serwery UE", Globe], ["99.98% SLA", Activity]].map(([n, I]) => (
-            <div key={n as string} className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] transition-all">
-              <I className="w-5 h-5 text-accent/60"/><span className="text-[10px] text-white/50 text-center font-medium">{n as string}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+
+            <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.65, delay: 0.1 }}>
+              <HeroConsole isLight={isLight} palette={palette} />
+            </motion.div>
+          </div>
+        </section>
+
+        <TrustStrip isLight={isLight} palette={palette} />
+        <PillarsSection isLight={isLight} palette={palette} />
+        <RoleSection isLight={isLight} palette={palette} activeRole={activeRole} setActiveRole={setActiveRole} />
+        <WorkflowSection isLight={isLight} palette={palette} />
+        <DemoSection isLight={isLight} palette={palette} />
+        <ModulesSection isLight={isLight} palette={palette} />
+        <AISection isLight={isLight} palette={palette} />
+        <SecuritySection isLight={isLight} palette={palette} />
+        <PricingSection isLight={isLight} palette={palette} />
+        <FAQSection isLight={isLight} palette={palette} activeFaq={activeFaq} setActiveFaq={setActiveFaq} />
+        <ContactSection isLight={isLight} palette={palette} />
+      </main>
+
+      <StickyActions isLight={isLight} goAuth={goAuth} toggle={toggle} />
+      <Footer isLight={isLight} palette={palette} />
+    </div>
   );
 }
 
-function TrustBar() {
-  const logos = [
-    { label: "Ministerstwo Edukacji", sub: "Zgodność z podstawą programową", icon: Scale },
-    { label: "RODO", sub: "Pełna zgodność z ochroną danych", icon: ShieldCheck },
-    { label: "ISO 27001", sub: "Certyfikat bezpieczeństwa", icon: Shield },
-    { label: "AWS", sub: "Cloud Infrastructure", icon: Server },
-    { label: "Google for Education", sub: "Integration Partner", icon: GraduationCap },
-    { label: "Resend", sub: "Email Infrastructure", icon: Mail },
+function Background({ isLight }: { isLight: boolean }) {
+  return (
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: isLight
+            ? "radial-gradient(circle at 18% 10%, rgba(0,120,212,0.16), transparent 26%), radial-gradient(circle at 78% 12%, rgba(80,230,255,0.14), transparent 28%), linear-gradient(135deg, #f8fbff, #eef4fb 45%, #ffffff)"
+            : "radial-gradient(circle at 15% 8%, rgba(0,120,212,0.25), transparent 30%), radial-gradient(circle at 82% 6%, rgba(80,230,255,0.12), transparent 30%), radial-gradient(circle at 50% 92%, rgba(59,130,246,0.18), transparent 35%), linear-gradient(135deg, #020617, #06101e 45%, #01030a)",
+        }}
+      />
+      <div
+        className={`absolute inset-0 ${isLight ? "opacity-[0.35]" : "opacity-[0.18]"}`}
+        style={{
+          backgroundImage: isLight
+            ? "linear-gradient(rgba(15,23,42,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.06) 1px, transparent 1px)"
+            : "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
+        }}
+      />
+      <motion.div className="absolute -left-24 top-24 h-96 w-96 rounded-full bg-[#0078d4]/20 blur-3xl" animate={{ x: [0, 60, 10, 0], y: [0, -20, 25, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }} />
+      <motion.div className="absolute -right-24 top-40 h-[440px] w-[440px] rounded-full bg-cyan-400/14 blur-3xl" animate={{ x: [0, -40, 20, 0], y: [0, 35, -10, 0] }} transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }} />
+    </div>
+  );
+}
+
+function TopNav({ isLight, palette, menuOpen, setMenuOpen, toggle }: any) {
+  const links = [
+    ["Funkcje", "#funkcje"],
+    ["Role", "#role"],
+    ["Demo", "#demo"],
+    ["AI", "#ai"],
+    ["Cennik", "#cennik"],
   ];
   return (
-    <section className="relative py-12 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          className="text-center mb-6"
-        >
-          <span className="text-[10px] tracking-[0.2em] text-white/30 uppercase font-mono">Zaufali nam</span>
-        </motion.div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
-          {logos.map((l, i) => (
-            <motion.div key={l.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-              className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] transition"
-            >
-              <l.icon className="w-5 h-5 text-cyan-400/60" />
-              <span className="text-[10px] text-white/50 text-center font-medium leading-tight">{l.label}</span>
-              <span className="text-[8px] text-white/20 text-center">{l.sub}</span>
-            </motion.div>
+    <header className="fixed left-0 right-0 top-4 z-50 px-4 sm:px-6">
+      <nav className={`mx-auto flex max-w-7xl items-center justify-between rounded-full border px-4 py-3 shadow-lg backdrop-blur-2xl ${palette.nav}`}>
+        <Link to="/" className="flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#0078d4] text-white shadow-[0_12px_34px_rgba(0,120,212,0.3)]"><Sparkles className="h-5 w-5" /></div>
+          <div>
+            <div className="text-sm font-semibold leading-none">EduNex</div>
+            <div className={`mt-1 text-[10px] uppercase tracking-[0.22em] ${isLight ? "text-slate-500" : "text-white/42"}`}>exam cloud</div>
+          </div>
+        </Link>
+
+        <div className="hidden items-center gap-1 lg:flex">
+          {links.map(([label, href]) => (
+            <a key={href} href={href} className={`rounded-full px-4 py-2 text-sm font-medium transition ${isLight ? "text-slate-600 hover:bg-slate-100 hover:text-slate-950" : "text-white/62 hover:bg-white/8 hover:text-white"}`}>{label}</a>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
 
-function CaseStudiesCarousel() {
-  const studies = [
-    { school: "SP nr 3 im. Mikołaja Kopernika", city: "Warszawa", students: "420", quote: "EduNex skrócił czas przygotowania egzaminów z 3 godzin do 15 minut. Monitoring AI działa bezbłędnie.", author: "mgr Anna Nowak", role: "Dyrektor szkoły", improvement: "78%" },
-    { school: "Zespół Szkół nr 7", city: "Kraków", students: "890", quote: "Po wdrożeniu EduNex średnia ocen wzrosła o 15%. Uczniowie chętniej podchodzą do egzaminów.", author: "dr Piotr Wiśniewski", role: "Wicedyrektor", improvement: "92%" },
-    { school: "Liceum Ogólnokształcące nr 5", city: "Wrocław", students: "650", quote: "Automatyczne ocenianie AI oszczędza nauczycielom 12 godzin tygodniowo. Rewolucja w edukacji.", author: "mgr Katarzyna Lewandowska", role: "Nauczyciel matematyki", improvement: "95%" },
-  ];
-  const [current, setCurrent] = useState(0);
-  const s = studies[current];
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrent((p) => (p + 1) % studies.length), 5000);
-    return () => clearInterval(timer);
-  }, [studies.length]);
-
-  return (
-    <section className="relative py-20 overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <div className="reveal text-center mb-10">
-          <span className="section-label">Case Studies</span>
-          <h2 className="mt-6 text-4xl sm:text-5xl font-bold tracking-tight"><TextReveal text="Szkoły, które wybrały EduNex" /></h2>
-        </div>
-        <div className="reveal-scale relative">
-          <AnimatePresence mode="wait">
-            <motion.div key={current} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="card-premium rounded-2xl p-6 sm:p-8"
-            >
-              <div className="flex items-start gap-4 mb-6">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shrink-0">
-                  <Building2 className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white/90">{s.school}</div>
-                  <div className="text-xs text-white/40 mt-0.5">{s.city} · {s.students} uczniów</div>
-                </div>
-                <div className="ml-auto shrink-0 text-center">
-                  <div className="text-2xl font-bold font-mono text-emerald-400">{s.improvement}</div>
-                  <div className="text-[10px] text-white/30">efektywności</div>
-                </div>
-              </div>
-              <div className="relative pl-4 border-l-2 border-cyan-400/30">
-                <p className="text-sm text-white/70 leading-relaxed italic">"{s.quote}"</p>
-                <div className="mt-3">
-                  <div className="text-xs font-medium text-white/80">{s.author}</div>
-                  <div className="text-[10px] text-white/40">{s.role}</div>
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-          <div className="flex items-center justify-center gap-2 mt-4">
-            {studies.map((_, i) => (
-              <button key={i} onClick={() => setCurrent(i)}
-                className={`w-2 h-2 rounded-full transition-all ${i === current ? "w-6 bg-cyan-400" : "bg-white/20"}`}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function NewsletterFlow() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const onSubmit = (e: React.FormEvent) => { e.preventDefault(); if (!email.trim()) return; setSent(true); toast.success("Zapisano do newslettera!"); setEmail(""); };
-  return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="max-w-lg mx-auto px-4 sm:px-6 text-center">
-        <div className="reveal">
-          {sent ? (
-            <div className="card-premium rounded-2xl p-8"><CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-3"/><h2 className="text-2xl font-bold text-emerald-300">Jesteś zapisany!</h2><p className="mt-2 text-sm text-white/50">Nowości i porady — raz na dwa tygodnie.</p></div>
-          ) : (
-            <>
-              <Bell className="w-7 h-7 text-accent mx-auto mb-4"/>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Bądź na bieżąco</h2>
-              <p className="mt-3 text-white/40 text-sm">Nowe funkcje, porady i aktualności — raz na dwa tygodnie, zero spamu.</p>
-              <form onSubmit={onSubmit} className="mt-6 flex items-center gap-2 max-w-sm mx-auto">
-                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="Twój e-mail"
-                  className="flex-1 px-5 py-3 rounded-full bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
-                <button type="submit"
-                  className="btn-shine px-5 py-3 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shrink-0">
-                  <Send className="w-4 h-4"/>
-                </button>
-              </form>
-            </>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ContactFlow() {
-  const submit = useServerFn(submitContact);
-  const [busy, setBusy] = useState(false);
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    setBusy(true);
-    try {
-      await submit({ data: { name: String(fd.get("name") ?? ""), email: String(fd.get("email") ?? ""), subject: String(fd.get("subject") ?? "Zapytanie"), message: String(fd.get("message") ?? "") } });
-      toast.success("Wiadomość wysłana. Odezwiemy się w 24h.");
-      (e.target as HTMLFormElement).reset();
-    } catch (err) { toast.error(err instanceof Error ? err.message : "Błąd wysyłki"); } finally { setBusy(false); }
-  };
-  return (
-    <section id="kontakt" className="relative py-28 sm:py-36 overflow-hidden section-premium">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="reveal card-premium rounded-2xl p-6 sm:p-10">
-          <div className="grid lg:grid-cols-5 gap-8">
-            <div className="lg:col-span-2">
-              <span className="section-label mb-4">Kontakt</span>
-              <h2 className="text-3xl font-bold tracking-tight">Napisz do nas</h2>
-              <p className="mt-2 text-sm text-white/40">Odpowiadamy w 24h w dni robocze.</p>
-              <ul className="mt-6 space-y-4 text-sm">
-                <li className="flex gap-3"><Mail className="w-5 h-5 text-accent shrink-0 mt-0.5"/><div><div className="text-white/80">kontakt@edunex.pl</div><div className="text-xs text-white/40">Sekretariat</div></div></li>
-                <li className="flex gap-3"><Phone className="w-5 h-5 text-accent shrink-0 mt-0.5"/><div><div className="text-white/80">+48 22 100 12 34</div><div className="text-xs text-white/40">Pon–Pt, 8:00–16:00</div></div></li>
-              </ul>
-            </div>
-            <form onSubmit={onSubmit} className="lg:col-span-3 grid sm:grid-cols-2 gap-3">
-              <input name="name" required placeholder="Imię i nazwisko" className="sm:col-span-2 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
-              <input name="email" type="email" required placeholder="E-mail" className="sm:col-span-2 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
-              <input name="subject" placeholder="Temat" className="sm:col-span-2 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all" />
-              <textarea name="message" rows={4} required placeholder="Treść wiadomości" className="sm:col-span-2 px-5 py-3 rounded-xl bg-white/[0.04] border border-white/[0.06] text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-accent/30 transition-all resize-none" />
-              <div className="sm:col-span-2 flex items-center justify-between gap-3">
-                <p className="text-xs text-white/40">Zgoda na kontakt zwrotny.</p>
-                <button disabled={busy} type="submit"
-                  className="btn-shine inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 disabled:opacity-50 transition-all relative">
-                  {busy ? <Loader2 className="w-4 h-4 animate-spin"/> : <Send className="w-4 h-4"/>} Wyślij
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StickyCta() {
-  const [visible, setVisible] = useState(false);
-  const lastRef = useRef(0);
-  useEffect(() => {
-    const f = () => {
-      const s = window.scrollY;
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = s / h;
-      if (pct > 0.15 && pct < 0.85) {
-        if (s > lastRef.current) setVisible(true);
-        else setVisible(false);
-      } else {
-        setVisible(false);
-      }
-      lastRef.current = s;
-    };
-    window.addEventListener("scroll", f, { passive: true });
-    return () => window.removeEventListener("scroll", f);
-  }, []);
-  return (
-    <div className={`sticky-cta-wrap ${visible ? "visible" : ""}`}>
-      <div className="bg-black/70 backdrop-blur-2xl border-t border-white/[0.06] py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="pulse-dot"><span className="w-1.5 h-1.5 rounded-full bg-accent block" /></span>
-            <span className="text-sm text-white/60 max-sm:hidden"><span className="text-white font-medium">Ponad 36 000</span> użytkowników już korzysta</span>
-            <span className="text-sm text-white/60 sm:hidden">36 000+ użytkowników</span>
-          </div>
-          <Link to="/auth/teacher" className="btn-shine inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-white text-black hover:bg-white/90 transition-all shadow-sm shrink-0">
-            Rozpocznij za darmo <ArrowRight className="w-4 h-4"/>
+        <div className="hidden items-center gap-2 sm:flex">
+          <button onClick={toggle} className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition ${palette.chip}`}>
+            {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            {isLight ? "Ciemny" : "Jasny"}
+          </button>
+          <Link to="/auth" className="inline-flex h-10 items-center gap-2 rounded-full bg-[#0078d4] px-5 text-sm font-semibold text-white transition hover:bg-[#106ebe]">
+            Logowanie <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
+
+        <button onClick={() => setMenuOpen(!menuOpen)} className={`grid h-10 w-10 place-items-center rounded-full border lg:hidden ${palette.chip}`}>
+          {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </nav>
+      {menuOpen && (
+        <div className={`mx-auto mt-3 max-w-7xl rounded-3xl border p-4 backdrop-blur-2xl lg:hidden ${palette.nav}`}>
+          <div className="grid gap-2">
+            {links.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)} className="rounded-2xl px-4 py-3 text-sm font-semibold">{label}</a>)}
+            <Link to="/auth" className="rounded-2xl bg-[#0078d4] px-4 py-3 text-center text-sm font-semibold text-white">Przejdź do logowania</Link>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+}
+
+function Badge({ children, icon: Icon, isLight }: { children: string; icon: IconType; isLight: boolean }) {
+  return (
+    <span className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] ${isLight ? "border-slate-200 bg-white text-slate-600" : "border-white/10 bg-white/[0.06] text-white/62"}`}>
+      <Icon className="h-4 w-4 text-[#50a7f2]" /> {children}
+    </span>
+  );
+}
+
+function HeroConsole({ isLight, palette }: any) {
+  return (
+    <div className={`relative overflow-hidden rounded-[32px] border p-4 backdrop-blur-2xl ${palette.soft}`}>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,rgba(0,120,212,0.20),transparent_32%)]" />
+      <div className="relative rounded-[24px] border border-white/10 bg-[#020817] p-5 text-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-400" /><span className="h-3 w-3 rounded-full bg-yellow-300" /><span className="h-3 w-3 rounded-full bg-green-400" /></div>
+          <span className="text-xs text-white/45">EduNex Teacher OS</span>
+        </div>
+        <div className="mt-6 grid gap-4">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="flex items-center justify-between"><div><p className="text-xs text-white/45">Aktywna sesja</p><h3 className="mt-1 text-2xl font-semibold">Matematyka — Klasa 6</h3></div><div className="rounded-2xl bg-[#0078d4] px-4 py-2 text-xl font-bold">482 913</div></div>
+            <div className="mt-5 h-2 rounded-full bg-white/10"><motion.div className="h-full rounded-full bg-[#50e6ff]" initial={{ width: "18%" }} animate={{ width: "76%" }} transition={{ duration: 2.4, repeat: Infinity, repeatType: "reverse" }} /></div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[["24", "uczniów"], ["86%", "średnia"], ["14m", "czas"]].map(([a, b]) => <div key={b} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"><div className="text-2xl font-semibold">{a}</div><div className="text-xs text-white/45">{b}</div></div>)}
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold"><Bot className="h-4 w-4 text-[#50e6ff]" /> AI podpowiedź</div>
+            <p className="text-sm leading-6 text-white/60">5 uczniów ma problem z zadaniem o polu figury. System proponuje krótką powtórkę po egzaminie.</p>
+          </div>
+        </div>
+      </div>
+      <div className={`mt-4 grid grid-cols-3 gap-3 text-center text-xs ${isLight ? "text-slate-600" : "text-white/55"}`}>
+        <div className={`rounded-2xl border p-3 ${palette.soft2}`}>PIN</div>
+        <div className={`rounded-2xl border p-3 ${palette.soft2}`}>AI</div>
+        <div className={`rounded-2xl border p-3 ${palette.soft2}`}>Raport</div>
       </div>
     </div>
   );
 }
 
-function FooterFlow() {
-  const [showTop, setShowTop] = useState(false);
-  useEffect(() => { const f = () => setShowTop(window.scrollY > 400); window.addEventListener("scroll", f, { passive: true }); return () => window.removeEventListener("scroll", f); }, []);
+function TrustStrip({ palette }: any) {
   return (
-    <footer className="relative border-t border-white/[0.06] pt-16 pb-8 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.01] to-transparent" />
-      {showTop && (
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.06] text-white/50 grid place-items-center hover:bg-white/[0.1] hover:text-white transition-all backdrop-blur-md">
-          <ChevronUp className="w-4 h-4" />
-        </button>
-      )}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
-          <div className="lg:col-span-2">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-[12px] bg-gradient-to-br from-accent to-fuchsia-500 p-[1.5px] shadow-lg">
-                <div className="w-full h-full rounded-[10px] bg-[oklch(0.06_0.03_270)] grid place-items-center">
-                  <svg viewBox="0 0 24 24" className="w-4.5 h-4.5" fill="none" stroke="url(#logoGradF)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                    <defs><linearGradient id="logoGradF" x1="0" y1="0" x2="24" y2="24"><stop offset="0%" stopColor="#22d3ee"/><stop offset="50%" stopColor="#a78bfa"/><stop offset="100%" stopColor="#f472b6"/></linearGradient></defs>
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="font-semibold text-base">EduNex</div>
-            </div>
-            <p className="mt-3 text-xs text-white/40 leading-relaxed max-w-xs">Nowoczesna platforma egzaminacyjna dla polskich szkół. Zgodna z wytycznymi MEN i RODO.</p>
-            <div className="mt-4 flex items-center gap-2">
-              {[Github, MessageSquare].map((Icon, i) => (
-                <a key={i} href="#" className="w-8 h-8 rounded-full bg-white/[0.04] border border-white/[0.06] grid place-items-center text-white/30 hover:text-white hover:bg-white/[0.08] transition-all"><Icon className="w-3.5 h-3.5"/></a>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div className="section-label text-white/30 mb-4">Platforma</div>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li><Link to="/auth/student" className="hover:text-white transition-colors">Uczeń</Link></li>
-              <li><Link to="/auth/teacher" className="hover:text-white transition-colors">Nauczyciel</Link></li>
-              <li><a href="#funkcje" className="hover:text-white transition-colors">Funkcje</a></li>
-              <li><a href="#cennik" className="hover:text-white transition-colors">Cennik</a></li>
-            </ul>
-          </div>
-          <div>
-            <div className="section-label text-white/30 mb-4">Dokumenty</div>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li><Link to="/dokumenty" className="hover:text-white transition-colors">Regulamin</Link></li>
-              <li><Link to="/dokumenty" className="hover:text-white transition-colors">Polityka prywatności</Link></li>
-              <li><Link to="/dokumenty" className="hover:text-white transition-colors">RODO</Link></li>
-            </ul>
-          </div>
-          <div>
-            <div className="section-label text-white/30 mb-4">Kontakt</div>
-            <ul className="space-y-2 text-sm text-white/40">
-              <li>kontakt@edunex.pl</li>
-              <li>+48 22 100 12 34</li>
-            </ul>
-            <div className="mt-4 text-[10px] text-white/20 font-mono">
-              <span className="inline-flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-accent"/>online</span>
-              <span className="ml-2">v11.1</span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-10 pt-6 border-t border-white/[0.06] text-center text-xs text-white/30">
-          &copy; {new Date().getFullYear()} EduNex · Projekt edukacyjny dla polskich szkół
-        </div>
+    <section className="relative z-10 border-y border-white/8 py-5">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 px-5 sm:px-8 lg:px-10">
+        {["Supabase", "Vercel", "Google", "Microsoft", "GitHub", "AI", "RODO"].map((x) => <span key={x} className={`rounded-full border px-4 py-2 text-xs font-semibold ${palette.chip}`}>{x}</span>)}
       </div>
-    </footer>
+    </section>
   );
 }
 
-function burstConfetti(e: React.MouseEvent) {
-  const colors = ["#22d3ee", "#06b6d4", "#0891b2", "#67e8f9", "#22d3ee", "#06b6d4"];
-  for (let i = 0; i < 30; i++) {
-    const el = document.createElement("div");
-    el.className = "confetti-piece";
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    el.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;width:${4 + Math.random() * 4}px;height:${4 + Math.random() * 4}px;background:${color};animation-delay:${Math.random() * 0.2}s;animation-duration:${1.2 + Math.random() * 0.8}s`;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 2500);
-  }
+function SectionHeader({ eyebrow, title, text, isLight }: { eyebrow: string; title: string; text: string; isLight: boolean }) {
+  return (
+    <div className="mx-auto mb-12 max-w-3xl text-center">
+      <Badge isLight={isLight} icon={Sparkles}>{eyebrow}</Badge>
+      <h2 className="mt-5 text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">{title}</h2>
+      <p className={`mx-auto mt-5 max-w-2xl text-base leading-7 ${isLight ? "text-slate-600" : "text-white/62"}`}>{text}</p>
+    </div>
+  );
+}
+
+function PillarsSection({ isLight, palette }: any) {
+  return (
+    <section id="funkcje" className="relative px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="Funkcje" title="Cały system szkolny w jednym produkcie" text="Nie tylko landing. Strona pokazuje realny ekosystem: egzaminy, użytkowników, AI, dane, bezpieczeństwo i raporty." />
+      <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {pillars.map(({ icon: Icon, title, text }) => (
+          <motion.div whileHover={{ y: -6 }} key={title} className={`rounded-[28px] border p-6 backdrop-blur-2xl ${palette.soft}`}>
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#0078d4] text-white"><Icon className="h-5 w-5" /></div>
+            <h3 className="mt-6 text-xl font-semibold tracking-tight">{title}</h3>
+            <p className={`mt-3 text-sm leading-6 ${palette.muted}`}>{text}</p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RoleSection({ isLight, palette, activeRole, setActiveRole }: any) {
+  const role = roles[activeRole];
+  const Icon = role.icon;
+  return (
+    <section id="role" className="relative px-5 py-24 sm:px-8 lg:px-10">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.85fr_1.15fr]">
+        <div>
+          <Badge isLight={isLight} icon={Users}>Role użytkowników</Badge>
+          <h2 className="mt-5 text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">Każdy widzi dokładnie to, czego potrzebuje.</h2>
+          <p className={`mt-5 leading-7 ${palette.muted}`}>Uczeń nie musi widzieć panelu nauczyciela. Nauczyciel ma swoje sesje i wyniki. Admin ma bezpieczeństwo i użytkowników.</p>
+          <div className="mt-8 grid gap-3">
+            {roles.map((r, i) => <button key={r.title} onClick={() => setActiveRole(i)} className={`rounded-2xl border p-4 text-left transition ${i === activeRole ? "border-[#0078d4] bg-[#0078d4]/12" : palette.soft2}`}><div className="font-semibold">{r.title}</div><div className={`mt-1 text-sm ${palette.muted}`}>{r.desc}</div></button>)}
+          </div>
+        </div>
+        <div className={`rounded-[34px] border p-6 backdrop-blur-2xl ${palette.soft}`}>
+          <div className="rounded-[26px] border border-white/10 bg-[#020817] p-6 text-white">
+            <div className="flex items-center gap-4"><div className="grid h-16 w-16 place-items-center rounded-3xl bg-[#0078d4]"><Icon className="h-8 w-8" /></div><div><div className="text-sm text-white/45">Widok panelu</div><h3 className="text-3xl font-semibold">{role.title}</h3></div></div>
+            <div className="mt-8 grid gap-3">
+              {role.points.map((p) => <div key={p} className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-4"><CheckCircle2 className="h-5 w-5 text-emerald-400" /><span>{p}</span></div>)}
+            </div>
+            <div className="mt-8 rounded-2xl bg-white/[0.04] p-4 text-sm leading-6 text-white/62">{role.desc}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WorkflowSection({ isLight, palette }: any) {
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="Proces" title="Od stworzenia testu do raportu" text="EduNex prowadzi cały proces egzaminacyjny bez ręcznego chaosu i bez zgubionych wyników." />
+      <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-4">
+        {workflow.map((w) => <div key={w.nr} className={`rounded-[28px] border p-6 ${palette.soft}`}><div className="text-sm font-semibold text-[#50a7f2]">{w.nr}</div><h3 className="mt-5 text-xl font-semibold">{w.title}</h3><p className={`mt-3 text-sm leading-6 ${palette.muted}`}>{w.text}</p></div>)}
+      </div>
+    </section>
+  );
+}
+
+function DemoSection({ isLight, palette }: any) {
+  return (
+    <section id="demo" className="px-5 py-24 sm:px-8 lg:px-10">
+      <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-2">
+        <div>
+          <Badge isLight={isLight} icon={Rocket}>Demo systemu</Badge>
+          <h2 className="mt-5 text-4xl font-semibold tracking-[-0.055em] sm:text-6xl">Panel, który wygląda jak produkt, nie jak szkolny formularz.</h2>
+          <p className={`mt-5 leading-7 ${palette.muted}`}>Na stronie głównej pokazujemy realne funkcje: aktywna sesja, wyniki, AI alert, lista uczniów i kontrola czasu.</p>
+        </div>
+        <div className={`rounded-[34px] border p-4 ${palette.soft}`}>
+          <div className="rounded-[26px] border border-white/10 bg-[#020817] p-5 text-white">
+            <div className="flex items-center justify-between"><h3 className="font-semibold">Sesja egzaminacyjna</h3><span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs text-emerald-300">LIVE</span></div>
+            <div className="mt-5 grid gap-3">
+              {["Anna Kowalska", "Michał Nowak", "Oliwia Zielińska", "Jan Wiśniewski"].map((name, i) => <div key={name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] p-3"><span>{name}</span><span className="text-sm text-white/50">{[92, 84, 76, 68][i]}%</span></div>)}
+            </div>
+            <button onClick={() => toast.success("Demo: raport został wygenerowany") } className="mt-5 w-full rounded-2xl bg-[#0078d4] py-3 text-sm font-semibold">Generuj raport</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ModulesSection({ isLight, palette }: any) {
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="Moduły" title="Dużo funkcji ogólnych, które robią różnicę" text="Moduły zostały pokazane jako kafelki, żeby strona wyglądała bogato i jasno komunikowała zakres platformy." />
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+        {modules.map(({ icon: Icon, label }) => <div key={label} className={`flex items-center gap-3 rounded-2xl border p-4 ${palette.soft2}`}><Icon className="h-5 w-5 text-[#50a7f2]" /><span className="text-sm font-semibold">{label}</span></div>)}
+      </div>
+    </section>
+  );
+}
+
+function AISection({ isLight, palette }: any) {
+  return (
+    <section id="ai" className="px-5 py-24 sm:px-8 lg:px-10">
+      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[1fr_1fr]">
+        <div className={`rounded-[34px] border p-8 ${palette.soft}`}>
+          <Badge isLight={isLight} icon={BrainCircuit}>AI EduNex</Badge>
+          <h2 className="mt-5 text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">Asystent, który pomaga nauczycielowi, nie zastępuje szkoły.</h2>
+          <p className={`mt-5 leading-7 ${palette.muted}`}>AI może generować pytania, analizować wyniki, oceniać odpowiedzi opisowe i wskazywać tematy do powtórki.</p>
+        </div>
+        <div className="grid gap-4">
+          {[{ icon: Bot, title: "Generator pytań", text: "Na podstawie tematu, klasy i poziomu trudności." }, { icon: Lightbulb, title: "Analiza błędów", text: "Wskazuje, które zagadnienia sprawiają problem." }, { icon: FileText, title: "Ocena esejów", text: "Pomaga z kryteriami i sugestiami punktacji." }].map(({ icon: Icon, title, text }) => <div key={title} className={`rounded-[28px] border p-6 ${palette.soft}`}><Icon className="h-6 w-6 text-[#50a7f2]" /><h3 className="mt-4 text-xl font-semibold">{title}</h3><p className={`mt-2 text-sm leading-6 ${palette.muted}`}>{text}</p></div>)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SecuritySection({ isLight, palette }: any) {
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="Bezpieczeństwo" title="Wygląd premium + fundament pod poważną szkołę" text="Strona komunikuje bezpieczeństwo: nie tylko ładny UI, ale też logowanie, 2FA, audyt i kontrola dostępu." />
+      <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {security.map((s) => <div key={s} className={`flex items-center gap-3 rounded-2xl border p-5 ${palette.soft2}`}><Lock className="h-5 w-5 text-[#50a7f2]" /><span className="font-semibold">{s}</span></div>)}
+      </div>
+    </section>
+  );
+}
+
+function PricingSection({ isLight, palette }: any) {
+  return (
+    <section id="cennik" className="px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="Pakiety" title="Gotowe pod szkołę, nauczyciela i klasę" text="Cennik jest prosty, ale wygląda jak produkt SaaS — można go później podpiąć pod płatności." />
+      <div className="mx-auto grid max-w-7xl gap-4 lg:grid-cols-3">
+        {plans.map((p, i) => <div key={p.name} className={`rounded-[30px] border p-7 ${i === 1 ? "border-[#0078d4] bg-[#0078d4]/12" : palette.soft}`}><div className="flex items-center justify-between"><h3 className="text-2xl font-semibold">{p.name}</h3><span className="rounded-full bg-[#0078d4]/15 px-3 py-1 text-xs font-semibold text-[#50a7f2]">{p.tag}</span></div><div className="mt-6 text-4xl font-semibold">{p.price}</div><div className="mt-6 grid gap-3">{p.items.map((x) => <div key={x} className="flex items-center gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-emerald-400" /> {x}</div>)}</div><Link to="/auth" className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#0078d4] px-5 py-3 text-sm font-semibold text-white">Wybierz <ArrowRight className="h-4 w-4" /></Link></div>)}
+      </div>
+    </section>
+  );
+}
+
+function FAQSection({ isLight, palette, activeFaq, setActiveFaq }: any) {
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:px-10">
+      <SectionHeader isLight={isLight} eyebrow="FAQ" title="Najważniejsze pytania od razu na stronie" text="Sekcja FAQ domyka landing i zmniejsza chaos informacyjny." />
+      <div className="mx-auto max-w-4xl space-y-3">
+        {faqs.map(([q, a], i) => <button key={q} onClick={() => setActiveFaq(activeFaq === i ? -1 : i)} className={`w-full rounded-3xl border p-5 text-left ${palette.soft2}`}><div className="flex items-center justify-between gap-4"><span className="font-semibold">{q}</span><ChevronDown className={`h-5 w-5 transition ${activeFaq === i ? "rotate-180" : ""}`} /></div>{activeFaq === i && <p className={`mt-4 text-sm leading-6 ${palette.muted}`}>{a}</p>}</button>)}
+      </div>
+    </section>
+  );
+}
+
+function ContactSection({ isLight, palette }: any) {
+  const submit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    toast.success("Wiadomość demo zapisana — formularz gotowy do podpięcia pod backend.");
+  };
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:px-10">
+      <div className={`mx-auto grid max-w-7xl gap-8 rounded-[36px] border p-8 lg:grid-cols-[0.9fr_1.1fr] ${palette.soft}`}>
+        <div><Badge isLight={isLight} icon={Mail}>Kontakt</Badge><h2 className="mt-5 text-4xl font-semibold tracking-[-0.055em] sm:text-5xl">Chcesz wdrożyć EduNex w szkole?</h2><p className={`mt-5 leading-7 ${palette.muted}`}>Formularz można później podpiąć pod Resend/Supabase. Teraz wygląda jak gotowa sekcja kontaktowa.</p></div>
+        <form onSubmit={submit} className="grid gap-3">
+          <input className={`rounded-2xl border px-4 py-3 outline-none ${isLight ? "border-slate-200 bg-white" : "border-white/12 bg-white/[0.055] text-white placeholder:text-white/40"}`} placeholder="Imię i nazwisko" />
+          <input className={`rounded-2xl border px-4 py-3 outline-none ${isLight ? "border-slate-200 bg-white" : "border-white/12 bg-white/[0.055] text-white placeholder:text-white/40"}`} placeholder="E-mail" />
+          <textarea className={`min-h-32 rounded-2xl border px-4 py-3 outline-none ${isLight ? "border-slate-200 bg-white" : "border-white/12 bg-white/[0.055] text-white placeholder:text-white/40"}`} placeholder="Wiadomość" />
+          <button className="rounded-2xl bg-[#0078d4] px-5 py-3 text-sm font-semibold text-white">Wyślij wiadomość</button>
+        </form>
+      </div>
+    </section>
+  );
+}
+
+function StickyActions({ isLight, goAuth, toggle }: { isLight: boolean; goAuth: () => void; toggle: () => void }) {
+  return (
+    <div className="fixed bottom-5 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-white/10 bg-[#020617]/80 p-2 shadow-2xl backdrop-blur-2xl md:flex">
+      <button onClick={toggle} className="grid h-10 w-10 place-items-center rounded-full bg-white/10 text-white">{isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}</button>
+      <button onClick={goAuth} className="rounded-full bg-[#0078d4] px-5 py-2.5 text-sm font-semibold text-white">Otwórz panel</button>
+    </div>
+  );
+}
+
+function Footer({ isLight, palette }: any) {
+  return (
+    <footer className={`relative z-10 border-t px-5 py-10 sm:px-8 lg:px-10 ${isLight ? "border-slate-200" : "border-white/10"}`}>
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3"><div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#0078d4] text-white"><Sparkles className="h-5 w-5" /></div><div><div className="font-semibold">EduNex</div><div className={`text-xs ${palette.muted}`}>Nowoczesna platforma egzaminacyjna</div></div></div>
+        <div className={`flex flex-wrap gap-3 text-sm ${palette.muted}`}><span>RODO</span><span>2FA</span><span>AI</span><span>PIN</span><span>Vercel</span><span>Supabase</span></div>
+      </div>
+    </footer>
+  );
 }
