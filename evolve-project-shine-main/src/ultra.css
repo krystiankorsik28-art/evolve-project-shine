@@ -1,4 +1,4 @@
-/* EduNex Ultra FX Layer — global effects for landing/auth */
+/* EduNex Ultra FX Layer — scoped to landing only */
 :root {
   --edunex-blue: #0078d4;
   --edunex-cyan: #50e6ff;
@@ -17,7 +17,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-body::before {
+/* The route /auth must stay untouched. Global background FX are enabled only on the landing page. */
+body:has(a[href="#platforma"])::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -32,8 +33,8 @@ body::before {
   animation: edunexGridDrift 24s linear infinite;
 }
 
-html.light body::before,
-html[data-theme="light"] body::before {
+html.light body:has(a[href="#platforma"])::before,
+html[data-theme="light"] body:has(a[href="#platforma"])::before {
   background:
     radial-gradient(circle at 18% 14%, rgba(0, 103, 184, 0.11), transparent 28%),
     radial-gradient(circle at 84% 8%, rgba(80, 132, 214, 0.10), transparent 24%),
@@ -144,7 +145,7 @@ html[data-theme="light"] body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::before,
+  body:has(a[href="#platforma"])::before,
   .edunex-ultra-scan::after,
   .edunex-holo-border::before,
   .edunex-float-soft,
