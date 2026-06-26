@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, type FormEvent, type ReactNode } from "react";
+import { useState, useMemo, useEffect, type ComponentType, type FormEvent, type ReactNode } from "react";
 import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -157,7 +157,7 @@ function PrimaryButton({ children, loading, ...props }: any) {
 function SSOButton({ provider, label, icon: Icon, onClick, disabled }: {
   provider: Provider;
   label: string;
-  icon: () => JSX.Element;
+  icon: ComponentType;
   onClick: (provider: Provider) => void;
   disabled?: boolean;
 }) {
@@ -228,6 +228,7 @@ function AuthPage() {
   const [adminConsent, setAdminConsent] = useState(false);
 
   const roleMeta = useMemo(() => ROLES.find((r) => r.id === role)!, [role]);
+  const RoleIcon = roleMeta.icon;
   const isAdmin = role === "admin";
 
   useEffect(() => {
@@ -373,7 +374,13 @@ function AuthPage() {
           className="grid w-full max-w-6xl overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.18)] lg:grid-cols-[1.05fr_0.95fr]"
         >
           <aside className="relative hidden min-h-[720px] overflow-hidden bg-[#0f172a] p-10 text-white lg:flex lg:flex-col lg:justify-between">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_15%,rgba(0,120,212,0.55),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(80,230,255,0.22),transparent_30%),linear-gradient(145deg,#0f172a,#111827_48%,#062a4f)]" />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 20% 15%, rgba(0,120,212,0.55), transparent 28%), radial-gradient(circle at 82% 18%, rgba(80,230,255,0.22), transparent 30%), linear-gradient(145deg, #0f172a, #111827 48%, #062a4f)",
+              }}
+            />
             <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
 
             <div className="relative z-10">
@@ -383,7 +390,7 @@ function AuthPage() {
                 </div>
                 <div>
                   <div className="text-xl font-semibold tracking-tight">EduNex</div>
-                  <div className="text-xs uppercase tracking-[0.28em] text-white/55">secure education cloud</div>
+                  <div className="text-xs uppercase tracking-[0.28em] text-white/60">secure education cloud</div>
                 </div>
               </div>
 
@@ -394,7 +401,7 @@ function AuthPage() {
                 <h1 className="text-4xl font-semibold tracking-[-0.045em] text-white xl:text-5xl">
                   Jedno bezpieczne wejście do całej szkoły.
                 </h1>
-                <p className="mt-5 text-base leading-7 text-white/68">
+                <p className="mt-5 text-base leading-7 text-white/70">
                   Panel ucznia, nauczyciela, rodzica i administratora w jednej eleganckiej bramie logowania — czytelnie, szybko i bez chaosu.
                 </p>
               </div>
@@ -408,7 +415,7 @@ function AuthPage() {
                 ].map(([title, desc]) => (
                   <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.075] p-4 backdrop-blur">
                     <div className="text-sm font-semibold text-white">{title}</div>
-                    <div className="mt-1 text-xs leading-5 text-white/55">{desc}</div>
+                    <div className="mt-1 text-xs leading-5 text-white/60">{desc}</div>
                   </div>
                 ))}
               </div>
@@ -420,11 +427,11 @@ function AuthPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
-                  <roleMeta.icon className="h-5 w-5 text-[#bfe7ff]" />
+                  <RoleIcon className="h-5 w-5 text-[#bfe7ff]" />
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-white">{roleMeta.label}</div>
-                  <div className="text-xs text-white/55">{tab === "quick" ? "Szybkie wejście kodem PIN" : roleMeta.desc}</div>
+                  <div className="text-xs text-white/60">{tab === "quick" ? "Szybkie wejście kodem PIN" : roleMeta.desc}</div>
                 </div>
               </div>
             </div>
