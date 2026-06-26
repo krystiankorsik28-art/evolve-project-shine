@@ -1,33 +1,51 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "@/lib/theme";
+import { AIShowcaseSection } from "./AIShowcaseSection";
 import { ProductDemoSection } from "./ProductDemoSection";
+
+type Mounts = {
+  product: HTMLElement | null;
+  ai: HTMLElement | null;
+};
 
 export function LandingEnhancements() {
   const { theme } = useTheme();
-  const [host, setHost] = useState<HTMLElement | null>(null);
+  const [mounts, setMounts] = useState<Mounts>({ product: null, ai: null });
 
   useEffect(() => {
-    const target = document.getElementById("platforma");
-    const parent = target?.parentElement;
-    if (!target || !parent) return;
+    const created: HTMLElement[] = [];
 
-    const existing = document.querySelector<HTMLElement>("[data-edunex-product-demo]");
-    if (existing) {
-      setHost(existing);
-      return;
-    }
+    const ensureMount = (selector: string, attr: string, position: "before" | "after") => {
+      const target = document.querySelector<HTMLElement>(selector);
+      const parent = target?.parentElement;
+      if (!target || !parent) return null;
 
-    const mount = document.createElement("div");
-    mount.setAttribute("data-edunex-product-demo", "true");
-    parent.insertBefore(mount, target);
-    setHost(mount);
+      const existing = document.querySelector<HTMLElement>(`[${attr}]`);
+      if (existing) return existing;
+
+      const mount = document.createElement("div");
+      mount.setAttribute(attr, "true");
+      if (position === "before") parent.insertBefore(mount, target);
+      else parent.insertBefore(mount, target.nextSibling);
+      created.push(mount);
+      return mount;
+    };
+
+    const product = ensureMount("#platforma", "data-edunex-product-demo", "before");
+    const ai = ensureMount("#ai", "data-edunex-ai-showcase", "after");
+
+    setMounts({ product, ai });
 
     return () => {
-      mount.remove();
+      created.forEach((node) => node.remove());
     };
   }, []);
 
-  if (!host) return null;
-  return createPortal(<ProductDemoSection isLight={theme === "light"} />, host);
+  return (
+    <>
+      {mounts.product && createPortal(<ProductDemoSection isLight={theme === "light"} />, mounts.product)}
+      {mounts.ai && createPortal(<AIShowcaseSection isLight={theme === "light"} />, mounts.ai)}
+    </>
+  );
 }
