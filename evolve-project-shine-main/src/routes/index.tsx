@@ -36,15 +36,12 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  Star,
   Sun,
-  Target,
   Timer,
   Trophy,
   Users,
   Workflow,
   X,
-  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -638,7 +635,7 @@ function PricingSection({ palette, isLight, annual, setAnnual }: { palette: Pale
     <section id="cennik" className="px-5 py-24 sm:px-8 lg:px-10">
       <SectionHeader isLight={isLight} icon={BadgeCheck} eyebrow="Cennik" title="Cennik naprawiony — teraz wygląda jak SaaS premium" text="Siedem pakietów, roczny rabat, wyróżniony plan i jasny opis, dla kogo jest każdy wariant." />
 
-      <div className="mx-auto mb-8 flex max-w-7xl flex-col items-center justify-between gap-4 rounded-[28px] border p-4 sm:flex-row ${palette.card2}">
+      <div className={`mx-auto mb-8 flex max-w-7xl flex-col items-center justify-between gap-4 rounded-[28px] border p-4 sm:flex-row ${palette.card2}`}>
         <div>
           <div className="font-semibold">Rozliczenie</div>
           <div className={`text-sm ${palette.muted}`}>Rocznie pokazuje około 20% taniej dla pakietów płatnych.</div>
