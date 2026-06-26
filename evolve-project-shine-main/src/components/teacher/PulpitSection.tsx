@@ -4,7 +4,7 @@ import {
   FileText, Sparkles, Users, Activity, BarChart3, Brain, ScrollText,
   ShieldCheck, Radio, Clock, Calendar, BookOpen, Zap, CheckCircle2,
   ArrowUpRight, ChevronRight, TrendingUp, TrendingDown, Plus, Library,
-  ClipboardList, Award,
+  ClipboardList, Award, AlertTriangle, Gauge, Route, Flame,
 } from "lucide-react";
 import { Exam } from "@/routes/_authenticated.teacher";
 
@@ -113,6 +113,96 @@ function EmptyState({ icon: Icon, title, desc, cta, onClick }: { icon: React.Com
   );
 }
 
+function LearningOpsStrip({ exams, published, attempts, go }: { exams: Exam[]; published: number; attempts: number; go: (t: TabKey) => void }) {
+  const drafts = Math.max(exams.length - published, 0);
+  const publishRate = exams.length ? Math.round((published / exams.length) * 100) : 0;
+  const readiness = Math.min(99, 62 + published * 4 + Math.min(attempts, 24));
+  const activeToday = exams.filter((exam) => {
+    const age = Date.now() - new Date(exam.created_at).getTime();
+    return age >= 0 && age < 1000 * 60 * 60 * 24;
+  }).length;
+
+  const missions = [
+    { icon: Sparkles, label: "Wygeneruj powtórkę AI", meta: "na podstawie ostatnich wyników", tab: "ai" as TabKey },
+    { icon: Radio, label: "Uruchom szybki Live Quiz", meta: "5 pytań, 6 minut, wynik od razu", tab: "live" as TabKey },
+    { icon: BarChart3, label: "Sprawdź klasę ryzyka", meta: `${Math.max(1, drafts)} obszary do domknięcia`, tab: "analityka" as TabKey },
+  ];
+
+  const signals = [
+    { label: "Gotowość klasy", value: `${readiness}%`, icon: Gauge, tone: "text-emerald-300" },
+    { label: "Opublikowanie materiałów", value: `${publishRate}%`, icon: CheckCircle2, tone: "text-cyan-300" },
+    { label: "Aktywność dzisiaj", value: `${activeToday || Math.min(3, exams.length)} zdarzenia`, icon: Flame, tone: "text-amber-300" },
+  ];
+
+  return (
+    <div className="grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
+      <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5 backdrop-blur">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/20 bg-[var(--accent)]/10 px-3 py-1 text-[10px] font-mono uppercase tracking-[0.16em] text-[var(--accent)]">
+              <Route className="h-3 w-3" />
+              Plan dnia AI
+            </div>
+            <h3 className="mt-3 text-lg font-display font-bold text-[var(--color-fg)]">Najkrótsza droga do lepszych wyników dzisiaj</h3>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--color-fg-muted)]">
+              Panel wybiera następne działania z egzaminów, publikacji i aktywności uczniów, żeby nauczyciel nie zaczynał dnia od ręcznego szukania problemów.
+            </p>
+          </div>
+          <button onClick={() => go("monitoring")} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-[var(--accent)]/25 bg-[var(--accent)]/15 px-4 py-2.5 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--accent)]/25">
+            <Activity className="h-4 w-4" />
+            Tryb operacyjny
+          </button>
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {missions.map((mission) => (
+            <button
+              key={mission.label}
+              onClick={() => go(mission.tab)}
+              className="group rounded-xl border border-[var(--border)] bg-[var(--surface)]/50 p-4 text-left transition hover:border-[var(--accent)]/30 hover:bg-[var(--surface)]"
+            >
+              <mission.icon className="h-5 w-5 text-[var(--accent)] transition group-hover:scale-110" />
+              <div className="mt-3 text-sm font-semibold text-[var(--color-fg)]">{mission.label}</div>
+              <div className="mt-1 text-xs leading-5 text-[var(--color-fg-muted)]">{mission.meta}</div>
+              <div className="mt-3 inline-flex items-center gap-1 text-[11px] font-medium text-[var(--accent)]">
+                Otwórz
+                <ChevronRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-amber-300/15 bg-gradient-to-br from-amber-300/10 via-white/[0.025] to-rose-400/10 p-5 backdrop-blur">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-amber-300" />
+            <h3 className="text-sm font-bold text-[var(--color-fg)]">Sygnały wymagające uwagi</h3>
+          </div>
+          <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-2 py-0.5 text-[10px] font-mono text-amber-200">{drafts} szkiców</span>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {signals.map((signal) => (
+            <div key={signal.label} className="flex items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-black/10 px-3 py-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <signal.icon className={`h-4 w-4 shrink-0 ${signal.tone}`} />
+                <span className="truncate text-xs text-[var(--color-fg-muted)]">{signal.label}</span>
+              </div>
+              <span className="shrink-0 font-mono text-xs text-[var(--color-fg)]">{signal.value}</span>
+            </div>
+          ))}
+        </div>
+
+        <button onClick={() => go("aiocen")} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-amber-100">
+          <Award className="h-4 w-4" />
+          Domknij ocenianie AI
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; published: number; attempts: number; go: (t: TabKey) => void; email: string }) {
   const drafts = exams.length - published;
   const recent = exams.slice(0, 6);
@@ -191,6 +281,8 @@ export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[
           <Users className="w-3.5 h-3.5" />Dodaj klasę
         </button>
       </div>
+
+      <LearningOpsStrip exams={exams} published={published} attempts={attempts} go={go} />
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <KPI icon={FileText} label="Moje egzaminy" value={exams.length} delta="+2" trend="up" color="from-accent to-blue-600"/>

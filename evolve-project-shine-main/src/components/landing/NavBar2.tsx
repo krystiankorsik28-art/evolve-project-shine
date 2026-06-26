@@ -6,6 +6,7 @@ import { useTheme } from "@/lib/theme";
 
 const NAV_LINKS = [
   { href: "#funkcje", label: "Funkcje" },
+  { href: "#centrum", label: "Centrum" },
   { href: "#ai-demo", label: "AI Demo" },
   { href: "#cennik", label: "Cennik" },
   { href: "#opinie", label: "Opinie" },

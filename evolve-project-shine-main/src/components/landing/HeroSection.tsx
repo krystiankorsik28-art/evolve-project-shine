@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield, Zap, Globe2, Cpu } from "lucide-react";
+import CommandCenterSection from "./CommandCenterSection";
 
 const TRUST_ITEMS = [
   { icon: Cpu, label: "AI Powered" },
@@ -46,6 +47,7 @@ export default function HeroSection() {
   }, []);
 
   return (
+    <>
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div ref={bgRef} className="absolute inset-0 pointer-events-none">
         <div
@@ -164,10 +166,10 @@ export default function HeroSection() {
           </Link>
 
           <a
-            href="#funkcje"
+            href="#centrum"
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById("funkcje")?.scrollIntoView({ behavior: "smooth" });
+              document.getElementById("centrum")?.scrollIntoView({ behavior: "smooth" });
             }}
             className="inline-flex items-center gap-2.5 px-8 py-3.5 text-sm font-medium rounded-full transition-all duration-300"
             style={{
@@ -187,7 +189,7 @@ export default function HeroSection() {
               e.currentTarget.style.borderColor = "oklch(1 0 0 / 0.08)";
             }}
           >
-            Zobacz możliwości
+            Zobacz centrum
           </a>
         </motion.div>
 
@@ -208,5 +210,7 @@ export default function HeroSection() {
         </motion.div>
       </motion.div>
     </section>
+    <CommandCenterSection />
+    </>
   );
 }
