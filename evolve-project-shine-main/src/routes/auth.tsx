@@ -19,6 +19,8 @@ import {
   Hash,
   AlertTriangle,
   Fingerprint,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -78,31 +80,33 @@ export const Route = createFileRoute("/auth")({
   }),
 });
 
-function BgAnimation() {
+function BgAnimation({ isLight }: { isLight: boolean }) {
   return (
-    <div className="absolute inset-0 -z-10 overflow-hidden bg-[#f3f6fb]">
+    <div className={`absolute inset-0 -z-10 overflow-hidden ${isLight ? "bg-[#f3f6fb]" : "bg-[#030712]"}`}>
       <div
-        className="absolute inset-0 opacity-70"
+        className={`absolute inset-0 ${isLight ? "opacity-80" : "opacity-95"}`}
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 18% 12%, rgba(0,103,184,0.16), transparent 28%), radial-gradient(circle at 82% 0%, rgba(80,132,214,0.16), transparent 26%), linear-gradient(135deg, rgba(255,255,255,0.96), rgba(233,239,248,0.92))",
+          backgroundImage: isLight
+            ? "radial-gradient(circle at 18% 12%, rgba(0,103,184,0.16), transparent 28%), radial-gradient(circle at 82% 0%, rgba(80,132,214,0.16), transparent 26%), linear-gradient(135deg, rgba(255,255,255,0.96), rgba(233,239,248,0.92))"
+            : "radial-gradient(circle at 16% 8%, rgba(0,120,212,0.28), transparent 32%), radial-gradient(circle at 84% 6%, rgba(80,230,255,0.16), transparent 30%), radial-gradient(circle at 55% 92%, rgba(37,99,235,0.18), transparent 36%), linear-gradient(135deg, #030712, #07111f 48%, #020617)",
         }}
       />
       <div
-        className="absolute inset-0 opacity-[0.32]"
+        className={`absolute inset-0 ${isLight ? "opacity-[0.32]" : "opacity-[0.18]"}`}
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px)",
+          backgroundImage: isLight
+            ? "linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px)"
+            : "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
         }}
       />
       <motion.div
-        className="absolute left-[8%] top-[12%] h-72 w-72 rounded-full bg-[#0078d4]/20 blur-3xl"
+        className="absolute left-[8%] top-[12%] h-72 w-72 rounded-full bg-[#0078d4]/25 blur-3xl"
         animate={{ x: [0, 34, -18, 0], y: [0, -18, 22, 0] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-[8%] right-[10%] h-96 w-96 rounded-full bg-[#50e6ff]/15 blur-3xl"
+        className="absolute bottom-[8%] right-[10%] h-96 w-96 rounded-full bg-[#50e6ff]/20 blur-3xl"
         animate={{ x: [0, -28, 20, 0], y: [0, 22, -16, 0] }}
         transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
       />
@@ -117,6 +121,7 @@ function Field({
   placeholder,
   autoComplete,
   rightSlot,
+  isLight,
 }: {
   type?: string;
   value: string;
@@ -124,6 +129,7 @@ function Field({
   placeholder: string;
   autoComplete?: string;
   rightSlot?: ReactNode;
+  isLight: boolean;
 }) {
   return (
     <div className="relative">
@@ -133,7 +139,11 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className="h-12 w-full rounded-sm border border-[#8a8886] bg-white px-3 text-[15px] text-[#1b1b1b] outline-none transition-all duration-150 placeholder:text-[#605e5c] focus:border-[#0067b8] focus:shadow-[inset_0_-2px_0_#0067b8]"
+        className={`h-12 w-full rounded-sm px-3 text-[15px] outline-none transition-all duration-150 focus:border-[#0078d4] focus:shadow-[inset_0_-2px_0_#0078d4] ${
+          isLight
+            ? "border border-[#8a8886] bg-white text-[#1b1b1b] placeholder:text-[#605e5c]"
+            : "border border-white/18 bg-white/[0.055] text-white placeholder:text-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+        }`}
       />
       {rightSlot && <div className="absolute right-3 top-1/2 -translate-y-1/2">{rightSlot}</div>}
     </div>
@@ -145,7 +155,7 @@ function PrimaryButton({ children, loading, ...props }: any) {
     <button
       {...props}
       disabled={loading || props.disabled}
-      className="h-11 w-full rounded-sm bg-[#0067b8] px-5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-[#005da6] hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+      className="h-11 w-full rounded-sm bg-[#0078d4] px-5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-[#106ebe] hover:shadow-[0_16px_36px_rgba(0,120,212,0.28)] disabled:cursor-not-allowed disabled:opacity-60"
     >
       <span className="flex items-center justify-center gap-2">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : children}
@@ -154,19 +164,24 @@ function PrimaryButton({ children, loading, ...props }: any) {
   );
 }
 
-function SSOButton({ provider, label, icon: Icon, onClick, disabled }: {
+function SSOButton({ provider, label, icon: Icon, onClick, disabled, isLight }: {
   provider: Provider;
   label: string;
   icon: ComponentType;
   onClick: (provider: Provider) => void;
   disabled?: boolean;
+  isLight: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={() => onClick(provider)}
       disabled={disabled}
-      className="flex h-11 w-full items-center justify-center gap-3 rounded-sm border border-[#8a8886] bg-white text-sm font-semibold text-[#1f1f1f] transition-all duration-150 hover:border-[#323130] hover:bg-[#f7f7f7] disabled:cursor-not-allowed disabled:opacity-60"
+      className={`flex h-11 w-full items-center justify-center gap-3 rounded-sm text-sm font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${
+        isLight
+          ? "border border-[#8a8886] bg-white text-[#1f1f1f] hover:border-[#323130] hover:bg-[#f7f7f7]"
+          : "border border-white/18 bg-white/[0.055] text-white hover:border-white/35 hover:bg-white/[0.09]"
+      }`}
     >
       <Icon />
       {label}
@@ -208,6 +223,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const { signInWithEmail, signInWithProvider, signUpWithEmail, resetPassword } = useAuth();
 
+  const [isLight, setIsLight] = useState(false);
   const [tab, setTab] = useState<Tab>("account");
   const [mode, setMode] = useState<Mode>("login");
   const [role, setRole] = useState<RoleId>("student");
@@ -232,13 +248,23 @@ function AuthPage() {
   const isAdmin = role === "admin";
 
   useEffect(() => {
+    const savedTheme = localStorage.getItem("edunex_auth_theme");
     const savedRemember = localStorage.getItem("edunex_remember") === "true";
     const savedEmail = localStorage.getItem("edunex_email");
+    if (savedTheme === "light") setIsLight(true);
     if (savedRemember && savedEmail) {
       setEmail(savedEmail);
       setRemember(true);
     }
   }, []);
+
+  const toggleTheme = () => {
+    setIsLight((current) => {
+      const next = !current;
+      localStorage.setItem("edunex_auth_theme", next ? "light" : "dark");
+      return next;
+    });
+  };
 
   const handleQuickLogin = async (e: FormEvent) => {
     e.preventDefault();
@@ -354,34 +380,67 @@ function AuthPage() {
     }
   };
 
+  const textMain = isLight ? "text-[#1b1b1b]" : "text-white";
+  const textMuted = isLight ? "text-[#605e5c]" : "text-white/62";
+  const softBorder = isLight ? "border-[#edebe9]" : "border-white/10";
+  const panelClass = isLight
+    ? "border-white/80 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.18)]"
+    : "border-white/12 bg-[#07111f]/86 shadow-[0_32px_110px_rgba(0,0,0,0.55)] backdrop-blur-xl";
+
   return (
-    <div className="relative min-h-screen overflow-hidden p-4 text-[#1f1f1f] sm:p-6 lg:p-10">
-      <Toaster theme="light" position="top-center" />
-      <BgAnimation />
+    <div className={`relative min-h-screen overflow-hidden p-4 transition-colors duration-300 sm:p-6 lg:p-10 ${isLight ? "text-[#1f1f1f]" : "text-white"}`}>
+      <Toaster theme={isLight ? "light" : "dark"} position="top-center" />
+      <BgAnimation isLight={isLight} />
 
-      <Link
-        to="/"
-        className="absolute left-5 top-5 z-20 flex items-center gap-2 rounded-full border border-white/70 bg-white/75 px-4 py-2 text-sm font-semibold text-[#323130] shadow-sm backdrop-blur transition-colors hover:text-[#0067b8]"
-      >
-        <ChevronLeft className="h-4 w-4" /> Strona główna
-      </Link>
+      <div className="absolute left-5 right-5 top-5 z-20 flex items-center justify-between gap-3">
+        <Link
+          to="/"
+          className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-sm backdrop-blur transition-colors ${
+            isLight
+              ? "border border-white/70 bg-white/75 text-[#323130] hover:text-[#0067b8]"
+              : "border border-white/12 bg-white/[0.07] text-white/78 hover:text-white"
+          }`}
+        >
+          <ChevronLeft className="h-4 w-4" /> Strona główna
+        </Link>
 
-      <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center pt-14 lg:pt-6">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-sm backdrop-blur transition-all ${
+            isLight
+              ? "border border-[#d2d0ce] bg-white/80 text-[#323130] hover:border-[#8a8886] hover:text-[#0067b8]"
+              : "border border-white/12 bg-white/[0.07] text-white/78 hover:border-white/24 hover:text-white"
+          }`}
+        >
+          {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+          {isLight ? "Tryb ciemny" : "Tryb jasny"}
+        </button>
+      </div>
+
+      <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center pt-16 lg:pt-6">
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
-          className="grid w-full max-w-6xl overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.18)] lg:grid-cols-[1.05fr_0.95fr]"
+          className={`grid w-full max-w-6xl overflow-hidden rounded-[28px] border transition-colors duration-300 lg:grid-cols-[1.05fr_0.95fr] ${panelClass}`}
         >
           <aside className="relative hidden min-h-[720px] overflow-hidden bg-[#0f172a] p-10 text-white lg:flex lg:flex-col lg:justify-between">
             <div
               className="absolute inset-0"
               style={{
                 background:
-                  "radial-gradient(circle at 20% 15%, rgba(0,120,212,0.55), transparent 28%), radial-gradient(circle at 82% 18%, rgba(80,230,255,0.22), transparent 30%), linear-gradient(145deg, #0f172a, #111827 48%, #062a4f)",
+                  "radial-gradient(circle at 20% 15%, rgba(0,120,212,0.58), transparent 28%), radial-gradient(circle at 82% 18%, rgba(80,230,255,0.24), transparent 30%), linear-gradient(145deg, #020617, #0f172a 48%, #062a4f)",
               }}
             />
-            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+            <div
+              className="absolute inset-0 opacity-20"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)",
+                backgroundSize: "40px 40px",
+              }}
+            />
 
             <div className="relative z-10">
               <div className="mb-10 flex items-center gap-3">
@@ -396,7 +455,7 @@ function AuthPage() {
 
               <div className="max-w-md">
                 <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-[#bfe7ff] backdrop-blur">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Logowanie w stylu Microsoft
+                  <ShieldCheck className="h-3.5 w-3.5" /> Bezpieczne logowanie szkolne
                 </div>
                 <h1 className="text-4xl font-semibold tracking-[-0.045em] text-white xl:text-5xl">
                   Jedno bezpieczne wejście do całej szkoły.
@@ -441,34 +500,50 @@ function AuthPage() {
             <div className="w-full max-w-[430px]">
               <div className="mb-8 lg:hidden">
                 <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-[#0067b8] text-white shadow-sm">
+                  <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-[#0078d4] text-white shadow-sm">
                     <Sparkles className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-lg font-semibold tracking-tight">EduNex</div>
-                    <div className="text-xs text-[#605e5c]">Bezpieczne logowanie szkolne</div>
+                    <div className={`text-lg font-semibold tracking-tight ${textMain}`}>EduNex</div>
+                    <div className={`text-xs ${textMuted}`}>Bezpieczne logowanie szkolne</div>
                   </div>
                 </div>
               </div>
 
-              <div className="mb-6 flex items-center gap-2 text-[13px] font-semibold text-[#605e5c]">
-                <span className="h-px flex-1 bg-[#edebe9]" />
-                Microsoft-like sign in
-                <span className="h-px flex-1 bg-[#edebe9]" />
+              <div className={`mb-6 flex items-center gap-2 text-[13px] font-semibold ${textMuted}`}>
+                <span className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
+                Bezpieczne logowanie EduNex
+                <span className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
               </div>
 
-              <div className="mb-6 grid grid-cols-2 gap-0 rounded-sm border border-[#d2d0ce] bg-[#f8f8f8] p-1">
+              <div className={`mb-6 grid grid-cols-2 gap-0 rounded-sm border p-1 ${isLight ? "border-[#d2d0ce] bg-[#f8f8f8]" : "border-white/12 bg-white/[0.055]"}`}>
                 <button
                   type="button"
                   onClick={() => setTab("account")}
-                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${tab === "account" ? "bg-white text-[#0067b8] shadow-sm" : "text-[#605e5c] hover:text-[#323130]"}`}
+                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${
+                    tab === "account"
+                      ? isLight
+                        ? "bg-white text-[#0067b8] shadow-sm"
+                        : "bg-white/12 text-white shadow-sm"
+                      : isLight
+                        ? "text-[#605e5c] hover:text-[#323130]"
+                        : "text-white/55 hover:text-white"
+                  }`}
                 >
                   <Mail className="h-4 w-4" /> Konto
                 </button>
                 <button
                   type="button"
                   onClick={() => setTab("quick")}
-                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${tab === "quick" ? "bg-white text-[#0067b8] shadow-sm" : "text-[#605e5c] hover:text-[#323130]"}`}
+                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${
+                    tab === "quick"
+                      ? isLight
+                        ? "bg-white text-[#0067b8] shadow-sm"
+                        : "bg-white/12 text-white shadow-sm"
+                      : isLight
+                        ? "text-[#605e5c] hover:text-[#323130]"
+                        : "text-white/55 hover:text-white"
+                  }`}
                 >
                   <Hash className="h-4 w-4" /> Kod PIN
                 </button>
@@ -476,17 +551,18 @@ function AuthPage() {
 
               {tab === "quick" && (
                 <motion.div key="quick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
-                  <h1 className="text-2xl font-semibold tracking-[-0.03em] text-[#1b1b1b]">Dołącz do egzaminu</h1>
-                  <p className="mt-2 text-sm leading-6 text-[#605e5c]">
+                  <h1 className={`text-2xl font-semibold tracking-[-0.03em] ${textMain}`}>Dołącz do egzaminu</h1>
+                  <p className={`mt-2 text-sm leading-6 ${textMuted}`}>
                     Wpisz imię, nazwisko i 6-cyfrowy kod otrzymany od nauczyciela.
                   </p>
 
                   <form onSubmit={handleQuickLogin} className="mt-6 space-y-3">
                     <div className="grid grid-cols-2 gap-3">
-                      <Field value={qFirst} onChange={setQFirst} placeholder="Imię" autoComplete="given-name" />
-                      <Field value={qLast} onChange={setQLast} placeholder="Nazwisko" autoComplete="family-name" />
+                      <Field isLight={isLight} value={qFirst} onChange={setQFirst} placeholder="Imię" autoComplete="given-name" />
+                      <Field isLight={isLight} value={qLast} onChange={setQLast} placeholder="Nazwisko" autoComplete="family-name" />
                     </div>
                     <Field
+                      isLight={isLight}
                       value={qPin}
                       onChange={(v) => setQPin(v.replace(/\D/g, "").slice(0, 6))}
                       placeholder="Kod egzaminu (6 cyfr)"
@@ -498,7 +574,7 @@ function AuthPage() {
                           key={i}
                           animate={{
                             scale: i < qPin.length ? 1.12 : 1,
-                            backgroundColor: i < qPin.length ? "#0067b8" : "#d2d0ce",
+                            backgroundColor: i < qPin.length ? "#0078d4" : isLight ? "#d2d0ce" : "rgba(255,255,255,0.24)",
                           }}
                           transition={{ type: "spring", stiffness: 420, damping: 22 }}
                           className="h-2.5 w-2.5 rounded-full"
@@ -508,7 +584,7 @@ function AuthPage() {
                     <PrimaryButton loading={loading}>
                       Dołącz do egzaminu <ArrowRight className="h-4 w-4" />
                     </PrimaryButton>
-                    <p className="text-center text-xs text-[#605e5c]">Kod PIN działa dla jednej aktywnej sesji egzaminacyjnej.</p>
+                    <p className={`text-center text-xs ${textMuted}`}>Kod PIN działa dla jednej aktywnej sesji egzaminacyjnej.</p>
                   </form>
                 </motion.div>
               )}
@@ -517,12 +593,12 @@ function AuthPage() {
                 <>
                   <AnimatePresence mode="wait">
                     <motion.div key={mode} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}>
-                      <h1 className="text-2xl font-semibold tracking-[-0.03em] text-[#1b1b1b]">
+                      <h1 className={`text-2xl font-semibold tracking-[-0.03em] ${textMain}`}>
                         {mode === "login" && "Zaloguj się"}
                         {mode === "register" && "Utwórz konto"}
                         {mode === "forgot" && "Reset hasła"}
                       </h1>
-                      <p className="mt-2 text-sm leading-6 text-[#605e5c]">
+                      <p className={`mt-2 text-sm leading-6 ${textMuted}`}>
                         {mode === "login" && "Użyj konta EduNex albo konta organizacji."}
                         {mode === "register" && "Załóż konto i wybierz rolę w systemie szkolnym."}
                         {mode === "forgot" && "Podaj adres e-mail, a wyślemy instrukcję resetu."}
@@ -532,7 +608,7 @@ function AuthPage() {
 
                   {mode !== "forgot" && (
                     <div className="mt-6">
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-[#605e5c]">Wybierz rolę</label>
+                      <label className={`mb-2 block text-xs font-semibold uppercase tracking-[0.16em] ${textMuted}`}>Wybierz rolę</label>
                       <div className="grid grid-cols-2 gap-2">
                         {ROLES.map((r) => {
                           const Icon = r.icon;
@@ -542,7 +618,15 @@ function AuthPage() {
                               key={r.id}
                               type="button"
                               onClick={() => setRole(r.id)}
-                              className={`flex items-center gap-2 rounded-sm border px-3 py-2.5 text-left text-xs font-semibold transition-all ${active ? "border-[#0067b8] bg-[#eef6fd] text-[#005da6]" : "border-[#d2d0ce] bg-white text-[#605e5c] hover:border-[#8a8886] hover:text-[#323130]"}`}
+                              className={`flex items-center gap-2 rounded-sm border px-3 py-2.5 text-left text-xs font-semibold transition-all ${
+                                active
+                                  ? isLight
+                                    ? "border-[#0078d4] bg-[#eef6fd] text-[#005da6]"
+                                    : "border-[#50e6ff]/55 bg-[#0078d4]/14 text-white"
+                                  : isLight
+                                    ? "border-[#d2d0ce] bg-white text-[#605e5c] hover:border-[#8a8886] hover:text-[#323130]"
+                                    : "border-white/12 bg-white/[0.045] text-white/58 hover:border-white/24 hover:text-white"
+                              }`}
                             >
                               <Icon className="h-4 w-4 shrink-0" />
                               <span className="truncate">{r.label}</span>
@@ -557,7 +641,11 @@ function AuthPage() {
                     <motion.div
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 flex items-start gap-2 rounded-sm border border-[#f3c911] bg-[#fff8d7] p-3 text-xs leading-5 text-[#6b5700]"
+                      className={`mt-4 flex items-start gap-2 rounded-sm border p-3 text-xs leading-5 ${
+                        isLight
+                          ? "border-[#f3c911] bg-[#fff8d7] text-[#6b5700]"
+                          : "border-[#f3c911]/35 bg-[#f3c911]/10 text-[#ffe680]"
+                      }`}
                     >
                       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                       <span>Logowanie administratora wymaga dodatkowego kodu 2FA i zaufanego urządzenia.</span>
@@ -576,22 +664,27 @@ function AuthPage() {
                     >
                       {mode === "register" && (
                         <div className="grid grid-cols-2 gap-3">
-                          <Field value={firstName} onChange={setFirstName} placeholder="Imię" autoComplete="given-name" />
-                          <Field value={lastName} onChange={setLastName} placeholder="Nazwisko" autoComplete="family-name" />
+                          <Field isLight={isLight} value={firstName} onChange={setFirstName} placeholder="Imię" autoComplete="given-name" />
+                          <Field isLight={isLight} value={lastName} onChange={setLastName} placeholder="Nazwisko" autoComplete="family-name" />
                         </div>
                       )}
 
-                      <Field type="email" value={email} onChange={setEmail} placeholder="Adres e-mail" autoComplete="email" />
+                      <Field isLight={isLight} type="email" value={email} onChange={setEmail} placeholder="Adres e-mail" autoComplete="email" />
 
                       {mode !== "forgot" && (
                         <Field
+                          isLight={isLight}
                           type={showPass ? "text" : "password"}
                           value={password}
                           onChange={setPassword}
                           placeholder="Hasło"
                           autoComplete={mode === "login" ? "current-password" : "new-password"}
                           rightSlot={
-                            <button type="button" onClick={() => setShowPass((s) => !s)} className="text-[#605e5c] transition-colors hover:text-[#0067b8]">
+                            <button
+                              type="button"
+                              onClick={() => setShowPass((s) => !s)}
+                              className={`transition-colors ${isLight ? "text-[#605e5c] hover:text-[#0067b8]" : "text-white/48 hover:text-white"}`}
+                            >
                               {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </button>
                           }
@@ -599,23 +692,24 @@ function AuthPage() {
                       )}
 
                       {mode === "register" && (
-                        <Field type={showPass ? "text" : "password"} value={confirm} onChange={setConfirm} placeholder="Powtórz hasło" autoComplete="new-password" />
+                        <Field isLight={isLight} type={showPass ? "text" : "password"} value={confirm} onChange={setConfirm} placeholder="Powtórz hasło" autoComplete="new-password" />
                       )}
 
                       {mode === "login" && isAdmin && (
                         <>
                           <Field
+                            isLight={isLight}
                             value={adminCode}
                             onChange={(v) => setAdminCode(v.replace(/\D/g, "").slice(0, 8))}
                             placeholder="Kod 2FA administratora"
                             autoComplete="one-time-code"
                           />
-                          <label className="flex cursor-pointer items-start gap-2 text-xs leading-5 text-[#605e5c]">
+                          <label className={`flex cursor-pointer items-start gap-2 text-xs leading-5 ${textMuted}`}>
                             <input
                               type="checkbox"
                               checked={adminConsent}
                               onChange={(e) => setAdminConsent(e.target.checked)}
-                              className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0067b8]"
+                              className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0078d4]"
                             />
                             Potwierdzam, że logowanie odbywa się z zaufanego urządzenia.
                           </label>
@@ -624,16 +718,16 @@ function AuthPage() {
 
                       {mode === "login" && (
                         <div className="flex items-center justify-between pt-1 text-xs">
-                          <label className="flex cursor-pointer items-center gap-2 text-[#605e5c]">
+                          <label className={`flex cursor-pointer items-center gap-2 ${textMuted}`}>
                             <input
                               type="checkbox"
                               checked={remember}
                               onChange={(e) => setRemember(e.target.checked)}
-                              className="h-3.5 w-3.5 accent-[#0067b8]"
+                              className="h-3.5 w-3.5 accent-[#0078d4]"
                             />
                             Nie wylogowuj mnie
                           </label>
-                          <button type="button" onClick={() => setMode("forgot")} className="font-semibold text-[#0067b8] hover:underline">
+                          <button type="button" onClick={() => setMode("forgot")} className="font-semibold text-[#50a7f2] hover:underline">
                             Nie pamiętam hasła
                           </button>
                         </div>
@@ -652,9 +746,9 @@ function AuthPage() {
                   {mode !== "forgot" && !isAdmin && (
                     <>
                       <div className="my-5 flex items-center gap-3">
-                        <div className="h-px flex-1 bg-[#edebe9]" />
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8a8886]">lub</span>
-                        <div className="h-px flex-1 bg-[#edebe9]" />
+                        <div className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
+                        <span className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${textMuted}`}>lub</span>
+                        <div className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
                       </div>
                       <div className="space-y-2">
                         {SSO_PROVIDERS.map((provider) => (
@@ -665,17 +759,18 @@ function AuthPage() {
                             icon={provider.icon}
                             onClick={handleSSO}
                             disabled={loading}
+                            isLight={isLight}
                           />
                         ))}
                       </div>
                     </>
                   )}
 
-                  <div className="mt-6 text-center text-sm text-[#605e5c]">
+                  <div className={`mt-6 text-center text-sm ${textMuted}`}>
                     {mode === "login" && (
                       <>
                         Nie masz konta?{" "}
-                        <button onClick={() => setMode("register")} className="font-semibold text-[#0067b8] hover:underline">
+                        <button onClick={() => setMode("register")} className="font-semibold text-[#50a7f2] hover:underline">
                           Zarejestruj się
                         </button>
                       </>
@@ -683,13 +778,13 @@ function AuthPage() {
                     {mode === "register" && (
                       <>
                         Masz już konto?{" "}
-                        <button onClick={() => setMode("login")} className="font-semibold text-[#0067b8] hover:underline">
+                        <button onClick={() => setMode("login")} className="font-semibold text-[#50a7f2] hover:underline">
                           Zaloguj się
                         </button>
                       </>
                     )}
                     {mode === "forgot" && (
-                      <button onClick={() => setMode("login")} className="font-semibold text-[#0067b8] hover:underline">
+                      <button onClick={() => setMode("login")} className="font-semibold text-[#50a7f2] hover:underline">
                         ← Wróć do logowania
                       </button>
                     )}
@@ -697,10 +792,10 @@ function AuthPage() {
                 </>
               )}
 
-              <div className="mt-8 grid grid-cols-3 gap-2 border-t border-[#edebe9] pt-4 text-center text-[11px] font-semibold text-[#605e5c]">
-                <div className="flex items-center justify-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-[#107c10]" /> RODO</div>
-                <div className="flex items-center justify-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-[#0067b8]" /> 2FA</div>
-                <div className="flex items-center justify-center gap-1.5"><Fingerprint className="h-3.5 w-3.5 text-[#0067b8]" /> SSO</div>
+              <div className={`mt-8 grid grid-cols-3 gap-2 border-t pt-4 text-center text-[11px] font-semibold ${softBorder} ${textMuted}`}>
+                <div className="flex items-center justify-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-[#2fcf6f]" /> RODO</div>
+                <div className="flex items-center justify-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-[#50a7f2]" /> 2FA</div>
+                <div className="flex items-center justify-center gap-1.5"><Fingerprint className="h-3.5 w-3.5 text-[#50a7f2]" /> SSO</div>
               </div>
             </div>
           </main>
