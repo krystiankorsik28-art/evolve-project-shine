@@ -16,6 +16,8 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { TeacherCommandCenter } from "@/components/teacher/TeacherCommandCenter";
+import { TeacherOperationalEnhancements } from "@/components/teacher/TeacherOperationalEnhancements";
+import { TeacherSecurityEnhancements } from "@/components/teacher/TeacherSecurityEnhancements";
 
 function NotFoundComponent() {
   return (
@@ -170,6 +172,8 @@ function RootComponent() {
             </motion.div>
           </AnimatePresence>
           {isTeacherRoute && <TeacherCommandCenter />}
+          {isTeacherRoute && <TeacherOperationalEnhancements />}
+          {isTeacherRoute && <TeacherSecurityEnhancements />}
           <ConfirmDialog />
         </AuthProvider>
       </ThemeProvider>
