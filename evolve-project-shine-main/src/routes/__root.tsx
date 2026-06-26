@@ -15,6 +15,7 @@ import ultraCss from "../ultra.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import { TeacherCommandCenter } from "@/components/teacher/TeacherCommandCenter";
 
 function NotFoundComponent() {
   return (
@@ -151,6 +152,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useLocation();
+  const isTeacherRoute = location.pathname.includes("/teacher");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -167,6 +169,7 @@ function RootComponent() {
               <Outlet />
             </motion.div>
           </AnimatePresence>
+          {isTeacherRoute && <TeacherCommandCenter />}
           <ConfirmDialog />
         </AuthProvider>
       </ThemeProvider>
