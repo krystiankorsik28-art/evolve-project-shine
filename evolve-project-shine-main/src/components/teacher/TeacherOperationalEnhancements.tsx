@@ -6,17 +6,14 @@ import {
   Camera,
   CheckCircle2,
   ClipboardList,
-  Eye,
   FileAudio,
   FileCode2,
   FileImage,
   FileText,
   FileVideo,
-  Gauge,
   GraduationCap,
   LayoutTemplate,
   Lock,
-  MonitorUp,
   MousePointer2,
   PlayCircle,
   Radio,
@@ -26,6 +23,7 @@ import {
   Timer,
   Wand2,
 } from "lucide-react";
+import { TeacherQualityEnhancements } from "./TeacherQualityEnhancements";
 
 type MountState = {
   exams: HTMLElement | null;
@@ -110,6 +108,7 @@ export function TeacherOperationalEnhancements() {
     <>
       {mounts.exams && createPortal(<ExamBuilderShell />, mounts.exams)}
       {mounts.monitoring && createPortal(<MonitoringConsentCenter />, mounts.monitoring)}
+      <TeacherQualityEnhancements />
     </>
   );
 }
