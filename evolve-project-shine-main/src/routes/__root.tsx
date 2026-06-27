@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import appCss from "../styles.css?url";
 import ultraCss from "../ultra.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { TeacherCommandCenter } from "@/components/teacher/TeacherCommandCenter";
@@ -170,6 +171,7 @@ function RootComponent() {
               <Outlet />
             </motion.div>
           </AnimatePresence>
+          <RouteTransitionOverlay />
           {isTeacherRoute && <TeacherCommandCenter />}
           {isTeacherRoute && <TeacherOperationalEnhancements />}
           <ConfirmDialog />
