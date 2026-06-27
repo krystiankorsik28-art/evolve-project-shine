@@ -1,4 +1,4 @@
-﻿import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
@@ -80,10 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EduNex â€” bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
-      { name: "description", content: "EduNex â€” bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem." },
+      { title: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
+      { name: "description", content: "EduNex - bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem." },
       { name: "author", content: "EduNex" },
-      { property: "og:title", content: "EduNex â€” bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
+      { property: "og:title", content: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
       { property: "og:description", content: "Bezpieczne egzaminy online z AI i monitoringiem." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -178,4 +178,3 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
