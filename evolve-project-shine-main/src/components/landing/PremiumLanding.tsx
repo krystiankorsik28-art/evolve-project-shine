@@ -1016,11 +1016,9 @@ function HeroDeviceClean({ palette, isLight }: { palette: Palette; isLight: bool
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className="pointer-events-none absolute -inset-5 rounded-[42px] bg-[radial-gradient(circle_at_25%_20%,rgba(80,230,255,0.24),transparent_32%),radial-gradient(circle_at_75%_70%,rgba(0,120,212,0.28),transparent_34%)] blur-2xl" />
-      <div className="relative overflow-hidden rounded-[34px] border border-white/20 bg-[#061122]/88 p-3 shadow-[0_34px_120px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full border border-[#50e6ff]/20" />
-        <div className="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full border border-[#0078d4]/20" />
-
+      <div className="relative overflow-hidden rounded-[34px] border border-white/20 bg-[linear-gradient(135deg,rgba(6,17,34,0.94),rgba(3,10,24,0.9))] p-3 shadow-[0_34px_120px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
+        <div className="pointer-events-none absolute inset-x-3 top-3 h-px bg-gradient-to-r from-transparent via-[#50e6ff]/55 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-3 right-3 w-px bg-gradient-to-b from-transparent via-[#0078d4]/45 to-transparent" />
         <div className={`relative rounded-[28px] border p-5 md:p-6 ${palette.card}`}>
           <div className="flex items-start justify-between gap-5">
             <div className="min-w-0">
