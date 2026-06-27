@@ -890,7 +890,7 @@ function Hero({
             Egzaminy online, które wyglądają jak system klasy państwowej.
           </h1>
           <p className={`mt-7 max-w-2xl text-lg leading-8 sm:text-xl ${palette.muted}`}>
-            EduNex łączy szybkie sesje PIN, panel nauczyciela, panel ucznia, AI, raporty i
+            EduNex łączy szybkie wejścia PIN, panel nauczyciela, panel ucznia, AI, raporty i
             bezpieczeństwo w jednym nowoczesnym systemie dla szkół.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
@@ -948,7 +948,7 @@ function HeroDevice({ palette, isLight }: { palette: Palette; isLight: boolean }
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs font-bold uppercase tracking-[0.24em] text-[#0078d4]">
-              Sesja aktywna
+              Kod klasy
             </div>
             <div className="mt-2 text-4xl font-black tracking-[-0.05em]">PIN 482 913</div>
           </div>
@@ -997,66 +997,159 @@ function HeroDevice({ palette, isLight }: { palette: Palette; isLight: boolean }
 
 function HeroDeviceClean({ palette, isLight }: { palette: Palette; isLight: boolean }) {
   const rows = [
-    { icon: ClipboardList, label: "Sprawdzian", value: "Matematyka", meta: "aktywny" },
-    { icon: Users, label: "Uczniowie", value: "24 online", meta: "na zywo" },
-    { icon: BarChart3, label: "Srednia", value: "84%", meta: "klasa" },
+    { icon: ClipboardList, label: "Arkusz", value: "Matematyka", meta: "12 zadan" },
+    { icon: Users, label: "Klasa", value: "24 online", meta: "100%" },
+    { icon: BarChart3, label: "Wynik", value: "84%", meta: "+9%" },
   ];
+  const insights = [
+    ["Ulamki", 78, "powtorka"],
+    ["Geometria", 92, "mocne"],
+    ["Rownania", 64, "do pracy"],
+  ] as const;
+  const students = ["AK", "MT", "OL", "JR", "NW", "LP", "ZS", "EM"];
+  const surface = isLight ? "border-slate-200 bg-white/82" : "border-white/10 bg-white/[0.055]";
 
   return (
     <motion.div
-      className="rounded-[28px] border border-white/20 p-4 backdrop-blur-2xl md:p-5 lg:p-6"
+      className="relative"
       initial={{ opacity: 0, y: 30, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.8, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
     >
-      <div className={`rounded-2xl border p-5 ${palette.card}`}>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <div className="text-xs font-bold uppercase tracking-[0.24em] text-[#50e6ff]">
-              Sesja aktywna
-            </div>
-            <div className="mt-2 text-4xl font-black tracking-[-0.05em]">PIN 482 913</div>
-            <div className={`mt-2 text-sm ${palette.faint}`}>Jedno wejscie dla calej klasy.</div>
-          </div>
-          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-[#0078d4] text-white">
-            <Lock className="h-7 w-7" />
-          </div>
-        </div>
+      <div className="pointer-events-none absolute -inset-5 rounded-[42px] bg-[radial-gradient(circle_at_25%_20%,rgba(80,230,255,0.24),transparent_32%),radial-gradient(circle_at_75%_70%,rgba(0,120,212,0.28),transparent_34%)] blur-2xl" />
+      <div className="relative overflow-hidden rounded-[34px] border border-white/20 bg-[#061122]/88 p-3 shadow-[0_34px_120px_rgba(0,0,0,0.42)] backdrop-blur-2xl">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full border border-[#50e6ff]/20" />
+        <div className="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full border border-[#0078d4]/20" />
 
-        <div className="mt-6 grid gap-3">
-          {rows.map(({ icon: Icon, label, value, meta }) => (
-            <div key={label} className={`rounded-xl border p-4 ${palette.card2}`}>
-              <div className="flex items-center gap-3">
-                <Icon className="h-5 w-5 text-[#50e6ff]" />
-                <div className="min-w-0 flex-1">
-                  <div className={`text-xs font-bold uppercase tracking-[0.18em] ${palette.faint}`}>
-                    {label}
-                  </div>
-                  <div className="mt-1 font-semibold">{value}</div>
+        <div className={`relative rounded-[28px] border p-5 md:p-6 ${palette.card}`}>
+          <div className="flex items-start justify-between gap-5">
+            <div className="min-w-0">
+              <div
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-[11px] font-black uppercase tracking-[0.22em] ${
+                  isLight
+                    ? "border-slate-200 bg-slate-50 text-slate-600"
+                    : "border-[#50e6ff]/20 bg-[#50e6ff]/10 text-[#50e6ff]"
+                }`}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Egzamin klasy
+              </div>
+              <div className="mt-4 flex flex-wrap items-end gap-3">
+                <div className="text-5xl font-black tracking-[-0.06em] sm:text-6xl">
+                  PIN 482 913
                 </div>
-                <span
-                  className={`text-xs font-bold uppercase ${isLight ? "text-slate-500" : "text-white/45"}`}
-                >
-                  {meta}
+                <span className="mb-2 rounded-full bg-[#50e6ff]/10 px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-[#50e6ff]">
+                  bez hasla
                 </span>
               </div>
+              <p className={`mt-3 max-w-md text-sm leading-6 ${palette.muted}`}>
+                Kod, arkusz, obecnosc i raport AI w jednym widoku nauczyciela.
+              </p>
             </div>
-          ))}
-        </div>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-[#020617] p-4 text-white">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#50e6ff]">
-            <Zap className="h-4 w-4" /> Analiza AI
+            <div className="hidden shrink-0 rounded-2xl bg-[#0078d4] p-3 text-white shadow-[0_18px_50px_rgba(0,120,212,0.32)] sm:block">
+              <Lock className="h-7 w-7" />
+              <div className="mt-3 text-[10px] font-black uppercase tracking-[0.2em]">2FA</div>
+            </div>
           </div>
-          <div className="mt-5 grid gap-2">
-            {[78, 92, 64, 86].map((w, i) => (
-              <div key={i} className="h-2.5 overflow-hidden rounded-full bg-white/10">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[#0078d4] to-[#50e6ff]"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: `${w}%` }}
-                  transition={{ duration: 0.8, delay: i * 0.1 }}
-                />
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {rows.map(({ icon: Icon, label, value, meta }) => (
+              <div key={label} className={`rounded-2xl border p-4 ${surface}`}>
+                <Icon className="h-5 w-5 text-[#50e6ff]" />
+                <div
+                  className={`mt-4 text-[10px] font-black uppercase tracking-[0.2em] ${palette.faint}`}
+                >
+                  {label}
+                </div>
+                <div className="mt-1 text-xl font-black tracking-[-0.04em]">{value}</div>
+                <div className={`mt-1 text-xs font-bold ${palette.faint}`}>{meta}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.82fr]">
+            <div className="rounded-2xl border border-white/10 bg-[#020617] p-5 text-white">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[#50e6ff]">
+                  <Zap className="h-4 w-4" /> Analiza AI
+                </div>
+                <span className="rounded-full bg-white/8 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/55">
+                  live
+                </span>
+              </div>
+              <div className="mt-5 grid gap-4">
+                {insights.map(([label, width, status], i) => (
+                  <div key={label}>
+                    <div className="mb-2 flex items-center justify-between text-xs">
+                      <span className="font-bold text-white/75">{label}</span>
+                      <span className="text-white/45">{status}</span>
+                    </div>
+                    <div className="h-2.5 overflow-hidden rounded-full bg-white/10">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-[#0078d4] to-[#50e6ff]"
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${width}%` }}
+                        transition={{ duration: 0.8, delay: i * 0.1 }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className={`rounded-2xl border p-5 ${surface}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className={`text-xs font-black uppercase tracking-[0.2em] ${palette.faint}`}>
+                    Uczniowie
+                  </div>
+                  <div className="mt-1 text-2xl font-black tracking-[-0.04em]">24 / 24</div>
+                </div>
+                <Radio className="h-6 w-6 text-[#50e6ff]" />
+              </div>
+              <div className="mt-5 grid grid-cols-4 gap-2">
+                {students.map((student, i) => (
+                  <div
+                    key={student}
+                    className={`grid aspect-square place-items-center rounded-xl text-xs font-black ${
+                      i < 6 ? "bg-[#0078d4] text-white" : "bg-[#50e6ff]/12 text-[#50e6ff]"
+                    }`}
+                  >
+                    {student}
+                  </div>
+                ))}
+              </div>
+              <div className={`mt-4 rounded-xl border p-3 ${surface}`}>
+                <div className="flex items-center justify-between text-xs font-bold">
+                  <span>Oddane prace</span>
+                  <span>18/24</span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full w-3/4 rounded-full bg-[#50e6ff]" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {[
+              { icon: Timer, label: "Limit", value: "45 min" },
+              { icon: Eye, label: "Podglad", value: "live" },
+              { icon: BrainCircuit, label: "AI", value: "raport" },
+            ].map(({ icon: Icon, label, value }) => (
+              <div key={label} className={`rounded-xl border px-4 py-3 ${surface}`}>
+                <div className="flex items-center gap-3">
+                  <Icon className="h-4 w-4 text-[#50e6ff]" />
+                  <div>
+                    <div
+                      className={`text-[10px] font-black uppercase tracking-[0.18em] ${palette.faint}`}
+                    >
+                      {label}
+                    </div>
+                    <div className="font-black">{value}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -1236,7 +1329,7 @@ function PanelSection({
               Podgląd systemu
             </div>
             <div className="mt-3 grid gap-2">
-              {["Sesja 482913", "Oddane prace: 18/24", "Średnia: 84%"].map((x) => (
+              {["Kod PIN 482913", "Oddane prace: 18/24", "Średnia: 84%"].map((x) => (
                 <div key={x} className="rounded-2xl bg-white/10 p-3 font-semibold">
                   {x}
                 </div>
@@ -1319,7 +1412,7 @@ function PanelSectionClean({
               Podglad systemu
             </div>
             <div className="mt-4 grid gap-2">
-              {["Sesja 482913", "Oddane prace: 18/24", "Srednia: 84%"].map((x) => (
+              {["Kod PIN 482913", "Oddane prace: 18/24", "Srednia: 84%"].map((x) => (
                 <div
                   key={x}
                   className="rounded-xl border border-white/10 bg-white/[0.055] p-3 font-semibold"
