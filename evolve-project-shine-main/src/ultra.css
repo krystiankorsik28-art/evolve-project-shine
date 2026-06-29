@@ -26,6 +26,13 @@ body:has(a[href="#system"])::after{
   background-size:82px 82px;
 }
 
+body:has(a[href="#system"]) main,
+body:has(a[href="#system"]) section,
+body:has(a[href="#system"]) div[class*="max-w-7xl"]{
+  position:relative;
+  z-index:1;
+}
+
 .edunex-ultra-scan::after,
 .edunex-holo-border::before,
 .edunex-pulse-ring::before,
