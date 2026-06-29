@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck } from "lucide-react";
 import { EnterpriseNavTabs } from "@/components/landing/EnterpriseNavTabs";
+import { EnterpriseAuthButtons } from "@/components/landing/EnterpriseAuthButtons";
 
 export function EnterpriseHeader() {
   return (
@@ -16,9 +17,7 @@ export function EnterpriseHeader() {
           </div>
         </Link>
         <EnterpriseNavTabs />
-        <Link to="/auth" className="rounded-full bg-[#0f172a] px-5 py-2.5 text-sm font-semibold text-white">
-          Logowanie
-        </Link>
+        <EnterpriseAuthButtons />
       </nav>
     </header>
   );
