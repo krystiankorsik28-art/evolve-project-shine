@@ -1,4 +1,4 @@
-const registerPath = "/register";
+const registerPath = "/auth";
 
 export function EnterpriseAuthButtons() {
   return (
