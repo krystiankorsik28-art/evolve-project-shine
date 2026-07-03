@@ -2,6 +2,6 @@
   "rootDirectory": "evolve-project-shine-main",
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "public",
+  "outputDirectory": ".output/public",
   "framework": null
 }
