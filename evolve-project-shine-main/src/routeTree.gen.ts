@@ -23,6 +23,7 @@ import { Route as DemoAdminRouteImport } from './routes/demo.admin'
 import { Route as AuthTeacherRouteImport } from './routes/auth.teacher'
 import { Route as AuthStudentRouteImport } from './routes/auth.student'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthParentRouteImport } from './routes/auth.parent'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthAdminRouteImport } from './routes/auth.admin'
@@ -102,6 +103,11 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthParentRoute = AuthParentRouteImport.update({
   id: '/parent',
   path: '/parent',
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/student': typeof AuthStudentRoute
   '/auth/teacher': typeof AuthTeacherRoute
@@ -185,6 +192,7 @@ export interface FileRoutesByTo {
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/student': typeof AuthStudentRoute
   '/auth/teacher': typeof AuthTeacherRoute
@@ -211,6 +219,7 @@ export interface FileRoutesById {
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
+  '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/student': typeof AuthStudentRoute
   '/auth/teacher': typeof AuthTeacherRoute
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
+    | '/auth/register'
     | '/auth/reset-password'
     | '/auth/student'
     | '/auth/teacher'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
+    | '/auth/register'
     | '/auth/reset-password'
     | '/auth/student'
     | '/auth/teacher'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
+    | '/auth/register'
     | '/auth/reset-password'
     | '/auth/student'
     | '/auth/teacher'
@@ -412,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/auth/parent': {
       id: '/auth/parent'
       path: '/parent'
@@ -498,6 +517,7 @@ interface AuthRouteChildren {
   AuthAdminRoute: typeof AuthAdminRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthParentRoute: typeof AuthParentRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthStudentRoute: typeof AuthStudentRoute
   AuthTeacherRoute: typeof AuthTeacherRoute
@@ -507,6 +527,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthAdminRoute: AuthAdminRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthParentRoute: AuthParentRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthStudentRoute: AuthStudentRoute,
   AuthTeacherRoute: AuthTeacherRoute,
