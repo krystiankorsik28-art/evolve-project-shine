@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PremiumLanding } from "@/components/landing/PremiumLanding";
+import { PremiumLandingV2 } from "@/components/landing/PremiumLandingV2";
 
 export const Route = createFileRoute("/")({
-  component: PremiumLanding,
+  component: PremiumLandingV2,
 });
