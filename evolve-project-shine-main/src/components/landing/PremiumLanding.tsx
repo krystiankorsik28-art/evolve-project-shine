@@ -240,78 +240,6 @@ function SectionHeader({ eyebrow, title, text }: { eyebrow: string; title: strin
   );
 }
 
-function SystemMockup() {
-  return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-slate-200 bg-white p-3 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-3">
-        <div>
-          <div className="text-xs font-semibold uppercase text-slate-500">EduNex</div>
-          <div className="mt-1 text-sm font-semibold text-slate-950">Pulpit pracy</div>
-        </div>
-        <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-          <span className="h-2.5 w-2.5 rounded-full bg-blue-600" />
-        </div>
-      </div>
-      <div className="grid min-w-0 gap-3 p-3 lg:grid-cols-[0.75fr_1fr]">
-        <div className="min-w-0 space-y-2">
-          {["Egzaminy", "Klasy", "Wyniki", "E-dziennik", "Dokumenty"].map((item, index) => (
-            <motion.div
-              key={item}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.07 }}
-              className={`rounded-md px-3 py-2 text-sm ${index === 0 ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-600"}`}
-            >
-              {item}
-            </motion.div>
-          ))}
-        </div>
-        <div className="space-y-3">
-          <div className="rounded-lg bg-slate-950 p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs text-white/55">Aktywna sesja PIN</div>
-                <div className="mt-2 text-3xl font-semibold">482 913</div>
-              </div>
-              <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-950">LIVE</div>
-            </div>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {[
-              ["28", "uczestników"],
-              ["91%", "oddane"],
-              ["12m", "średni czas"],
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <div className="text-xl font-semibold text-slate-950">{value}</div>
-                <div className="mt-1 text-xs text-slate-500">{label}</div>
-              </div>
-            ))}
-          </div>
-        <div className="min-w-0 rounded-lg border border-slate-200 p-3">
-            <div className="mb-3 flex items-center justify-between text-xs text-slate-500">
-              <span>Wyniki klasy</span>
-              <span>dzisiaj</span>
-            </div>
-            {[82, 65, 94, 74, 88].map((width, index) => (
-              <div key={index} className="mb-2 h-2 rounded-full bg-slate-100">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${width}%` }}
-                  transition={{ delay: 0.25 + index * 0.08, duration: 0.6 }}
-                  className="h-full rounded-full bg-blue-700"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ContactForm() {
   const [form, setForm] = useState<ContactFormState>(initialContactForm);
 
@@ -504,9 +432,8 @@ export function PremiumLanding() {
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.15 }} className="relative z-10 min-w-0 space-y-4">
+            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.15 }} className="relative z-10 min-w-0 self-center">
               <HeroProductVisual />
-              <SystemMockup />
             </motion.div>
           </div>
         </section>
