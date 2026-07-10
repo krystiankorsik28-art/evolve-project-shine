@@ -1,58 +1,104 @@
-import { useState, useEffect } from "react";
-import { createFileRoute, useNavigate, redirect } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import {
-  Sparkles, User, GraduationCap, Building2, BookOpen, BarChart3, BrainCircuit, CheckCircle2,
-  ArrowRight, ArrowLeft, Loader2,
+  ArrowLeft,
+  ArrowRight,
+  BookOpen,
+  BrainCircuit,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  GraduationCap,
+  Loader2,
+  ShieldCheck,
+  User,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { OnboardingBg } from "@/components/three/OnboardingBg";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/onboarding")({
   beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) throw redirect({ to: "/auth", replace: true });
   },
   component: OnboardingPage,
-  head: () => ({ meta: [{ title: "Welcome — EduNex" }] }),
+  head: () => ({ meta: [{ title: "Konfiguracja | EduNex" }] }),
 });
 
-const STEPS = [
-  { id: "profile", icon: User, label: "Profile" },
-  { id: "role", icon: GraduationCap, label: "Role" },
-  { id: "school", icon: Building2, label: "School" },
-  { id: "workspace", icon: BookOpen, label: "Workspace" },
-  { id: "ai", icon: BrainCircuit, label: "AI Setup" },
-  { id: "ready", icon: CheckCircle2, label: "Ready" },
+type RoleId = "student" | "teacher" | "parent" | "admin";
+
+type StepConfig = {
+  id: string;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+};
+
+const STEPS: StepConfig[] = [
+  { id: "profile", icon: User, label: "Profil" },
+  { id: "role", icon: GraduationCap, label: "Rola" },
+  { id: "school", icon: Building2, label: "Placówka" },
+  { id: "workspace", icon: BookOpen, label: "Zakres" },
+  { id: "ai", icon: BrainCircuit, label: "AI" },
+  { id: "ready", icon: CheckCircle2, label: "Gotowe" },
 ];
 
-const ROLES = [
-  { id: "student", label: "Student", icon: GraduationCap, desc: "Take exams, learn with AI", color: "neon" },
-  { id: "teacher", label: "Teacher", icon: BookOpen, desc: "Create exams, monitor classes", color: "neon-blue" },
-  { id: "parent", label: "Parent", icon: User, desc: "Monitor your child's progress", color: "neon-purple" },
-  { id: "admin", label: "Admin", icon: Building2, desc: "Manage your school", color: "neon-pink" },
+const ROLES: Array<{
+  id: RoleId;
+  label: string;
+  icon: ComponentType<{ className?: string }>;
+  desc: string;
+}> = [
+  { id: "student", label: "Uczeń", icon: GraduationCap, desc: "Egzaminy PIN, historia wyników i materiały do nauki." },
+  { id: "teacher", label: "Nauczyciel", icon: BookOpen, desc: "Egzaminy, wyniki, klasy, AI i eksport ocen." },
+  { id: "parent", label: "Rodzic", icon: Users, desc: "Postępy, komunikaty i najważniejsze informacje o uczniu." },
+  { id: "admin", label: "Administracja", icon: Building2, desc: "Zarządzanie szkołą, rolami, zgodnością i dokumentami." },
 ];
 
-const SUBJECTS = ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Geography", "Literature", "Computer Science", "Art", "Music", "Languages", "Economics"];
+const SUBJECTS = [
+  "Matematyka",
+  "Fizyka",
+  "Chemia",
+  "Biologia",
+  "Historia",
+  "Geografia",
+  "Język polski",
+  "Informatyka",
+  "Języki obce",
+  "Ekonomia",
+];
 
 const AI_STYLES = [
-  { id: "formal", label: "Formal", desc: "Professional, structured explanations" },
-  { id: "friendly", label: "Friendly", desc: "Warm, encouraging tone" },
-  { id: "creative", label: "Creative", desc: "Visual, story-based learning" },
-  { id: "concise", label: "Concise", desc: "Short, direct answers" },
+  { id: "formal", label: "Formalny", desc: "Precyzyjne, uporządkowane wyjaśnienia." },
+  { id: "friendly", label: "Wspierający", desc: "Spokojny ton i jasne podpowiedzi." },
+  { id: "creative", label: "Obrazowy", desc: "Przykłady, analogie i praca krok po kroku." },
+  { id: "concise", label: "Zwięzły", desc: "Krótkie odpowiedzi bez zbędnych dygresji." },
+];
+
+const AVATAR_COLORS = ["#1d4ed8", "#0f766e", "#7c3aed", "#be123c", "#c2410c", "#475569"];
+const MOCK_SCHOOLS = [
+  "Zespół Szkół nr 1 im. Mikołaja Kopernika",
+  "Liceum Ogólnokształcące nr 3",
+  "Szkoła Podstawowa nr 5",
+  "Technikum Informatyczne nr 7",
+  "EduNex International School",
+  "Akademia Future",
 ];
 
 function OnboardingPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [ready, setReady] = useState(false);
 
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [avatar, setAvatar] = useState(0);
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState<RoleId | "">("");
   const [schoolQuery, setSchoolQuery] = useState("");
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null);
   const [createSchool, setCreateSchool] = useState(false);
@@ -65,25 +111,70 @@ function OnboardingPage() {
   const [aiStyle, setAiStyle] = useState("friendly");
   const [aiConsent, setAiConsent] = useState(false);
 
-  const avatars = ["#00ff88", "#4488ff", "#8844ff", "#ff4488", "#ffaa00", "#ff6688"];
-
   useEffect(() => {
+    let active = true;
+
     supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { navigate({ to: "/auth", replace: true }); return; }
-      setUser(data.user);
+      if (!active) return;
+      if (!data.user) {
+        navigate({ to: "/auth", replace: true });
+        return;
+      }
+
       const meta = data.user.user_metadata || {};
-      setFname(meta.first_name || "");
-      setLname(meta.last_name || "");
+      setFname(typeof meta.first_name === "string" ? meta.first_name : "");
+      setLname(typeof meta.last_name === "string" ? meta.last_name : "");
+      setReady(true);
     });
+
+    return () => {
+      active = false;
+    };
   }, [navigate]);
+
+  const filteredSchools = useMemo(
+    () => MOCK_SCHOOLS.filter((school) => school.toLowerCase().includes(schoolQuery.toLowerCase())),
+    [schoolQuery],
+  );
+
+  const progress = Math.round(((step + 1) / STEPS.length) * 100);
+
+  const canProceed = () => {
+    switch (step) {
+      case 0:
+        return fname.trim().length > 0;
+      case 1:
+        return role !== "";
+      case 2:
+        return createSchool ? schoolName.trim().length > 0 : selectedSchool !== null;
+      case 3:
+        return subjects.length > 0 && level !== "";
+      case 4:
+        return aiStyle !== "" && aiConsent;
+      default:
+        return true;
+    }
+  };
+
+  const toggleSubject = (subject: string) => {
+    setSubjects((current) =>
+      current.includes(subject) ? current.filter((item) => item !== subject) : [...current, subject],
+    );
+  };
+
+  const toggleDay = (day: string) => {
+    setSchedule((current) => (current.includes(day) ? current.filter((item) => item !== day) : [...current, day]));
+  };
 
   const complete = async () => {
     setBusy(true);
-    await supabase.auth.updateUser({
+    const finalRole: RoleId = role || "student";
+
+    const { error } = await supabase.auth.updateUser({
       data: {
         onboarding_completed: true,
-        avatar_color: avatars[avatar],
-        role,
+        avatar_color: AVATAR_COLORS[avatar],
+        role: finalRole,
         school: selectedSchool || schoolName,
         subjects,
         skill_level: level,
@@ -94,153 +185,189 @@ function OnboardingPage() {
         ai_consent: aiConsent,
       },
     });
-    await new Promise((r) => setTimeout(r, 500));
+
     setBusy(false);
-    toast.success("Welcome to EduNex!");
-    const dash = { student: "/student/dashboard", teacher: "/teacher", parent: "/parent/dashboard", admin: "/admin" };
-    navigate({ to: dash[role as keyof typeof dash] || "/student/dashboard" });
-  };
 
-  const canProceed = () => {
-    switch (step) {
-      case 0: return fname.trim().length > 0;
-      case 1: return role !== "";
-      case 2: return createSchool ? schoolName.trim().length > 0 : selectedSchool !== null;
-      case 3: return subjects.length > 0 && level !== "";
-      case 4: return aiStyle !== "" && aiConsent;
-      default: return true;
+    if (error) {
+      toast.error("Nie udało się zapisać konfiguracji. Spróbuj ponownie.");
+      return;
     }
+
+    toast.success("Konfiguracja EduNex została zapisana.");
+    const destinations: Record<RoleId, string> = {
+      student: "/student/dashboard",
+      teacher: "/teacher",
+      parent: "/parent",
+      admin: "/admin",
+    };
+    navigate({ to: destinations[finalRole] });
   };
 
-  const toggleSubject = (s: string) => {
-    setSubjects((p) => p.includes(s) ? p.filter((x) => x !== s) : [...p, s]);
-  };
-
-  const toggleDay = (d: string) => {
-    setSchedule((p) => p.includes(d) ? p.filter((x) => x !== d) : [...p, d]);
-  };
-
-  const mockSchools = [
-    "Zespół Szkół nr 1 im. Kopernika", "Liceum Ogólnokształcące nr 3",
-    "Szkoła Podstawowa nr 5", "Technikum Informatyczne nr 7",
-    "EduNex International School", "Akademia Future",
-  ];
-  const filteredSchools = mockSchools.filter((s) => s.toLowerCase().includes(schoolQuery.toLowerCase()));
-
-  if (!user) {
-    return <div className="min-h-screen bg-bg flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-neon" /></div>;
+  if (!ready) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f6f8fb] text-slate-800">
+        <Loader2 className="h-6 w-6 animate-spin text-blue-700" />
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen text-white flex flex-col relative">
-      <OnboardingBg />
-      <Toaster theme="dark" />
-
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] bg-black/40 backdrop-blur-2xl">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-neon to-neon-blue flex items-center justify-center shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.3)]">
-              <Sparkles className="w-4 h-4 text-white" />
+    <div className="min-h-screen bg-[#f6f8fb] text-slate-950">
+      <Toaster theme="light" />
+      <div className="border-b border-slate-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-blue-700 text-white shadow-sm">
+              <ShieldCheck className="h-4 w-4" />
             </div>
-            <span className="text-base font-semibold">EduNex</span>
+            <div>
+              <p className="text-sm font-semibold">EduNex</p>
+              <p className="text-xs text-slate-500">Konfiguracja profilu</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-white/30">
-            <span>Step {step + 1} of 6</span>
-            <button onClick={() => complete()} className="text-neon/60 hover:text-neon ml-2">Skip</button>
+          <div className="flex items-center gap-4 text-sm text-slate-500">
+            <span>
+              Krok {step + 1} z {STEPS.length}
+            </span>
+            <button type="button" onClick={complete} className="font-medium text-blue-700 transition hover:text-blue-900">
+              Pomiń
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="flex items-center justify-center gap-3 px-6 py-6">
-          {STEPS.map((s, i) => (
-            <div key={s.id} className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
-                i === step ? "bg-neon text-black shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.5)]" : i < step ? "bg-neon/20 text-neon" : "bg-white/[0.04] text-white/30"
-              }`}>
-                {i < step ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
-              </div>
-              {i < STEPS.length - 1 && <div className={`w-12 h-0.5 rounded ${i < step ? "bg-neon/40" : "bg-white/[0.06]"}`} />}
-            </div>
-          ))}
-        </div>
+      <main className="mx-auto grid min-h-[calc(100vh-73px)] max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[360px_minmax(0,1fr)]">
+        <aside className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.08)]">
+          <div className="mb-6">
+            <p className="text-xs font-semibold uppercase text-blue-700">Start pracy</p>
+            <h1 className="mt-3 text-3xl font-semibold">Dostosuj EduNex do swojej roli.</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Kilka informacji pozwala przygotować właściwy panel, dokumenty i ścieżkę pierwszych działań.
+            </p>
+          </div>
 
-        <div className="flex-1 flex items-center justify-center px-6 pb-16">
-          <div className="w-full max-w-lg">
+          <div className="mb-6 h-2 overflow-hidden rounded-full bg-slate-100">
+            <div className="h-full rounded-full bg-blue-700 transition-all duration-500" style={{ width: `${progress}%` }} />
+          </div>
+
+          <div className="space-y-2">
+            {STEPS.map((item, index) => {
+              const Icon = item.icon;
+              const isActive = index === step;
+              const isDone = index < step;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setStep(index)}
+                  className={`flex w-full items-center gap-3 rounded-2xl border px-3 py-3 text-left transition ${
+                    isActive
+                      ? "border-blue-200 bg-blue-50 text-blue-900"
+                      : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-slate-50"
+                  }`}
+                >
+                  <span
+                    className={`grid h-9 w-9 place-items-center rounded-xl ${
+                      isActive || isDone ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-500"
+                    }`}
+                  >
+                    {isDone ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold">{item.label}</span>
+                    <span className="text-xs text-slate-500">Etap {index + 1}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        <section className="flex items-center rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_70px_rgba(15,23,42,.08)] sm:p-10">
+          <div className="w-full">
             {step === 0 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold neon-text">Welcome to EduNex</h1>
-                  <p className="text-sm text-fg-muted mt-1">Let&apos;s set up your profile</p>
-                </div>
-                <div className="flex items-center justify-center gap-3">
-                  {avatars.map((c, i) => (
-                    <button key={c} onClick={() => setAvatar(i)}
-                      className={`w-12 h-12 rounded-full transition-all ${avatar === i ? "ring-2 ring-neon ring-offset-2 ring-offset-bg scale-110 shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.3)]" : "opacity-50 hover:opacity-80"}`}
-                      style={{ background: c }}
+              <div className="mx-auto max-w-2xl space-y-6">
+                <SectionHeading title="Dane profilu" text="Ustaw podstawowe informacje widoczne w panelu i dokumentach." />
+                <div className="flex flex-wrap gap-3">
+                  {AVATAR_COLORS.map((color, index) => (
+                    <button
+                      key={color}
+                      type="button"
+                      onClick={() => setAvatar(index)}
+                      className={`h-12 w-12 rounded-full border-4 transition ${
+                        avatar === index ? "border-blue-100 ring-2 ring-blue-700" : "border-white opacity-75 hover:opacity-100"
+                      }`}
+                      style={{ background: color }}
+                      aria-label={`Kolor profilu ${index + 1}`}
                     />
                   ))}
                 </div>
-                <input type="text" value={fname} onChange={(e) => setFname(e.target.value)} placeholder="First name"
-                  className="w-full h-11 px-4 text-sm rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-fg-subtle outline-none focus:border-neon/40 focus:shadow-[0_0_10px_oklch(0.85_0.18_160_/_0.1)] transition-all" />
-                <input type="text" value={lname} onChange={(e) => setLname(e.target.value)} placeholder="Last name"
-                  className="w-full h-11 px-4 text-sm rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-fg-subtle outline-none focus:border-neon/40 focus:shadow-[0_0_10px_oklch(0.85_0.18_160_/_0.1)] transition-all" />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Imię" value={fname} onChange={setFname} />
+                  <Field label="Nazwisko" value={lname} onChange={setLname} />
+                </div>
               </div>
             )}
 
             {step === 1 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold neon-text">What&apos;s your role?</h1>
-                  <p className="text-sm text-fg-muted mt-1">Choose how you&apos;ll use EduNex</p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {ROLES.map((r) => (
-                    <button key={r.id} onClick={() => setRole(r.id)}
-                      className={`p-5 rounded-xl border text-left transition-all ${
-                        role === r.id
-                          ? `border-${r.color}/40 bg-${r.color}/5 shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.1)]`
-                          : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.15]"
-                      }`}
-                    >
-                      <r.icon className={`w-6 h-6 mb-2 ${role === r.id ? `text-${r.color}` : "text-white/40"}`} />
-                      <div className={`text-sm font-medium ${role === r.id ? "text-white" : "text-white/60"}`}>{r.label}</div>
-                      <div className="text-xs text-fg-subtle mt-1">{r.desc}</div>
-                    </button>
-                  ))}
+              <div className="mx-auto max-w-3xl space-y-6">
+                <SectionHeading title="Wybierz rolę" text="EduNex przygotuje inne pierwsze kroki dla ucznia, nauczyciela, rodzica i administracji." />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {ROLES.map((item) => {
+                    const Icon = item.icon;
+                    const selected = role === item.id;
+
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setRole(item.id)}
+                        className={`rounded-2xl border p-5 text-left transition ${
+                          selected ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-slate-300"
+                        }`}
+                      >
+                        <Icon className={`h-6 w-6 ${selected ? "text-blue-700" : "text-slate-400"}`} />
+                        <p className="mt-4 text-base font-semibold">{item.label}</p>
+                        <p className="mt-2 text-sm leading-6 text-slate-600">{item.desc}</p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
 
             {step === 2 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold neon-text">Your School</h1>
-                  <p className="text-sm text-fg-muted mt-1">Find or create your school</p>
-                </div>
+              <div className="mx-auto max-w-2xl space-y-6">
+                <SectionHeading title="Placówka" text="Wybierz szkołę z listy albo dodaj nazwę placówki ręcznie." />
                 {!createSchool ? (
-                  <div className="space-y-3">
-                    <input type="text" value={schoolQuery} onChange={(e) => setSchoolQuery(e.target.value)} placeholder="Search for your school..."
-                      className="w-full h-11 px-4 text-sm rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-fg-subtle outline-none focus:border-neon/40 focus:shadow-[0_0_10px_oklch(0.85_0.18_160_/_0.1)] transition-all" />
-                    <div className="max-h-40 overflow-y-auto space-y-1">
-                      {filteredSchools.map((s) => (
-                        <button key={s} onClick={() => setSelectedSchool(s)}
-                          className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all ${
-                            selectedSchool === s ? "bg-neon/10 border border-neon/30 text-neon" : "border border-white/[0.04] text-white/60 hover:bg-white/[0.04] hover:text-white"
+                  <div className="space-y-4">
+                    <Field label="Wyszukaj placówkę" value={schoolQuery} onChange={setSchoolQuery} />
+                    <div className="max-h-56 space-y-2 overflow-y-auto pr-1">
+                      {filteredSchools.map((school) => (
+                        <button
+                          key={school}
+                          type="button"
+                          onClick={() => setSelectedSchool(school)}
+                          className={`w-full rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                            selectedSchool === school
+                              ? "border-blue-300 bg-blue-50 text-blue-900"
+                              : "border-slate-200 text-slate-700 hover:border-slate-300"
                           }`}
                         >
-                          {s}
+                          {school}
                         </button>
                       ))}
                     </div>
-                    <button onClick={() => setCreateSchool(true)} className="text-xs text-neon/60 hover:text-neon transition-colors">
-                      Can&apos;t find your school? Create one
+                    <button type="button" onClick={() => setCreateSchool(true)} className="text-sm font-medium text-blue-700">
+                      Dodaj inną placówkę
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-3">
-                    <input type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)} placeholder="School name"
-                      className="w-full h-11 px-4 text-sm rounded-xl bg-white/[0.04] border border-white/[0.08] text-white placeholder:text-fg-subtle outline-none focus:border-neon/40 transition-all" />
-                    <button onClick={() => setCreateSchool(false)} className="text-xs text-neon/60 hover:text-neon transition-colors">
-                      Search existing schools
+                  <div className="space-y-4">
+                    <Field label="Nazwa placówki" value={schoolName} onChange={setSchoolName} />
+                    <button type="button" onClick={() => setCreateSchool(false)} className="text-sm font-medium text-blue-700">
+                      Wróć do wyszukiwania
                     </button>
                   </div>
                 )}
@@ -248,169 +375,211 @@ function OnboardingPage() {
             )}
 
             {step === 3 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold neon-text">Set up your workspace</h1>
-                  <p className="text-sm text-fg-muted mt-1">Choose subjects and your level</p>
+              <div className="mx-auto max-w-3xl space-y-7">
+                <SectionHeading title="Zakres pracy" text="Wybierz przedmioty, poziom i rytm pracy. Możesz zmienić te ustawienia później." />
+                <ChoiceGroup label="Przedmioty">
+                  {SUBJECTS.map((subject) => (
+                    <Chip key={subject} active={subjects.includes(subject)} onClick={() => toggleSubject(subject)}>
+                      {subject}
+                    </Chip>
+                  ))}
+                </ChoiceGroup>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {[
+                    ["beginner", "Podstawowy", "Pierwsze kroki lub powtórka."],
+                    ["intermediate", "Średni", "Regularna praca i utrwalanie."],
+                    ["advanced", "Zaawansowany", "Wyższy poziom trudności."],
+                  ].map(([id, label, desc]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => setLevel(id)}
+                      className={`rounded-2xl border p-4 text-left transition ${
+                        level === id ? "border-blue-300 bg-blue-50" : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <BookOpen className="h-5 w-5 text-blue-700" />
+                      <p className="mt-3 text-sm font-semibold">{label}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">{desc}</p>
+                    </button>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-xs text-fg-muted mb-2">Subjects</p>
-                  <div className="flex flex-wrap gap-2">
-                    {SUBJECTS.map((s) => (
-                      <button key={s} onClick={() => toggleSubject(s)}
-                        className={`px-4 py-2 rounded-xl text-sm border transition-all ${
-                          subjects.includes(s) ? "border-neon/40 bg-neon/10 text-neon" : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20"
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-fg-muted mb-2">Your level</p>
-                  <div className="space-y-2">
-                    {[
-                      { id: "beginner", label: "Beginner", desc: "New to these subjects" },
-                      { id: "intermediate", label: "Intermediate", desc: "Some knowledge, room to grow" },
-                      { id: "advanced", label: "Advanced", desc: "Confident and ready for challenges" },
-                    ].map((opt) => (
-                      <button key={opt.id} onClick={() => setLevel(opt.id)}
-                        className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all ${
-                          level === opt.id ? "border-neon/40 bg-neon/10" : "border-white/[0.08] bg-white/[0.02] hover:border-white/20"
-                        }`}
-                      >
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${level === opt.id ? "bg-neon text-black" : "bg-white/[0.04] text-white/40"}`}>
-                          <BookOpen className="w-5 h-5" />
-                        </div>
-                        <div className="text-left">
-                          <div className="text-sm font-medium">{opt.label}</div>
-                          <div className="text-xs text-fg-muted">{opt.desc}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-fg-muted mb-2">Study schedule</p>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-                      <button key={d} onClick={() => toggleDay(d)}
-                        className={`flex-1 min-w-[70px] py-2.5 rounded-xl text-sm border transition-all ${
-                          schedule.includes(d) ? "border-neon/40 bg-neon/10 text-neon" : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20"
-                        }`}
-                      >
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    {["15", "30", "45", "60", "90", "120"].map((t) => (
-                      <button key={t} onClick={() => setTimePerDay(t)}
-                        className={`flex-1 py-2.5 rounded-xl text-sm border transition-all ${
-                          timePerDay === t ? "border-neon/40 bg-neon/10 text-neon" : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20"
-                        }`}
-                      >
-                        {t}m
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                <ChoiceGroup label="Dni pracy">
+                  {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Nd"].map((day) => (
+                    <Chip key={day} active={schedule.includes(day)} onClick={() => toggleDay(day)}>
+                      {day}
+                    </Chip>
+                  ))}
+                </ChoiceGroup>
+                <ChoiceGroup label="Czas dziennie">
+                  {["15", "30", "45", "60", "90"].map((time) => (
+                    <Chip key={time} active={timePerDay === time} onClick={() => setTimePerDay(time)}>
+                      {time} min
+                    </Chip>
+                  ))}
+                </ChoiceGroup>
               </div>
             )}
 
             {step === 4 && (
-              <div className="space-y-6">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold neon-text">AI Tutor Setup</h1>
-                  <p className="text-sm text-fg-muted mt-1">Personalize your AI learning experience</p>
+              <div className="mx-auto max-w-3xl space-y-7">
+                <SectionHeading title="Asystent AI" text="Ustaw styl odpowiedzi i zgodę na przetwarzanie danych edukacyjnych w celu personalizacji." />
+                <ChoiceGroup label="Język odpowiedzi">
+                  {[
+                    ["pl", "Polski"],
+                    ["en", "English"],
+                    ["uk", "Українська"],
+                  ].map(([id, label]) => (
+                    <Chip key={id} active={aiLang === id} onClick={() => setAiLang(id)}>
+                      {label}
+                    </Chip>
+                  ))}
+                </ChoiceGroup>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {AI_STYLES.map((style) => (
+                    <button
+                      key={style.id}
+                      type="button"
+                      onClick={() => setAiStyle(style.id)}
+                      className={`rounded-2xl border p-5 text-left transition ${
+                        aiStyle === style.id ? "border-blue-300 bg-blue-50" : "border-slate-200 hover:border-slate-300"
+                      }`}
+                    >
+                      <BrainCircuit className="h-5 w-5 text-blue-700" />
+                      <p className="mt-3 text-sm font-semibold">{style.label}</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{style.desc}</p>
+                    </button>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-xs text-fg-muted mb-2">AI Language</p>
-                  <div className="flex gap-2">
-                    {[
-                      { id: "pl", label: "Polish", flag: "🇵🇱" },
-                      { id: "en", label: "English", flag: "🇬🇧" },
-                      { id: "uk", label: "Ukrainian", flag: "🇺🇦" },
-                    ].map((l) => (
-                      <button key={l.id} onClick={() => setAiLang(l.id)}
-                        className={`flex-1 py-3 rounded-xl text-sm border transition-all ${
-                          aiLang === l.id ? "border-neon/40 bg-neon/10 text-neon" : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20"
-                        }`}
-                      >
-                        {l.flag} {l.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-fg-muted mb-2">AI Response Style</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {AI_STYLES.map((s) => (
-                      <button key={s.id} onClick={() => setAiStyle(s.id)}
-                        className={`p-4 rounded-xl text-sm border text-left transition-all ${
-                          aiStyle === s.id ? "border-neon/40 bg-neon/10 text-neon" : "border-white/[0.08] bg-white/[0.02] text-white/60 hover:border-white/20"
-                        }`}
-                      >
-                        <div className="font-medium mb-1">{s.label}</div>
-                        <div className="text-[10px] text-fg-muted">{s.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input type="checkbox" checked={aiConsent} onChange={(e) => setAiConsent(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/[0.04] text-neon focus:ring-neon/40" />
-                  <span className="text-xs text-fg-muted">
-                    I agree to AI processing of my learning data to provide personalized tutoring
+                <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <input
+                    type="checkbox"
+                    checked={aiConsent}
+                    onChange={(event) => setAiConsent(event.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-700 focus:ring-blue-700"
+                  />
+                  <span className="text-sm leading-6 text-slate-700">
+                    Wyrażam zgodę na wykorzystanie danych edukacyjnych do personalizacji odpowiedzi AI w EduNex.
                   </span>
                 </label>
               </div>
             )}
 
             {step === 5 && (
-              <div className="space-y-6 text-center">
-                <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-neon to-neon-blue flex items-center justify-center shadow-[0_0_30px_oklch(0.85_0.18_160_/_0.3)]">
-                  <CheckCircle2 className="w-10 h-10 text-black" />
+              <div className="mx-auto max-w-2xl text-center">
+                <div className="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-blue-700 text-white shadow-lg shadow-blue-700/20">
+                  <CheckCircle2 className="h-10 w-10" />
                 </div>
-                <h1 className="text-2xl font-bold neon-text">You&apos;re all set!</h1>
-                <p className="text-sm text-fg-muted max-w-sm mx-auto">
-                  Your profile is ready. Let&apos;s start your learning journey with EduNex.
+                <h2 className="mt-6 text-3xl font-semibold">Profil jest gotowy.</h2>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-600">
+                  Po zapisaniu przeniesiemy Cię do właściwego panelu. Ustawienia możesz później dopracować w profilu.
                 </p>
-                <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-4 space-y-2 text-left backdrop-blur-sm">
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">Name</span><span>{fname} {lname}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">Role</span><span className="capitalize text-neon">{role}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">School</span><span>{selectedSchool || schoolName || "—"}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">Subjects</span><span>{subjects.length} selected</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">Level</span><span className="capitalize">{level}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-fg-muted">AI Style</span><span className="capitalize">{aiStyle}</span></div>
+                <div className="mt-8 grid gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-5 text-left sm:grid-cols-2">
+                  <SummaryItem label="Imię i nazwisko" value={`${fname} ${lname}`.trim() || "Nie podano"} />
+                  <SummaryItem label="Rola" value={ROLES.find((item) => item.id === role)?.label || "Uczeń"} />
+                  <SummaryItem label="Placówka" value={selectedSchool || schoolName || "Nie wybrano"} />
+                  <SummaryItem label="Przedmioty" value={subjects.length ? `${subjects.length} wybranych` : "Nie wybrano"} />
+                  <SummaryItem label="Rytm pracy" value={`${timePerDay} min dziennie`} />
+                  <SummaryItem label="Styl AI" value={AI_STYLES.find((item) => item.id === aiStyle)?.label || "Wspierający"} />
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </section>
+      </main>
 
-        <div className="border-t border-white/[0.06] px-6 py-4 flex items-center justify-between bg-black/40 backdrop-blur-2xl">
-          <button onClick={() => step > 0 && setStep(step - 1)} disabled={step === 0}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs text-white/50 hover:text-white disabled:opacity-30 transition"
+      <footer className="border-t border-slate-200 bg-white/90 px-5 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setStep((current) => Math.max(current - 1, 0))}
+            disabled={step === 0}
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 disabled:opacity-40"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Back
+            <ArrowLeft className="h-4 w-4" />
+            Wstecz
           </button>
-          {step < 5 ? (
-            <button onClick={() => canProceed() && setStep(step + 1)} disabled={!canProceed()}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-medium bg-neon text-black rounded-lg hover:bg-neon/90 disabled:opacity-30 transition shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.3)]"
+          {step < STEPS.length - 1 ? (
+            <button
+              type="button"
+              onClick={() => canProceed() && setStep((current) => current + 1)}
+              disabled={!canProceed()}
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Continue <ArrowRight className="w-3.5 h-3.5" />
+              Dalej
+              <ArrowRight className="h-4 w-4" />
             </button>
           ) : (
-            <button onClick={complete} disabled={busy}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 text-xs font-medium bg-neon text-black rounded-lg hover:bg-neon/90 disabled:opacity-30 transition shadow-[0_0_15px_oklch(0.85_0.18_160_/_0.3)]"
+            <button
+              type="button"
+              onClick={complete}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {busy ? "Setting up..." : "Start learning"} {!busy && <ArrowRight className="w-3.5 h-3.5" />}
+              {busy ? "Zapisywanie..." : "Zapisz konfigurację"}
+              {!busy && <ArrowRight className="h-4 w-4" />}
             </button>
           )}
         </div>
-      </div>
+      </footer>
+    </div>
+  );
+}
+
+function SectionHeading({ title, text }: { title: string; text: string }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase text-blue-700">EduNex</p>
+      <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">{title}</h2>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{text}</p>
+    </div>
+  );
+}
+
+function Field({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <label className="block">
+      <span className="text-sm font-medium text-slate-700">{label}</span>
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 h-12 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+      />
+    </label>
+  );
+}
+
+function ChoiceGroup({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div>
+      <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <CalendarDays className="h-4 w-4 text-blue-700" />
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+}
+
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+        active ? "border-blue-300 bg-blue-50 text-blue-800" : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SummaryItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4">
+      <p className="text-xs font-medium uppercase text-slate-400">{label}</p>
+      <p className="mt-2 text-sm font-semibold text-slate-900">{value}</p>
     </div>
   );
 }

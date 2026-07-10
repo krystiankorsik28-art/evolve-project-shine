@@ -1,293 +1,372 @@
-import { useState } from "react";
+import { useMemo, useState, type ComponentType } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Shield, FileText, ScrollText, Lock, Activity, ArrowLeft, CheckCircle2 } from "lucide-react";
+import {
+  Activity,
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  FileText,
+  Lock,
+  Scale,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 export const Route = createFileRoute("/dokumenty")({
   component: Documents,
   head: () => ({
     meta: [
-      { title: "Dokumenty prawne | EduNex.pl" },
-      { name: "description", content: "Regulamin, polityka prywatności, umowa powierzenia danych, status systemu i informacje RODO platformy EduNex." },
+      { title: "Dokumenty prawne | EduNex" },
+      {
+        name: "description",
+        content: "Regulamin, polityka prywatności, RODO, umowa powierzenia danych i status systemu EduNex.",
+      },
     ],
   }),
 });
 
-type DocKey = "regulamin" | "polityka" | "umowa" | "status" | "rodo";
+type DocKey = "regulamin" | "polityka" | "rodo" | "powierzenie" | "status";
 
-const DOCS: Record<DocKey, { title: string; icon: typeof Shield; content: string[] }> = {
-  regulamin: {
-    title: "Regulamin platformy EduNex",
-    icon: FileText,
-    content: [
-      "§1. Postanowienia ogólne",
-      "1. Niniejszy regulamin określa zasady korzystania z platformy edukacyjnej EduNex (zwanej dalej „Platformą”), dostępnej pod adresem edunex.pl.",
-      "2. Platforma umożliwia nauczycielom tworzenie egzaminów i sprawdzianów, uczniom rozwiązywanie ich online, a dyrekcji i rodzicom monitorowanie postępów.",
-      "3. Administratorem Platformy jest EduNex Sp. z o.o. z siedzibą w Warszawie, ul. Świętokrzyska 14, 00-050 Warszawa.",
-      "4. Korzystanie z Platformy jest dobrowolne i wymaga akceptacji niniejszego regulaminu.",
-      "",
-      "§2. Definicje",
-      "1. Nauczyciel – osoba posiadająca konto nauczycielskie, uprawniona do tworzenia egzaminów i zarządzania klasami.",
-      "2. Uczeń – osoba rozwiązująca egzaminy za pomocą kodu PIN, bez konieczności zakładania konta.",
-      "3. Dyrekcja – osoba posiadająca konto administracyjne z dostępem do raportów zbiorczych.",
-      "4. Rodzic – osoba posiadająca konto rodzica z wglądem w wyniki dziecka.",
-      "5. Egzamin – zestaw pytań utworzony przez nauczyciela, udostępniony uczniom.",
-      "",
-      "§3. Rejestracja i konto",
-      "1. Rejestracja nauczyciela wymaga podania adresu e-mail oraz weryfikacji przez administratora.",
-      "2. Nauczyciel zobowiązuje się do podania prawdziwych danych i aktualizowania ich w razie zmian.",
-      "3. Konto nauczyciela jest osobiste – nie można udostępniać go osobom trzecim.",
-      "4. Uczeń nie wymaga konta – dostęp do egzaminu odbywa się poprzez 6-cyfrowy PIN i imię.",
-      "5. Rodzic rejestruje się za pomocą kodu dostępu wygenerowanego przez nauczyciela.",
-      "",
-      "§4. Zasady korzystania",
-      "1. Platforma służy wyłącznie do celów edukacyjnych.",
-      "2. Zabronione jest wprowadzanie treści obraźliwych, nielegalnych lub naruszających prawa autorskie.",
-      "3. Nauczyciel ponosi odpowiedzialność za treść pytań egzaminacyjnych.",
-      "4. Uczeń zobowiązuje się do samodzielnego rozwiązywania egzaminów.",
-      "5. Platforma monitoruje podejrzane zachowania (opuszczanie okna, nietypowe ruchy myszy) w celu zapewnienia uczciwości.",
-      "",
-      "§5. Płatności",
-      "1. Platforma oferuje plany płatne i bezpłatny (Klasa).",
-      "2. Płatności realizowane są za pośrednictwem DirectCryptoPay (kryptowaluty) oraz tradycyjnych metod płatności.",
-      "3. W przypadku planu rocznego, opłata pobierana jest z góry za cały okres.",
-      "4. Zwroty środków możliwe są w ciągu 14 dni od daty zakupu, zgodnie z ustawą o prawach konsumenta.",
-      "",
-      "§6. Odpowiedzialność",
-      "1. EduNex dokłada wszelkich starań, aby Platforma działała bez zakłóceń, jednak nie gwarantuje 100% dostępności.",
-      "2. SLA dla płatnych planów wynosi 99,98% (Szkoła), 99,95% (Dzielnica) i 99,99% (Kuratorium).",
-      "3. EduNex nie ponosi odpowiedzialności za utratę danych spowodowaną działaniem siły wyższej.",
-      "4. W przypadku naruszenia regulaminu, administrator ma prawo zablokować konto bez uprzedzenia.",
-      "",
-      "§7. Postanowienia końcowe",
-      "1. Regulamin wchodzi w życie z dniem opublikowania na stronie Platformy.",
-      "2. EduNex zastrzega sobie prawo do zmiany regulaminu – użytkownicy zostaną powiadomieni o zmianach e-mailem.",
-      "3. W sprawach nieuregulowanych zastosowanie mają przepisy prawa polskiego.",
-      "4. Wszelkie spory rozstrzygane są przez sąd właściwy dla siedziby Administratora.",
-    ],
-  },
-  polityka: {
-    title: "Polityka prywatności",
-    icon: Shield,
-    content: [
-      "1. Administratorem danych osobowych jest EduNex Sp. z o.o. z siedzibą w Warszawie, ul. Świętokrzyska 14, 00-050 Warszawa.",
-      "2. Dane osobowe przetwarzane są zgodnie z Rozporządzeniem Parlamentu Europejskiego i Rady (UE) 2016/679 (RODO).",
-      "3. Administrator zbiera następujące dane:",
-      "   – Nauczyciele: imię, nazwisko, adres e-mail, przedmiot nauczania",
-      "   – Uczniowie: imię i nazwisko (wyłącznie na potrzeby egzaminu, bez zakładania konta)",
-      "   – Rodzice: imię, nazwisko, adres e-mail",
-      "   – Dyrekcja: imię, nazwisko, adres e-mail, stanowisko",
-      "4. Dane osobowe przetwarzane są w celu:",
-      "   – świadczenia usług platformy edukacyjnej",
-      "   – wystawiania certyfikatów i raportów",
-      "   – kontaktu w sprawach związanych z korzystaniem z Platformy",
-      "   – przesyłania newslettera (za zgodą)",
-      "5. Podstawą prawną przetwarzania jest:",
-      "   – art. 6 ust. 1 lit. b RODO (niezbędność do wykonania umowy)",
-      "   – art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora)",
-      "   – art. 6 ust. 1 lit. a RODO (zgoda – w przypadku newslettera)",
-      "6. Dane przechowywane są przez okres:",
-      "   – nauczyciele i dyrekcja: przez czas trwania umowy + 3 lata",
-      "   – uczniowie: dane z egzaminów przez 12 miesięcy, imię i nazwisko usuwane po 30 dniach",
-      "   – rodzice: przez czas posiadania konta + 12 miesięcy",
-      "7. Odbiorcami danych mogą być:",
-      "   – podmioty przetwarzające (hosting, serwery w UE)",
-      "   – organy państwowe na podstawie przepisów prawa",
-      "8. Użytkownikom przysługują prawa:",
-      "   – dostępu do danych, sprostowania, usunięcia, ograniczenia przetwarzania",
-      "   – przenoszenia danych",
-      "   – wniesienia skargi do Prezesa UODO",
-      "9. Dane nie są przekazywane do państw trzecich poza UE.",
-      "10. Platforma wykorzystuje pliki cookies niezbędne do działania (sesyjne) oraz analityczne.",
-      "11. Administrator stosuje środki bezpieczeństwa: TLS 1.3, AES-256, regularne audyty.",
-      "12. Kontakt w sprawach prywatności: kontakt@edunex.pl",
-    ],
-  },
-  umowa: {
-    title: "Umowa powierzenia danych osobowych",
-    icon: ScrollText,
-    content: [
-      "UMOWA POWIERZENIA DANYCH OSOBOWYCH (zwana dalej „Umową”)",
-      "",
-      "zawarta pomiędzy:",
-      "Szkołą/Placówką oświatową (zwaną dalej „Powierzającym”)",
-      "a EduNex Sp. z o.o. z siedzibą w Warszawie (zwanym dalej „Przetwarzającym”)",
-      "",
-      "§1. Przedmiot Umowy",
-      "1. Powierzający powierza Przetwarzającemu dane osobowe uczniów, nauczycieli i rodziców w celu świadczenia usług platformy egzaminacyjnej EduNex.",
-      "2. Przetwarzanie obejmuje: zbieranie, przechowywanie, porządkowanie, udostępnianie i usuwanie danych.",
-      "3. Zakres danych: imię, nazwisko, adres e-mail, wyniki egzaminów, dane o postępach.",
-      "",
-      "§2. Obowiązki Przetwarzającego",
-      "1. Przetwarzający stosuje środki bezpieczeństwa: szyfrowanie TLS 1.3 w tranzycie, AES-256 w spoczynku.",
-      "2. Serwery znajdują się wyłącznie na terenie Unii Europejskiej (Warszawa, Frankfurt).",
-      "3. Przetwarzający prowadzi rejestr wszystkich operacji na danych (dziennik audytu).",
-      "4. Przetwarzający zapewnia prawo dostępu, sprostowania, usunięcia danych na żądanie Powierzającego.",
-      "5. Przetwarzający zgłasza naruszenia ochrony danych w ciągu 48h.",
-      "",
-      "§3. Podprzetwarzający",
-      "1. Przetwarzającemu przysługuje prawo korzystania z podprzetwarzających (dostawcy hostingu, usług chmurowych).",
-      "2. Każdy podprzetwarzający jest zobowiązany do zachowania standardów RODO.",
-      "3. Aktualna lista podprzetwarzających dostępna jest na stronie edunex.pl/dokumenty.",
-      "",
-      "§4. Okres obowiązywania",
-      "1. Umowa obowiązuje przez czas trwania umowy na korzystanie z Platformy.",
-      "2. Po zakończeniu, Przetwarzający usuwa wszystkie dane w terminie 30 dni.",
-      "3. Na żądanie Powierzającego, dane są eksportowane i przekazywane przed usunięciem.",
-      "",
-      "§5. Postanowienia końcowe",
-      "1. Umowę można wypowiedzieć z 30-dniowym okresem wypowiedzenia.",
-      "2. W sprawach nieuregulowanych zastosowanie ma RODO i kodeks cywilny.",
-      "3. Spory rozstrzyga sąd właściwy dla siedziby Powierzającego.",
-    ],
-  },
-  rodo: {
-    title: "RODO — informacje",
-    icon: Lock,
-    content: [
-      "INFORMACJA O PRZETWARZANIU DANYCH OSOBOWYCH (RODO)",
-      "",
-      "1. Administrator danych",
-      "EduNex Sp. z o.o., ul. Świętokrzyska 14, 00-050 Warszawa",
-      "e-mail: kontakt@edunex.pl",
-      "",
-      "2. Inspektor Ochrony Danych",
-      "Kontakt: iod@edunex.pl",
-      "",
-      "3. Cele i podstawy przetwarzania",
-      "– Świadczenie usług platformy edukacyjnej (art. 6 ust. 1 lit. b RODO)",
-      "– Wystawianie certyfikatów i raportów (art. 6 ust. 1 lit. b RODO)",
-      "– Monitorowanie bezpieczeństwa i wykrywanie nadużyć (art. 6 ust. 1 lit. f RODO)",
-      "– Przesyłanie informacji handlowych za zgodą (art. 6 ust. 1 lit. a RODO)",
-      "– Realizacja obowiązków prawnych (art. 6 ust. 1 lit. c RODO)",
-      "",
-      "4. Kategorie danych",
-      "– Dane identyfikacyjne (imię, nazwisko)",
-      "– Dane kontaktowe (e-mail)",
-      "– Dane edukacyjne (wyniki egzaminów, postępy)",
-      "– Dane o aktywności (logi, czas spędzony na egzaminie)",
-      "",
-      "5. Okres przechowywania",
-      "– Dane nauczycieli i dyrekcji: 3 lata od zakończenia umowy",
-      "– Dane uczniów: 30 dni (imię i nazwisko), 12 miesięcy (wyniki) ",
-      "– Dane rodziców: 12 miesięcy od zakończenia umowy",
-      "",
-      "6. Prawa osoby, której dane dotyczą",
-      "– Prawo dostępu do danych (art. 15 RODO)",
-      "– Prawo do sprostowania (art. 16 RODO)",
-      "– Prawo do usunięcia danych („prawo do bycia zapomnianym”, art. 17 RODO)",
-      "– Prawo do ograniczenia przetwarzania (art. 18 RODO)",
-      "– Prawo do przenoszenia danych (art. 20 RODO)",
-      "– Prawo wniesienia sprzeciwu (art. 21 RODO)",
-      "– Prawo wniesienia skargi do Prezesa UODO",
-      "",
-      "7. Prawa autorskie",
-      "Wszelkie materiały edukacyjne utworzone przez nauczycieli przy użyciu Platformy stanowią ich własność intelektualną. EduNex nie rości sobie praw do treści pytań egzaminacyjnych.",
-      "",
-      "8. Bezpieczeństwo",
-      "Stosujemy szyfrowanie TLS 1.3, szyfrowanie danych w spoczynku AES-256, regularne audyty bezpieczeństwa, kopie zapasowe co 6 godzin.",
-      "",
-      "9. Kontakt",
-      "We wszystkich sprawach związanych z ochroną danych osobowych prosimy o kontakt: kontakt@edunex.pl",
-    ],
-  },
-  status: {
-    title: "Status systemu",
-    icon: Activity,
-    content: [
-      "STATUS SYSTEMU EDUnex",
-      "",
-      "Stan na: " + new Date().toLocaleString("pl-PL"),
-      "",
-      "✔ Wszystkie systemy działają prawidłowo.",
-      "",
-      "Moduły:",
-      "– Platforma główna (edunex.pl): ✅ Online",
-      "– System egzaminacyjny: ✅ Online",
-      "– Generator AI: ✅ Online",
-      "– AI Tutor: ✅ Online",
-      "– Baza danych (Supabase): ✅ Online",
-      "– System płatności (DirectCryptoPay): ✅ Online",
-      "– E-mail (Resend): ✅ Online",
-      "– Certyfikaty i weryfikacja QR: ✅ Online",
-      "",
-      "Ostatnie incydenty:",
-      "– Brak incydentów w ciągu ostatnich 30 dni.",
-      "",
-      "Planowana konserwacja:",
-      "– Najbliższe okno konserwacyjne: brak zaplanowanych.",
-      "",
-      "SLA:",
-      "– Uptime 30 dni: 99,98%",
-      "– Uptime 90 dni: 99,97%",
-      "– Uptime 365 dni: 99,99%",
-      "",
-      "Metryki wydajności:",
-      "– Średni czas odpowiedzi API: 120ms",
-      "– Średni czas generowania AI: 2.3s",
-      "– Aktywni użytkownicy (24h): 847",
-      "– Przeprowadzone egzaminy (24h): 124",
-    ],
-  },
+type LegalDoc = {
+  key: DocKey;
+  title: string;
+  short: string;
+  updated: string;
+  icon: ComponentType<{ className?: string }>;
+  sections: Array<{ heading: string; body: string[] }>;
 };
 
+const docs: LegalDoc[] = [
+  {
+    key: "regulamin",
+    title: "Regulamin platformy EduNex",
+    short: "Zasady korzystania z kont, egzaminów, certyfikatów i paneli szkolnych.",
+    updated: "3 lipca 2026",
+    icon: FileText,
+    sections: [
+      {
+        heading: "1. Postanowienia ogólne",
+        body: [
+          "EduNex jest platformą edukacyjną wspierającą tworzenie egzaminów, obsługę kodów PIN, analizę wyników i komunikację szkolną.",
+          "Z platformy korzystają nauczyciele, uczniowie, administratorzy szkoły oraz uprawnieni opiekunowie.",
+          "Korzystanie z systemu wymaga akceptacji regulaminu oraz przestrzegania zasad bezpieczeństwa danych.",
+        ],
+      },
+      {
+        heading: "2. Konta i dostęp",
+        body: [
+          "Konto nauczyciela może wymagać zatwierdzenia przez administratora szkoły.",
+          "Uczeń może wejść do egzaminu przez konto lub jednorazowy PIN przekazany przez nauczyciela.",
+          "Użytkownik nie może udostępniać danych logowania innym osobom.",
+        ],
+      },
+      {
+        heading: "3. Egzaminy i wyniki",
+        body: [
+          "Nauczyciel odpowiada za treść egzaminów, kryteria oceniania i publikację wyników.",
+          "Uczeń zobowiązuje się do samodzielnej pracy, chyba że nauczyciel określi inaczej.",
+          "Wyniki, certyfikaty i eksporty są przechowywane zgodnie z zasadami retencji danych szkoły.",
+        ],
+      },
+      {
+        heading: "4. Odpowiedzialność i dostępność",
+        body: [
+          "EduNex utrzymuje system z należytą starannością i monitoruje podstawowe parametry bezpieczeństwa.",
+          "Planowane prace techniczne mogą czasowo ograniczyć dostęp do wybranych modułów.",
+          "Zgłoszenia techniczne należy kierować do administratora szkoły lub kontaktu wskazanego w umowie.",
+        ],
+      },
+    ],
+  },
+  {
+    key: "polityka",
+    title: "Polityka prywatności",
+    short: "Jakie dane przetwarzamy, w jakim celu i przez jaki czas.",
+    updated: "3 lipca 2026",
+    icon: Shield,
+    sections: [
+      {
+        heading: "1. Administrator danych",
+        body: [
+          "Administratorem danych w ramach wdrożenia szkolnego jest właściwa placówka lub podmiot wskazany w umowie.",
+          "EduNex może pełnić rolę podmiotu przetwarzającego dane na podstawie umowy powierzenia.",
+        ],
+      },
+      {
+        heading: "2. Kategorie danych",
+        body: [
+          "Przetwarzane mogą być dane identyfikacyjne, kontaktowe, edukacyjne, wyniki egzaminów oraz techniczne logi bezpieczeństwa.",
+          "Zakres danych ucznia powinien być ograniczony do minimum niezbędnego do przeprowadzenia egzaminu i wystawienia wyniku.",
+        ],
+      },
+      {
+        heading: "3. Cele przetwarzania",
+        body: [
+          "Dane są wykorzystywane do obsługi kont, egzaminów, raportów, certyfikatów, eksportu ocen oraz zapewnienia bezpieczeństwa systemu.",
+          "Komunikacja marketingowa lub dodatkowe integracje wymagają odrębnej podstawy prawnej albo zgody.",
+        ],
+      },
+      {
+        heading: "4. Retencja i prawa użytkownika",
+        body: [
+          "Okres przechowywania danych zależy od ustawień szkoły, umowy i obowiązków prawnych.",
+          "Osoba, której dane dotyczą, może żądać dostępu, sprostowania, ograniczenia, usunięcia lub przeniesienia danych zgodnie z RODO.",
+        ],
+      },
+    ],
+  },
+  {
+    key: "rodo",
+    title: "Informacja RODO",
+    short: "Podstawowe informacje o przetwarzaniu danych osobowych w EduNex.",
+    updated: "3 lipca 2026",
+    icon: Lock,
+    sections: [
+      {
+        heading: "1. Podstawy prawne",
+        body: [
+          "Przetwarzanie danych może opierać się na wykonaniu umowy, obowiązku prawnym, uzasadnionym interesie administratora lub zgodzie.",
+          "Dla danych szkolnych podstawę i zakres przetwarzania określa placówka oraz właściwe przepisy prawa.",
+        ],
+      },
+      {
+        heading: "2. Bezpieczeństwo",
+        body: [
+          "System wykorzystuje szyfrowane połączenia, kontrolę dostępu opartą o role oraz rozdzielenie paneli użytkowników.",
+          "Dostęp administracyjny powinien być ograniczony do uprawnionych osób i regularnie weryfikowany.",
+        ],
+      },
+      {
+        heading: "3. Odbiorcy danych",
+        body: [
+          "Dane mogą być powierzane dostawcom hostingu, poczty, baz danych i narzędzi bezpieczeństwa wyłącznie w zakresie niezbędnym do działania usługi.",
+          "Lista podmiotów przetwarzających powinna być utrzymywana w dokumentacji wdrożenia szkoły.",
+        ],
+      },
+      {
+        heading: "4. Kontakt",
+        body: [
+          "W sprawach ochrony danych należy kontaktować się z administratorem szkoły albo inspektorem ochrony danych wskazanym przez placówkę.",
+          "Zgłoszenia techniczne dotyczące kont i dostępu można kierować przez kanał wsparcia EduNex.",
+        ],
+      },
+    ],
+  },
+  {
+    key: "powierzenie",
+    title: "Umowa powierzenia danych",
+    short: "Zakres i obowiązki podmiotu przetwarzającego dane dla szkoły.",
+    updated: "3 lipca 2026",
+    icon: Scale,
+    sections: [
+      {
+        heading: "1. Przedmiot powierzenia",
+        body: [
+          "Szkoła powierza przetwarzanie danych w celu obsługi platformy edukacyjnej, egzaminów, raportów i certyfikatów.",
+          "Powierzenie obejmuje wyłącznie dane niezbędne do świadczenia usługi.",
+        ],
+      },
+      {
+        heading: "2. Obowiązki przetwarzającego",
+        body: [
+          "Podmiot przetwarzający stosuje środki organizacyjne i techniczne adekwatne do ryzyka.",
+          "Dane nie mogą być wykorzystywane do celów innych niż wskazane przez administratora.",
+        ],
+      },
+      {
+        heading: "3. Podpowierzenie",
+        body: [
+          "Korzystanie z dostawców infrastruktury wymaga zachowania standardów bezpieczeństwa i umów zgodnych z RODO.",
+          "Administrator powinien mieć dostęp do aktualnej listy kategorii podwykonawców.",
+        ],
+      },
+      {
+        heading: "4. Zakończenie współpracy",
+        body: [
+          "Po zakończeniu umowy dane powinny zostać zwrócone, wyeksportowane lub usunięte zgodnie z dyspozycją administratora.",
+          "Potwierdzenie usunięcia danych może zostać przekazane w formie raportu technicznego.",
+        ],
+      },
+    ],
+  },
+  {
+    key: "status",
+    title: "Status systemu",
+    short: "Publiczny opis dostępności i podstawowych komponentów EduNex.",
+    updated: "3 lipca 2026",
+    icon: Activity,
+    sections: [
+      {
+        heading: "Aktualny status",
+        body: [
+          "Platforma główna: operacyjna.",
+          "Logowanie i role: operacyjne.",
+          "Egzaminy PIN: operacyjne.",
+          "Dokumenty prawne: operacyjne.",
+        ],
+      },
+      {
+        heading: "Planowane prace",
+        body: [
+          "Brak zaplanowanych prac serwisowych w tym środowisku.",
+          "Wdrożenia produkcyjne powinny być komunikowane szkole z wyprzedzeniem.",
+        ],
+      },
+      {
+        heading: "Zgłaszanie incydentów",
+        body: [
+          "Incydenty bezpieczeństwa i niedostępność systemu należy zgłaszać kanałem wsparcia wskazanym w umowie.",
+          "Zgłoszenie powinno zawierać czas zdarzenia, nazwę szkoły, rolę użytkownika i opis problemu.",
+        ],
+      },
+    ],
+  },
+];
+
+const docMap = new Map(docs.map((doc) => [doc.key, doc]));
+
 function Documents() {
-  const [doc, setDoc] = useState<DocKey>("regulamin");
-  const active = DOCS[doc];
-  const Icon = active.icon;
+  const [selectedKey, setSelectedKey] = useState<DocKey>("regulamin");
+  const selected = docMap.get(selectedKey) ?? docs[0];
+
+  const documentText = useMemo(() => {
+    return [
+      selected.title,
+      `Aktualizacja: ${selected.updated}`,
+      "",
+      ...selected.sections.flatMap((section) => [
+        section.heading,
+        ...section.body.map((line) => `- ${line}`),
+        "",
+      ]),
+    ].join("\n");
+  }, [selected]);
+
+  const downloadDocument = () => {
+    const blob = new Blob([documentText], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `${selected.key}-edunex.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 
   return (
-    <div className="min-h-screen bg-[#0a0a12] text-white">
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white/70 transition mb-8">
-          <ArrowLeft className="w-4 h-4"/> Back to home
-        </Link>
+    <div className="min-h-screen bg-[#f6f8fb] text-slate-950">
+      <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700 transition hover:text-slate-950">
+            <ArrowLeft className="h-4 w-4" />
+            Strona główna
+          </Link>
+          <div className="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:flex">
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            Dokumenty aktywne
+          </div>
+        </div>
+      </header>
 
-        <div className="flex flex-wrap gap-2 mb-10">
-          {(Object.entries(DOCS) as [DocKey, typeof DOCS[DocKey]][]).map(([key, d]) => {
-            const DIcon = d.icon;
-            const isActive = doc === key;
-            return (
-              <button key={key} onClick={() => setDoc(key)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${isActive ? "bg-cyan-400 text-[#0a0a12]" : "bg-white/[0.04] border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.08]"}`}>
-                <DIcon className="w-4 h-4"/>{d.title}
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="bg-slate-950 px-6 py-8 text-white">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/75">
+              <Sparkles className="h-3.5 w-3.5" />
+              Dokumenty EduNex
+            </div>
+            <h1 className="max-w-3xl text-3xl font-semibold sm:text-4xl">Dokumenty prawne i bezpieczeństwo</h1>
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-300">
+              Regulamin, polityka prywatności, RODO, powierzenie danych i status systemu w jednym miejscu. Każdy dokument można otworzyć i pobrać jako plik tekstowy.
+            </p>
+          </div>
+
+          <div className="grid gap-px bg-slate-200 md:grid-cols-5">
+            {docs.map((doc) => (
+              <button
+                key={doc.key}
+                onClick={() => setSelectedKey(doc.key)}
+                className={`bg-white p-4 text-left transition hover:bg-slate-50 ${
+                  selected.key === doc.key ? "ring-2 ring-inset ring-blue-600" : ""
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`grid h-9 w-9 place-items-center rounded-lg ${
+                    selected.key === doc.key ? "bg-blue-50 text-blue-700" : "bg-slate-100 text-slate-600"
+                  }`}>
+                    <doc.icon className="h-4 w-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-slate-950">{doc.title}</div>
+                    <div className="mt-0.5 text-xs text-slate-500">{doc.updated}</div>
+                  </div>
+                </div>
               </button>
-            );
-          })}
-        </div>
-
-        <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8">
-          <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/[0.06]">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center">
-              <Icon className="w-5 h-5 text-[#0a0a12]" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-white">{active.title}</h1>
-              <p className="text-xs text-white/40 mt-0.5">EduNex · Legal document</p>
-            </div>
-            <div className="ml-auto hidden sm:flex items-center gap-1.5 text-[10px] text-white/30 font-mono">
-              <CheckCircle2 className="w-3 h-3 text-emerald-400" /> Updated: June 2026
-            </div>
+            ))}
           </div>
+        </section>
 
-          <div className="max-w-none">
-            {active.content.map((line, i) => {
-              if (!line.trim()) return <br key={i} />;
-              const isHeading = line.startsWith("§") || line.startsWith("UMOWA") || line.startsWith("INFORMACJA") || line.startsWith("STATUS") || line.match(/^\d+\./);
-              const isSub = line.startsWith("  ") || line.startsWith("   ");
-              return (
-                <p key={i} className={`${isHeading ? "text-white font-medium text-sm mt-6 mb-2" : isSub ? "text-white/50 text-sm pl-4" : "text-white/60 text-sm leading-relaxed mb-2"}`}>
-                  {line}
-                </p>
-              );
-            })}
-          </div>
-        </div>
+        <section className="mt-6 grid gap-6 lg:grid-cols-[340px_1fr]">
+          <aside className="space-y-4">
+            <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 text-blue-700">
+                  <selected.icon className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold text-slate-950">{selected.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{selected.short}</p>
+                </div>
+              </div>
 
-        <div className="mt-8 text-center text-xs text-white/30">
-          <p>Questions? <a href="mailto:kontakt@edunex.pl" className="text-cyan-400/60 hover:text-cyan-400">kontakt@edunex.pl</a></p>
-          <p className="mt-1">EduNex · ul. Świętokrzyska 14, 00-050 Warszawa</p>
-        </div>
-      </div>
+              <button
+                onClick={downloadDocument}
+                className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                <Download className="h-4 w-4" />
+                Pobierz plik TXT
+              </button>
+            </div>
+
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+              <div className="mb-2 flex items-center gap-2 font-semibold">
+                <ShieldCheck className="h-4 w-4" />
+                Standard wdrożeniowy
+              </div>
+              Dokumenty są przygotowane jako baza operacyjna dla szkoły. Finalne brzmienie powinno być zatwierdzone przez administratora danych lub prawnika placówki.
+            </div>
+          </aside>
+
+          <article className="rounded-lg border border-slate-200 bg-white shadow-sm">
+            <div className="flex flex-col gap-4 border-b border-slate-200 px-6 py-5 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Dokument</div>
+                <h2 className="mt-1 text-2xl font-semibold text-slate-950">{selected.title}</h2>
+                <p className="mt-2 text-sm text-slate-500">Ostatnia aktualizacja: {selected.updated}</p>
+              </div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                <Shield className="h-3.5 w-3.5 text-blue-700" />
+                EduNex Legal
+              </div>
+            </div>
+
+            <div className="space-y-8 px-6 py-6">
+              {selected.sections.map((section) => (
+                <section key={section.heading}>
+                  <h3 className="text-base font-semibold text-slate-950">{section.heading}</h3>
+                  <div className="mt-3 space-y-3">
+                    {section.body.map((paragraph) => (
+                      <p key={paragraph} className="text-sm leading-7 text-slate-700">{paragraph}</p>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </article>
+        </section>
+      </main>
     </div>
   );
 }

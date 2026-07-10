@@ -90,7 +90,7 @@ export function AiTutor() {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
       loadThreads();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Błąd AI");
+      toast.error(e instanceof Error ? e.message : "Błąd NexAi");
       setMessages((p) => p.slice(0, -1));
     } finally {
       setBusy(false);
@@ -149,7 +149,7 @@ export function AiTutor() {
         <div className="p-4 border-b border-white/5 flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Brain className="w-5 h-5 text-white"/></div>
           <div>
-            <div className="text-sm font-bold text-white">AI Tutor</div>
+            <div className="text-sm font-bold text-white">NexAi Tutor</div>
             <div className="text-[11px] text-white/40">Wytłumaczy każdy temat, krok po kroku. Po polsku.</div>
           </div>
         </div>

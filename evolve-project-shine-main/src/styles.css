@@ -96,7 +96,18 @@
   --nav-height: 64px;
 }
 
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
