@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PremiumLandingV2 } from "@/components/landing/PremiumLandingV2";
+import { PremiumLanding } from "@/components/landing/PremiumLanding";
 
 export const Route = createFileRoute("/")({
-  component: PremiumLandingV2,
+  component: PremiumLanding,
   head: () => ({
     meta: [
       { title: "EduNex — system egzaminacyjny, AI, E-dziennik i dokumenty szkoły" },
