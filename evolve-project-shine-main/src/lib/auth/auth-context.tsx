@@ -11,6 +11,19 @@ const PROVIDER_CONFIG: Record<AuthProvider, { name: string; icon: string; color:
   linkedin: { name: "LinkedIn", icon: "LI", color: "#0A66C2" },
 };
 
+function formatAuthError(message?: string) {
+  const text = message || "Nie udało się wykonać operacji.";
+  const normalized = text.toLowerCase();
+
+  if (normalized.includes("invalid login credentials")) return "Nieprawidłowy e-mail lub hasło.";
+  if (normalized.includes("email not confirmed")) return "Adres e-mail nie został jeszcze potwierdzony.";
+  if (normalized.includes("user already registered")) return "Konto z tym adresem e-mail już istnieje.";
+  if (normalized.includes("signup is disabled")) return "Rejestracja jest aktualnie wyłączona w konfiguracji Supabase.";
+  if (normalized.includes("password")) return text.replace("Password", "Hasło").replace("password", "hasło");
+
+  return text;
+}
+
 interface AuthContextValue {
   state: AuthState;
   signInWithProvider: (provider: AuthProvider) => Promise<void>;
@@ -86,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: error.message };
+    if (error) return { error: formatAuthError(error.message) };
     return {};
   }, []);
 
@@ -99,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-    if (error) return { error: error.message };
+    if (error) return { error: formatAuthError(error.message) };
     return {};
   }, []);
 
@@ -117,15 +130,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/update-password`,
+      redirectTo: `${window.location.origin}/auth/reset-password`,
     });
-    if (error) return { error: error.message };
+    if (error) return { error: formatAuthError(error.message) };
     return {};
   }, []);
 
   const updateProfile = useCallback(async (data: Partial<AuthUser>) => {
     const { error } = await supabase.auth.updateUser({ data });
-    if (error) return { error: error.message };
+    if (error) return { error: formatAuthError(error.message) };
     return {};
   }, []);
 

@@ -58,7 +58,7 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const [ready, setReady] = useState(true);
-  const isTeacher = location.pathname.startsWith("/teacher");
+  const usesOwnShell = ["/teacher", "/admin", "/parent"].some((path) => location.pathname.startsWith(path));
 
   useIdleTimeout();
 
@@ -75,14 +75,14 @@ function AuthenticatedLayout() {
     return (
       <div className="grid min-h-screen place-items-center bg-bg text-fg-muted">
         <div className="flex items-center gap-2 text-sm">
-          <div className="w-2 h-2 rounded-full bg-neon animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-blue-700 animate-pulse" />
           Sprawdzanie sesji...
         </div>
       </div>
     );
   }
 
-  if (isTeacher) return <Outlet />;
+  if (usesOwnShell) return <Outlet />;
 
   return (
     <AppShell>

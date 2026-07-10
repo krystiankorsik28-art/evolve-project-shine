@@ -27,13 +27,13 @@ type AiQ = {
 };
 
 const AI_SUB_TABS = [
-  { id: "generator", label: "AI Generator", icon: Sparkles },
-  { id: "codementor", label: "AI Code Mentor", icon: Code2 },
-  { id: "coursegen", label: "AI Course Generator", icon: BookOpen },
-  { id: "presentation", label: "AI Presentation", icon: Presentation },
+  { id: "generator", label: "NexAi Generator", icon: Sparkles },
+  { id: "codementor", label: "NexAi Code Mentor", icon: Code2 },
+  { id: "coursegen", label: "NexAi Course Generator", icon: BookOpen },
+  { id: "presentation", label: "NexAi Presentation", icon: Presentation },
   { id: "plagiarism", label: "Plagiarism Detector", icon: ShieldCheck },
-  { id: "progress", label: "AI Progress Analyzer", icon: BarChart3 },
-  { id: "materials", label: "AI Material Recommender", icon: BookOpen },
+  { id: "progress", label: "NexAi Progress Analyzer", icon: BarChart3 },
+  { id: "materials", label: "NexAi Material Recommender", icon: BookOpen },
 ];
 
 function TabBtn({ active, onClick, icon: Icon, label }: { active: boolean; onClick: ()=>void; icon: React.ComponentType<{ className?: string }>; label: string }) {
@@ -184,7 +184,7 @@ function AIPhoto() {
       setResult(out as AiQ);
       toast.success("Pytanie wygenerowane");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Błąd AI");
+      toast.error(err instanceof Error ? err.message : "Błąd NexAi");
     } finally { setLoading(false); }
   };
 
@@ -203,7 +203,7 @@ function AIPhoto() {
           <textarea rows={3} value={desc} onChange={(e)=>setDesc(e.target.value)} placeholder="np. Pytanie ABCD do klasy 2 LO o sile tarcia." className="w-full px-4 py-3 bg-[var(--surface)] border border-[var(--border)] rounded-lg outline-none focus:border-[var(--accent)]/50 text-[var(--color-fg)] placeholder-[var(--color-fg-subtle)]"/>
         </div>
         <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 transition hover:scale-[1.01]">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj pytanie"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Wand2 className="w-4 h-4"/>} {loading ? "NexAi pracuje..." : "Wygeneruj pytanie"}
         </button>
       </div>
       <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6">
@@ -230,7 +230,7 @@ function AIGenerate() {
       setResult(out as AiQ[]);
       toast.success(`Wygenerowano ${count} pytań`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Błąd AI");
+      toast.error(err instanceof Error ? err.message : "Błąd NexAi");
     } finally { setLoading(false); }
   };
 
@@ -256,7 +256,7 @@ function AIGenerate() {
           </label>
         </div>
         <button disabled={loading} onClick={generate} className="w-full inline-flex justify-center items-center gap-2 bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-bold px-5 py-3 rounded-xl disabled:opacity-50 hover:scale-[1.01] transition">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Brain className="w-4 h-4"/>} {loading ? "AI pracuje..." : "Wygeneruj"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Brain className="w-4 h-4"/>} {loading ? "NexAi pracuje..." : "Wygeneruj"}
         </button>
       </div>
       <div className="rounded-2xl border border-[var(--border)] bg-white/[0.03] p-6">
@@ -293,7 +293,7 @@ export function AISection() {
             <div className="flex items-center gap-3 mb-1">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Sparkles className="w-5 h-5 text-slate-900"/></div>
               <div>
-                <h2 className="text-xl font-display font-bold text-[var(--color-fg)]">AI Generator</h2>
+                <h2 className="text-xl font-display font-bold text-[var(--color-fg)]">NexAi Generator</h2>
                 <p className="text-xs text-[var(--color-fg-muted)]">Gemini · pytania ze zdjęcia, z tematu, lub ilustracje do pytań — z zapisem do banku lub bezpośrednio do egzaminu.</p>
               </div>
             </div>

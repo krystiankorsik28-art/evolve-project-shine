@@ -1,20 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, type ComponentType, type ReactNode } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  LayoutDashboard, Users, FileText, Award, Bell, Download,
-  BarChart3, Clock, CheckCircle2, XCircle, Loader2,
-  TrendingUp, GraduationCap, BookOpen, CalendarDays,
-  AlertCircle, UserCheck, Mail, Phone, MapPin,
-  ChevronRight, Search, Filter, Settings, LogOut,
-  Sparkles, Trophy, Star, Activity, Eye,
-} from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  AlertCircle,
+  ArrowRight,
+  Award,
+  BarChart3,
+  Bell,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  Clock,
+  FileText,
+  GraduationCap,
+  LayoutDashboard,
+  Loader2,
+  LogOut,
+  Mail,
+  Search,
+  ShieldCheck,
+  TrendingUp,
+  UserCheck,
+  Users,
+  XCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/parent")({
-  component: ParentDashboard,
+  component: ParentPanel,
   head: () => ({ meta: [{ title: "Panel rodzica | EduNex" }] }),
 });
 
@@ -23,26 +38,25 @@ type ChildSummary = {
   name: string;
   class: string;
   school: string;
-  avatar: string;
+  initials: string;
   avgScore: number;
   examsPassed: number;
   examsTotal: number;
   attendance: number;
-  streak: number;
 };
 
 type ExamResult = {
   id: string;
-  exam_title: string;
+  examTitle: string;
   subject: string;
   score: number;
-  max_score: number;
+  maxScore: number;
   percent: number;
   passed: boolean;
   date: string;
 };
 
-type Alert = {
+type Notice = {
   id: string;
   type: "warning" | "info" | "success" | "danger";
   message: string;
@@ -50,400 +64,379 @@ type Alert = {
   child: string;
 };
 
-const MOCK_CHILDREN: ChildSummary[] = [
-  { id: "c1", name: "Kacper Korsik", class: "8A", school: "Szkoła Podstawowa nr 3", avatar: "KK", avgScore: 78, examsPassed: 12, examsTotal: 15, attendance: 94, streak: 5 },
-  { id: "c2", name: "Zuzanna Korsik", class: "5B", school: "Szkoła Podstawowa nr 3", avatar: "ZK", avgScore: 92, examsPassed: 8, examsTotal: 9, attendance: 98, streak: 12 },
+type ViewKey = "overview" | "results" | "attendance" | "messages";
+
+const childrenData: ChildSummary[] = [
+  { id: "c1", name: "Kacper Korsik", class: "8A", school: "Szkoła Podstawowa nr 3", initials: "KK", avgScore: 78, examsPassed: 12, examsTotal: 15, attendance: 94 },
+  { id: "c2", name: "Zuzanna Korsik", class: "5B", school: "Szkoła Podstawowa nr 3", initials: "ZK", avgScore: 92, examsPassed: 8, examsTotal: 9, attendance: 98 },
 ];
 
-const MOCK_EXAMS: ExamResult[] = [
-  { id: "e1", exam_title: "Matematyka — Ułamki", subject: "Matematyka", score: 18, max_score: 20, percent: 90, passed: true, date: "2025-06-15" },
-  { id: "e2", exam_title: "Język Polski — Lektury", subject: "Język Polski", score: 14, max_score: 20, percent: 70, passed: true, date: "2025-06-12" },
-  { id: "e3", exam_title: "Fizyka — Ruch", subject: "Fizyka", score: 8, max_score: 15, percent: 53, passed: false, date: "2025-06-10" },
-  { id: "e4", exam_title: "Angielski — Grammar", subject: "Język Angielski", score: 19, max_score: 20, percent: 95, passed: true, date: "2025-06-08" },
-  { id: "e5", exam_title: "Chemia — Pierwiastki", subject: "Chemia", score: 16, max_score: 20, percent: 80, passed: true, date: "2025-06-05" },
-  { id: "e6", exam_title: "Biologia — Komórki", subject: "Biologia", score: 12, max_score: 15, percent: 80, passed: true, date: "2025-06-03" },
-  { id: "e7", exam_title: "Historia — II Wojna", subject: "Historia", score: 10, max_score: 20, percent: 50, passed: false, date: "2025-06-01" },
+const examResults: ExamResult[] = [
+  { id: "e1", examTitle: "Matematyka - ułamki", subject: "Matematyka", score: 18, maxScore: 20, percent: 90, passed: true, date: "2026-06-25" },
+  { id: "e2", examTitle: "Język polski - lektury", subject: "Język polski", score: 14, maxScore: 20, percent: 70, passed: true, date: "2026-06-21" },
+  { id: "e3", examTitle: "Fizyka - ruch", subject: "Fizyka", score: 8, maxScore: 15, percent: 53, passed: false, date: "2026-06-18" },
+  { id: "e4", examTitle: "Język angielski - grammar", subject: "Język angielski", score: 19, maxScore: 20, percent: 95, passed: true, date: "2026-06-12" },
+  { id: "e5", examTitle: "Chemia - pierwiastki", subject: "Chemia", score: 16, maxScore: 20, percent: 80, passed: true, date: "2026-06-05" },
 ];
 
-const MOCK_ALERTS: Alert[] = [
-  { id: "a1", type: "warning", message: "Kacper — niska frekwencja z matematyki (68%)", date: "2025-06-20", child: "Kacper" },
-  { id: "a2", type: "success", message: "Zuzanna — poprawa wyniku z angielskiego o 15%!", date: "2025-06-19", child: "Zuzanna" },
-  { id: "a3", type: "info", message: "Nowy sprawdzian z chemii — 27 czerwca", date: "2025-06-18", child: "Kacper" },
-  { id: "a4", type: "danger", message: "Kacper — nieobecność na sprawdzianie z fizyki", date: "2025-06-17", child: "Kacper" },
+const notices: Notice[] = [
+  { id: "a1", type: "warning", message: "Kacper ma do powtórzenia materiał z fizyki przed kolejnym sprawdzianem.", date: "2026-06-28", child: "Kacper" },
+  { id: "a2", type: "success", message: "Zuzanna poprawiła wynik z języka angielskiego o 15 punktów procentowych.", date: "2026-06-26", child: "Zuzanna" },
+  { id: "a3", type: "info", message: "Nowy sprawdzian z chemii zaplanowano na przyszły tydzień.", date: "2026-06-24", child: "Kacper" },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.05 } },
-};
+const views: Array<{ id: ViewKey; label: string; icon: ComponentType<{ className?: string }> }> = [
+  { id: "overview", label: "Przegląd", icon: LayoutDashboard },
+  { id: "results", label: "Wyniki", icon: FileText },
+  { id: "attendance", label: "Frekwencja", icon: CalendarDays },
+  { id: "messages", label: "Komunikaty", icon: Bell },
+];
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 200, damping: 20 } },
-};
-
-const weekDays = ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Nd"];
-
-function ParentDashboard() {
+function ParentPanel() {
   const navigate = useNavigate();
   const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
   const [checking, setChecking] = useState(true);
-  const [selectedChild, setSelectedChild] = useState<string>("all");
-  const [activeView, setActiveView] = useState<"overview" | "exams" | "attendance" | "alerts">("overview");
+  const [selectedChild, setSelectedChild] = useState("all");
+  const [activeView, setActiveView] = useState<ViewKey>("overview");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const check = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) { navigate({ to: "/auth" }); return; }
+      if (!session?.user) {
+        navigate({ to: "/auth" });
+        return;
+      }
+
       setUser({
         email: session.user.email,
         name: session.user.user_metadata?.first_name
-          ? `${session.user.user_metadata.first_name} ${session.user.user_metadata.last_name || ""}`
+          ? `${session.user.user_metadata.first_name} ${session.user.user_metadata.last_name || ""}`.trim()
           : session.user.email,
       });
       setChecking(false);
     };
+
     check();
   }, [navigate]);
 
+  const filteredChildren = useMemo(() => {
+    return selectedChild === "all" ? childrenData : childrenData.filter((child) => child.id === selectedChild);
+  }, [selectedChild]);
+
+  const filteredResults = useMemo(() => {
+    const term = query.trim().toLowerCase();
+    if (!term) return examResults;
+    return examResults.filter((result) =>
+      result.examTitle.toLowerCase().includes(term) ||
+      result.subject.toLowerCase().includes(term),
+    );
+  }, [query]);
+
+  const averageScore = Math.round(examResults.reduce((sum, result) => sum + result.percent, 0) / examResults.length);
+  const passedCount = examResults.filter((result) => result.passed).length;
+  const averageAttendance = Math.round(childrenData.reduce((sum, child) => sum + child.attendance, 0) / childrenData.length);
+
   const logout = async () => {
     await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    toast.success("Wylogowano z EduNex.");
+    await navigate({ to: "/auth" });
   };
-
-  const filteredChildren = selectedChild === "all"
-    ? MOCK_CHILDREN
-    : MOCK_CHILDREN.filter((c) => c.id === selectedChild);
-
-  const allExams = MOCK_EXAMS;
-  const passedExams = allExams.filter((e) => e.passed);
-  const failedExams = allExams.filter((e) => !e.passed);
-  const avgAllScore = Math.round(allExams.reduce((a, e) => a + e.percent, 0) / allExams.length);
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-[#0a0a12] text-white flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+      <div className="grid min-h-screen place-items-center bg-slate-50 text-slate-900">
+        <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
+          <Loader2 className="h-4 w-4 animate-spin text-blue-700" />
+          <span className="text-sm font-medium">Sprawdzanie dostępu rodzica...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <motion.div variants={containerVariants} initial="hidden" animate="visible">
-      <Toaster theme="dark" />
-
-      {/* Header */}
-      <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
-          <div className="text-[10px] tracking-[0.2em] text-cyan-400/60 uppercase font-mono mb-1">Parent Dashboard</div>
-          <h1 className="text-xl font-semibold">Control Center</h1>
-          <p className="text-sm text-white/40 mt-0.5">Monitor progress, attendance, and results for your children.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={logout} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-xs text-white/50 hover:text-white transition">
-            <LogOut className="w-3.5 h-3.5" /> Sign out
-          </button>
-        </div>
-      </motion.div>
-
-      {/* Child selector */}
-      <motion.div variants={itemVariants} className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        <button onClick={() => setSelectedChild("all")}
-          className={`shrink-0 px-4 py-2 rounded-xl text-xs font-medium border transition ${
-            selectedChild === "all"
-              ? "bg-cyan-400/10 border-cyan-400/30 text-cyan-300"
-              : "bg-white/[0.03] border-white/[0.06] text-white/50 hover:text-white/70"
-          }`}
-        >
-          <Users className="w-3.5 h-3.5 inline mr-1.5" />All Children
-        </button>
-        {MOCK_CHILDREN.map((c) => (
-          <button key={c.id} onClick={() => setSelectedChild(c.id)}
-            className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium border transition ${
-              selectedChild === c.id
-                ? "bg-cyan-400/10 border-cyan-400/30 text-cyan-300"
-                : "bg-white/[0.03] border-white/[0.06] text-white/50 hover:text-white/70"
-            }`}
-          >
-            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-[8px] font-bold text-white">
-              {c.avatar}
+    <div className="min-h-screen bg-[#f6f8fb] text-slate-950">
+      <Toaster richColors />
+      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
+              <Users className="h-4 w-4" />
             </div>
-            {c.name.split(" ")[0]}
-          </button>
-        ))}
-      </motion.div>
-
-      {/* Sub-nav */}
-      <motion.div variants={itemVariants} className="flex items-center gap-1 mb-6 bg-white/[0.03] rounded-xl p-1 border border-white/[0.06] w-fit">
-        {[
-          { id: "overview" as const, label: "Overview", icon: LayoutDashboard },
-          { id: "exams" as const, label: "Results", icon: FileText },
-          { id: "attendance" as const, label: "Attendance", icon: CalendarDays },
-          { id: "alerts" as const, label: "Alerts", icon: Bell },
-        ].map((v) => (
-          <button key={v.id} onClick={() => setActiveView(v.id)}
-            className={`relative flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition ${
-              activeView === v.id ? "text-white" : "text-white/40 hover:text-white/70"
-            }`}
-          >
-            {activeView === v.id && <motion.div layoutId="parent-tab" className="absolute inset-0 bg-white/[0.08] rounded-lg" />}
-            <v.icon className="w-3.5 h-3.5 relative z-10" />
-            <span className="relative z-10">{v.label}</span>
-          </button>
-        ))}
-      </motion.div>
-
-      {activeView === "overview" && (
-        <motion.div key="overview" variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
-
-          {/* Children summary cards */}
-          <div className="grid md:grid-cols-2 gap-4">
-            {filteredChildren.map((child, ci) => (
-              <motion.div key={child.id} variants={itemVariants} custom={ci}
-                className="rounded-2xl border border-white/[0.06] bg-gradient-to-br from-[#0c0c1a] to-[#0a0a12] p-5"
-              >
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-sm font-bold text-white">
-                    {child.avatar}
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold">{child.name}</div>
-                    <div className="text-xs text-white/40">{child.class} · {child.school}</div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 text-center">
-                    <div className="text-lg font-semibold text-emerald-400">{child.avgScore}%</div>
-                    <div className="text-[10px] text-white/40">Avg Score</div>
-                  </div>
-                  <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 text-center">
-                    <div className="text-lg font-semibold text-cyan-400">{child.examsPassed}/{child.examsTotal}</div>
-                    <div className="text-[10px] text-white/40">Passed</div>
-                  </div>
-                  <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 text-center">
-                    <div className="text-lg font-semibold text-amber-400">{child.attendance}%</div>
-                    <div className="text-[10px] text-white/40">Attendance</div>
-                  </div>
-                  <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-3 text-center">
-                    <div className="text-lg font-semibold text-violet-400">{child.streak}</div>
-                    <div className="text-[10px] text-white/40">Streak</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Performance chart (mini bar) */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-cyan-400" />
-                <h2 className="text-sm font-semibold">Recent Performance</h2>
-              </div>
-              <span className="text-xs text-white/40">Last 7 exams</span>
-            </div>
-            <div className="space-y-3">
-              {allExams.slice(0, 7).map((exam) => (
-                <div key={exam.id} className="flex items-center gap-3">
-                  <div className="w-20 shrink-0 text-[10px] text-white/40 font-mono">
-                    {new Date(exam.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-xs text-white/70 truncate">{exam.exam_title}</span>
-                      <span className={`text-[10px] font-mono shrink-0 ml-2 ${exam.passed ? "text-emerald-400" : "text-pink-400"}`}>
-                        {exam.percent}%
-                      </span>
-                    </div>
-                    <div className="w-full h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
-                      <motion.div initial={{ width: 0 }} animate={{ width: `${exam.percent}%` }}
-                        transition={{ duration: 1, delay: 0.1, ease: "easeOut" }}
-                        className={`h-full rounded-full ${exam.passed ? "bg-emerald-400" : "bg-pink-400"}`}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Alerts preview */}
-          <motion.div variants={itemVariants} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-amber-400" />
-                <h2 className="text-sm font-semibold">Recent Alerts</h2>
-              </div>
-              <button onClick={() => setActiveView("alerts")} className="text-xs text-cyan-400/60 hover:text-cyan-400">View all</button>
-            </div>
-            <div className="space-y-2">
-              {MOCK_ALERTS.slice(0, 3).map((alert) => (
-                <div key={alert.id} className={`flex items-start gap-3 p-3 rounded-xl border ${
-                  alert.type === "danger" ? "border-pink-400/20 bg-pink-400/5" :
-                  alert.type === "warning" ? "border-amber-400/20 bg-amber-400/5" :
-                  alert.type === "success" ? "border-emerald-400/20 bg-emerald-400/5" :
-                  "border-cyan-400/20 bg-cyan-400/5"
-                }`}>
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 ${
-                    alert.type === "danger" ? "bg-pink-400/20 text-pink-300" :
-                    alert.type === "warning" ? "bg-amber-400/20 text-amber-300" :
-                    alert.type === "success" ? "bg-emerald-400/20 text-emerald-300" :
-                    "bg-cyan-400/20 text-cyan-300"
-                  }`}>
-                    <AlertCircle className="w-3 h-3" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-xs text-white/70">{alert.message}</div>
-                    <div className="text-[10px] text-white/30 mt-0.5">{new Date(alert.date).toLocaleDateString()}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-
-      {activeView === "exams" && (
-        <motion.div key="exams" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          {/* Summary stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <div className="text-2xl font-semibold font-mono">{allExams.length}</div>
-              <div className="text-xs text-white/40">Total Exams</div>
-            </div>
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <div className="text-2xl font-semibold font-mono text-emerald-400">{passedExams.length}</div>
-              <div className="text-xs text-white/40">Passed</div>
-            </div>
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <div className="text-2xl font-semibold font-mono text-pink-400">{failedExams.length}</div>
-              <div className="text-xs text-white/40">Failed</div>
-            </div>
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-              <div className="text-2xl font-semibold font-mono text-cyan-400">{avgAllScore}%</div>
-              <div className="text-xs text-white/40">Average</div>
+            <div>
+              <div className="text-sm font-semibold">EduNex</div>
+              <div className="text-xs text-slate-500">Panel rodzica</div>
             </div>
           </div>
-
-          {/* Exam list */}
-          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] divide-y divide-white/[0.04]">
-            {allExams.map((exam) => (
-              <div key={exam.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/[0.01] transition">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  exam.passed ? "bg-emerald-500/15 text-emerald-300" : "bg-pink-500/15 text-pink-300"
-                }`}>
-                  {exam.passed ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium">{exam.exam_title}</div>
-                  <div className="text-xs text-white/40 mt-0.5">{exam.subject} · {new Date(exam.date).toLocaleDateString()}</div>
-                </div>
-                <div className="text-right">
-                  <div className={`text-sm font-semibold font-mono ${exam.passed ? "text-emerald-400" : "text-pink-400"}`}>
-                    {exam.percent}%
-                  </div>
-                  <div className="text-[10px] text-white/30">{exam.score}/{exam.max_score}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Export button */}
-          <div className="flex justify-end">
-            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 text-xs font-medium hover:bg-emerald-500/20 transition">
-              <Download className="w-3.5 h-3.5" /> Export Results (PDF)
+          <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 sm:flex">
+              <Mail className="h-3.5 w-3.5 text-blue-700" />
+              {user?.name || user?.email}
+            </div>
+            <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+              <LogOut className="h-3.5 w-3.5" />
+              Wyloguj
             </button>
           </div>
-        </motion.div>
-      )}
+        </div>
+      </header>
 
-      {activeView === "attendance" && (
-        <motion.div key="attendance" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-          {filteredChildren.map((child) => (
-            <div key={child.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-xs font-bold text-white">
-                  {child.avatar}
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold">{child.name}</h3>
-                  <p className="text-xs text-white/40">{child.class}</p>
-                </div>
-                <div className="ml-auto">
-                  <div className="text-lg font-semibold font-mono text-emerald-400">{child.attendance}%</div>
-                  <div className="text-[10px] text-white/30 text-right">Attendance</div>
-                </div>
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="grid gap-px bg-slate-200 lg:grid-cols-[1fr_420px]">
+            <div className="bg-slate-950 px-6 py-8 text-white">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/75">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Widok postępów dziecka
               </div>
+              <h1 className="max-w-3xl text-3xl font-semibold sm:text-4xl">Spokojny przegląd wyników, frekwencji i komunikatów.</h1>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
+                Rodzic widzi najważniejsze informacje bez rozbudowanej administracji i bez dostępu do danych innych uczniów.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-px bg-slate-200">
+              <Metric label="Średni wynik" value={`${averageScore}%`} icon={TrendingUp} />
+              <Metric label="Zaliczone" value={`${passedCount}/${examResults.length}`} icon={CheckCircle2} />
+              <Metric label="Frekwencja" value={`${averageAttendance}%`} icon={CalendarDays} />
+            </div>
+          </div>
+        </motion.section>
 
-              {/* Week grid */}
-              <div className="grid grid-cols-7 gap-2 mb-4">
-                {weekDays.map((day, i) => (
-                  <div key={i} className="text-center">
-                    <div className="text-[10px] text-white/30 mb-1">{day}</div>
-                    <div className="aspect-square rounded-lg flex items-center justify-center text-xs font-mono bg-emerald-500/20 text-emerald-300">
-                      {i + 10}
+        <section className="mt-6 grid gap-6 lg:grid-cols-[320px_1fr]">
+          <aside className="space-y-6">
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 text-sm font-semibold text-slate-950">Dzieci</div>
+              <div className="space-y-2">
+                <ChildButton active={selectedChild === "all"} onClick={() => setSelectedChild("all")} label="Wszystkie dzieci" icon={Users} />
+                {childrenData.map((child) => (
+                  <button
+                    key={child.id}
+                    onClick={() => setSelectedChild(child.id)}
+                    className={`flex w-full items-center gap-3 rounded-lg border px-3 py-3 text-left transition ${
+                      selectedChild === child.id ? "border-blue-200 bg-blue-50" : "border-slate-200 bg-white hover:bg-slate-50"
+                    }`}
+                  >
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-slate-950 text-xs font-semibold text-white">{child.initials}</div>
+                    <div>
+                      <div className="text-sm font-semibold text-slate-950">{child.name}</div>
+                      <div className="text-xs text-slate-500">{child.class} · {child.school}</div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
+            </div>
 
-              <div className="flex items-center gap-4 text-xs text-white/40">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                  Present (18 days)
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-pink-400" />
-                  Absent (1 day)
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                  Late (1 day)
-                </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="mb-3 text-sm font-semibold text-slate-950">Widok</div>
+              <div className="space-y-2">
+                {views.map((view) => (
+                  <ChildButton key={view.id} active={activeView === view.id} onClick={() => setActiveView(view.id)} label={view.label} icon={view.icon} />
+                ))}
               </div>
             </div>
-          ))}
-        </motion.div>
-      )}
+          </aside>
 
-      {activeView === "alerts" && (
-        <motion.div key="alerts" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">All Alerts</h2>
-            <div className="flex items-center gap-2 text-xs text-white/40">
-              <span className="w-2 h-2 rounded-full bg-amber-400 inline-block" /> {MOCK_ALERTS.length} active
-            </div>
-          </div>
-          <div className="space-y-2">
-            {MOCK_ALERTS.map((alert) => (
-              <div key={alert.id} className={`rounded-xl border p-4 ${
-                alert.type === "danger" ? "border-pink-400/20 bg-pink-400/5" :
-                alert.type === "warning" ? "border-amber-400/20 bg-amber-400/5" :
-                alert.type === "success" ? "border-emerald-400/20 bg-emerald-400/5" :
-                "border-cyan-400/20 bg-cyan-400/5"
-              }`}>
-                <div className="flex items-start gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                    alert.type === "danger" ? "bg-pink-400/20 text-pink-300" :
-                    alert.type === "warning" ? "bg-amber-400/20 text-amber-300" :
-                    alert.type === "success" ? "bg-emerald-400/20 text-emerald-300" :
-                    "bg-cyan-400/20 text-cyan-300"
-                  }`}>
-                    <AlertCircle className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm text-white/80">{alert.message}</div>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[10px] text-white/30">{new Date(alert.date).toLocaleDateString()}</span>
-                      <span className="text-[10px] text-cyan-400/60">{alert.child}</span>
+          <div className="space-y-6">
+            {activeView === "overview" && (
+              <>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {filteredChildren.map((child) => (
+                    <ChildCard key={child.id} child={child} />
+                  ))}
+                </div>
+                <Panel title="Ostatnie komunikaty" icon={Bell}>
+                  <NoticeList items={notices} />
+                </Panel>
+              </>
+            )}
+
+            {activeView === "results" && (
+              <Panel title="Wyniki egzaminów" icon={FileText} action={<SearchBox value={query} onChange={setQuery} />}>
+                <ResultsTable items={filteredResults} />
+              </Panel>
+            )}
+
+            {activeView === "attendance" && (
+              <Panel title="Frekwencja" icon={CalendarDays}>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {filteredChildren.map((child) => (
+                    <div key={child.id} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-semibold text-slate-950">{child.name}</div>
+                          <div className="mt-1 text-xs text-slate-500">{child.class}</div>
+                        </div>
+                        <div className="text-2xl font-semibold text-slate-950">{child.attendance}%</div>
+                      </div>
+                      <div className="mt-4 h-2 rounded-full bg-white">
+                        <div className="h-full rounded-full bg-blue-700" style={{ width: `${child.attendance}%` }} />
+                      </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              </div>
-            ))}
+              </Panel>
+            )}
+
+            {activeView === "messages" && (
+              <Panel title="Komunikaty" icon={Bell}>
+                <NoticeList items={notices} expanded />
+              </Panel>
+            )}
           </div>
-        </motion.div>
-      )}
-    </motion.div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function Metric({ label, value, icon: Icon }: { label: string; value: string; icon: ComponentType<{ className?: string }> }) {
+  return (
+    <div className="bg-white p-5">
+      <Icon className="h-4 w-4 text-blue-700" />
+      <div className="mt-4 text-2xl font-semibold text-slate-950">{value}</div>
+      <div className="mt-1 text-xs font-medium uppercase tracking-wide text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function ChildButton({ active, onClick, label, icon: Icon }: { active: boolean; onClick: () => void; label: string; icon: ComponentType<{ className?: string }> }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition ${
+        active ? "border-blue-200 bg-blue-50 text-blue-800" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
+  );
+}
+
+function ChildCard({ child }: { child: ChildSummary }) {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="grid h-11 w-11 place-items-center rounded-full bg-slate-950 text-sm font-semibold text-white">{child.initials}</div>
+          <div>
+            <h2 className="text-base font-semibold text-slate-950">{child.name}</h2>
+            <p className="mt-1 text-sm text-slate-500">{child.class} · {child.school}</p>
+          </div>
+        </div>
+        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Aktywne</span>
+      </div>
+      <div className="mt-5 grid grid-cols-3 gap-3">
+        <MiniStat label="Średnia" value={`${child.avgScore}%`} icon={BarChart3} />
+        <MiniStat label="Zaliczone" value={`${child.examsPassed}/${child.examsTotal}`} icon={Award} />
+        <MiniStat label="Frekwencja" value={`${child.attendance}%`} icon={CalendarDays} />
+      </div>
+    </div>
+  );
+}
+
+function MiniStat({ label, value, icon: Icon }: { label: string; value: string; icon: ComponentType<{ className?: string }> }) {
+  return (
+    <div className="rounded-lg bg-slate-50 p-3">
+      <Icon className="h-4 w-4 text-blue-700" />
+      <div className="mt-3 text-lg font-semibold text-slate-950">{value}</div>
+      <div className="mt-0.5 text-xs text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function Panel({ title, icon: Icon, action, children }: { title: string; icon: ComponentType<{ className?: string }>; action?: ReactNode; children: ReactNode }) {
+  return (
+    <section className="rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2">
+          <Icon className="h-4 w-4 text-blue-700" />
+          <h2 className="text-base font-semibold text-slate-950">{title}</h2>
+        </div>
+        {action}
+      </div>
+      <div className="p-5">{children}</div>
+    </section>
+  );
+}
+
+function SearchBox({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  return (
+    <div className="flex min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 sm:w-80">
+      <Search className="h-4 w-4 shrink-0 text-slate-400" />
+      <input value={value} onChange={(event) => onChange(event.target.value)} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400" placeholder="Szukaj wyniku" />
+    </div>
+  );
+}
+
+function ResultsTable({ items }: { items: ExamResult[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full min-w-[620px] text-sm">
+        <thead className="text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th className="px-3 py-2 text-left font-semibold">Egzamin</th>
+            <th className="px-3 py-2 text-left font-semibold">Przedmiot</th>
+            <th className="px-3 py-2 text-right font-semibold">Wynik</th>
+            <th className="px-3 py-2 text-right font-semibold">Status</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-200">
+          {items.map((item) => (
+            <tr key={item.id} className="hover:bg-slate-50/80">
+              <td className="px-3 py-3 font-medium text-slate-950">
+                {item.examTitle}
+                <div className="mt-1 text-xs text-slate-500">{new Date(item.date).toLocaleDateString("pl-PL")}</div>
+              </td>
+              <td className="px-3 py-3 text-slate-600">{item.subject}</td>
+              <td className="px-3 py-3 text-right font-mono text-slate-700">{item.score}/{item.maxScore} · {item.percent}%</td>
+              <td className="px-3 py-3 text-right">
+                <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${
+                  item.passed ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"
+                }`}>
+                  {item.passed ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                  {item.passed ? "Zaliczone" : "Do poprawy"}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function NoticeList({ items, expanded }: { items: Notice[]; expanded?: boolean }) {
+  const visible = expanded ? items : items.slice(0, 3);
+  return (
+    <div className="space-y-3">
+      {visible.map((item) => (
+        <div key={item.id} className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <NoticeIcon type={item.type} />
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-medium text-slate-950">{item.message}</div>
+            <div className="mt-1 text-xs text-slate-500">{item.child} · {new Date(item.date).toLocaleDateString("pl-PL")}</div>
+          </div>
+          <ArrowRight className="h-4 w-4 text-slate-400" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function NoticeIcon({ type }: { type: Notice["type"] }) {
+  const className = {
+    warning: "bg-amber-50 text-amber-700",
+    info: "bg-blue-50 text-blue-700",
+    success: "bg-emerald-50 text-emerald-700",
+    danger: "bg-rose-50 text-rose-700",
+  }[type];
+
+  const Icon = type === "success" ? UserCheck : type === "danger" ? AlertCircle : type === "warning" ? Clock : BookOpen;
+
+  return (
+    <div className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${className}`}>
+      <Icon className="h-4 w-4" />
+    </div>
   );
 }

@@ -31,8 +31,8 @@ export function AiOcen() {
   return (
     <div className="space-y-5">
       <div>
-        <h2 className="font-display text-2xl font-bold text-white inline-flex items-center gap-2"><Brain className="w-5 h-5 text-violet-300"/>AI Asystent oceniania</h2>
-        <p className="text-sm text-white/50 mt-1">Automatyczne ocenianie esejów z rubryką i analityka egzaminów z AI.</p>
+        <h2 className="font-display text-2xl font-bold text-white inline-flex items-center gap-2"><Brain className="w-5 h-5 text-violet-300"/>NexAi Asystent oceniania</h2>
+        <p className="text-sm text-white/50 mt-1">Automatyczne ocenianie esejów z rubryką i analityka egzaminów z NexAi.</p>
       </div>
       <div className="inline-flex p-1 rounded-xl bg-white/[0.04] border border-white/10">
         <button onClick={() => setTab("essay")} className={`px-4 py-2 rounded-lg text-sm transition ${tab === "essay" ? "bg-gradient-to-r from-accent to-blue-500 text-slate-900 font-semibold" : "text-white/60 hover:text-white"}`}>Oceń esej</button>

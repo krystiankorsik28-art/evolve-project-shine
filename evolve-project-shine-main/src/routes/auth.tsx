@@ -1,217 +1,109 @@
-import { useState, useMemo, useEffect, type ComponentType, type FormEvent, type ReactNode } from "react";
-import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react";
+import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { motion } from "framer-motion";
 import {
-  Mail,
+  ArrowRight,
+  Building2,
+  CheckCircle2,
   Eye,
   EyeOff,
-  ArrowRight,
-  Sparkles,
-  ShieldCheck,
   GraduationCap,
-  Users,
-  School,
-  Building2,
-  Loader2,
-  CheckCircle2,
   KeyRound,
-  ChevronLeft,
-  Hash,
-  AlertTriangle,
-  Fingerprint,
-  Sun,
-  Moon,
+  Loader2,
+  LockKeyhole,
+  Mail,
+  School,
+  ShieldCheck,
+  Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth/auth-context";
+import type { AuthProvider } from "@/lib/auth/auth-types";
 import { studentPinLogin } from "@/lib/student-auth.functions";
 
-const ROLE_DASHBOARD: Record<string, string> = {
+type RoleId = "student" | "teacher" | "parent" | "admin";
+type Provider = "microsoft" | "google" | "github";
+type Mode = "login" | "forgot";
+
+const ROLE_DASHBOARD: Record<RoleId, string> = {
   student: "/student/dashboard",
   teacher: "/teacher",
-  parent: "/student/dashboard",
+  parent: "/parent",
   admin: "/admin",
 };
 
-const ROLES = [
-  { id: "student" as const, label: "Uczeń", icon: GraduationCap, desc: "Egzaminy, sprawdziany i wyniki" },
-  { id: "teacher" as const, label: "Nauczyciel", icon: Users, desc: "Klasy, testy, sesje i raporty" },
-  { id: "parent" as const, label: "Rodzic", icon: School, desc: "Postępy dziecka i powiadomienia" },
-  { id: "admin" as const, label: "Dyrektor / Admin", icon: Building2, desc: "Zarządzanie szkołą i bezpieczeństwem" },
+const roles: Array<{ id: RoleId; label: string; desc: string; icon: ComponentType<{ className?: string }> }> = [
+  { id: "teacher", label: "Nauczyciel", desc: "Egzaminy, klasy, NexAi i raporty", icon: Users },
+  { id: "student", label: "Uczeń", desc: "Wejście kontem lub kodem PIN", icon: GraduationCap },
+  { id: "admin", label: "Dyrekcja / Admin", desc: "Role, licencja i bezpieczeństwo", icon: Building2 },
+  { id: "parent", label: "Rodzic", desc: "Postęp dziecka i komunikaty", icon: School },
 ];
 
-const SSO_PROVIDERS = [
-  { id: "microsoft" as const, label: "Kontynuuj z Microsoft", icon: MicrosoftIcon },
-  { id: "google" as const, label: "Kontynuuj z Google", icon: GoogleIcon },
-  { id: "github" as const, label: "Kontynuuj z GitHub", icon: GitHubIcon },
+const providers: Array<{ id: Provider; label: string }> = [
+  { id: "microsoft", label: "Microsoft" },
+  { id: "google", label: "Google" },
+  { id: "github", label: "GitHub" },
 ];
-
-type RoleId = (typeof ROLES)[number]["id"];
-type Mode = "login" | "register" | "forgot";
-type Tab = "quick" | "account";
-type Provider = (typeof SSO_PROVIDERS)[number]["id"];
 
 export const Route = createFileRoute("/auth")({
-  beforeLoad: async () => {
+  beforeLoad: async ({ location }) => {
+    if (location.pathname !== "/auth") return;
+
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (session?.user) {
-        const role = (session.user.user_metadata?.role as string) || "student";
+        const role = (session.user.user_metadata?.role || session.user.app_metadata?.role || "student") as RoleId;
         throw redirect({ to: ROLE_DASHBOARD[role] || "/student/dashboard", replace: true });
       }
-    } catch (e: any) {
-      if (e && typeof e === "object" && "to" in e) throw e;
+    } catch (error) {
+      if (error && typeof error === "object" && "to" in error) throw error;
     }
   },
-  component: AuthPage,
+  component: AuthRouteShell,
   head: () => ({
     meta: [
-      { title: "Logowanie — EduNex" },
+      { title: "Logowanie | EduNex" },
       {
         name: "description",
-        content:
-          "Zaloguj się do platformy edukacyjnej EduNex jako uczeń, rodzic, nauczyciel lub administrator.",
+        content: "Bezpieczne logowanie do platformy EduNex dla ucznia, nauczyciela, rodzica i administratora.",
       },
     ],
   }),
 });
 
-function BgAnimation({ isLight }: { isLight: boolean }) {
-  return (
-    <div className={`absolute inset-0 -z-10 overflow-hidden ${isLight ? "bg-[#f3f6fb]" : "bg-[#030712]"}`}>
-      <div
-        className={`absolute inset-0 ${isLight ? "opacity-80" : "opacity-95"}`}
-        style={{
-          backgroundImage: isLight
-            ? "radial-gradient(circle at 18% 12%, rgba(0,103,184,0.16), transparent 28%), radial-gradient(circle at 82% 0%, rgba(80,132,214,0.16), transparent 26%), linear-gradient(135deg, rgba(255,255,255,0.96), rgba(233,239,248,0.92))"
-            : "radial-gradient(circle at 16% 8%, rgba(0,120,212,0.28), transparent 32%), radial-gradient(circle at 84% 6%, rgba(80,230,255,0.16), transparent 30%), radial-gradient(circle at 55% 92%, rgba(37,99,235,0.18), transparent 36%), linear-gradient(135deg, #030712, #07111f 48%, #020617)",
-        }}
-      />
-      <div
-        className={`absolute inset-0 ${isLight ? "opacity-[0.32]" : "opacity-[0.18]"}`}
-        style={{
-          backgroundImage: isLight
-            ? "linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px)"
-            : "linear-gradient(rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.09) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-      <motion.div
-        className="absolute left-[8%] top-[12%] h-72 w-72 rounded-full bg-[#0078d4]/25 blur-3xl"
-        animate={{ x: [0, 34, -18, 0], y: [0, -18, 22, 0] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-[8%] right-[10%] h-96 w-96 rounded-full bg-[#50e6ff]/20 blur-3xl"
-        animate={{ x: [0, -28, 20, 0], y: [0, 22, -16, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
-  );
+function AuthRouteShell() {
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  return pathname === "/auth" ? <AuthPage /> : <Outlet />;
 }
 
-function Field({
-  type = "text",
-  value,
-  onChange,
-  placeholder,
-  autoComplete,
-  rightSlot,
-  isLight,
-}: {
-  type?: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder: string;
-  autoComplete?: string;
-  rightSlot?: ReactNode;
-  isLight: boolean;
-}) {
-  return (
-    <div className="relative">
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        className={`h-12 w-full rounded-sm px-3 text-[15px] outline-none transition-all duration-150 focus:border-[#0078d4] focus:shadow-[inset_0_-2px_0_#0078d4] ${
-          isLight
-            ? "border border-[#8a8886] bg-white text-[#1b1b1b] placeholder:text-[#605e5c]"
-            : "border border-white/18 bg-white/[0.055] text-white placeholder:text-white/45 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
-        }`}
-      />
-      {rightSlot && <div className="absolute right-3 top-1/2 -translate-y-1/2">{rightSlot}</div>}
-    </div>
-  );
-}
+function ProviderMark({ provider }: { provider: Provider }) {
+  if (provider === "google") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+      </svg>
+    );
+  }
 
-function PrimaryButton({ children, loading, ...props }: any) {
-  return (
-    <button
-      {...props}
-      disabled={loading || props.disabled}
-      className="h-11 w-full rounded-sm bg-[#0078d4] px-5 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-[#106ebe] hover:shadow-[0_16px_36px_rgba(0,120,212,0.28)] disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      <span className="flex items-center justify-center gap-2">
-        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : children}
-      </span>
-    </button>
-  );
-}
+  if (provider === "microsoft") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
+        <path fill="#F25022" d="M1 1h10v10H1z" />
+        <path fill="#7FBA00" d="M13 1h10v10H13z" />
+        <path fill="#00A4EF" d="M1 13h10v10H1z" />
+        <path fill="#FFB900" d="M13 13h10v10H13z" />
+      </svg>
+    );
+  }
 
-function SSOButton({ provider, label, icon: Icon, onClick, disabled, isLight }: {
-  provider: Provider;
-  label: string;
-  icon: ComponentType;
-  onClick: (provider: Provider) => void;
-  disabled?: boolean;
-  isLight: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => onClick(provider)}
-      disabled={disabled}
-      className={`flex h-11 w-full items-center justify-center gap-3 rounded-sm text-sm font-semibold transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-60 ${
-        isLight
-          ? "border border-[#8a8886] bg-white text-[#1f1f1f] hover:border-[#323130] hover:bg-[#f7f7f7]"
-          : "border border-white/18 bg-white/[0.055] text-white hover:border-white/35 hover:bg-white/[0.09]"
-      }`}
-    >
-      <Icon />
-      {label}
-    </button>
-  );
-}
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-    </svg>
-  );
-}
-
-function MicrosoftIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-      <path fill="#F25022" d="M1 1h10v10H1z" />
-      <path fill="#7FBA00" d="M13 1h10v10H13z" />
-      <path fill="#00A4EF" d="M1 13h10v10H1z" />
-      <path fill="#FFB900" d="M13 13h10v10H13z" />
-    </svg>
-  );
-}
-
-function GitHubIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
       <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.69-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 015.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.14 0 1.55-.01 2.8-.01 3.18 0 .31.21.68.79.56C20.21 21.39 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
@@ -219,587 +111,330 @@ function GitHubIcon() {
   );
 }
 
+function Field({
+  label,
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  right,
+}: {
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder: string;
+  autoComplete?: string;
+  right?: ReactNode;
+}) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold text-slate-700">
+      <span>{label}</span>
+      <div className="relative">
+        <input
+          type={type}
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          placeholder={placeholder}
+          autoComplete={autoComplete}
+          className="h-12 w-full rounded-lg border border-slate-300 bg-white px-3 pr-10 text-[15px] text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
+        />
+        {right && <div className="absolute right-3 top-1/2 -translate-y-1/2">{right}</div>}
+      </div>
+    </label>
+  );
+}
+
+function PinInput({ value, onChange }: { value: string[]; onChange: (value: string[]) => void }) {
+  return (
+    <div className="grid grid-cols-6 gap-2" aria-label="Kod PIN egzaminu">
+      {value.map((digit, index) => (
+        <input
+          key={index}
+          value={digit}
+          inputMode="numeric"
+          maxLength={1}
+          aria-label={`Cyfra PIN ${index + 1}`}
+          onChange={(event) => {
+            const next = [...value];
+            next[index] = event.target.value.replace(/\D/g, "").slice(0, 1);
+            onChange(next);
+            if (next[index]) {
+              const sibling = event.currentTarget.parentElement?.children[index + 1] as HTMLInputElement | undefined;
+              sibling?.focus();
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Backspace" && !digit && index > 0) {
+              const sibling = event.currentTarget.parentElement?.children[index - 1] as HTMLInputElement | undefined;
+              sibling?.focus();
+            }
+          }}
+          className="h-12 rounded-lg border border-slate-300 bg-white text-center text-lg font-semibold text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100"
+        />
+      ))}
+    </div>
+  );
+}
+
 function AuthPage() {
   const navigate = useNavigate();
-  const { signInWithEmail, signInWithProvider, signUpWithEmail, resetPassword } = useAuth();
-
-  const [isLight, setIsLight] = useState(false);
-  const [tab, setTab] = useState<Tab>("account");
+  const pinLogin = useServerFn(studentPinLogin);
+  const { signInWithEmail, signInWithProvider, resetPassword } = useAuth();
+  const [role, setRole] = useState<RoleId>("teacher");
   const [mode, setMode] = useState<Mode>("login");
-  const [role, setRole] = useState<RoleId>("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [remember, setRemember] = useState(true);
-  const [showPass, setShowPass] = useState(false);
+  const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
   const [loading, setLoading] = useState(false);
+  const [pinLoading, setPinLoading] = useState(false);
 
-  const [qFirst, setQFirst] = useState("");
-  const [qLast, setQLast] = useState("");
-  const [qPin, setQPin] = useState("");
+  const activeRole = useMemo(() => roles.find((item) => item.id === role) ?? roles[0], [role]);
+  const ActiveIcon = activeRole.icon;
+  const pin = pinDigits.join("");
 
-  const [adminCode, setAdminCode] = useState("");
-  const [adminConsent, setAdminConsent] = useState(false);
-
-  const roleMeta = useMemo(() => ROLES.find((r) => r.id === role)!, [role]);
-  const RoleIcon = roleMeta.icon;
-  const isAdmin = role === "admin";
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("edunex_auth_theme");
-    const savedRemember = localStorage.getItem("edunex_remember") === "true";
-    const savedEmail = localStorage.getItem("edunex_email");
-    if (savedTheme === "light") setIsLight(true);
-    if (savedRemember && savedEmail) {
-      setEmail(savedEmail);
-      setRemember(true);
+  const submitAccount = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!isSupabaseConfigured) {
+      return toast.error("Brakuje konfiguracji Supabase. Sprawdź VITE_SUPABASE_URL i VITE_SUPABASE_PUBLISHABLE_KEY.");
     }
-  }, []);
+    if (!email.trim()) return toast.error("Podaj adres e-mail");
 
-  const toggleTheme = () => {
-    setIsLight((current) => {
-      const next = !current;
-      localStorage.setItem("edunex_auth_theme", next ? "light" : "dark");
-      return next;
-    });
-  };
-
-  const handleQuickLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    if (qFirst.trim().length < 2 || qLast.trim().length < 2) {
-      toast.error("Wpisz imię i nazwisko");
-      return;
-    }
-    if (!/^[0-9]{6}$/.test(qPin)) {
-      toast.error("Kod musi mieć 6 cyfr");
-      return;
-    }
     setLoading(true);
     try {
-      const res = await studentPinLogin({
-        data: { first_name: qFirst.trim(), last_name: qLast.trim(), pin: qPin },
-      });
-      toast.success(`Witaj ${res.student_name}!`);
-      navigate({ to: "/student/exam/$attemptId", params: { attemptId: res.attempt_id }, replace: true });
-    } catch (err: any) {
-      toast.error(err?.message || "Nie udało się zalogować");
+      if (mode === "forgot") {
+        const { error } = await resetPassword(email.trim());
+        if (error) return toast.error(error);
+        toast.success("Wysłaliśmy link resetowania hasła");
+        setMode("login");
+        return;
+      }
+
+      if (!password) return toast.error("Podaj hasło");
+      const { error } = await signInWithEmail(email.trim(), password);
+      if (error) return toast.error(error);
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const resolvedRole = (user?.user_metadata?.role || user?.app_metadata?.role || role) as RoleId;
+      toast.success("Zalogowano do EduNex");
+      await navigate({ to: ROLE_DASHBOARD[resolvedRole] || ROLE_DASHBOARD[role], replace: true });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
-      toast.error("Wpisz e-mail i hasło");
-      return;
-    }
-    if (isAdmin) {
-      if (!/^[0-9]{6,8}$/.test(adminCode)) {
-        toast.error("Wpisz kod administratora (6–8 cyfr)");
-        return;
-      }
-      if (!adminConsent) {
-        toast.error("Potwierdź zgodność z polityką bezpieczeństwa");
-        return;
-      }
-    }
-    setLoading(true);
-    const { error } = await signInWithEmail(email, password);
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    if (remember) {
-      localStorage.setItem("edunex_email", email);
-      localStorage.setItem("edunex_remember", "true");
-    } else {
-      localStorage.removeItem("edunex_email");
-      localStorage.removeItem("edunex_remember");
-    }
-    toast.success("Zalogowano pomyślnie");
-    navigate({ to: ROLE_DASHBOARD[role] || "/student/dashboard", replace: true });
-  };
+  const submitPin = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!firstName.trim() || !lastName.trim()) return toast.error("Podaj imię i nazwisko");
+    if (pin.length !== 6) return toast.error("Podaj pełny 6-cyfrowy PIN");
 
-  const handleRegister = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email || !password || !firstName) {
-      toast.error("Wypełnij wszystkie wymagane pola");
-      return;
-    }
-    if (password.length < 8) {
-      toast.error("Hasło musi mieć min. 8 znaków");
-      return;
-    }
-    if (password !== confirm) {
-      toast.error("Hasła nie są takie same");
-      return;
-    }
-    setLoading(true);
-    const { error } = await signUpWithEmail(email, password, role, {
-      first_name: firstName,
-      last_name: lastName,
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    toast.success("Konto utworzone! Sprawdź e-mail aby je potwierdzić.");
-    setMode("login");
-  };
-
-  const handleForgot = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast.error("Wpisz adres e-mail");
-      return;
-    }
-    setLoading(true);
-    const { error } = await resetPassword(email);
-    setLoading(false);
-    if (error) {
-      toast.error(error);
-      return;
-    }
-    toast.success("Wysłaliśmy link do resetu hasła na Twój e-mail");
-    setMode("login");
-  };
-
-  const handleSSO = async (provider: Provider) => {
+    setPinLoading(true);
     try {
-      setLoading(true);
-      await signInWithProvider(provider as any);
-    } catch (err: any) {
-      toast.error(err?.message || "Logowanie nie powiodło się");
-    } finally {
-      setLoading(false);
+      const result = await pinLogin({ data: { first_name: firstName.trim(), last_name: lastName.trim(), pin } });
+      sessionStorage.setItem("edunex_student", JSON.stringify(result));
+      toast.success(`Egzamin: ${result.exam_title}`);
+      await navigate({ to: "/student/exam/$attemptId", params: { attemptId: result.attempt_id } });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się uruchomić egzaminu");
+      setPinLoading(false);
     }
   };
 
-  const textMain = isLight ? "text-[#1b1b1b]" : "text-white";
-  const textMuted = isLight ? "text-[#605e5c]" : "text-white/62";
-  const softBorder = isLight ? "border-[#edebe9]" : "border-white/10";
-  const panelClass = isLight
-    ? "border-white/80 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.18)]"
-    : "border-white/12 bg-[#07111f]/86 shadow-[0_32px_110px_rgba(0,0,0,0.55)] backdrop-blur-xl";
+  const providerLogin = async (provider: Provider) => {
+    try {
+      await signInWithProvider(provider as AuthProvider);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się rozpocząć logowania");
+    }
+  };
 
   return (
-    <div className={`relative min-h-screen overflow-hidden p-4 transition-colors duration-300 sm:p-6 lg:p-10 ${isLight ? "text-[#1f1f1f]" : "text-white"}`}>
-      <Toaster theme={isLight ? "light" : "dark"} position="top-center" />
-      <BgAnimation isLight={isLight} />
-
-      <div className="absolute left-5 right-5 top-5 z-20 flex items-center justify-between gap-3">
-        <Link
-          to="/"
-          className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-sm backdrop-blur transition-colors ${
-            isLight
-              ? "border border-white/70 bg-white/75 text-[#323130] hover:text-[#0067b8]"
-              : "border border-white/12 bg-white/[0.07] text-white/78 hover:text-white"
-          }`}
-        >
-          <ChevronLeft className="h-4 w-4" /> Strona główna
-        </Link>
-
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold shadow-sm backdrop-blur transition-all ${
-            isLight
-              ? "border border-[#d2d0ce] bg-white/80 text-[#323130] hover:border-[#8a8886] hover:text-[#0067b8]"
-              : "border border-white/12 bg-white/[0.07] text-white/78 hover:border-white/24 hover:text-white"
-          }`}
-        >
-          {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          {isLight ? "Tryb ciemny" : "Tryb jasny"}
-        </button>
-      </div>
-
-      <div className="flex min-h-[calc(100vh-3rem)] items-center justify-center pt-16 lg:pt-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.48, ease: [0.16, 1, 0.3, 1] }}
-          className={`grid w-full max-w-6xl overflow-hidden rounded-[28px] border transition-colors duration-300 lg:grid-cols-[1.05fr_0.95fr] ${panelClass}`}
-        >
-          <aside className="relative hidden min-h-[720px] overflow-hidden bg-[#0f172a] p-10 text-white lg:flex lg:flex-col lg:justify-start">
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(circle at 20% 15%, rgba(0,120,212,0.58), transparent 28%), radial-gradient(circle at 82% 18%, rgba(80,230,255,0.24), transparent 30%), linear-gradient(145deg, #020617, #0f172a 48%, #062a4f)",
-              }}
-            />
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px)",
-                backgroundSize: "40px 40px",
-              }}
-            />
-
-            <div className="relative z-10">
-              <div className="mb-10 flex items-center gap-3">
-                <div className="grid h-11 w-11 place-items-center rounded-[12px] bg-white text-[#0067b8] shadow-lg">
-                  <Sparkles className="h-5 w-5" />
-                </div>
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-950">
+      <Toaster position="top-center" theme="light" />
+      <div className="mx-auto grid min-h-screen max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <motion.aside initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hidden lg:block">
+          <Link to="/" className="inline-flex items-center gap-3 text-sm font-semibold text-slate-700 hover:text-slate-950">
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            Portal EduNex
+          </Link>
+          <h1 className="mt-10 max-w-xl text-5xl font-semibold leading-[1.02]">
+            Bezpieczne logowanie do EduNex.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
+            Jedno wejście dla nauczyciela, dyrekcji i administratora. Uczeń może rozpocząć egzamin prostym kodem PIN, bez rozbudowanego konta.
+          </p>
+          <div className="mt-8 grid max-w-xl gap-3">
+            {[
+              ["OAuth", "Google, Microsoft i GitHub przez Supabase Auth"],
+              ["PIN ucznia", "Imię, nazwisko i kod sesji egzaminacyjnej"],
+              ["2FA ready", "Widoczne miejsce na dodatkowe zabezpieczenia"],
+            ].map(([title, text]) => (
+              <div key={title} className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-700" />
                 <div>
-                  <div className="text-xl font-semibold tracking-tight">EduNex</div>
-                  <div className="text-xs uppercase tracking-[0.28em] text-white/60">secure education cloud</div>
+                  <div className="font-semibold text-slate-950">{title}</div>
+                  <div className="mt-1 text-sm text-slate-500">{text}</div>
                 </div>
               </div>
+            ))}
+          </div>
+        </motion.aside>
 
-              <div className="max-w-md">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-[#bfe7ff] backdrop-blur">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Bezpieczne logowanie szkolne
-                </div>
-                <h1 className="text-4xl font-semibold tracking-[-0.045em] text-white xl:text-5xl">
-                  Jedno bezpieczne wejście do całej szkoły.
-                </h1>
-                <p className="mt-5 text-base leading-7 text-white/70">
-                  Panel ucznia, nauczyciela, rodzica i administratora w jednej eleganckiej bramie logowania — czytelnie, szybko i bez chaosu.
-                </p>
+        <motion.main initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="rounded-lg border border-slate-200 bg-white shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
+          <div className="border-b border-slate-200 p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <div className="text-xs font-semibold uppercase text-blue-800">Logowanie EduNex</div>
+                <h2 className="mt-2 text-2xl font-semibold">Wybierz rolę i metodę dostępu</h2>
               </div>
-
-              <div className="mt-10 grid grid-cols-2 gap-3">
-                {[
-                  ["SSO", "Google / Microsoft / GitHub"],
-                  ["2FA", "Kod administratora"],
-                  ["PIN", "Wejście ucznia na egzamin"],
-                  ["RODO", "Serwery UE i audyt"],
-                ].map(([title, desc]) => (
-                  <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.075] p-4 backdrop-blur">
-                    <div className="text-sm font-semibold text-white">{title}</div>
-                    <div className="mt-1 text-xs leading-5 text-white/60">{desc}</div>
-                  </div>
-                ))}
-              </div>
+              <Link to="/auth/register" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+                Rejestracja
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
-
-            <div className="relative z-10 mt-10 rounded-3xl border border-white/10 bg-white/[0.075] p-5 backdrop-blur-xl">
-              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-white">
-                <Fingerprint className="h-4 w-4 text-[#50e6ff]" /> Aktualny tryb
+            {!isSupabaseConfigured && (
+              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                Lokalna konfiguracja Supabase nie jest aktywna. Logowanie i rejestracja wymagają pliku `.env.local` albo zmiennych Vercel.
               </div>
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10">
-                  <RoleIcon className="h-5 w-5 text-[#bfe7ff]" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">{roleMeta.label}</div>
-                  <div className="text-xs text-white/60">{tab === "quick" ? "Szybkie wejście kodem PIN" : roleMeta.desc}</div>
-                </div>
-              </div>
-            </div>
-          </aside>
+            )}
+          </div>
 
-          <main className="flex min-h-[720px] items-center justify-center px-5 py-8 sm:px-8 lg:px-12">
-            <div className="w-full max-w-[430px]">
-              <div className="mb-8 lg:hidden">
+          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
+            <section className="border-b border-slate-200 p-5 lg:border-b-0 lg:border-r">
+              <div className="grid gap-3">
+                {roles.map((item) => {
+                  const Icon = item.icon;
+                  const selected = role === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setRole(item.id)}
+                      className={`rounded-lg border p-4 text-left transition ${selected ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"}`}
+                    >
+                      <div className="flex gap-3">
+                        <div className={`grid h-10 w-10 place-items-center rounded-lg ${selected ? "bg-blue-900 text-white" : "bg-slate-100 text-slate-700"}`}>
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <div className="font-semibold text-slate-950">{item.label}</div>
+                          <div className="mt-1 text-sm text-slate-500">{item.desc}</div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-[#0078d4] text-white shadow-sm">
-                    <Sparkles className="h-5 w-5" />
+                  <div className="grid h-10 w-10 place-items-center rounded-lg bg-slate-950 text-white">
+                    <ActiveIcon className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className={`text-lg font-semibold tracking-tight ${textMain}`}>EduNex</div>
-                    <div className={`text-xs ${textMuted}`}>Bezpieczne logowanie szkolne</div>
+                    <div className="text-sm font-semibold text-slate-950">{activeRole.label}</div>
+                    <div className="text-xs text-slate-500">aktywny profil logowania</div>
                   </div>
                 </div>
               </div>
+            </section>
 
-              <div className={`mb-6 flex items-center gap-2 text-[13px] font-semibold ${textMuted}`}>
-                <span className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
-                Bezpieczne logowanie EduNex
-                <span className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
-              </div>
-
-              <div className={`mb-6 grid grid-cols-2 gap-0 rounded-sm border p-1 ${isLight ? "border-[#d2d0ce] bg-[#f8f8f8]" : "border-white/12 bg-white/[0.055]"}`}>
-                <button
-                  type="button"
-                  onClick={() => setTab("account")}
-                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${
-                    tab === "account"
-                      ? isLight
-                        ? "bg-white text-[#0067b8] shadow-sm"
-                        : "bg-white/12 text-white shadow-sm"
-                      : isLight
-                        ? "text-[#605e5c] hover:text-[#323130]"
-                        : "text-white/55 hover:text-white"
-                  }`}
-                >
-                  <Mail className="h-4 w-4" /> Konto
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTab("quick")}
-                  className={`flex h-10 items-center justify-center gap-2 rounded-sm text-sm font-semibold transition-all ${
-                    tab === "quick"
-                      ? isLight
-                        ? "bg-white text-[#0067b8] shadow-sm"
-                        : "bg-white/12 text-white shadow-sm"
-                      : isLight
-                        ? "text-[#605e5c] hover:text-[#323130]"
-                        : "text-white/55 hover:text-white"
-                  }`}
-                >
-                  <Hash className="h-4 w-4" /> Kod PIN
-                </button>
-              </div>
-
-              {tab === "quick" && (
-                <motion.div key="quick" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
-                  <h1 className={`text-2xl font-semibold tracking-[-0.03em] ${textMain}`}>Dołącz do egzaminu</h1>
-                  <p className={`mt-2 text-sm leading-6 ${textMuted}`}>
-                    Wpisz imię, nazwisko i 6-cyfrowy kod otrzymany od nauczyciela.
-                  </p>
-
-                  <form onSubmit={handleQuickLogin} className="mt-6 space-y-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <Field isLight={isLight} value={qFirst} onChange={setQFirst} placeholder="Imię" autoComplete="given-name" />
-                      <Field isLight={isLight} value={qLast} onChange={setQLast} placeholder="Nazwisko" autoComplete="family-name" />
-                    </div>
+            <section className="p-5">
+              {role === "student" ? (
+                <form onSubmit={submitPin} className="space-y-4">
+                  <div>
+                    <div className="text-xs font-semibold uppercase text-slate-500">Egzamin PIN</div>
+                    <h3 className="mt-2 text-xl font-semibold text-slate-950">Wejście ucznia do egzaminu</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">Uczeń podaje dane i kod otrzymany od nauczyciela. Konto nie jest wymagane dla tej ścieżki.</p>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label="Imię" value={firstName} onChange={setFirstName} placeholder="Jan" autoComplete="given-name" />
+                    <Field label="Nazwisko" value={lastName} onChange={setLastName} placeholder="Kowalski" autoComplete="family-name" />
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="text-sm font-semibold text-slate-700">Kod PIN</div>
+                    <PinInput value={pinDigits} onChange={setPinDigits} />
+                  </div>
+                  <button disabled={pinLoading} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
+                    {pinLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                    Rozpocznij egzamin
+                  </button>
+                  <button type="button" onClick={() => setRole("teacher")} className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+                    Mam konto EduNex
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={submitAccount} className="space-y-4">
+                  <div>
+                    <div className="text-xs font-semibold uppercase text-slate-500">{mode === "forgot" ? "Reset hasła" : "Konto instytucjonalne"}</div>
+                    <h3 className="mt-2 text-xl font-semibold text-slate-950">{mode === "forgot" ? "Odzyskaj dostęp" : `Logowanie: ${activeRole.label}`}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {mode === "forgot" ? "Podaj adres e-mail. Link resetowania zostanie obsłużony przez Supabase Auth." : "Użyj konta e-mail lub logowania organizacyjnego."}
+                    </p>
+                  </div>
+                  <Field label="Adres e-mail" type="email" value={email} onChange={setEmail} placeholder="nauczyciel@szkola.pl" autoComplete="email" />
+                  {mode === "login" && (
                     <Field
-                      isLight={isLight}
-                      value={qPin}
-                      onChange={(v) => setQPin(v.replace(/\D/g, "").slice(0, 6))}
-                      placeholder="Kod egzaminu (6 cyfr)"
-                      autoComplete="one-time-code"
+                      label="Hasło"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={setPassword}
+                      placeholder="Hasło"
+                      autoComplete="current-password"
+                      right={
+                        <button type="button" onClick={() => setShowPassword((value) => !value)} className="text-slate-500 hover:text-slate-900" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}>
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      }
                     />
-                    <div className="flex justify-center gap-2 py-2">
-                      {Array.from({ length: 6 }).map((_, i) => (
-                        <motion.div
-                          key={i}
-                          animate={{
-                            scale: i < qPin.length ? 1.12 : 1,
-                            backgroundColor: i < qPin.length ? "#0078d4" : isLight ? "#d2d0ce" : "rgba(255,255,255,0.24)",
-                          }}
-                          transition={{ type: "spring", stiffness: 420, damping: 22 }}
-                          className="h-2.5 w-2.5 rounded-full"
-                        />
-                      ))}
-                    </div>
-                    <PrimaryButton loading={loading}>
-                      Dołącz do egzaminu <ArrowRight className="h-4 w-4" />
-                    </PrimaryButton>
-                    <p className={`text-center text-xs ${textMuted}`}>Kod PIN działa dla jednej aktywnej sesji egzaminacyjnej.</p>
-                  </form>
-                </motion.div>
-              )}
-
-              {tab === "account" && (
-                <>
-                  <AnimatePresence mode="wait">
-                    <motion.div key={mode} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.15 }}>
-                      <h1 className={`text-2xl font-semibold tracking-[-0.03em] ${textMain}`}>
-                        {mode === "login" && "Zaloguj się"}
-                        {mode === "register" && "Utwórz konto"}
-                        {mode === "forgot" && "Reset hasła"}
-                      </h1>
-                      <p className={`mt-2 text-sm leading-6 ${textMuted}`}>
-                        {mode === "login" && "Użyj konta EduNex albo konta organizacji."}
-                        {mode === "register" && "Załóż konto i wybierz rolę w systemie szkolnym."}
-                        {mode === "forgot" && "Podaj adres e-mail, a wyślemy instrukcję resetu."}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
-
-                  {mode !== "forgot" && (
-                    <div className="mt-6">
-                      <label className={`mb-2 block text-xs font-semibold uppercase tracking-[0.16em] ${textMuted}`}>Wybierz rolę</label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {ROLES.map((r) => {
-                          const Icon = r.icon;
-                          const active = role === r.id;
-                          return (
-                            <button
-                              key={r.id}
-                              type="button"
-                              onClick={() => setRole(r.id)}
-                              className={`flex items-center gap-2 rounded-sm border px-3 py-2.5 text-left text-xs font-semibold transition-all ${
-                                active
-                                  ? isLight
-                                    ? "border-[#0078d4] bg-[#eef6fd] text-[#005da6]"
-                                    : "border-[#50e6ff]/55 bg-[#0078d4]/14 text-white"
-                                  : isLight
-                                    ? "border-[#d2d0ce] bg-white text-[#605e5c] hover:border-[#8a8886] hover:text-[#323130]"
-                                    : "border-white/12 bg-white/[0.045] text-white/58 hover:border-white/24 hover:text-white"
-                              }`}
-                            >
-                              <Icon className="h-4 w-4 shrink-0" />
-                              <span className="truncate">{r.label}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
                   )}
-
-                  {mode === "login" && isAdmin && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`mt-4 flex items-start gap-2 rounded-sm border p-3 text-xs leading-5 ${
-                        isLight
-                          ? "border-[#f3c911] bg-[#fff8d7] text-[#6b5700]"
-                          : "border-[#f3c911]/35 bg-[#f3c911]/10 text-[#ffe680]"
-                      }`}
-                    >
-                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                      <span>Logowanie administratora wymaga dodatkowego kodu 2FA i zaufanego urządzenia.</span>
-                    </motion.div>
-                  )}
-
-                  <AnimatePresence mode="wait">
-                    <motion.form
-                      key={mode}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -8 }}
-                      transition={{ duration: 0.16 }}
-                      onSubmit={mode === "login" ? handleLogin : mode === "register" ? handleRegister : handleForgot}
-                      className="mt-5 space-y-3"
-                    >
-                      {mode === "register" && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <Field isLight={isLight} value={firstName} onChange={setFirstName} placeholder="Imię" autoComplete="given-name" />
-                          <Field isLight={isLight} value={lastName} onChange={setLastName} placeholder="Nazwisko" autoComplete="family-name" />
-                        </div>
-                      )}
-
-                      <Field isLight={isLight} type="email" value={email} onChange={setEmail} placeholder="Adres e-mail" autoComplete="email" />
-
-                      {mode !== "forgot" && (
-                        <Field
-                          isLight={isLight}
-                          type={showPass ? "text" : "password"}
-                          value={password}
-                          onChange={setPassword}
-                          placeholder="Hasło"
-                          autoComplete={mode === "login" ? "current-password" : "new-password"}
-                          rightSlot={
-                            <button
-                              type="button"
-                              onClick={() => setShowPass((s) => !s)}
-                              className={`transition-colors ${isLight ? "text-[#605e5c] hover:text-[#0067b8]" : "text-white/48 hover:text-white"}`}
-                            >
-                              {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
-                          }
-                        />
-                      )}
-
-                      {mode === "register" && (
-                        <Field isLight={isLight} type={showPass ? "text" : "password"} value={confirm} onChange={setConfirm} placeholder="Powtórz hasło" autoComplete="new-password" />
-                      )}
-
-                      {mode === "login" && isAdmin && (
-                        <>
-                          <Field
-                            isLight={isLight}
-                            value={adminCode}
-                            onChange={(v) => setAdminCode(v.replace(/\D/g, "").slice(0, 8))}
-                            placeholder="Kod 2FA administratora"
-                            autoComplete="one-time-code"
-                          />
-                          <label className={`flex cursor-pointer items-start gap-2 text-xs leading-5 ${textMuted}`}>
-                            <input
-                              type="checkbox"
-                              checked={adminConsent}
-                              onChange={(e) => setAdminConsent(e.target.checked)}
-                              className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#0078d4]"
-                            />
-                            Potwierdzam, że logowanie odbywa się z zaufanego urządzenia.
-                          </label>
-                        </>
-                      )}
-
-                      {mode === "login" && (
-                        <div className="flex items-center justify-between pt-1 text-xs">
-                          <label className={`flex cursor-pointer items-center gap-2 ${textMuted}`}>
-                            <input
-                              type="checkbox"
-                              checked={remember}
-                              onChange={(e) => setRemember(e.target.checked)}
-                              className="h-3.5 w-3.5 accent-[#0078d4]"
-                            />
-                            Nie wylogowuj mnie
-                          </label>
-                          <button type="button" onClick={() => setMode("forgot")} className="font-semibold text-[#50a7f2] hover:underline">
-                            Nie pamiętam hasła
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="pt-2">
-                        <PrimaryButton loading={loading}>
-                          {mode === "login" && <>Zaloguj się <ArrowRight className="h-4 w-4" /></>}
-                          {mode === "register" && <>Utwórz konto <ArrowRight className="h-4 w-4" /></>}
-                          {mode === "forgot" && <>Wyślij link <KeyRound className="h-4 w-4" /></>}
-                        </PrimaryButton>
-                      </div>
-                    </motion.form>
-                  </AnimatePresence>
-
-                  {mode !== "forgot" && !isAdmin && (
+                  <button disabled={loading} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "forgot" ? <Mail className="h-4 w-4" /> : <LockKeyhole className="h-4 w-4" />}
+                    {mode === "forgot" ? "Wyślij link resetowania" : "Zaloguj"}
+                  </button>
+                  <button type="button" onClick={() => setMode(mode === "forgot" ? "login" : "forgot")} className="text-sm font-semibold text-blue-800 hover:text-blue-950">
+                    {mode === "forgot" ? "Wróć do logowania" : "Nie pamiętam hasła"}
+                  </button>
+                  {mode === "login" && (
                     <>
-                      <div className="my-5 flex items-center gap-3">
-                        <div className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
-                        <span className={`text-[11px] font-semibold uppercase tracking-[0.16em] ${textMuted}`}>lub</span>
-                        <div className={`h-px flex-1 ${isLight ? "bg-[#edebe9]" : "bg-white/10"}`} />
+                      <div className="flex items-center gap-3">
+                        <div className="h-px flex-1 bg-slate-200" />
+                        <span className="text-xs uppercase text-slate-400">SSO</span>
+                        <div className="h-px flex-1 bg-slate-200" />
                       </div>
-                      <div className="space-y-2">
-                        {SSO_PROVIDERS.map((provider) => (
-                          <SSOButton
+                      <div className="grid gap-2">
+                        {providers.map((provider) => (
+                          <button
                             key={provider.id}
-                            provider={provider.id}
-                            label={provider.label}
-                            icon={provider.icon}
-                            onClick={handleSSO}
-                            disabled={loading}
-                            isLight={isLight}
-                          />
+                            type="button"
+                            onClick={() => providerLogin(provider.id)}
+                            className="inline-flex h-11 items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                          >
+                            <ProviderMark provider={provider.id} />
+                            Kontynuuj z {provider.label}
+                          </button>
                         ))}
                       </div>
                     </>
                   )}
-
-                  <div className={`mt-6 text-center text-sm ${textMuted}`}>
-                    {mode === "login" && (
-                      <>
-                        Nie masz konta?{" "}
-                        <button onClick={() => setMode("register")} className="font-semibold text-[#50a7f2] hover:underline">
-                          Zarejestruj się
-                        </button>
-                      </>
-                    )}
-                    {mode === "register" && (
-                      <>
-                        Masz już konto?{" "}
-                        <button onClick={() => setMode("login")} className="font-semibold text-[#50a7f2] hover:underline">
-                          Zaloguj się
-                        </button>
-                      </>
-                    )}
-                    {mode === "forgot" && (
-                      <button onClick={() => setMode("login")} className="font-semibold text-[#50a7f2] hover:underline">
-                        ← Wróć do logowania
-                      </button>
-                    )}
-                  </div>
-                </>
+                </form>
               )}
+            </section>
+          </div>
 
-              <div className={`mt-8 grid grid-cols-3 gap-2 border-t pt-4 text-center text-[11px] font-semibold ${softBorder} ${textMuted}`}>
-                <div className="flex items-center justify-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-[#2fcf6f]" /> RODO</div>
-                <div className="flex items-center justify-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-[#50a7f2]" /> 2FA</div>
-                <div className="flex items-center justify-center gap-1.5"><Fingerprint className="h-3.5 w-3.5 text-[#50a7f2]" /> SSO</div>
-              </div>
-            </div>
-          </main>
-        </motion.div>
+          <div className="grid gap-3 border-t border-slate-200 bg-slate-50 p-5 text-sm text-slate-600 sm:grid-cols-3">
+            <div className="flex gap-2"><ShieldCheck className="h-4 w-4 text-slate-800" /> Role i zgody</div>
+            <div className="flex gap-2"><LockKeyhole className="h-4 w-4 text-slate-800" /> OAuth przez Supabase</div>
+            <div className="flex gap-2"><KeyRound className="h-4 w-4 text-slate-800" /> PIN dla ucznia</div>
+          </div>
+        </motion.main>
       </div>
     </div>
   );

@@ -1,64 +1,27 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { CheckCircle2, Loader2, ShieldCheck, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { AuthLayout } from "@/components/auth/AuthLayout";
+
+type CallbackStatus = "loading" | "success" | "error";
+
+const dashboards: Record<string, string> = {
+  teacher: "/teacher",
+  admin: "/admin",
+  parent: "/student/dashboard",
+  student: "/student/dashboard",
+};
 
 export const Route = createFileRoute("/auth/callback")({
   component: AuthCallback,
+  head: () => ({ meta: [{ title: "Weryfikacja logowania | EduNex" }] }),
 });
-
-function Spinner() {
-  return (
-    <div className="relative w-12 h-12 mx-auto">
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ border: "2px solid oklch(1 0 0 / 0.06)" }}
-      />
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{
-          border: "2px solid transparent",
-          borderTopColor: "oklch(0.7 0.15 200)",
-          borderRightColor: "oklch(0.6 0.2 240)",
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-      />
-      <motion.div
-        className="absolute inset-1 rounded-full"
-        style={{
-          border: "2px solid transparent",
-          borderBottomColor: "oklch(0.65 0.2 280 / 0.6)",
-          borderLeftColor: "oklch(0.7 0.15 200 / 0.4)",
-        }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-      />
-    </div>
-  );
-}
-
-const PHASES = [
-  "Verifying session",
-  "Fetching profile",
-  "Checking permissions",
-  "Redirecting",
-];
 
 function AuthCallback() {
   const navigate = useNavigate();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [phase, setPhase] = useState(0);
-  const [message, setMessage] = useState("Verifying authentication...");
-
-  useEffect(() => {
-    const phaseInterval = setInterval(() => {
-      setPhase((p) => Math.min(p + 1, PHASES.length - 1));
-    }, 600);
-    return () => clearInterval(phaseInterval);
-  }, []);
+  const [status, setStatus] = useState<CallbackStatus>("loading");
+  const [message, setMessage] = useState("Weryfikujemy sesję i uprawnienia użytkownika.");
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -68,106 +31,64 @@ function AuthCallback() {
         if (!data.session) {
           const params = new URLSearchParams(window.location.hash.substring(1));
           const accessToken = params.get("access_token");
-          if (!accessToken) throw new Error("No session found");
+          if (!accessToken) throw new Error("Nie znaleziono aktywnej sesji");
         }
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error("No user found");
 
-        const role = user.user_metadata?.role || "student";
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) throw new Error("Nie udało się pobrać użytkownika");
+
+        const role = user.user_metadata?.role || user.app_metadata?.role || "student";
         setStatus("success");
-        setMessage("Signed in successfully!");
+        setMessage("Logowanie zakończone. Przekierowujemy do właściwego panelu.");
 
-        setTimeout(() => {
-          const dash: Record<string, string> = {
-            teacher: "/teacher", admin: "/admin",
-            parent: "/student/dashboard", student: "/student/dashboard",
-          };
-          navigate({ to: dash[role] || "/student/dashboard", replace: true });
-        }, 1500);
-      } catch (e: any) {
+        window.setTimeout(() => {
+          navigate({ to: dashboards[role] || "/student/dashboard", replace: true });
+        }, 900);
+      } catch (error) {
         setStatus("error");
-        setMessage(e.message || "Authentication failed");
-        setTimeout(() => navigate({ to: "/auth", replace: true }), 3000);
+        setMessage(error instanceof Error ? error.message : "Logowanie nie powiodło się");
+        window.setTimeout(() => navigate({ to: "/auth", replace: true }), 2600);
       }
     };
+
     handleCallback();
   }, [navigate]);
 
+  const Icon = status === "success" ? CheckCircle2 : status === "error" ? XCircle : Loader2;
+
   return (
-    <AuthLayout title="Completing sign-in" subtitle="Please wait while we verify your credentials.">
-      <AnimatePresence mode="wait">
-        {status === "loading" && (
-          <motion.div
-            key="loading"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="flex flex-col items-center justify-center text-center py-8"
-          >
-            <Spinner />
-            <motion.p
-              key={phase}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-6 text-sm font-medium"
-              style={{ color: "oklch(1 0 0 / 0.6)" }}
-            >
-              {PHASES[phase]}
-            </motion.p>
-            <div className="flex gap-1.5 mt-4">
-              {PHASES.map((_, i) => (
-                <div
-                  key={i}
-                  className="h-1.5 rounded-full transition-all duration-500"
-                  style={{
-                    width: i === phase ? "20px" : "6px",
-                    background: i <= phase ? "oklch(0.7 0.15 200)" : "oklch(1 0 0 / 0.08)",
-                    boxShadow: i <= phase ? "0 0 6px oklch(0.7 0.15 200 / 0.4)" : "none",
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {status === "success" && (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="flex flex-col items-center justify-center text-center py-8"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.1 }}
-            >
-              <CheckCircle2 className="w-14 h-14" style={{ color: "oklch(0.65 0.2 150)" }} />
-            </motion.div>
-            <p className="mt-4 text-lg font-semibold text-white">Signed in!</p>
-            <p className="mt-1 text-sm" style={{ color: "oklch(1 0 0 / 0.4)" }}>Redirecting you shortly...</p>
-          </motion.div>
-        )}
-
+    <div className="grid min-h-screen place-items-center bg-[#f4f7fb] px-5 text-slate-950">
+      <motion.main
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-lg rounded-lg border border-slate-200 bg-white p-8 text-center shadow-[0_24px_90px_rgba(15,23,42,0.12)]"
+      >
+        <Link to="/" className="mx-auto mb-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-950">
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          EduNex Exam OS
+        </Link>
+        <div className={`mx-auto grid h-14 w-14 place-items-center rounded-lg ${status === "error" ? "bg-red-50 text-red-700" : status === "success" ? "bg-emerald-50 text-emerald-700" : "bg-blue-50 text-blue-800"}`}>
+          <Icon className={`h-7 w-7 ${status === "loading" ? "animate-spin" : ""}`} />
+        </div>
+        <h1 className="mt-6 text-3xl font-semibold">
+          {status === "loading" && "Trwa weryfikacja"}
+          {status === "success" && "Dostęp potwierdzony"}
+          {status === "error" && "Nie udało się zalogować"}
+        </h1>
+        <p className="mt-3 text-sm leading-7 text-slate-600">{message}</p>
+        <div className="mt-6 rounded-lg border border-slate-200 bg-slate-50 p-4 text-left text-xs leading-6 text-slate-500">
+          System sprawdza sesję Supabase Auth, rolę użytkownika i docelowy panel. Jeśli proces nie zakończy się automatycznie, wróć do logowania.
+        </div>
         {status === "error" && (
-          <motion.div
-            key="error"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="flex flex-col items-center justify-center text-center py-8"
-          >
-            <XCircle className="w-14 h-14" style={{ color: "oklch(0.6 0.2 30)" }} />
-            <p className="mt-4 text-sm" style={{ color: "oklch(1 0 0 / 0.6)" }}>{message}</p>
-            <p className="mt-2 text-xs" style={{ color: "oklch(1 0 0 / 0.3)" }}>Redirecting to sign in...</p>
-          </motion.div>
+          <Link to="/auth" className="mt-6 inline-flex items-center justify-center rounded-lg bg-slate-950 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+            Wróć do logowania
+          </Link>
         )}
-      </AnimatePresence>
-    </AuthLayout>
+      </motion.main>
+    </div>
   );
 }

@@ -1,17 +1,14 @@
 import { useMemo, type ComponentType } from "react";
 import {
   Activity,
-  ArrowUpRight,
+  ArrowRight,
   BarChart3,
-  BellRing,
   BookOpen,
   CalendarDays,
   CheckCircle2,
-  ClipboardCheck,
   Download,
   FileText,
   Gauge,
-  GraduationCap,
   Layers,
   MessageCircle,
   MonitorDot,
@@ -20,81 +17,31 @@ import {
   ShieldCheck,
   Sparkles,
   TimerReset,
-  Users,
 } from "lucide-react";
-import { Exam } from "@/routes/_authenticated.teacher";
-
-type TabKey =
-  | "pulpit"
-  | "egzaminy"
-  | "ai"
-  | "aiocen"
-  | "tutor"
-  | "plan"
-  | "bank"
-  | "klasy"
-  | "zadania"
-  | "kalendarz"
-  | "live"
-  | "monitoring"
-  | "analityka"
-  | "ranking"
-  | "materialy"
-  | "forum"
-  | "ustawienia"
-  | "ogloszenia"
-  | "wiadomosci"
-  | "eksport"
-  | "edziennik"
-  | "sprawdziany"
-  | "certyfikaty";
+import type { Exam, TabKey } from "@/routes/_authenticated.teacher";
 
 type IconType = ComponentType<{ className?: string }>;
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
-  hint,
-}: {
-  icon: IconType;
-  label: string;
-  value: string | number;
-  hint: string;
-}) {
+function StatCard({ icon: Icon, label, value, hint }: { icon: IconType; label: string; value: string | number; hint: string }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="grid h-11 w-11 place-items-center rounded-xl border border-slate-200 bg-slate-50 text-slate-800">
+        <div className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-slate-50 text-slate-800">
           <Icon className="h-5 w-5" />
         </div>
-        <ArrowUpRight className="h-5 w-5 text-slate-300" />
+        <ArrowRight className="h-4 w-4 text-slate-300" />
       </div>
-      <div className="mt-5 text-3xl font-semibold tracking-tight text-slate-950">{value}</div>
+      <div className="mt-5 text-3xl font-semibold text-slate-950">{value}</div>
       <div className="mt-1 font-medium text-slate-800">{label}</div>
-      <div className="mt-2 text-sm text-slate-500">{hint}</div>
+      <div className="mt-2 text-sm leading-6 text-slate-500">{hint}</div>
     </div>
   );
 }
 
-function ActionCard({
-  icon: Icon,
-  title,
-  text,
-  onClick,
-}: {
-  icon: IconType;
-  title: string;
-  text: string;
-  onClick: () => void;
-}) {
+function ActionCard({ icon: Icon, title, text, onClick }: { icon: IconType; title: string; text: string; onClick: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
-    >
-      <div className="grid h-10 w-10 place-items-center rounded-xl bg-slate-950 text-white">
+    <button type="button" onClick={onClick} className="rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-blue-300 hover:bg-blue-50">
+      <div className="grid h-10 w-10 place-items-center rounded-lg bg-slate-950 text-white">
         <Icon className="h-5 w-5" />
       </div>
       <div className="mt-4 font-semibold text-slate-950">{title}</div>
@@ -103,15 +50,7 @@ function ActionCard({
   );
 }
 
-function ProgressRow({
-  label,
-  value,
-  color,
-}: {
-  label: string;
-  value: number;
-  color: string;
-}) {
+function ProgressRow({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between text-sm">
@@ -125,23 +64,10 @@ function ProgressRow({
   );
 }
 
-export function Pulpit({
-  exams,
-  published,
-  attempts,
-  go,
-  email,
-}: {
-  exams: Exam[];
-  published: number;
-  attempts: number;
-  go: (t: TabKey) => void;
-  email: string;
-}) {
+export function Pulpit({ exams, published, attempts, go, email }: { exams: Exam[]; published: number; attempts: number; go: (tab: TabKey) => void; email: string }) {
   const drafts = Math.max(0, exams.length - published);
   const reviewQueue = Math.max(0, attempts - published * 2);
   const readiness = Math.min(98, Math.max(62, 64 + published * 4 + Math.floor(attempts / 8)));
-
   const recent = useMemo(() => exams.slice(0, 5), [exams]);
 
   const subjectRows = useMemo(() => {
@@ -157,72 +83,72 @@ export function Pulpit({
       .map(([label, count], index) => ({
         label,
         value: Math.max(12, Math.round((count / total) * 100)),
-        color: ["bg-slate-950", "bg-blue-600", "bg-emerald-600", "bg-amber-500"][index % 4],
+        color: ["bg-slate-950", "bg-blue-700", "bg-emerald-700", "bg-amber-600"][index % 4],
       }));
 
     return rows.length
       ? rows
       : [
           { label: "Matematyka", value: 84, color: "bg-slate-950" },
-          { label: "Jezyk polski", value: 66, color: "bg-blue-600" },
-          { label: "Angielski", value: 58, color: "bg-emerald-600" },
+          { label: "Język polski", value: 66, color: "bg-blue-700" },
+          { label: "Angielski", value: 58, color: "bg-emerald-700" },
         ];
   }, [exams]);
 
   return (
     <div className="space-y-6 text-slate-950">
-      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div className="grid gap-6 p-6 lg:grid-cols-[1.2fr_0.8fr] lg:p-8">
+      <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+        <div className="grid gap-6 p-6 lg:grid-cols-[1.15fr_0.85fr] lg:p-8">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-slate-600">
+            <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-blue-800">
               <ShieldCheck className="h-4 w-4" />
               Panel nauczyciela
             </div>
-            <h1 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight text-slate-950 lg:text-5xl">
-              Dzien pracy jest uporzadkowany.
+            <h1 className="mt-5 max-w-2xl text-4xl font-semibold leading-tight text-slate-950 lg:text-5xl">
+              Dzień pracy uporządkowany pod decyzje.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 lg:text-base">
-              Najwazniejsze akcje, aktywnosc klasy, materialy do publikacji i sygnaly ryzyka sa zebrane w jednym profesjonalnym kokpicie.
+              Najważniejsze akcje, aktywność klasy, materiały do publikacji i sygnały ryzyka są zebrane w jednym operacyjnym widoku.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <button type="button" onClick={() => go("ai")} className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+              <button type="button" onClick={() => go("ai")} className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
                 <Sparkles className="h-4 w-4" />
-                Nowy egzamin AI
+                Nowy egzamin NexAi
               </button>
-              <button type="button" onClick={() => go("live")} className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+              <button type="button" onClick={() => go("live")} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
                 <Radio className="h-4 w-4" />
-                Uruchom live
+                Uruchom sesję PIN
               </button>
-              <button type="button" onClick={() => go("monitoring")} className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+              <button type="button" onClick={() => go("monitoring")} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
                 <Activity className="h-4 w-4" />
                 Monitoring
               </button>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-5">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs font-semibold uppercase text-slate-500">Gotowosc operacyjna</div>
+                <div className="text-xs font-semibold uppercase text-slate-500">Gotowość operacyjna</div>
                 <div className="mt-1 text-4xl font-semibold text-slate-950">{readiness}%</div>
               </div>
               <Gauge className="h-9 w-9 text-slate-700" />
             </div>
             <div className="mt-5 grid grid-cols-3 gap-2 text-center text-sm">
-              <div className="rounded-xl bg-white p-3">
+              <div className="rounded-lg bg-white p-3">
                 <div className="font-semibold text-slate-950">{exams.length}</div>
                 <div className="mt-1 text-xs text-slate-500">egzaminy</div>
               </div>
-              <div className="rounded-xl bg-white p-3">
+              <div className="rounded-lg bg-white p-3">
                 <div className="font-semibold text-slate-950">{published}</div>
                 <div className="mt-1 text-xs text-slate-500">publiczne</div>
               </div>
-              <div className="rounded-xl bg-white p-3">
+              <div className="rounded-lg bg-white p-3">
                 <div className="font-semibold text-slate-950">{attempts}</div>
-                <div className="mt-1 text-xs text-slate-500">podejscia</div>
+                <div className="mt-1 text-xs text-slate-500">podejścia</div>
               </div>
             </div>
-            <div className="mt-5 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-600">
+            <div className="mt-5 rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-600">
               Konto: <span className="font-medium text-slate-950">{email || "teacher@edunex.pl"}</span>
             </div>
           </div>
@@ -230,30 +156,30 @@ export function Pulpit({
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard icon={FileText} label="Moje egzaminy" value={exams.length} hint="wszystkie materialy" />
-        <StatCard icon={CheckCircle2} label="Opublikowane" value={published} hint="gotowe dla uczniow" />
+        <StatCard icon={FileText} label="Moje egzaminy" value={exams.length} hint="wszystkie materiały" />
+        <StatCard icon={CheckCircle2} label="Opublikowane" value={published} hint="gotowe dla uczniów" />
         <StatCard icon={TimerReset} label="Do sprawdzenia" value={reviewQueue} hint="kolejka decyzji" />
         <StatCard icon={Layers} label="Szkice" value={drafts} hint="do publikacji" />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <div className="text-xs font-semibold uppercase text-slate-500">Szybkie decyzje</div>
-              <h2 className="mt-1 text-2xl font-semibold text-slate-950">Najczestsze ruchy nauczyciela</h2>
+              <h2 className="mt-1 text-2xl font-semibold text-slate-950">Najczęstsze ruchy nauczyciela</h2>
             </div>
             <BookOpen className="h-6 w-6 text-slate-400" />
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <ActionCard icon={Sparkles} title="Egzamin AI" text="Start od tematu lekcji i poziomu klasy." onClick={() => go("ai")} />
-            <ActionCard icon={MonitorDot} title="Sesja live" text="Kod PIN, tempo klasy i status oddania." onClick={() => go("live")} />
-            <ActionCard icon={MessageCircle} title="Wiadomosc" text="Komunikat do klasy lub rodzicow." onClick={() => go("wiadomosci")} />
-            <ActionCard icon={ScrollText} title="Sprawdzian" text="Krotka forma na najblizsza lekcje." onClick={() => go("sprawdziany")} />
+            <ActionCard icon={Sparkles} title="Egzamin NexAi" text="Start od tematu lekcji i poziomu klasy." onClick={() => go("ai")} />
+            <ActionCard icon={MonitorDot} title="Sesja PIN" text="Kod, tempo klasy i status oddania." onClick={() => go("live")} />
+            <ActionCard icon={MessageCircle} title="Wiadomość" text="Komunikat do klasy lub rodziców." onClick={() => go("wiadomosci")} />
+            <ActionCard icon={ScrollText} title="Sprawdzian" text="Krótka forma na najbliższą lekcję." onClick={() => go("sprawdziany")} />
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <div className="text-xs font-semibold uppercase text-slate-500">Plan dnia</div>
@@ -264,10 +190,10 @@ export function Pulpit({
           <div className="space-y-3">
             {[
               ["08:00", "Szybki quiz diagnostyczny"],
-              ["10:45", "Przeglad wynikow i prac opisowych"],
+              ["10:45", "Przegląd wyników i prac opisowych"],
               ["14:00", "Eksport raportu dla klasy"],
             ].map(([time, label]) => (
-              <div key={time} className="grid grid-cols-[4.2rem_1fr] gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div key={time} className="grid grid-cols-[4.2rem_1fr] gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <div className="font-semibold text-slate-950">{time}</div>
                 <div className="text-sm text-slate-600">{label}</div>
               </div>
@@ -277,9 +203,9 @@ export function Pulpit({
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr]">
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-slate-950">Zakres materialow</h2>
+            <h2 className="text-2xl font-semibold text-slate-950">Zakres materiałów</h2>
             <BarChart3 className="h-6 w-6 text-slate-400" />
           </div>
           <div className="space-y-4">
@@ -289,16 +215,16 @@ export function Pulpit({
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-slate-950">Ostatnie materialy</h2>
+            <h2 className="text-2xl font-semibold text-slate-950">Ostatnie materiały</h2>
             <button type="button" onClick={() => go("egzaminy")} className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
               Zobacz wszystko
             </button>
           </div>
           <div className="space-y-3">
-            {(recent.length ? recent : [{ title: "Przykladowy egzamin", subject: "Matematyka", created_at: new Date().toISOString() } as Exam]).map((exam, index) => (
-              <div key={`${exam.title}-${index}`} className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+            {(recent.length ? recent : [{ title: "Przykładowy egzamin", subject: "Matematyka", created_at: new Date().toISOString() } as Exam]).map((exam, index) => (
+              <div key={`${exam.title}-${index}`} className="grid gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
                 <div>
                   <div className="font-semibold text-slate-950">{exam.title || "Bez nazwy"}</div>
                   <div className="mt-1 text-sm text-slate-500">{exam.subject || "Bez przedmiotu"}</div>
@@ -310,18 +236,18 @@ export function Pulpit({
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
         <div className="grid gap-5 md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <div className="text-xs font-semibold uppercase text-slate-500">Eksport i zgodnosc</div>
+            <div className="text-xs font-semibold uppercase text-slate-500">Eksport i zgodność</div>
             <h2 className="mt-1 text-2xl font-semibold text-slate-950">Raporty gotowe do przekazania dalej</h2>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              Eksporty, dokumenty i audyt decyzji AI sa prezentowane jako czesc procesu pracy, nie jako dodatek.
+              Eksporty, dokumenty i audyt decyzji NexAi są prezentowane jako część procesu pracy, nie jako dodatek.
             </p>
           </div>
-          <button type="button" onClick={() => go("eksport")} className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+          <button type="button" onClick={() => go("eksport")} className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
             <Download className="h-4 w-4" />
-            Przejdz do eksportu
+            Przejdź do eksportu
           </button>
         </div>
       </section>
