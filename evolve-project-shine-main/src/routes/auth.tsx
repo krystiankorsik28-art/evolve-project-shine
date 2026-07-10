@@ -1,15 +1,22 @@
-import { useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react";
-import { createFileRoute, Link, Outlet, redirect, useNavigate, useRouterState } from "@tanstack/react-router";
+import { useState, type ComponentType, type FormEvent, type ReactNode } from "react";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+  useNavigate,
+  useRouterState,
+} from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   Building2,
-  CheckCircle2,
   Eye,
   EyeOff,
   GraduationCap,
   KeyRound,
+  Layers3,
   Loader2,
   LockKeyhole,
   Mail,
@@ -35,10 +42,20 @@ const ROLE_DASHBOARD: Record<RoleId, string> = {
   admin: "/admin",
 };
 
-const roles: Array<{ id: RoleId; label: string; desc: string; icon: ComponentType<{ className?: string }> }> = [
+const roles: Array<{
+  id: RoleId;
+  label: string;
+  desc: string;
+  icon: ComponentType<{ className?: string }>;
+}> = [
   { id: "teacher", label: "Nauczyciel", desc: "Egzaminy, klasy, NexAi i raporty", icon: Users },
   { id: "student", label: "Uczeń", desc: "Wejście kontem lub kodem PIN", icon: GraduationCap },
-  { id: "admin", label: "Dyrekcja / Admin", desc: "Role, licencja i bezpieczeństwo", icon: Building2 },
+  {
+    id: "admin",
+    label: "Dyrekcja / Admin",
+    desc: "Role, licencja i bezpieczeństwo",
+    icon: Building2,
+  },
   { id: "parent", label: "Rodzic", desc: "Postęp dziecka i komunikaty", icon: School },
 ];
 
@@ -46,6 +63,28 @@ const providers: Array<{ id: Provider; label: string }> = [
   { id: "microsoft", label: "Microsoft" },
   { id: "google", label: "Google" },
   { id: "github", label: "GitHub" },
+];
+
+const accessHighlights: Array<{
+  icon: ComponentType<{ className?: string }>;
+  title: string;
+  text: string;
+}> = [
+  {
+    icon: Building2,
+    title: "Dostęp według roli",
+    text: "Po zalogowaniu system prowadzi do właściwego panelu i zakresu pracy.",
+  },
+  {
+    icon: LockKeyhole,
+    title: "Konto lub logowanie SSO",
+    text: "E-mail i hasło oraz Microsoft, Google i GitHub przez Supabase Auth.",
+  },
+  {
+    icon: KeyRound,
+    title: "Szybkie wejście ucznia",
+    text: "Imię, nazwisko i 6-cyfrowy PIN bez zakładania pełnego konta.",
+  },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -57,7 +96,9 @@ export const Route = createFileRoute("/auth")({
         data: { session },
       } = await supabase.auth.getSession();
       if (session?.user) {
-        const role = (session.user.user_metadata?.role || session.user.app_metadata?.role || "student") as RoleId;
+        const role = (session.user.user_metadata?.role ||
+          session.user.app_metadata?.role ||
+          "student") as RoleId;
         throw redirect({ to: ROLE_DASHBOARD[role] || "/student/dashboard", replace: true });
       }
     } catch (error) {
@@ -70,7 +111,8 @@ export const Route = createFileRoute("/auth")({
       { title: "Logowanie | EduNex" },
       {
         name: "description",
-        content: "Bezpieczne logowanie do platformy EduNex dla ucznia, nauczyciela, rodzica i administratora.",
+        content:
+          "Bezpieczne logowanie do platformy EduNex dla ucznia, nauczyciela, rodzica i administratora.",
       },
     ],
   }),
@@ -85,10 +127,22 @@ function ProviderMark({ provider }: { provider: Provider }) {
   if (provider === "google") {
     return (
       <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        <path
+          fill="#4285F4"
+          d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+        />
+        <path
+          fill="#EA4335"
+          d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+        />
       </svg>
     );
   }
@@ -161,13 +215,17 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
             next[index] = event.target.value.replace(/\D/g, "").slice(0, 1);
             onChange(next);
             if (next[index]) {
-              const sibling = event.currentTarget.parentElement?.children[index + 1] as HTMLInputElement | undefined;
+              const sibling = event.currentTarget.parentElement?.children[index + 1] as
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
           }}
           onKeyDown={(event) => {
             if (event.key === "Backspace" && !digit && index > 0) {
-              const sibling = event.currentTarget.parentElement?.children[index - 1] as HTMLInputElement | undefined;
+              const sibling = event.currentTarget.parentElement?.children[index - 1] as
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
           }}
@@ -193,14 +251,16 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [pinLoading, setPinLoading] = useState(false);
 
-  const activeRole = useMemo(() => roles.find((item) => item.id === role) ?? roles[0], [role]);
+  const activeRole = roles.find((item) => item.id === role) ?? roles[0];
   const ActiveIcon = activeRole.icon;
   const pin = pinDigits.join("");
 
   const submitAccount = async (event: FormEvent) => {
     event.preventDefault();
     if (!isSupabaseConfigured) {
-      return toast.error("Brakuje konfiguracji Supabase. Sprawdź VITE_SUPABASE_URL i VITE_SUPABASE_PUBLISHABLE_KEY.");
+      return toast.error(
+        "Brakuje konfiguracji Supabase. Sprawdź VITE_SUPABASE_URL i VITE_SUPABASE_PUBLISHABLE_KEY.",
+      );
     }
     if (!email.trim()) return toast.error("Podaj adres e-mail");
 
@@ -221,7 +281,9 @@ function AuthPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const resolvedRole = (user?.user_metadata?.role || user?.app_metadata?.role || role) as RoleId;
+      const resolvedRole = (user?.user_metadata?.role ||
+        user?.app_metadata?.role ||
+        role) as RoleId;
       toast.success("Zalogowano do EduNex");
       await navigate({ to: ROLE_DASHBOARD[resolvedRole] || ROLE_DASHBOARD[role], replace: true });
     } finally {
@@ -236,7 +298,9 @@ function AuthPage() {
 
     setPinLoading(true);
     try {
-      const result = await pinLogin({ data: { first_name: firstName.trim(), last_name: lastName.trim(), pin } });
+      const result = await pinLogin({
+        data: { first_name: firstName.trim(), last_name: lastName.trim(), pin },
+      });
       sessionStorage.setItem("edunex_student", JSON.stringify(result));
       toast.success(`Egzamin: ${result.exam_title}`);
       await navigate({ to: "/student/exam/$attemptId", params: { attemptId: result.attempt_id } });
@@ -255,61 +319,117 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb] text-slate-950">
+    <div className="relative min-h-screen overflow-hidden bg-[#f4f7fb] text-slate-950">
       <Toaster position="top-center" theme="light" />
-      <div className="mx-auto grid min-h-screen max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <motion.aside initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="hidden lg:block">
-          <Link to="/" className="inline-flex items-center gap-3 text-sm font-semibold text-slate-700 hover:text-slate-950">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
-              <ShieldCheck className="h-5 w-5" />
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-40 top-16 h-96 w-96 rounded-full bg-blue-200/35 blur-3xl" />
+        <div className="absolute -right-32 bottom-0 h-[28rem] w-[28rem] rounded-full bg-indigo-200/30 blur-3xl" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(15,23,42,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.035)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
+      </div>
+
+      <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-5 sm:px-6 lg:px-8">
+        <Link
+          to="/"
+          className="inline-flex min-w-0 items-center gap-3 rounded-lg text-slate-700 transition hover:text-slate-950 focus:outline-none focus:ring-4 focus:ring-blue-100"
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-950 text-white shadow-sm">
+            <Layers3 className="h-4 w-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-sm font-semibold text-slate-950">EduNex</span>
+            <span className="block truncate text-xs text-slate-500">
+              Bezpieczny portal edukacyjny
             </span>
-            Portal EduNex
-          </Link>
-          <h1 className="mt-10 max-w-xl text-5xl font-semibold leading-[1.02]">
-            Bezpieczne logowanie do EduNex.
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-8 text-slate-600">
-            Jedno wejście dla nauczyciela, dyrekcji i administratora. Uczeń może rozpocząć egzamin prostym kodem PIN, bez rozbudowanego konta.
-          </p>
-          <div className="mt-8 grid max-w-xl gap-3">
-            {[
-              ["OAuth", "Google, Microsoft i GitHub przez Supabase Auth"],
-              ["PIN ucznia", "Imię, nazwisko i kod sesji egzaminacyjnej"],
-              ["2FA ready", "Widoczne miejsce na dodatkowe zabezpieczenia"],
-            ].map(([title, text]) => (
-              <div key={title} className="flex gap-3 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-700" />
-                <div>
-                  <div className="font-semibold text-slate-950">{title}</div>
-                  <div className="mt-1 text-sm text-slate-500">{text}</div>
+          </span>
+        </Link>
+        <Link
+          to="/auth/register"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white/85 px-4 text-sm font-semibold text-slate-800 shadow-sm backdrop-blur transition hover:border-slate-400 hover:bg-white"
+        >
+          Utwórz konto
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </header>
+
+      <div className="relative z-10 mx-auto grid w-full max-w-6xl gap-5 px-5 pb-8 sm:px-6 lg:min-h-[calc(100vh-84px)] lg:grid-cols-[0.78fr_1.22fr] lg:items-stretch lg:px-8 lg:pb-10">
+        <motion.aside
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative hidden overflow-hidden rounded-2xl bg-slate-950 p-8 text-white shadow-[0_28px_90px_rgba(15,23,42,0.22)] lg:flex lg:min-h-[680px] lg:flex-col"
+        >
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/25 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
+          <div className="relative flex h-full flex-col">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-blue-100">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Dostęp do platformy EduNex
+            </div>
+            <h1 className="mt-7 max-w-md text-4xl font-semibold leading-[1.04] xl:text-5xl">
+              Jedno logowanie. Właściwy panel. Spokojna praca.
+            </h1>
+            <p className="mt-5 max-w-md text-sm leading-7 text-slate-300">
+              Nauczyciel, uczeń, rodzic i dyrekcja korzystają z jednej, uporządkowanej bramy dostępu
+              do systemu szkoły.
+            </p>
+
+            <div className="mt-8 space-y-3">
+              {accessHighlights.map(({ icon: Icon, title, text }) => (
+                <div
+                  key={title}
+                  className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur-sm"
+                >
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white/10 text-blue-100">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold text-white">{title}</span>
+                    <span className="mt-1 block text-xs leading-5 text-slate-400">{text}</span>
+                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-6 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]" />
+                Portal dostępu online
+              </span>
+              <span>edunex.pl</span>
+            </div>
           </div>
         </motion.aside>
 
-        <motion.main initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="rounded-lg border border-slate-200 bg-white shadow-[0_24px_90px_rgba(15,23,42,0.12)]">
-          <div className="border-b border-slate-200 p-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <div className="text-xs font-semibold uppercase text-blue-800">Logowanie EduNex</div>
-                <h2 className="mt-2 text-2xl font-semibold">Wybierz rolę i metodę dostępu</h2>
+        <motion.main
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.06 }}
+          className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.14)]"
+        >
+          <div className="flex-1 p-5 sm:p-8">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-800">
+                Logowanie EduNex
               </div>
-              <Link to="/auth/register" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
-                Rejestracja
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
+                Witaj ponownie
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Wybierz profil, a następnie metodę dostępu do platformy.
+              </p>
             </div>
+
             {!isSupabaseConfigured && (
-              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
-                Lokalna konfiguracja Supabase nie jest aktywna. Logowanie i rejestracja wymagają pliku `.env.local` albo zmiennych Vercel.
+              <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-900">
+                Lokalna konfiguracja Supabase nie jest aktywna. Logowanie wymaga zmiennych
+                środowiskowych.
               </div>
             )}
-          </div>
 
-          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-            <section className="border-b border-slate-200 p-5 lg:border-b-0 lg:border-r">
-              <div className="grid gap-3">
+            <section className="mt-6" aria-labelledby="role-label">
+              <div id="role-label" className="mb-3 text-sm font-semibold text-slate-700">
+                Profil użytkownika
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {roles.map((item) => {
                   const Icon = item.icon;
                   const selected = role === item.id;
@@ -317,108 +437,174 @@ function AuthPage() {
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setRole(item.id)}
-                      className={`rounded-lg border p-4 text-left transition ${selected ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"}`}
+                      aria-pressed={selected}
+                      onClick={() => {
+                        setRole(item.id);
+                        setMode("login");
+                      }}
+                      className={`group flex min-h-24 flex-col items-start justify-between rounded-xl border p-3 text-left transition focus:outline-none focus:ring-4 focus:ring-blue-100 ${selected ? "border-blue-400 bg-blue-50 shadow-sm" : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"}`}
                     >
-                      <div className="flex gap-3">
-                        <div className={`grid h-10 w-10 place-items-center rounded-lg ${selected ? "bg-blue-900 text-white" : "bg-slate-100 text-slate-700"}`}>
-                          <Icon className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-slate-950">{item.label}</div>
-                          <div className="mt-1 text-sm text-slate-500">{item.desc}</div>
-                        </div>
-                      </div>
+                      <span
+                        className={`grid h-9 w-9 place-items-center rounded-lg transition ${selected ? "bg-blue-900 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-white"}`}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="mt-3 text-xs font-semibold leading-4 text-slate-900">
+                        {item.label}
+                      </span>
                     </button>
                   );
                 })}
               </div>
-              <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-lg bg-slate-950 text-white">
-                    <ActiveIcon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-slate-950">{activeRole.label}</div>
-                    <div className="text-xs text-slate-500">aktywny profil logowania</div>
-                  </div>
-                </div>
-              </div>
             </section>
 
-            <section className="p-5">
+            <section className="mt-7 border-t border-slate-200 pt-7">
               {role === "student" ? (
                 <form onSubmit={submitPin} className="space-y-4">
-                  <div>
-                    <div className="text-xs font-semibold uppercase text-slate-500">Egzamin PIN</div>
-                    <h3 className="mt-2 text-xl font-semibold text-slate-950">Wejście ucznia do egzaminu</h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">Uczeń podaje dane i kod otrzymany od nauczyciela. Konto nie jest wymagane dla tej ścieżki.</p>
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-950 text-white">
+                      <ActiveIcon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-950">
+                        Wejście ucznia do egzaminu
+                      </h3>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">
+                        Podaj dane i 6-cyfrowy PIN otrzymany od nauczyciela.
+                      </p>
+                    </div>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Imię" value={firstName} onChange={setFirstName} placeholder="Jan" autoComplete="given-name" />
-                    <Field label="Nazwisko" value={lastName} onChange={setLastName} placeholder="Kowalski" autoComplete="family-name" />
+                    <Field
+                      label="Imię"
+                      value={firstName}
+                      onChange={setFirstName}
+                      placeholder="Jan"
+                      autoComplete="given-name"
+                    />
+                    <Field
+                      label="Nazwisko"
+                      value={lastName}
+                      onChange={setLastName}
+                      placeholder="Kowalski"
+                      autoComplete="family-name"
+                    />
                   </div>
                   <div className="grid gap-2">
-                    <div className="text-sm font-semibold text-slate-700">Kod PIN</div>
+                    <div className="text-sm font-semibold text-slate-700">Kod PIN egzaminu</div>
                     <PinInput value={pinDigits} onChange={setPinDigits} />
                   </div>
-                  <button disabled={pinLoading} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
-                    {pinLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                  <button
+                    type="submit"
+                    disabled={pinLoading}
+                    className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {pinLoading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <KeyRound className="h-4 w-4" />
+                    )}
                     Rozpocznij egzamin
-                  </button>
-                  <button type="button" onClick={() => setRole("teacher")} className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-800 hover:bg-slate-50">
-                    Mam konto EduNex
                   </button>
                 </form>
               ) : (
                 <form onSubmit={submitAccount} className="space-y-4">
-                  <div>
-                    <div className="text-xs font-semibold uppercase text-slate-500">{mode === "forgot" ? "Reset hasła" : "Konto instytucjonalne"}</div>
-                    <h3 className="mt-2 text-xl font-semibold text-slate-950">{mode === "forgot" ? "Odzyskaj dostęp" : `Logowanie: ${activeRole.label}`}</h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {mode === "forgot" ? "Podaj adres e-mail. Link resetowania zostanie obsłużony przez Supabase Auth." : "Użyj konta e-mail lub logowania organizacyjnego."}
-                    </p>
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-slate-950 text-white">
+                      <ActiveIcon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-950">
+                        {mode === "forgot" ? "Odzyskaj dostęp" : `Logowanie: ${activeRole.label}`}
+                      </h3>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">
+                        {mode === "forgot"
+                          ? "Podaj adres e-mail, a wyślemy bezpieczny link resetowania hasła."
+                          : activeRole.desc}
+                      </p>
+                    </div>
                   </div>
-                  <Field label="Adres e-mail" type="email" value={email} onChange={setEmail} placeholder="nauczyciel@szkola.pl" autoComplete="email" />
+
+                  <Field
+                    label="Adres e-mail"
+                    type="email"
+                    value={email}
+                    onChange={setEmail}
+                    placeholder="nauczyciel@szkola.pl"
+                    autoComplete="email"
+                  />
                   {mode === "login" && (
                     <Field
                       label="Hasło"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={setPassword}
-                      placeholder="Hasło"
+                      placeholder="Wpisz hasło"
                       autoComplete="current-password"
                       right={
-                        <button type="button" onClick={() => setShowPassword((value) => !value)} className="text-slate-500 hover:text-slate-900" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}>
-                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((value) => !value)}
+                          className="rounded-md p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                          aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
                         </button>
                       }
                     />
                   )}
-                  <button disabled={loading} className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "forgot" ? <Mail className="h-4 w-4" /> : <LockKeyhole className="h-4 w-4" />}
-                    {mode === "forgot" ? "Wyślij link resetowania" : "Zaloguj"}
+
+                  <div className="flex items-center justify-between gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setMode(mode === "forgot" ? "login" : "forgot")}
+                      className="text-sm font-semibold text-blue-800 transition hover:text-blue-950"
+                    >
+                      {mode === "forgot" ? "Wróć do logowania" : "Nie pamiętam hasła"}
+                    </button>
+                    {mode === "login" && (
+                      <span className="text-xs text-slate-400">Dostęp chroniony</span>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {loading ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : mode === "forgot" ? (
+                      <Mail className="h-4 w-4" />
+                    ) : (
+                      <LockKeyhole className="h-4 w-4" />
+                    )}
+                    {mode === "forgot" ? "Wyślij link resetowania" : "Zaloguj się"}
                   </button>
-                  <button type="button" onClick={() => setMode(mode === "forgot" ? "login" : "forgot")} className="text-sm font-semibold text-blue-800 hover:text-blue-950">
-                    {mode === "forgot" ? "Wróć do logowania" : "Nie pamiętam hasła"}
-                  </button>
+
                   {mode === "login" && (
                     <>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 py-1">
                         <div className="h-px flex-1 bg-slate-200" />
-                        <span className="text-xs uppercase text-slate-400">SSO</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                          lub użyj konta
+                        </span>
                         <div className="h-px flex-1 bg-slate-200" />
                       </div>
-                      <div className="grid gap-2">
+                      <div className="grid gap-2 sm:grid-cols-3">
                         {providers.map((provider) => (
                           <button
                             key={provider.id}
                             type="button"
                             onClick={() => providerLogin(provider.id)}
-                            className="inline-flex h-11 items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
                           >
                             <ProviderMark provider={provider.id} />
-                            Kontynuuj z {provider.label}
+                            {provider.label}
                           </button>
                         ))}
                       </div>
@@ -429,10 +615,21 @@ function AuthPage() {
             </section>
           </div>
 
-          <div className="grid gap-3 border-t border-slate-200 bg-slate-50 p-5 text-sm text-slate-600 sm:grid-cols-3">
-            <div className="flex gap-2"><ShieldCheck className="h-4 w-4 text-slate-800" /> Role i zgody</div>
-            <div className="flex gap-2"><LockKeyhole className="h-4 w-4 text-slate-800" /> OAuth przez Supabase</div>
-            <div className="flex gap-2"><KeyRound className="h-4 w-4 text-slate-800" /> PIN dla ucznia</div>
+          <div className="flex flex-col gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="inline-flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-slate-700" /> Bezpieczna sesja
+              </span>
+              <span className="inline-flex items-center gap-2">
+                <LockKeyhole className="h-4 w-4 text-slate-700" /> Supabase Auth
+              </span>
+            </div>
+            <Link
+              to="/dokumenty"
+              className="font-semibold text-slate-700 transition hover:text-slate-950"
+            >
+              Prywatność i RODO
+            </Link>
           </div>
         </motion.main>
       </div>
