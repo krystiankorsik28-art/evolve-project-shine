@@ -12,6 +12,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import ultraCss from "../ultra.css?url";
+import teacherCompatCss from "../teacher-compat.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
@@ -119,6 +120,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: ultraCss },
+      { rel: "stylesheet", href: teacherCompatCss },
     ],
   }),
   shellComponent: RootShell,
