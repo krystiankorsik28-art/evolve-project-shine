@@ -43,58 +43,148 @@ type ContactFormState = {
 
 const navItems = [
   ["Platforma", "#platforma"],
-  ["Panele", "#panele"],
+  ["Rozwiązania", "#rozwiazania"],
   ["Bezpieczeństwo", "#bezpieczenstwo"],
+  ["Wdrożenie", "#wdrozenie"],
   ["Cennik", "#cennik"],
-  ["Dokumenty", "#dokumenty"],
   ["Kontakt", "#kontakt"],
 ];
 
-const metrics = [
-  ["4 role", "uczeń, nauczyciel, dyrekcja i admin"],
-  ["PIN", "egzaminy bez zakładania kont uczniowskich"],
-  ["NexAi", "asystent, generator i wsparcie oceniania"],
-  ["RODO", "dokumenty, role i kontrola dostępu"],
+const productFacts = [
+  ["4 role", "Spójne panele ucznia, nauczyciela, dyrekcji i administratora"],
+  ["6-cyfrowy PIN", "Wejście ucznia do egzaminu bez zakładania pełnego konta"],
+  ["NexAi", "Wsparcie tworzenia, nauki i oceniania pod nadzorem człowieka"],
+  ["RODO", "Dokumenty, role, ślad działań i kontrola dostępu w produkcie"],
 ];
 
-const roles: Record<RoleKey, { icon: IconType; label: string; title: string; copy: string; points: string[] }> = {
+const institutionTypes = [
+  "Szkoły podstawowe",
+  "Szkoły średnie",
+  "Zespoły szkół",
+  "Placówki publiczne",
+  "Centra szkoleniowe",
+  "Organizacje edukacyjne",
+];
+
+const roles: Record<
+  RoleKey,
+  {
+    icon: IconType;
+    label: string;
+    title: string;
+    copy: string;
+    points: string[];
+    previewTitle: string;
+    previewRows: Array<[string, string]>;
+  }
+> = {
   teacher: {
     icon: GraduationCap,
     label: "Nauczyciel",
-    title: "Pulpit pracy z egzaminami, klasami i materiałami",
-    copy: "Nauczyciel widzi plan pracy, egzaminy, sesje PIN, wyniki, NexAi i eksport ocen w jednym uporządkowanym widoku.",
-    points: ["Egzaminy i sprawdziany", "Sesje PIN", "NexAi Generator", "Eksport PDF/CSV"],
+    title: "Pełny pulpit pracy z egzaminami, klasami i materiałami",
+    copy: "Nauczyciel przygotowuje sprawdzian, uruchamia sesję PIN, obserwuje przebieg i analizuje wyniki bez przechodzenia między przypadkowymi narzędziami.",
+    points: ["Egzaminy i sprawdziany", "Sesje PIN na żywo", "Bank pytań i media", "Raporty i eksporty"],
+    previewTitle: "Dzień nauczyciela",
+    previewRows: [
+      ["08:00", "Matematyka — klasa 7B"],
+      ["10:15", "Sesja PIN — 28 uczestników"],
+      ["13:30", "Sprawdzenie odpowiedzi otwartych"],
+    ],
   },
   student: {
     icon: UserRound,
     label: "Uczeń",
-    title: "Prosty panel wejścia i spokojny tryb egzaminu",
-    copy: "Uczeń widzi tylko to, co potrzebne: dane, PIN, instrukcję, timer, pytania, wyniki i certyfikaty.",
-    points: ["Wejście PIN", "Timer", "Historia wyników", "Certyfikaty"],
+    title: "Proste wejście i spokojny tryb rozwiązywania egzaminu",
+    copy: "Uczeń widzi jasne instrukcje, timer, postęp i pytania. Interfejs ogranicza rozproszenie i prowadzi krok po kroku do bezpiecznego oddania pracy.",
+    points: ["Wejście kodem PIN", "Czytelny timer i postęp", "Automatyczny zapis", "Historia wyników"],
+    previewTitle: "Sesja ucznia",
+    previewRows: [
+      ["01", "Instrukcja i potwierdzenie danych"],
+      ["02", "Pytania oraz zapis odpowiedzi"],
+      ["03", "Podsumowanie i bezpieczne oddanie"],
+    ],
   },
   school: {
     icon: School,
     label: "Dyrekcja",
-    title: "Przegląd placówki, jakości pracy i zgodności",
-    copy: "Dyrekcja dostaje metryki, raporty, kontrolę ról, dokumenty i status wdrożenia bez technicznego chaosu.",
-    points: ["Raporty zbiorcze", "Role", "Dokumenty", "Zgodność"],
+    title: "Widok placówki, jakości pracy i gotowości operacyjnej",
+    copy: "Dyrekcja otrzymuje uporządkowane wskaźniki, raporty klas, stan wdrożenia, dokumenty i informacje potrzebne do podejmowania decyzji.",
+    points: ["Raporty zbiorcze", "Przegląd aktywności", "Dokumenty i zgodność", "Zarządzanie placówką"],
+    previewTitle: "Przegląd placówki",
+    previewRows: [
+      ["12", "aktywnych klas"],
+      ["38", "nauczycieli w systemie"],
+      ["94%", "ukończonych prac"],
+    ],
   },
   admin: {
     icon: ServerCog,
-    label: "Admin",
-    title: "Zarządzanie dostępem i ustawieniami szkoły",
-    copy: "Administrator zatwierdza konta, kontroluje role, dba o ustawienia placówki i utrzymuje porządek w dostępie.",
-    points: ["Uprawnienia", "Weryfikacja", "Ustawienia", "Audyt"],
+    label: "Administrator",
+    title: "Kontrola dostępu, ustawień i porządku organizacyjnego",
+    copy: "Administrator zarządza rolami, zatwierdza konta, konfiguruje placówkę oraz śledzi działania istotne z punktu widzenia bezpieczeństwa.",
+    points: ["Role i uprawnienia", "Zatwierdzanie kont", "Ustawienia organizacji", "Audyt działań"],
+    previewTitle: "Centrum administracyjne",
+    previewRows: [
+      ["7", "oczekujących kont"],
+      ["4", "role systemowe"],
+      ["31", "zdarzeń w dzienniku audytu"],
+    ],
   },
 };
 
-const modules: Array<[IconType, string, string]> = [
-  [MonitorDot, "Egzaminy PIN", "Szybkie uruchamianie sesji, lista uczestników, status oddania i monitoring przebiegu."],
-  [Sparkles, "NexAi", "Pomoc uczniowi i nauczycielowi jako funkcja systemowa, z jasnym nadzorem człowieka."],
-  [BookOpenCheck, "E-dziennik", "Widok ocen, eksportów, klas i połączeń z zewnętrznymi dziennikami."],
-  [BarChart3, "Raporty", "Postęp klasy, wynik ucznia, średnie, ryzyka i gotowe eksporty dla szkoły."],
-  [ClipboardCheck, "Bank pytań", "Kategorie, pytania, media, warianty i ponowne użycie materiałów."],
-  [CalendarDays, "Plan pracy", "Lekcje, terminy, zadania, komunikaty i materiały do przygotowania."],
+const platformPillars: Array<[IconType, string, string, string]> = [
+  [
+    MonitorDot,
+    "Egzaminy i sesje PIN",
+    "Od utworzenia pytań do wyników",
+    "Tworzenie egzaminu, generowanie kodu, lista uczestników, automatyczny zapis i podsumowanie sesji w jednym procesie.",
+  ],
+  [
+    Sparkles,
+    "NexAi w procesie nauczania",
+    "AI jako narzędzie, nie dekoracja",
+    "Generator materiałów, tutor i wsparcie oceny są osadzone w konkretnych zadaniach, z kontrolą nauczyciela.",
+  ],
+  [
+    BarChart3,
+    "Dane i decyzje",
+    "Wynik zamieniony w informację",
+    "Raporty ucznia, klasy i placówki pomagają zauważyć postęp, luki oraz działania wymagające uwagi.",
+  ],
+];
+
+const modules: Array<[IconType, string, string, string]> = [
+  [MonitorDot, "Egzaminy online", "Rdzeń platformy", "Sesje PIN, status uczestników, pytania zamknięte i otwarte, multimedia oraz kontrolowane oddanie pracy."],
+  [ClipboardCheck, "Bank pytań", "Wiedza do ponownego użycia", "Kategorie, warianty, media, poziom trudności i zestawy gotowe do kolejnych sprawdzianów."],
+  [Sparkles, "NexAi", "Wsparcie dla nauczyciela i ucznia", "Tworzenie pytań, podpowiedzi edukacyjne, materiały i analiza odpowiedzi z jasną rolą człowieka."],
+  [BookOpenCheck, "E-dziennik", "Oceny i klasy", "Oceny, zadania, frekwencja, klasy oraz eksport danych do procesów działających już w placówce."],
+  [BarChart3, "Analityka", "Widok od ucznia do placówki", "Wyniki, średnie, postęp, porównania i raporty przygotowane do dalszej pracy szkoły."],
+  [CalendarDays, "Plan pracy", "Terminy i organizacja", "Lekcje, sprawdziany, zadania, komunikaty i materiały w jednym uporządkowanym kalendarzu."],
+  [FileCheck2, "Dokumenty", "Formalności dostępne od razu", "Regulaminy, prywatność, RODO, powierzenie danych i informacje o statusie systemu."],
+  [ServerCog, "Administracja", "Kontrola organizacji", "Role, zatwierdzanie kont, ustawienia placówki, logi bezpieczeństwa i proces wdrożenia."],
+];
+
+const workflow = [
+  ["01", "Przygotowanie", "Nauczyciel wybiera klasę, buduje egzamin, ustala czas, punktację i zasady sesji."],
+  ["02", "Uruchomienie", "EduNex generuje PIN, przyjmuje uczniów i pokazuje status gotowości przed rozpoczęciem."],
+  ["03", "Realizacja", "Odpowiedzi są zapisywane, postęp jest widoczny, a nauczyciel obserwuje przebieg sesji."],
+  ["04", "Ocena i raport", "System porządkuje wyniki, odpowiedzi otwarte, certyfikaty i eksporty dla dalszej pracy."],
+];
+
+const securityItems: Array<[IconType, string, string]> = [
+  [LockKeyhole, "Dostęp według roli", "Każdy użytkownik otrzymuje zakres funkcji dopasowany do roli i decyzji placówki."],
+  [ShieldCheck, "Audyt i zdarzenia", "Istotne operacje mogą być rejestrowane, analizowane i dostępne dla administratora."],
+  [SearchCheck, "Minimalizacja danych", "Uczeń może wejść do egzaminu kodem PIN bez tworzenia pełnego profilu w systemie."],
+  [FileCheck2, "Dokumentacja w produkcie", "Regulamin, polityka prywatności i dokumenty RODO są częścią publicznego centrum dokumentów."],
+  [ServerCog, "Ustawienia organizacji", "Placówka kontroluje role, zatwierdzanie kont, konfigurację oraz sposób korzystania z platformy."],
+  [ReceiptText, "Eksport i retencja", "Wyniki i raporty mogą być porządkowane zgodnie z procesami oraz obowiązkami placówki."],
+];
+
+const implementationSteps = [
+  ["1", "Rozpoznanie procesu", "Ustalamy role, rodzaje egzaminów, strukturę klas i sposób raportowania."],
+  ["2", "Konfiguracja placówki", "Zakładamy organizację, role, konta i podstawowe zasady dostępu."],
+  ["3", "Pilotaż", "Wybrana grupa nauczycieli prowadzi pierwsze sesje i przekazuje konkretne uwagi."],
+  ["4", "Uruchomienie", "Rozszerzamy dostęp, porządkujemy dokumentację i ustalamy standard pracy."],
 ];
 
 const plans = [
@@ -102,23 +192,26 @@ const plans = [
     name: "Klasa",
     price: "99 zł",
     note: "miesięcznie",
-    target: "Dla nauczyciela lub małego zespołu.",
+    target: "Dla nauczyciela lub małego zespołu rozpoczynającego pracę cyfrową.",
     features: ["Egzaminy PIN", "Bank pytań", "Podstawowe raporty", "Dokumenty i zgody"],
+    cta: "Rozpocznij",
   },
   {
     name: "Szkoła",
     price: "399 zł",
     note: "miesięcznie",
-    target: "Dla placówki z wieloma klasami.",
+    target: "Dla placówki potrzebującej ról, klas, raportów i wspólnego standardu.",
     featured: true,
     features: ["Panel dyrekcji", "Role i zatwierdzanie", "E-dziennik", "NexAi", "Eksporty PDF/CSV"],
+    cta: "Wybierz plan Szkoła",
   },
   {
     name: "Instytucja",
     price: "Indywidualnie",
     note: "wdrożenie",
-    target: "Dla sieci szkół i większych organizacji.",
-    features: ["Audyt dostępu", "SLA", "Migracja danych", "Branding szkoły", "Wsparcie wdrożeniowe"],
+    target: "Dla większych organizacji, sieci placówek i szczególnych wymagań.",
+    features: ["Audyt dostępu", "SLA", "Migracja danych", "Branding organizacji", "Wsparcie wdrożeniowe"],
+    cta: "Porozmawiajmy",
   },
 ];
 
@@ -130,18 +223,13 @@ const documents = [
   [SearchCheck, "Dostępność", "Kontrast, klawiatura, formularze, responsywność i podstawy WCAG."],
 ];
 
-const workflow = [
-  ["1", "Przygotuj", "Nauczyciel tworzy egzamin, wybiera klasę, ustawia czas i próg zaliczenia."],
-  ["2", "Udostępnij", "System generuje PIN i prowadzi ucznia do przypisanego egzaminu."],
-  ["3", "Sprawdź", "Wyniki, certyfikaty i eksporty są dostępne od razu po zakończeniu pracy."],
-  ["4", "Raportuj", "Dyrekcja widzi postęp, zgodność i dane potrzebne do decyzji szkoły."],
-];
-
 const faq = [
-  ["Czy EduNex wymaga kont uczniowskich?", "Nie. Uczeń może rozpocząć egzamin za pomocą PIN-u i danych wymaganych przez nauczyciela."],
-  ["Czy można korzystać z Microsoft, Google i GitHub?", "Tak. Ekran logowania zachowuje istniejące ścieżki OAuth oraz logowanie e-mail/hasło."],
-  ["Czy e-dziennik jest częścią produktu?", "Tak. Moduł e-dziennika działa jako widok oraz eksport ocen do popularnych systemów."],
-  ["Czy dokumenty prawne są dostępne publicznie?", "Tak. Trasa /dokumenty zawiera regulamin, RODO, politykę prywatności, powierzenie danych i status systemu."],
+  ["Czy uczeń musi zakładać konto?", "Nie. Nauczyciel może uruchomić sesję egzaminacyjną z 6-cyfrowym PIN-em. Uczeń podaje wymagane dane i przechodzi bezpośrednio do przypisanego egzaminu."],
+  ["Czy EduNex jest tylko systemem egzaminacyjnym?", "Egzaminy są rdzeniem produktu, ale platforma obejmuje również klasy, bank pytań, raporty, e-dziennik, zadania, dokumenty, administrację i funkcje NexAi."],
+  ["Jak działa logowanie pracowników szkoły?", "Nauczyciel, dyrekcja i administrator mogą korzystać z e-maila i hasła lub logowania społecznościowego skonfigurowanego przez placówkę, w tym Microsoft i Google."],
+  ["Czy AI podejmuje decyzje za nauczyciela?", "Nie powinno. NexAi ma wspierać tworzenie i analizę, natomiast nauczyciel zachowuje kontrolę nad materiałem, oceną i publikacją wyniku."],
+  ["Czy dokumenty prawne są publiczne?", "Tak. Centrum dokumentów jest dostępne bez logowania i obejmuje regulamin, prywatność, informacje RODO, powierzenie danych oraz dostępność."],
+  ["Czy można rozpocząć od małego pilotażu?", "Tak. Wdrożenie można zacząć od jednej klasy lub zespołu, a następnie rozszerzyć role i zakres działania na całą placówkę."],
 ];
 
 const initialContactForm: ContactFormState = {
@@ -157,157 +245,162 @@ const initialContactForm: ContactFormState = {
   marketingConsent: true,
 };
 
-function HeroProductVisual() {
+function ProductConsole() {
   return (
-    <div className="relative w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-slate-200 bg-white p-4 shadow-[0_28px_90px_rgba(15,23,42,0.12)]">
-      <div className="absolute inset-x-0 top-0 h-32 bg-[linear-gradient(180deg,rgba(37,99,235,0.08),rgba(255,255,255,0))]" />
-      <div className="relative flex items-center justify-between border-b border-slate-200 pb-4">
-        <div>
-          <div className="text-xs font-semibold uppercase text-slate-500">EduNex</div>
-          <div className="mt-1 text-sm font-semibold text-slate-950">Przegląd szkoły</div>
+    <div className="relative w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_30px_90px_rgba(15,23,42,0.14)]">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-5">
+        <div className="flex items-center gap-3">
+          <div className="grid h-8 w-8 place-items-center rounded-md bg-slate-950 text-white">
+            <Layers3 className="h-3.5 w-3.5" />
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-slate-950">EduNex Console</div>
+            <div className="text-[10px] text-slate-500">Zespół Szkół nr 1</div>
+          </div>
         </div>
-        <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-          online
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-800">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          System online
         </div>
       </div>
 
-      <div className="relative mt-4 grid min-w-0 gap-3 sm:grid-cols-[0.85fr_1.15fr]">
-        <div className="min-w-0 space-y-2">
-          {["Egzaminy", "Klasy", "Wyniki", "E-dziennik", "Dokumenty"].map((item, index) => (
-            <motion.div
-              key={item}
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.06 }}
-              className={`rounded-md px-3 py-2 text-sm ${index === 0 ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-600"}`}
-            >
-              {item}
-            </motion.div>
-          ))}
-        </div>
-        <div className="min-w-0 space-y-3">
-          <div className="rounded-lg bg-slate-950 p-4 text-white">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <div className="text-xs text-white/55">Aktywna sesja PIN</div>
-                <div className="mt-2 text-3xl font-semibold">482 913</div>
-              </div>
-              <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-950">LIVE</div>
-            </div>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {[
-              ["28", "uczestników"],
-              ["91%", "oddane"],
-              ["12m", "średni czas"],
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <div className="text-xl font-semibold text-slate-950">{value}</div>
-                <div className="mt-1 text-xs text-slate-500">{label}</div>
+      <div className="grid min-h-[470px] grid-cols-[94px_1fr] sm:grid-cols-[132px_1fr]">
+        <aside className="border-r border-slate-200 bg-slate-50 p-2.5 sm:p-3">
+          <div className="space-y-1.5">
+            {["Przegląd", "Egzaminy", "Klasy", "Wyniki", "NexAi", "Dokumenty"].map((item, index) => (
+              <div
+                key={item}
+                className={`rounded-md px-2.5 py-2 text-[10px] font-medium sm:text-xs ${
+                  index === 0 ? "bg-slate-950 text-white" : "text-slate-500"
+                }`}
+              >
+                {item}
               </div>
             ))}
           </div>
-        </div>
-      </div>
-
-      <div className="relative mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <div className="mb-3 flex items-center justify-between text-xs text-slate-500">
-          <span>Wyniki klasy</span>
-          <span>dzisiaj</span>
-        </div>
-        {[82, 65, 94, 74, 88].map((width, index) => (
-          <div key={index} className="mb-2 h-2 rounded-full bg-white">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${width}%` }}
-              transition={{ delay: 0.25 + index * 0.08, duration: 0.6 }}
-              className="h-full rounded-full bg-blue-700"
-            />
+          <div className="mt-6 rounded-md border border-slate-200 bg-white p-2.5">
+            <div className="text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-400">Plan</div>
+            <div className="mt-1 text-[10px] font-semibold text-slate-900 sm:text-xs">Szkoła</div>
+            <div className="mt-1 text-[9px] leading-4 text-slate-500">Pełny dostęp organizacji</div>
           </div>
-        ))}
+        </aside>
+
+        <div className="min-w-0 bg-[#f7f8fa] p-3 sm:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Przegląd operacyjny</div>
+              <div className="mt-1 text-base font-semibold text-slate-950 sm:text-xl">Dzień dobry, Anna</div>
+            </div>
+            <div className="rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[9px] font-medium text-slate-500 sm:text-[10px]">
+              11 lipca 2026
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {[
+              ["12", "aktywnych klas"],
+              ["3", "sesje dzisiaj"],
+              ["91%", "oddanych prac"],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-lg border border-slate-200 bg-white p-3">
+                <div className="text-lg font-semibold text-slate-950 sm:text-2xl">{value}</div>
+                <div className="mt-1 text-[9px] leading-4 text-slate-500 sm:text-[10px]">{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-3 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-lg border border-slate-200 bg-white p-3.5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] text-slate-500">Aktywna sesja egzaminacyjna</div>
+                  <div className="mt-1 text-xs font-semibold text-slate-950 sm:text-sm">Matematyka — klasa 7B</div>
+                </div>
+                <div className="rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-semibold text-blue-800">NA ŻYWO</div>
+              </div>
+              <div className="mt-4 rounded-lg bg-slate-950 p-4 text-white">
+                <div className="text-[9px] uppercase tracking-[0.12em] text-white/50">Kod wejścia</div>
+                <div className="mt-2 text-2xl font-semibold tracking-[0.12em] sm:text-3xl">482 913</div>
+                <div className="mt-3 flex items-center justify-between text-[9px] text-white/60 sm:text-[10px]">
+                  <span>28 uczestników</span>
+                  <span>16 min pozostało</span>
+                </div>
+              </div>
+              <div className="mt-3 space-y-2">
+                {[
+                  ["Oddane", "24 / 28", "86%"],
+                  ["W trakcie", "4 osoby", "64%"],
+                ].map(([label, value, width]) => (
+                  <div key={label}>
+                    <div className="mb-1.5 flex justify-between text-[9px] text-slate-500 sm:text-[10px]">
+                      <span>{label}</span>
+                      <span>{value}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-slate-100">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width }}
+                        transition={{ duration: 0.7, delay: 0.2 }}
+                        className="h-full rounded-full bg-[#0067b8]"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="rounded-lg border border-slate-200 bg-white p-3.5">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-[#0067b8]" />
+                  <div className="text-xs font-semibold text-slate-950">NexAi — obserwacja</div>
+                </div>
+                <p className="mt-2 text-[10px] leading-5 text-slate-500">
+                  Pytanie 6 ma wyraźnie niższą skuteczność. Sprawdź treść przed publikacją kolejnej wersji.
+                </p>
+                <button className="mt-3 text-[10px] font-semibold text-[#0067b8]">Zobacz analizę</button>
+              </div>
+              <div className="rounded-lg border border-slate-200 bg-white p-3.5">
+                <div className="text-xs font-semibold text-slate-950">Najbliższe działania</div>
+                <div className="mt-3 space-y-2.5">
+                  {[
+                    ["10:45", "Zamknięcie sesji 7B"],
+                    ["12:00", "Publikacja wyników"],
+                    ["14:30", "Rada zespołu"],
+                  ].map(([time, item]) => (
+                    <div key={item} className="flex gap-2 text-[9px] leading-4 sm:text-[10px]">
+                      <span className="w-9 shrink-0 font-semibold text-slate-400">{time}</span>
+                      <span className="text-slate-600">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function SectionHeader({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) {
-  return (
-    <div className="mx-auto max-w-3xl text-center">
-      <div className="text-xs font-semibold uppercase text-blue-800">{eyebrow}</div>
-      <h2 className="mt-3 text-3xl font-semibold text-slate-950 sm:text-5xl">{title}</h2>
-      <p className="mt-4 text-base leading-8 text-slate-600">{text}</p>
-    </div>
-  );
-}
+function SectionHeader({
+  eyebrow,
+  title,
+  text,
+  align = "center",
+}: {
+  eyebrow: string;
+  title: string;
+  text: string;
+  align?: "center" | "left";
+}) {
+  const alignment = align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-2xl";
 
-function SystemMockup() {
   return (
-    <div className="w-full min-w-0 max-w-full overflow-hidden rounded-lg border border-slate-200 bg-white p-3 shadow-[0_24px_80px_rgba(15,23,42,0.12)]">
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-3">
-        <div>
-          <div className="text-xs font-semibold uppercase text-slate-500">EduNex</div>
-          <div className="mt-1 text-sm font-semibold text-slate-950">Pulpit pracy</div>
-        </div>
-        <div className="flex gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-500" />
-          <span className="h-2.5 w-2.5 rounded-full bg-blue-600" />
-        </div>
-      </div>
-      <div className="grid min-w-0 gap-3 p-3 lg:grid-cols-[0.75fr_1fr]">
-        <div className="min-w-0 space-y-2">
-          {["Egzaminy", "Klasy", "Wyniki", "E-dziennik", "Dokumenty"].map((item, index) => (
-            <motion.div
-              key={item}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.07 }}
-              className={`rounded-md px-3 py-2 text-sm ${index === 0 ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-600"}`}
-            >
-              {item}
-            </motion.div>
-          ))}
-        </div>
-        <div className="space-y-3">
-          <div className="rounded-lg bg-slate-950 p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs text-white/55">Aktywna sesja PIN</div>
-                <div className="mt-2 text-3xl font-semibold">482 913</div>
-              </div>
-              <div className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-950">LIVE</div>
-            </div>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {[
-              ["28", "uczestników"],
-              ["91%", "oddane"],
-              ["12m", "średni czas"],
-            ].map(([value, label]) => (
-              <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-                <div className="text-xl font-semibold text-slate-950">{value}</div>
-                <div className="mt-1 text-xs text-slate-500">{label}</div>
-              </div>
-            ))}
-          </div>
-        <div className="min-w-0 rounded-lg border border-slate-200 p-3">
-            <div className="mb-3 flex items-center justify-between text-xs text-slate-500">
-              <span>Wyniki klasy</span>
-              <span>dzisiaj</span>
-            </div>
-            {[82, 65, 94, 74, 88].map((width, index) => (
-              <div key={index} className="mb-2 h-2 rounded-full bg-slate-100">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${width}%` }}
-                  transition={{ delay: 0.25 + index * 0.08, duration: 0.6 }}
-                  className="h-full rounded-full bg-blue-700"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className={alignment}>
+      <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">{eyebrow}</div>
+      <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl">{title}</h2>
+      <p className="mt-5 text-base leading-8 text-slate-600">{text}</p>
     </div>
   );
 }
@@ -327,30 +420,39 @@ function ContactForm() {
     }
 
     const subject = encodeURIComponent(`Kontakt EduNex: ${form.institutionName}`);
-    const body = encodeURIComponent([
-      `Co interesuje placówkę: ${form.interest}`,
-      `E-mail: ${form.email}`,
-      `Typ placówki: ${form.institutionType}`,
-      `Wielkość placówki: ${form.institutionSize}`,
-      `Nazwa placówki: ${form.institutionName}`,
-      `Imię i nazwisko: ${form.firstName} ${form.lastName}`,
-      `Telefon: ${form.phone || "-"}`,
-      `Zgoda marketingowa: ${form.marketingConsent ? "tak" : "nie"}`,
-      "",
-      "Potrzeby:",
-      form.needs || "-",
-    ].join("\n"));
+    const body = encodeURIComponent(
+      [
+        `Co interesuje placówkę: ${form.interest}`,
+        `E-mail: ${form.email}`,
+        `Typ placówki: ${form.institutionType}`,
+        `Wielkość placówki: ${form.institutionSize}`,
+        `Nazwa placówki: ${form.institutionName}`,
+        `Imię i nazwisko: ${form.firstName} ${form.lastName}`,
+        `Telefon: ${form.phone || "-"}`,
+        `Zgoda marketingowa: ${form.marketingConsent ? "tak" : "nie"}`,
+        "",
+        "Potrzeby:",
+        form.needs || "-",
+      ].join("\n"),
+    );
 
     window.location.href = `mailto:kontakt@edunex.pl?subject=${subject}&body=${body}`;
     toast.success("Dziękujemy, skontaktujemy się.");
   };
 
+  const fieldClass =
+    "h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8]";
+
   return (
-    <form onSubmit={submit} className="rounded-lg border border-slate-200 bg-white p-5 shadow-[0_24px_80px_rgba(15,23,42,0.10)] sm:p-7">
+    <form onSubmit={submit} className="rounded-xl border border-slate-200 bg-white p-5 shadow-[0_24px_80px_rgba(15,23,42,0.09)] sm:p-7">
+      <div className="mb-6">
+        <div className="text-sm font-semibold text-slate-950">Dane do rozmowy wdrożeniowej</div>
+        <p className="mt-1 text-xs leading-5 text-slate-500">Odpowiadamy na podstawie potrzeb konkretnej placówki.</p>
+      </div>
       <div className="grid gap-4">
-        <label className="grid gap-2 text-sm font-semibold text-slate-700">
-          Co Cię interesuje? <span className="sr-only">*</span>
-          <select value={form.interest} onChange={(event) => update("interest", event.target.value)} className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100">
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
+          Zakres rozmowy
+          <select value={form.interest} onChange={(event) => update("interest", event.target.value)} className={fieldClass}>
             <option>Wdrożenie w szkole</option>
             <option>Egzaminy PIN</option>
             <option>NexAi i generator</option>
@@ -359,15 +461,21 @@ function ContactForm() {
           </select>
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
           Służbowy adres e-mail *
-          <input value={form.email} onChange={(event) => update("email", event.target.value)} type="email" placeholder="anna.nowak@szkola.pl" className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+          <input
+            value={form.email}
+            onChange={(event) => update("email", event.target.value)}
+            type="email"
+            placeholder="anna.nowak@szkola.pl"
+            className={fieldClass}
+          />
         </label>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
             Typ placówki
-            <select value={form.institutionType} onChange={(event) => update("institutionType", event.target.value)} className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100">
+            <select value={form.institutionType} onChange={(event) => update("institutionType", event.target.value)} className={fieldClass}>
               <option>Szkoła podstawowa</option>
               <option>Szkoła średnia</option>
               <option>Zespół szkół</option>
@@ -375,9 +483,9 @@ function ContactForm() {
               <option>Organ prowadzący</option>
             </select>
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
             Wielkość placówki
-            <select value={form.institutionSize} onChange={(event) => update("institutionSize", event.target.value)} className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100">
+            <select value={form.institutionSize} onChange={(event) => update("institutionSize", event.target.value)} className={fieldClass}>
               <option>1-100 uczniów</option>
               <option>101-500 uczniów</option>
               <option>501-1000 uczniów</option>
@@ -387,42 +495,61 @@ function ContactForm() {
           </label>
         </div>
 
-        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
           Nazwa placówki *
-          <input value={form.institutionName} onChange={(event) => update("institutionName", event.target.value)} placeholder="Nazwa szkoły lub instytucji" className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+          <input
+            value={form.institutionName}
+            onChange={(event) => update("institutionName", event.target.value)}
+            placeholder="Nazwa szkoły lub instytucji"
+            className={fieldClass}
+          />
         </label>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
             Imię *
-            <input value={form.firstName} onChange={(event) => update("firstName", event.target.value)} placeholder="Anna" className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+            <input value={form.firstName} onChange={(event) => update("firstName", event.target.value)} placeholder="Anna" className={fieldClass} />
           </label>
-          <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
             Nazwisko *
-            <input value={form.lastName} onChange={(event) => update("lastName", event.target.value)} placeholder="Nowak" className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+            <input value={form.lastName} onChange={(event) => update("lastName", event.target.value)} placeholder="Nowak" className={fieldClass} />
           </label>
         </div>
 
-        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
           Numer telefonu
-          <input value={form.phone} onChange={(event) => update("phone", event.target.value)} placeholder="+48 000 000 000" className="h-12 rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+          <input value={form.phone} onChange={(event) => update("phone", event.target.value)} placeholder="+48 000 000 000" className={fieldClass} />
         </label>
 
-        <label className="grid gap-2 text-sm font-semibold text-slate-700">
-          Opisz potrzeby szkoły
-          <textarea value={form.needs} onChange={(event) => update("needs", event.target.value)} rows={5} placeholder="Napisz, ile klas ma placówka, jakie egzaminy chcecie obsługiwać i czego potrzebuje zespół." className="resize-none rounded-md border border-slate-300 bg-white px-3 py-3 text-sm leading-6 text-slate-950 outline-none transition focus:border-blue-700 focus:ring-4 focus:ring-blue-100" />
+        <label className="grid gap-2 text-sm font-medium text-slate-700">
+          Najważniejsze potrzeby
+          <textarea
+            value={form.needs}
+            onChange={(event) => update("needs", event.target.value)}
+            rows={4}
+            placeholder="Liczba klas, rodzaje egzaminów, obecny sposób pracy i oczekiwany zakres wdrożenia."
+            className="resize-none rounded-md border border-slate-300 bg-white px-3 py-3 text-sm leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8]"
+          />
         </label>
 
-        <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm leading-6 text-slate-600">
-          <input type="checkbox" checked={form.marketingConsent} onChange={(event) => update("marketingConsent", event.target.checked)} className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-800" />
+        <label className="flex items-start gap-3 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs leading-5 text-slate-600">
+          <input
+            type="checkbox"
+            checked={form.marketingConsent}
+            onChange={(event) => update("marketingConsent", event.target.checked)}
+            className="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#0067b8]"
+          />
           <span>
-            Chcę otrzymywać wiadomości o EduNex, wdrożeniach i wydarzeniach. Szczegóły są dostępne w{" "}
-            <Link to="/dokumenty" className="font-semibold text-blue-800 hover:text-blue-950">dokumentach</Link>.
+            Chcę otrzymywać informacje o EduNex i wdrożeniach. Szczegóły znajdują się w{" "}
+            <Link to="/dokumenty" className="font-semibold text-[#0067b8] hover:text-[#004f8b]">
+              dokumentach
+            </Link>
+            .
           </span>
         </label>
 
-        <button className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800">
-          Prześlij
+        <button className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#0067b8] px-5 text-sm font-semibold text-white transition hover:bg-[#005a9e]">
+          Umów rozmowę
           <ArrowRight className="h-4 w-4" />
         </button>
       </div>
@@ -436,21 +563,33 @@ export function PremiumLanding() {
   const roleEntries = useMemo(() => Object.entries(roles) as Array<[RoleKey, typeof activeRole]>, []);
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#f6f8fb] text-slate-950">
+    <div className="min-h-screen w-full overflow-x-hidden bg-[#f7f7f8] text-slate-950">
       <Toaster richColors />
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/88 backdrop-blur-xl">
-        <div className="mx-auto grid min-h-16 w-full max-w-7xl grid-cols-1 items-center gap-3 px-4 py-3 sm:flex sm:h-16 sm:flex-nowrap sm:justify-between sm:px-6 sm:py-0 lg:px-8">
-          <Link to="/" className="flex min-w-0 items-center gap-3">
+
+      <div className="border-b border-slate-800 bg-slate-950 text-white">
+        <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-center gap-2 px-4 py-2 text-center text-xs text-slate-300 sm:px-6">
+          <span className="hidden rounded-full bg-white/10 px-2 py-0.5 font-semibold text-white sm:inline">Nowość</span>
+          <span>Nowy portal dostępu dla nauczyciela, ucznia, dyrekcji i administratora.</span>
+          <Link to="/auth" className="inline-flex shrink-0 items-center gap-1 font-semibold text-white">
+            Zobacz
+            <ChevronRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </div>
+
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex min-w-0 items-center gap-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0067b8]/30">
             <div className="grid h-9 w-9 place-items-center rounded-md bg-slate-950 text-white">
               <Layers3 className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-sm font-semibold">EduNex</div>
-              <div className="hidden text-xs text-slate-500 sm:block">Platforma edukacyjna</div>
+              <div className="text-sm font-semibold leading-4">EduNex</div>
+              <div className="hidden text-xs text-slate-500 sm:block">System operacyjny szkoły</div>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-6 lg:flex">
+          <nav className="hidden items-center gap-6 xl:flex">
             {navItems.map(([label, href]) => (
               <a key={href} href={href} className="text-sm font-medium text-slate-600 transition hover:text-slate-950">
                 {label}
@@ -458,123 +597,247 @@ export function PremiumLanding() {
             ))}
           </nav>
 
-          <div className="grid w-full min-w-0 max-w-[calc(100vw-2rem)] grid-cols-2 gap-2 sm:flex sm:w-auto sm:max-w-none sm:shrink-0 sm:items-center">
-            <Link to="/auth" className="inline-flex h-10 items-center justify-center rounded-md px-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 sm:h-auto sm:px-3 sm:py-2 sm:text-sm">
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              to="/auth"
+              className="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+            >
               Logowanie
             </Link>
-            <Link to="/auth/register" className="inline-flex h-10 items-center justify-center rounded-md bg-slate-950 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 sm:h-auto sm:px-4 sm:py-2 sm:text-sm">
-              Rejestracja
+            <Link
+              to="/auth/register"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-slate-950 px-3 text-sm font-semibold text-white transition hover:bg-slate-800 sm:px-4"
+            >
+              Załóż konto
             </Link>
           </div>
         </div>
       </header>
 
       <main>
-        <section className="relative w-full max-w-[100vw] overflow-hidden border-b border-slate-200 bg-white">
-          <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(37,99,235,0.08),rgba(255,255,255,0))]" />
-          <div className="mx-auto grid w-full max-w-7xl min-w-0 gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8 lg:py-20">
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55 }} className="relative z-10 min-w-0">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm">
-                <Sparkles className="h-3.5 w-3.5 text-blue-700" />
-                Premium platforma dla szkół i instytucji
+        <section className="relative overflow-hidden border-b border-slate-200 bg-white">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[linear-gradient(180deg,rgba(0,103,184,0.07),rgba(255,255,255,0))]" />
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8 lg:py-24">
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative z-10">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
+                <ShieldCheck className="h-3.5 w-3.5 text-[#0067b8]" />
+                Platforma dla szkół i instytucji edukacyjnych
               </div>
-              <h1 className="mt-6 max-w-[calc(100vw-2rem)] break-words text-[1.875rem] font-semibold leading-[1.12] text-slate-950 sm:max-w-4xl sm:text-7xl sm:leading-[0.96]">
-                EduNex dla nowoczesnej, spokojnej i dobrze zarządzanej szkoły.
+              <h1 className="mt-7 max-w-3xl text-4xl font-semibold leading-[1.03] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-[4.6rem]">
+                Jedno środowisko do prowadzenia cyfrowej pracy szkoły.
               </h1>
-              <p className="mt-6 max-w-[calc(100vw-2rem)] text-base leading-8 text-slate-600 sm:max-w-2xl sm:text-lg">
-                Egzaminy PIN, NexAi, e-dziennik, raporty i dokumenty prawne w jednym produkcie, który wygląda jak system wdrożony przez poważną instytucję.
+              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+                EduNex łączy bezpieczne egzaminy, klasy, raporty, e-dziennik, dokumenty i NexAi w produkcie zaprojektowanym dla codziennej pracy nauczyciela oraz zarządzania placówką.
               </p>
-              <div className="mt-8 flex max-w-[calc(100vw-2rem)] flex-col gap-3 sm:max-w-none sm:flex-row">
-                <Link to="/auth/register" className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-slate-950 px-5 text-sm font-semibold text-white transition hover:bg-slate-800">
-                  Rejestracja
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  to="/auth/register"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#0067b8] px-5 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
+                >
+                  Rozpocznij pracę
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link to="/auth" className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50">
-                  Logowanie
+                <a
+                  href="#kontakt"
+                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+                >
+                  Porozmawiaj o wdrożeniu
                   <ChevronRight className="h-4 w-4" />
-                </Link>
+                </a>
               </div>
-              <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-4">
-                {metrics.map(([value, label]) => (
-                  <div key={value} className="bg-white p-4">
-                    <div className="text-2xl font-semibold text-slate-950">{value}</div>
-                    <div className="mt-1 text-xs leading-5 text-slate-500">{label}</div>
-                  </div>
+              <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs text-slate-500">
+                {["Dostęp według roli", "Wejście ucznia kodem PIN", "Dokumenty publiczne", "Kontrola człowieka nad AI"].map((item) => (
+                  <span key={item} className="inline-flex items-center gap-2">
+                    <Check className="h-3.5 w-3.5 text-[#0067b8]" />
+                    {item}
+                  </span>
                 ))}
               </div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.55, delay: 0.15 }} className="relative z-10 min-w-0 space-y-4">
-              <HeroProductVisual />
-              <SystemMockup />
+            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.12 }} className="relative z-10 min-w-0">
+              <ProductConsole />
             </motion.div>
           </div>
         </section>
 
-        <section id="platforma" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Platforma"
-            title="Jedna ścieżka od przygotowania egzaminu do decyzji szkoły"
-            text="EduNex łączy codzienną pracę nauczyciela, prosty dostęp ucznia, raporty dla dyrekcji i dokumenty wymagane w placówce."
-          />
-          <div className="mt-12 grid gap-4 lg:grid-cols-4">
-            {workflow.map(([step, title, text]) => (
-              <motion.div key={step} whileHover={{ y: -4 }} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="grid h-10 w-10 place-items-center rounded-md bg-slate-950 text-sm font-semibold text-white">{step}</div>
-                <h3 className="mt-5 text-lg font-semibold text-slate-950">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
-              </motion.div>
-            ))}
+        <section className="border-b border-slate-200 bg-[#f7f7f8]">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">Projektowany dla różnych typów organizacji</div>
+            <div className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-3 lg:grid-cols-6">
+              {institutionTypes.map((item) => (
+                <div key={item} className="flex min-h-16 items-center justify-center bg-white px-3 text-center text-xs font-semibold text-slate-600">
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section id="panele" className="border-y border-slate-200 bg-white py-20">
+        <section className="bg-white py-20 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeader
-              eyebrow="Role"
-              title="Każdy widzi właściwy panel, bez zbędnych warstw"
-              text="System ma różne ścieżki dla nauczyciela, ucznia, dyrekcji i administratora, ale zachowuje jeden język wizualny."
+              eyebrow="Produkt"
+              title="Nie kolejna aplikacja. Wspólny standard pracy placówki."
+              text="EduNex porządkuje najważniejsze procesy edukacyjne i administracyjne tak, aby każdy użytkownik widział właściwe zadania, dane i decyzje."
             />
-            <div className="mt-12 grid gap-6 lg:grid-cols-[340px_1fr]">
-              <div className="space-y-2">
-                {roleEntries.map(([key, item]) => {
-                  const Icon = item.icon;
-                  const selected = role === key;
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => setRole(key)}
-                      className={`flex w-full items-start gap-3 rounded-lg border p-4 text-left transition ${
-                        selected ? "border-blue-300 bg-blue-50" : "border-slate-200 bg-white hover:bg-slate-50"
-                      }`}
-                    >
-                      <Icon className={`mt-0.5 h-5 w-5 ${selected ? "text-blue-800" : "text-slate-500"}`} />
-                      <div>
-                        <div className="text-sm font-semibold text-slate-950">{item.label}</div>
-                        <div className="mt-1 text-xs leading-5 text-slate-500">{item.title}</div>
-                      </div>
-                    </button>
-                  );
-                })}
+            <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 lg:grid-cols-3">
+              {platformPillars.map(([Icon, title, subtitle, text]) => (
+                <div key={title} className="bg-white p-6 sm:p-8">
+                  <div className="grid h-11 w-11 place-items-center rounded-md bg-slate-950 text-white">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="mt-6 text-xs font-semibold uppercase tracking-[0.1em] text-[#0067b8]">{subtitle}</div>
+                  <h3 className="mt-2 text-xl font-semibold text-slate-950">{title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 grid gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-2 lg:grid-cols-4">
+              {productFacts.map(([value, label]) => (
+                <div key={value} className="bg-[#f8f9fa] p-5">
+                  <div className="text-2xl font-semibold tracking-tight text-slate-950">{value}</div>
+                  <div className="mt-2 text-xs leading-5 text-slate-500">{label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="platforma" className="border-y border-slate-200 bg-[#f7f7f8] py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+              <SectionHeader
+                eyebrow="Platforma"
+                title="Moduły połączone jednym językiem produktu"
+                text="Funkcje są rozbudowane, ale użytkownik nie musi poznawać całego systemu. Każdy panel pokazuje zadania istotne dla konkretnej roli."
+                align="left"
+              />
+              <div className="rounded-lg border border-slate-200 bg-white p-5 text-sm leading-7 text-slate-600">
+                <div className="font-semibold text-slate-950">Zasada projektowa EduNex</div>
+                <p className="mt-2">Mniej ekranów bez celu, więcej zamkniętych procesów: przygotuj, uruchom, sprawdź, zdecyduj i udokumentuj.</p>
               </div>
+            </div>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {modules.map(([Icon, title, label, text], index) => (
+                <motion.article
+                  key={title}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ delay: Math.min(index * 0.04, 0.2) }}
+                  className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_18px_50px_rgba(15,23,42,0.08)]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-md bg-slate-100 text-slate-800 transition group-hover:bg-slate-950 group-hover:text-white">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">{String(index + 1).padStart(2, "0")}</span>
+                  </div>
+                  <div className="mt-5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[#0067b8]">{label}</div>
+                  <h3 className="mt-2 text-lg font-semibold text-slate-950">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{text}</p>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="rozwiazania" className="bg-white py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="Przepływ pracy"
+              title="Od pomysłu nauczyciela do raportu dla szkoły"
+              text="Najważniejszy proces EduNex jest zamknięty w czterech czytelnych etapach. Każdy etap ma konkretny rezultat i właściciela."
+            />
+            <div className="mt-12 grid gap-4 lg:grid-cols-4">
+              {workflow.map(([step, title, text], index) => (
+                <div key={step} className="relative rounded-xl border border-slate-200 bg-white p-6">
+                  {index < workflow.length - 1 && <div className="absolute -right-3 top-10 z-10 hidden h-px w-6 bg-slate-300 lg:block" />}
+                  <div className="text-xs font-semibold text-[#0067b8]">ETAP {step}</div>
+                  <h3 className="mt-4 text-xl font-semibold text-slate-950">{title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="panele" className="border-y border-slate-200 bg-[#f7f7f8] py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr]">
+              <div>
+                <SectionHeader
+                  eyebrow="Role użytkowników"
+                  title="Jeden system. Cztery różne perspektywy."
+                  text="Każda rola otrzymuje własny zakres informacji i działań, przy zachowaniu spójnego sposobu obsługi całej platformy."
+                  align="left"
+                />
+                <div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
+                  {roleEntries.map(([key, item]) => {
+                    const Icon = item.icon;
+                    const selected = role === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setRole(key)}
+                        className={`flex items-center gap-3 rounded-lg border px-3 py-3 text-left text-sm font-semibold transition ${
+                          selected ? "border-[#0067b8] bg-white text-slate-950 shadow-sm" : "border-slate-200 bg-transparent text-slate-500 hover:bg-white"
+                        }`}
+                      >
+                        <Icon className={`h-4 w-4 ${selected ? "text-[#0067b8]" : "text-slate-400"}`} />
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <AnimatePresence mode="wait">
                 <motion.div
                   key={role}
-                  initial={{ opacity: 0, y: 12 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  className="rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-sm"
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.22 }}
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
                 >
-                  <div className="text-sm font-semibold text-blue-200">{activeRole.label}</div>
-                  <h3 className="mt-3 max-w-2xl text-3xl font-semibold">{activeRole.title}</h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">{activeRole.copy}</p>
-                  <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                    {activeRole.points.map((point) => (
-                      <div key={point} className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/85">
-                        <Check className="h-4 w-4 text-blue-200" />
-                        {point}
+                  <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
+                    <div className="p-6 sm:p-8">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0067b8]">Panel: {activeRole.label}</div>
+                      <h3 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-slate-950">{activeRole.title}</h3>
+                      <p className="mt-4 text-sm leading-7 text-slate-600">{activeRole.copy}</p>
+                      <div className="mt-7 grid gap-3 sm:grid-cols-2">
+                        {activeRole.points.map((point) => (
+                          <div key={point} className="flex items-center gap-3 rounded-md border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm font-medium text-slate-700">
+                            <Check className="h-4 w-4 text-[#0067b8]" />
+                            {point}
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                    <div className="border-t border-slate-200 bg-slate-950 p-6 text-white lg:border-l lg:border-t-0 sm:p-8">
+                      <div className="text-xs font-semibold uppercase tracking-[0.12em] text-blue-200">{activeRole.previewTitle}</div>
+                      <div className="mt-6 space-y-3">
+                        {activeRole.previewRows.map(([value, label], index) => (
+                          <motion.div
+                            key={`${value}-${label}`}
+                            initial={{ opacity: 0, x: 8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.06 }}
+                            className="rounded-lg border border-white/10 bg-white/[0.06] p-4"
+                          >
+                            <div className="text-xs font-semibold text-blue-200">{value}</div>
+                            <div className="mt-1 text-sm leading-6 text-slate-200">{label}</div>
+                          </motion.div>
+                        ))}
+                      </div>
+                      <div className="mt-6 border-t border-white/10 pt-5 text-xs leading-5 text-slate-400">
+                        Widok demonstracyjny pokazujący sposób organizacji pracy danej roli.
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -582,91 +845,175 @@ export function PremiumLanding() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Moduły"
-            title="Rozbudowany produkt, który nadal da się szybko zrozumieć"
-            text="Każdy moduł ma własną funkcję, ale UI prowadzi użytkownika przez pracę bez nadmiaru ozdobników."
-          />
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {modules.map(([Icon, title, text]) => (
-              <motion.div key={title} whileHover={{ y: -4 }} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="grid h-10 w-10 place-items-center rounded-md bg-blue-50 text-blue-800">
-                  <Icon className="h-5 w-5" />
+        <section className="bg-white py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 text-white">
+              <div className="grid lg:grid-cols-[0.9fr_1.1fr]">
+                <div className="p-7 sm:p-10 lg:p-12">
+                  <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-blue-200">
+                    <Sparkles className="h-4 w-4" />
+                    NexAi
+                  </div>
+                  <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">AI osadzone w odpowiedzialnym procesie edukacyjnym.</h2>
+                  <p className="mt-5 text-sm leading-7 text-slate-300 sm:text-base">
+                    NexAi wspiera tworzenie pytań, materiałów, analizę postępu i pracę ucznia. Wynik modelu nie zastępuje decyzji nauczyciela — ma ją przygotować i ułatwić.
+                  </p>
+                  <Link to="/auth" className="mt-8 inline-flex h-11 items-center justify-center gap-2 rounded-md bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                    Przejdź do platformy
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
                 </div>
-                <h3 className="mt-5 text-lg font-semibold text-slate-950">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
-              </motion.div>
-            ))}
-          </div>
-        </section>
-
-        <section id="bezpieczenstwo" className="border-y border-slate-200 bg-slate-950 py-20 text-white">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1fr] lg:px-8">
-            <div>
-              <div className="text-xs font-semibold uppercase text-blue-200">Bezpieczeństwo</div>
-              <h2 className="mt-3 text-4xl font-semibold sm:text-5xl">System dla danych uczniów musi wyglądać i działać poważnie.</h2>
-              <p className="mt-5 text-sm leading-7 text-slate-300">
-                Role, zgody, dokumenty, retencja i eksporty są częścią produktu, nie dopiskiem w stopce.
-              </p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {[
-                ["Role i zatwierdzanie", "Dostęp nauczyciela lub administratora może wymagać decyzji szkoły."],
-                ["Dokumenty publiczne", "Regulamin, RODO i powierzenie danych są dostępne w aplikacji."],
-                ["Minimalizacja danych", "Uczeń może pracować kodem PIN bez pełnego konta."],
-                ["Eksport i ślad pracy", "Wyniki, certyfikaty i eksporty są uporządkowane w systemie."],
-              ].map(([title, text]) => (
-                <div key={title} className="rounded-lg border border-white/10 bg-white/5 p-5">
-                  <ShieldCheck className="h-5 w-5 text-blue-200" />
-                  <h3 className="mt-4 text-sm font-semibold">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="cennik" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="Cennik"
-            title="Plany dla nauczyciela, szkoły i większej instytucji"
-            text="Cennik jest czytelny, bez agresywnego marketingu. Placówka ma szybko zobaczyć, od czego zacząć."
-          />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {plans.map((plan) => (
-              <div key={plan.name} className={`rounded-lg border p-6 shadow-sm ${plan.featured ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"}`}>
-                <div className={plan.featured ? "text-blue-200" : "text-blue-800"}>{plan.name}</div>
-                <div className="mt-4 flex items-end gap-2">
-                  <div className="text-4xl font-semibold">{plan.price}</div>
-                  <div className={`pb-1 text-sm ${plan.featured ? "text-slate-300" : "text-slate-500"}`}>{plan.note}</div>
-                </div>
-                <p className={`mt-4 text-sm leading-6 ${plan.featured ? "text-slate-300" : "text-slate-600"}`}>{plan.target}</p>
-                <div className="mt-6 space-y-3">
-                  {plan.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2 text-sm">
-                      <Check className={`h-4 w-4 ${plan.featured ? "text-blue-200" : "text-blue-800"}`} />
-                      {feature}
+                <div className="border-t border-white/10 bg-white/[0.04] p-6 sm:p-8 lg:border-l lg:border-t-0 lg:p-10">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {[
+                      ["Generator pytań", "Tworzy propozycje na podstawie tematu, poziomu i rodzaju odpowiedzi."],
+                      ["Tutor ucznia", "Prowadzi przez materiał, zamiast natychmiast podawać gotowy wynik."],
+                      ["Wsparcie oceny", "Porządkuje odpowiedzi otwarte i wskazuje elementy wymagające uwagi."],
+                      ["Analiza postępu", "Łączy wyniki w obserwacje przydatne dla nauczyciela i ucznia."],
+                    ].map(([title, text], index) => (
+                      <div key={title} className="rounded-lg border border-white/10 bg-white/[0.05] p-5">
+                        <div className="text-xs font-semibold text-blue-200">0{index + 1}</div>
+                        <h3 className="mt-4 text-sm font-semibold text-white">{title}</h3>
+                        <p className="mt-2 text-xs leading-6 text-slate-300">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 rounded-lg border border-blue-300/20 bg-blue-300/10 p-5">
+                    <div className="flex items-start gap-3">
+                      <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-blue-200" />
+                      <div>
+                        <div className="text-sm font-semibold text-white">Kontrola człowieka pozostaje obowiązkowa</div>
+                        <p className="mt-1 text-xs leading-6 text-slate-300">Nauczyciel zatwierdza treść, kryteria, ocenę i publikację rezultatów.</p>
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
-        <section id="dokumenty" className="border-y border-slate-200 bg-white py-20">
+        <section id="bezpieczenstwo" className="border-y border-slate-200 bg-[#f7f7f8] py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
+              <div>
+                <SectionHeader
+                  eyebrow="Bezpieczeństwo i zgodność"
+                  title="Dane uczniów wymagają produktu zaprojektowanego poważnie."
+                  text="Bezpieczeństwo EduNex obejmuje warstwę dostępu, organizację ról, dokumentację, rejestrowanie zdarzeń i sposób przetwarzania danych."
+                  align="left"
+                />
+                <Link to="/dokumenty" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#0067b8] hover:text-[#004f8b]">
+                  Otwórz centrum dokumentów
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+              <div className="grid gap-px overflow-hidden rounded-xl border border-slate-200 bg-slate-200 sm:grid-cols-2">
+                {securityItems.map(([Icon, title, text]) => (
+                  <div key={title} className="bg-white p-5 sm:p-6">
+                    <Icon className="h-5 w-5 text-[#0067b8]" />
+                    <h3 className="mt-4 text-sm font-semibold text-slate-950">{title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="wdrozenie" className="bg-white py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-12 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
+              <div className="lg:sticky lg:top-24">
+                <SectionHeader
+                  eyebrow="Wdrożenie"
+                  title="Rozpocznij od pilotażu, nie od wielomiesięcznego projektu."
+                  text="Zakres można dopasować do jednej klasy, zespołu nauczycieli albo całej organizacji. Najpierw zamykamy podstawowy proces, później rozszerzamy moduły."
+                  align="left"
+                />
+                <div className="mt-8 rounded-xl border border-slate-200 bg-[#f7f7f8] p-5">
+                  <div className="text-sm font-semibold text-slate-950">Rezultat pierwszego etapu</div>
+                  <p className="mt-2 text-sm leading-7 text-slate-600">Nauczyciel potrafi przygotować egzamin, uruchomić PIN, odebrać pracę i pobrać raport bez pomocy technicznej.</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                {implementationSteps.map(([step, title, text]) => (
+                  <div key={step} className="grid gap-4 rounded-xl border border-slate-200 bg-white p-5 sm:grid-cols-[64px_1fr] sm:p-6">
+                    <div className="grid h-12 w-12 place-items-center rounded-md bg-slate-950 text-sm font-semibold text-white">{step}</div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-950">{title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-slate-600">{text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="cennik" className="border-y border-slate-200 bg-[#f7f7f8] py-20 sm:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <SectionHeader
-              eyebrow="Dokumenty"
-              title="Regulamin, prywatność i RODO dostępne od razu"
-              text="Dokumenty otwierają się w aplikacji i są widoczną częścią produktu, a nie ukrytą formalnością."
+              eyebrow="Plany"
+              title="Zakres dopasowany do skali organizacji"
+              text="Jasny punkt startowy dla nauczyciela, kompletna wersja dla szkoły oraz indywidualny model dla większej instytucji."
             />
-            <div className="mt-12 grid gap-4 lg:grid-cols-5">
+            <div className="mt-12 grid gap-5 lg:grid-cols-3">
+              {plans.map((plan) => (
+                <article
+                  key={plan.name}
+                  className={`flex min-h-[430px] flex-col rounded-xl border p-6 shadow-sm ${
+                    plan.featured ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"
+                  }`}
+                >
+                  <div className={`text-sm font-semibold ${plan.featured ? "text-blue-200" : "text-[#0067b8]"}`}>{plan.name}</div>
+                  <div className="mt-5 flex flex-wrap items-end gap-2">
+                    <div className="text-4xl font-semibold tracking-tight">{plan.price}</div>
+                    <div className={`pb-1 text-sm ${plan.featured ? "text-slate-300" : "text-slate-500"}`}>{plan.note}</div>
+                  </div>
+                  <p className={`mt-4 text-sm leading-7 ${plan.featured ? "text-slate-300" : "text-slate-600"}`}>{plan.target}</p>
+                  <div className="mt-7 space-y-3">
+                    {plan.features.map((feature) => (
+                      <div key={feature} className="flex items-center gap-3 text-sm">
+                        <Check className={`h-4 w-4 ${plan.featured ? "text-blue-200" : "text-[#0067b8]"}`} />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                  <a
+                    href="#kontakt"
+                    className={`mt-auto inline-flex h-11 items-center justify-center rounded-md px-4 text-sm font-semibold transition ${
+                      plan.featured ? "bg-white text-slate-950 hover:bg-slate-100" : "border border-slate-300 bg-white text-slate-800 hover:bg-slate-50"
+                    }`}
+                  >
+                    {plan.cta}
+                  </a>
+                </article>
+              ))}
+            </div>
+            <p className="mt-5 text-center text-xs leading-5 text-slate-500">Podane ceny i zakresy mogą zostać dopasowane do finalnego modelu wdrożenia oraz liczby użytkowników.</p>
+          </div>
+        </section>
+
+        <section id="dokumenty" className="bg-white py-20 sm:py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="Centrum dokumentów"
+              title="Formalności widoczne przed rozpoczęciem współpracy"
+              text="Placówka może zapoznać się z zasadami działania, prywatnością, bezpieczeństwem i dostępnością bez logowania do systemu."
+            />
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {documents.map(([Icon, title, text]) => (
-                <Link key={title} to="/dokumenty" className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-md">
-                  <Icon className="h-5 w-5 text-blue-800" />
-                  <h3 className="mt-4 text-sm font-semibold text-slate-950">{title}</h3>
+                <Link
+                  key={title}
+                  to="/dokumenty"
+                  className="group rounded-xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-[0_16px_45px_rgba(15,23,42,0.08)]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <Icon className="h-5 w-5 text-[#0067b8]" />
+                    <ChevronRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-600" />
+                  </div>
+                  <h3 className="mt-5 text-sm font-semibold text-slate-950">{title}</h3>
                   <p className="mt-2 text-xs leading-5 text-slate-500">{text}</p>
                 </Link>
               ))}
@@ -674,68 +1021,125 @@ export function PremiumLanding() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <SectionHeader
-            eyebrow="FAQ"
-            title="Najczęstsze pytania przed wdrożeniem"
-            text="Krótko i konkretnie: dostęp ucznia, logowanie, dokumenty i e-dziennik."
-          />
-          <div className="mx-auto mt-10 max-w-3xl divide-y divide-slate-200 rounded-lg border border-slate-200 bg-white">
-            {faq.map(([question, answer]) => (
-              <details key={question} className="group p-5">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-950">
-                  {question}
-                  <ChevronRight className="h-4 w-4 text-slate-400 transition group-open:rotate-90" />
-                </summary>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{answer}</p>
-              </details>
-            ))}
+        <section className="border-y border-slate-200 bg-[#f7f7f8] py-20 sm:py-24">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+            <SectionHeader
+              eyebrow="FAQ"
+              title="Najważniejsze pytania przed wdrożeniem"
+              text="Odpowiedzi dotyczące dostępu ucznia, zakresu platformy, AI, dokumentów i sposobu rozpoczęcia pracy."
+            />
+            <div className="mt-10 divide-y divide-slate-200 overflow-hidden rounded-xl border border-slate-200 bg-white">
+              {faq.map(([question, answer]) => (
+                <details key={question} className="group p-5 sm:p-6">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-semibold text-slate-950">
+                    {question}
+                    <ChevronRight className="h-4 w-4 shrink-0 text-slate-400 transition group-open:rotate-90" />
+                  </summary>
+                  <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600">{answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section id="kontakt" className="border-t border-slate-200 bg-white py-20">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.82fr_1fr] lg:px-8">
+        <section id="kontakt" className="bg-white py-20 sm:py-24">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.82fr_1fr] lg:px-8">
             <div>
-              <div className="text-xs font-semibold uppercase text-blue-800">Kontakt</div>
-              <h2 className="mt-4 text-4xl font-semibold leading-tight text-slate-950 sm:text-6xl">
-                Porozmawiajmy o wdrożeniu EduNex w Twojej placówce.
-              </h2>
-              <p className="mt-5 text-base leading-8 text-slate-600">
-                Formularz zbiera tylko dane potrzebne do przygotowania rozmowy. Układ jest prosty: potrzeba, placówka, kontakt i opis wyzwania.
+              <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">Kontakt i wdrożenie</div>
+              <h2 className="mt-5 text-4xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-6xl">Zbudujmy spokojny standard cyfrowej pracy Twojej placówki.</h2>
+              <p className="mt-6 max-w-xl text-base leading-8 text-slate-600">
+                Rozmowa zaczyna się od procesu, nie od listy funkcji. Określamy role, rodzaje egzaminów, sposób pracy nauczycieli oraz dane potrzebne dyrekcji.
               </p>
               <div className="mt-8 space-y-4">
                 {[
-                  "Dopasowanie planu do liczby klas i roli szkoły.",
-                  "Przegląd egzaminów PIN, NexAi i e-dziennika.",
-                  "Omówienie dokumentów, RODO i wdrożenia.",
-                  "Kontakt bez tworzenia nowego backendu formularzy.",
+                  "Dobór zakresu do liczby klas i użytkowników.",
+                  "Pilotaż najważniejszego procesu egzaminacyjnego.",
+                  "Omówienie ról, dostępu, dokumentów i bezpieczeństwa.",
+                  "Plan rozszerzania platformy bez chaosu wdrożeniowego.",
                 ].map((item) => (
-                  <div key={item} className="flex gap-3 text-sm leading-6 text-slate-700">
-                    <Check className="mt-1 h-4 w-4 shrink-0 text-blue-800" />
+                  <div key={item} className="flex gap-3 text-sm leading-7 text-slate-700">
+                    <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-slate-300 bg-white">
+                      <Check className="h-3 w-3 text-[#0067b8]" />
+                    </span>
                     {item}
                   </div>
                 ))}
               </div>
-              <div className="mt-8 flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                <Mail className="h-5 w-5 text-blue-800" />
-                kontakt@edunex.pl
+              <div className="mt-9 rounded-xl border border-slate-200 bg-[#f7f7f8] p-5">
+                <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">Kontakt</div>
+                <div className="mt-3 flex items-center gap-3 text-sm font-semibold text-slate-950">
+                  <Mail className="h-5 w-5 text-[#0067b8]" />
+                  kontakt@edunex.pl
+                </div>
+                <p className="mt-3 text-xs leading-5 text-slate-500">Wiadomość z formularza zostanie przygotowana w domyślnej aplikacji pocztowej.</p>
               </div>
             </div>
             <ContactForm />
           </div>
         </section>
+
+        <section className="border-t border-slate-200 bg-slate-950 text-white">
+          <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+            <div>
+              <div className="text-2xl font-semibold">Gotowy, aby zobaczyć EduNex od środka?</div>
+              <p className="mt-2 text-sm text-slate-300">Przejdź do portalu dostępu albo rozpocznij konfigurację konta.</p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link to="/auth" className="inline-flex h-11 items-center justify-center rounded-md border border-white/20 px-4 text-sm font-semibold text-white transition hover:bg-white/10">
+                Logowanie
+              </Link>
+              <Link to="/auth/register" className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-slate-100">
+                Załóż konto
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="border-t border-slate-200 bg-[#f6f8fb]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <div>
-            <div className="font-semibold text-slate-950">EduNex</div>
-            <div>Platforma edukacyjna dla szkół i instytucji.</div>
+      <footer className="border-t border-slate-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="grid h-9 w-9 place-items-center rounded-md bg-slate-950 text-white">
+                  <Layers3 className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-slate-950">EduNex</div>
+                  <div className="text-xs text-slate-500">System operacyjny szkoły</div>
+                </div>
+              </div>
+              <p className="mt-4 max-w-sm text-xs leading-6 text-slate-500">Egzaminy, klasy, raporty, e-dziennik, dokumenty i odpowiedzialnie wdrażane funkcje AI w jednym środowisku.</p>
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">Produkt</div>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <a href="#platforma" className="block hover:text-slate-950">Platforma</a>
+                <a href="#panele" className="block hover:text-slate-950">Panele</a>
+                <a href="#cennik" className="block hover:text-slate-950">Plany</a>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">Organizacja</div>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <a href="#wdrozenie" className="block hover:text-slate-950">Wdrożenie</a>
+                <a href="#bezpieczenstwo" className="block hover:text-slate-950">Bezpieczeństwo</a>
+                <a href="#kontakt" className="block hover:text-slate-950">Kontakt</a>
+              </div>
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-400">Dostęp</div>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <Link to="/auth" className="block hover:text-slate-950">Logowanie</Link>
+                <Link to="/auth/register" className="block hover:text-slate-950">Rejestracja</Link>
+                <Link to="/dokumenty" className="block hover:text-slate-950">Dokumenty</Link>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-4">
-            <Link to="/dokumenty" className="hover:text-slate-950">Dokumenty</Link>
-            <Link to="/auth" className="hover:text-slate-950">Logowanie</Link>
-            <Link to="/auth/register" className="hover:text-slate-950">Rejestracja</Link>
+          <div className="mt-10 flex flex-col gap-3 border-t border-slate-200 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+            <span>© 2026 EduNex. Platforma edukacyjna dla szkół i instytucji.</span>
+            <span>edunex.pl</span>
           </div>
         </div>
       </footer>
