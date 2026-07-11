@@ -1,37 +1,37 @@
-import { useEffect, useState, useMemo, useCallback } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
-  Plus, Trash2, Edit3, Eye, EyeOff, Loader2, Search, Copy,
-  BookOpen, Clock, Target, BarChart3, FileText, Users, HelpCircle,
-  ArrowUpDown, CalendarDays, RefreshCw, ListChecks, Sigma,
+  ArrowUpDown,
+  BarChart3,
+  BookOpen,
+  CalendarDays,
+  Clock,
+  Copy,
+  Edit3,
+  Eye,
+  EyeOff,
+  FileText,
+  HelpCircle,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Search,
+  Sigma,
+  Target,
+  Trash2,
+  Users,
+  X,
 } from "lucide-react";
 import { ExamEditor } from "./ExamEditor";
 import { confirmDialog } from "@/components/ConfirmDialog";
-
-const SUBJECT_COLORS: Record<string, string> = {
-  Matematyka: "from-blue-400 to-indigo-500",
-  "Język polski": "from-rose-400 to-pink-500",
-  "Język angielski": "from-emerald-400 to-teal-500",
-  Biologia: "from-green-400 to-emerald-500",
-  Chemia: "from-cyan-400 to-blue-500",
-  Fizyka: "from-amber-400 to-orange-500",
-  Geografia: "from-lime-400 to-green-500",
-  Historia: "from-amber-400 to-yellow-500",
-  Informatyka: "from-violet-400 to-purple-500",
-  Plastyka: "from-fuchsia-400 to-pink-500",
-  Muzyka: "from-indigo-400 to-violet-500",
-  WF: "from-emerald-400 to-cyan-500",
-  Religia: "from-amber-300 to-yellow-500",
-};
-
-function subjectGradient(subject: string | null) {
-  if (!subject) return "from-sky-400 to-blue-400";
-  for (const [key, val] of Object.entries(SUBJECT_COLORS)) {
-    if (subject.toLowerCase().includes(key.toLowerCase())) return val;
-  }
-  return "from-sky-400 to-blue-400";
-}
 
 type Exam = {
   id: string;
@@ -50,338 +50,581 @@ type ExamMeta = {
   pin: string | null;
 };
 
+type StatusFilter = "all" | "published" | "draft";
+type SortBy = "date" | "title" | "duration" | "questions";
+
+function createPinCandidate() {
+  const random = new Uint32Array(1);
+  crypto.getRandomValues(random);
+  return String(100000 + (random[0] % 900000));
+}
+
+async function insertUniqueExamPin(examId: string, userId: string) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const pinCode = createPinCandidate();
+    const { data, error } = await supabase
+      .from("exam_pins")
+      .insert({
+        exam_id: examId,
+        pin_code: pinCode,
+        active: true,
+        max_uses: 100,
+        used_count: 0,
+        created_by: userId,
+      })
+      .select("id,pin_code")
+      .single();
+
+    if (!error && data) return data;
+    if (error?.code !== "23505") throw error;
+  }
+
+  throw new Error("Nie udało się wygenerować unikalnego PIN-u. Spróbuj ponownie.");
+}
+
 export function Egzaminy() {
   const [exams, setExams] = useState<Exam[]>([]);
   const [meta, setMeta] = useState<Record<string, ExamMeta>>({});
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [openExamId, setOpenExamId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
-  const [sortBy, setSortBy] = useState<"date" | "title" | "duration" | "questions">("date");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortBy, setSortBy] = useState<SortBy>("date");
+  const [busyExamId, setBusyExamId] = useState<string | null>(null);
 
-  const loadMeta = useCallback(async (examIds: string[]) => {
-    if (examIds.length === 0) return;
-    const [qRes, aRes, pRes] = await Promise.all([
-      supabase.from("questions").select("exam_id, id").in("exam_id", examIds),
-      supabase.from("attempts").select("exam_id, id").in("exam_id", examIds),
-      supabase.from("exam_codes").select("exam_id, code").in("exam_id", examIds),
-    ]);
-    const qMap: Record<string, number> = {};
-    for (const r of (qRes.data ?? [])) {
-      qMap[r.exam_id] = (qMap[r.exam_id] ?? 0) + 1;
+  const load = useCallback(async (manual = false) => {
+    manual ? setRefreshing(true) : setLoading(true);
+    setLoadError(null);
+
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error("Sesja użytkownika wygasła. Zaloguj się ponownie.");
+
+      const { data: examRows, error: examsError } = await supabase
+        .from("exams")
+        .select("id,title,subject,status,duration_minutes,passing_score,created_at,category")
+        .eq("created_by", user.id)
+        .order("created_at", { ascending: false });
+
+      if (examsError) throw examsError;
+
+      const filteredExams = ((examRows ?? []) as Exam[]).filter(
+        (exam) => exam.category !== "sprawdzian",
+      );
+      const examIds = filteredExams.map((exam) => exam.id);
+
+      let nextMeta: Record<string, ExamMeta> = {};
+      if (examIds.length) {
+        const [questionsResult, attemptsResult, pinsResult] = await Promise.all([
+          supabase.from("questions").select("exam_id,id").in("exam_id", examIds),
+          supabase.from("attempts").select("exam_id,id").in("exam_id", examIds),
+          supabase
+            .from("exam_pins")
+            .select("exam_id,pin_code,active,created_at")
+            .in("exam_id", examIds)
+            .order("created_at", { ascending: false }),
+        ]);
+
+        const firstError = questionsResult.error || attemptsResult.error || pinsResult.error;
+        if (firstError) throw firstError;
+
+        const questionCounts: Record<string, number> = {};
+        const attemptCounts: Record<string, number> = {};
+        const pins: Record<string, string> = {};
+
+        for (const row of questionsResult.data ?? []) {
+          questionCounts[row.exam_id] = (questionCounts[row.exam_id] ?? 0) + 1;
+        }
+        for (const row of attemptsResult.data ?? []) {
+          attemptCounts[row.exam_id] = (attemptCounts[row.exam_id] ?? 0) + 1;
+        }
+        for (const row of pinsResult.data ?? []) {
+          if (row.active && !pins[row.exam_id]) pins[row.exam_id] = row.pin_code;
+        }
+
+        nextMeta = Object.fromEntries(
+          examIds.map((id) => [
+            id,
+            {
+              questionCount: questionCounts[id] ?? 0,
+              attemptCount: attemptCounts[id] ?? 0,
+              pin: pins[id] ?? null,
+            },
+          ]),
+        );
+      }
+
+      setExams(filteredExams);
+      setMeta(nextMeta);
+    } catch (error) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : "Nie udało się pobrać egzaminów.";
+      setLoadError(message);
+      if (manual) toast.error("Nie udało się odświeżyć egzaminów");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-    const aMap: Record<string, number> = {};
-    for (const r of (aRes.data ?? [])) {
-      aMap[r.exam_id] = (aMap[r.exam_id] ?? 0) + 1;
-    }
-    const pMap: Record<string, string | null> = {};
-    for (const r of (pRes.data ?? [])) {
-      pMap[r.exam_id] = r.code;
-    }
-    const m: Record<string, ExamMeta> = {};
-    for (const id of examIds) {
-      m[id] = { questionCount: qMap[id] ?? 0, attemptCount: aMap[id] ?? 0, pin: pMap[id] ?? null };
-    }
-    setMeta(m);
   }, []);
 
-  const load = async () => {
-    setLoading(true);
-    const { data } = await supabase.from("exams").select("*").order("created_at", { ascending: false });
-    const filtered = ((data ?? []) as Exam[]).filter((e) => e.category !== "sprawdzian");
-    setExams(filtered);
-    await loadMeta(filtered.map((e) => e.id));
-    setLoading(false);
-  };
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
-  const toggleStatus = async (e: Exam) => {
-    const next = e.status === "published" ? "draft" : "published";
-    const { error } = await supabase.from("exams").update({ status: next }).eq("id", e.id);
-    if (error) return toast.error(error.message);
-    toast.success(next === "published" ? "Opublikowano" : "Schowano");
-    load();
+  const ensurePin = async (examId: string, userId: string) => {
+    const { data: existing, error } = await supabase
+      .from("exam_pins")
+      .select("id,pin_code")
+      .eq("exam_id", examId)
+      .eq("active", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return existing ?? insertUniqueExamPin(examId, userId);
+  };
+
+  const toggleStatus = async (exam: Exam) => {
+    setBusyExamId(exam.id);
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error("Brak aktywnej sesji użytkownika.");
+
+      const nextStatus = exam.status === "published" ? "draft" : "published";
+      const { error } = await supabase
+        .from("exams")
+        .update({ status: nextStatus })
+        .eq("id", exam.id)
+        .eq("created_by", user.id);
+      if (error) throw error;
+
+      if (nextStatus === "published") {
+        const pin = await ensurePin(exam.id, user.id);
+        toast.success(`Egzamin opublikowany. PIN: ${pin.pin_code}`);
+      } else {
+        const { error: pinError } = await supabase
+          .from("exam_pins")
+          .update({ active: false })
+          .eq("exam_id", exam.id)
+          .eq("created_by", user.id);
+        if (pinError) throw pinError;
+        toast.success("Egzamin został przeniesiony do szkiców");
+      }
+
+      await load(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się zmienić statusu egzaminu");
+    } finally {
+      setBusyExamId(null);
+    }
   };
 
   const copyPin = async (examId: string) => {
-    const m = meta[examId];
-    if (!m?.pin) {
-      toast.error("Brak PIN-u. Opublikuj egzamin, aby wygenerować PIN.");
+    const pin = meta[examId]?.pin;
+    if (!pin) {
+      toast.error("Ten egzamin nie ma aktywnego PIN-u. Opublikuj go lub wygeneruj nowy PIN.");
       return;
     }
-    try { await navigator.clipboard.writeText(m.pin); toast.success("PIN skopiowany: " + m.pin); }
-    catch { toast.error("Nie udało się skopiować"); }
+
+    try {
+      await navigator.clipboard.writeText(pin);
+      toast.success(`PIN skopiowany: ${pin}`);
+    } catch {
+      toast.error("Przeglądarka nie pozwoliła skopiować PIN-u");
+    }
   };
 
   const regeneratePin = async (examId: string) => {
-    const pin = Math.floor(100000 + Math.random() * 900000).toString();
-    const { error } = await supabase.from("exam_codes").upsert(
-      { exam_id: examId, code: pin },
-      { onConflict: "exam_id" }
-    );
-    if (error) return toast.error(error.message);
-    toast.success("Nowy PIN: " + pin);
-    load();
+    setBusyExamId(examId);
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error("Brak aktywnej sesji użytkownika.");
+
+      const newPin = await insertUniqueExamPin(examId, user.id);
+      const { error: deactivateError } = await supabase
+        .from("exam_pins")
+        .update({ active: false })
+        .eq("exam_id", examId)
+        .eq("created_by", user.id)
+        .neq("id", newPin.id);
+      if (deactivateError) throw deactivateError;
+
+      toast.success(`Wygenerowano nowy PIN: ${newPin.pin_code}`);
+      await load(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się wygenerować PIN-u");
+    } finally {
+      setBusyExamId(null);
+    }
   };
 
-  const remove = async (e: Exam) => {
-    if (!(await confirmDialog({ description: `Usunąć egzamin "${e.title}"? Wraz z pytaniami i odpowiedziami.` }))) return;
-    await supabase.from("questions").delete().eq("exam_id", e.id);
-    await supabase.from("attempts").delete().eq("exam_id", e.id);
-    const { error } = await supabase.from("exams").delete().eq("id", e.id);
-    if (error) return toast.error(error.message);
-    toast.success("Usunięto"); load();
+  const remove = async (exam: Exam) => {
+    const confirmed = await confirmDialog({
+      description: `Usunąć egzamin „${exam.title}”? Powiązane pytania, PIN-y i podejścia zostaną usunięte zgodnie z konfiguracją bazy.`,
+    });
+    if (!confirmed) return;
+
+    setBusyExamId(exam.id);
+    try {
+      const { error } = await supabase.from("exams").delete().eq("id", exam.id);
+      if (error) throw error;
+      toast.success("Egzamin został usunięty");
+      await load(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się usunąć egzaminu");
+    } finally {
+      setBusyExamId(null);
+    }
   };
 
   const createNew = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return toast.error("Brak sesji");
-    const { data, error } = await supabase.from("exams").insert({
-      title: "Nowy egzamin", duration_minutes: 60, passing_score: 50, created_by: user.id, category: "egzamin",
-    }).select().single();
-    if (error) {
-      if (error.message?.includes("category")) {
-        toast.error("Brak kolumny 'category' w tabeli exams — dodaj ją w Supabase dashboard (type: text)");
-      } else {
-        toast.error(error.message);
-      }
-      return;
+    setBusyExamId("new");
+    try {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error("Brak aktywnej sesji użytkownika.");
+
+      const { data, error } = await supabase
+        .from("exams")
+        .insert({
+          title: "Nowy egzamin",
+          duration_minutes: 60,
+          passing_score: 50,
+          created_by: user.id,
+          category: "egzamin",
+          status: "draft",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+
+      setOpenExamId(data.id);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się utworzyć egzaminu");
+    } finally {
+      setBusyExamId(null);
     }
-    setOpenExamId((data as Exam).id);
   };
 
-  const published = exams.filter((e) => e.status === "published").length;
-  const drafts = exams.filter((e) => e.status === "draft").length;
-  const totalQuestions = Object.values(meta).reduce((a, m) => a + m.questionCount, 0);
-  const totalAttempts = Object.values(meta).reduce((a, m) => a + m.attemptCount, 0);
+  const published = exams.filter((exam) => exam.status === "published").length;
+  const drafts = exams.filter((exam) => exam.status === "draft").length;
+  const totalQuestions = Object.values(meta).reduce((sum, item) => sum + item.questionCount, 0);
+  const totalAttempts = Object.values(meta).reduce((sum, item) => sum + item.attemptCount, 0);
+  const averageDuration = exams.length
+    ? Math.round(exams.reduce((sum, exam) => sum + exam.duration_minutes, 0) / exams.length)
+    : 0;
 
   const filtered = useMemo(() => {
-    let f = [...exams];
-    if (search) f = f.filter((e) => e.title.toLowerCase().includes(search.toLowerCase()) || e.subject?.toLowerCase().includes(search.toLowerCase()));
-    if (statusFilter === "published") f = f.filter((e) => e.status === "published");
-    if (statusFilter === "draft") f = f.filter((e) => e.status === "draft");
-    if (sortBy === "title") f.sort((a, b) => a.title.localeCompare(b.title));
-    else if (sortBy === "duration") f.sort((a, b) => a.duration_minutes - b.duration_minutes);
-    else if (sortBy === "questions") f.sort((a, b) => (meta[b.id]?.questionCount ?? 0) - (meta[a.id]?.questionCount ?? 0));
-    else f.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-    return f;
-  }, [exams, search, statusFilter, sortBy, meta]);
+    const query = search.trim().toLowerCase();
+    const result = exams.filter((exam) => {
+      const matchesQuery =
+        !query ||
+        exam.title.toLowerCase().includes(query) ||
+        exam.subject?.toLowerCase().includes(query);
+      const matchesStatus = statusFilter === "all" || exam.status === statusFilter;
+      return matchesQuery && matchesStatus;
+    });
+
+    if (sortBy === "title") result.sort((a, b) => a.title.localeCompare(b.title, "pl"));
+    else if (sortBy === "duration") result.sort((a, b) => a.duration_minutes - b.duration_minutes);
+    else if (sortBy === "questions") {
+      result.sort(
+        (a, b) => (meta[b.id]?.questionCount ?? 0) - (meta[a.id]?.questionCount ?? 0),
+      );
+    } else result.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
+
+    return result;
+  }, [exams, meta, search, sortBy, statusFilter]);
 
   if (openExamId) {
-    return <ExamEditor examId={openExamId} onBack={() => { setOpenExamId(null); load(); }} />;
+    return (
+      <ExamEditor
+        examId={openExamId}
+        onBack={() => {
+          setOpenExamId(null);
+          void load(true);
+        }}
+      />
+    );
   }
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="inline-flex items-center gap-2 text-xl font-display font-bold text-white">
-            <FileText className="w-5 h-5 text-sky-400"/>Egzaminy
-          </h2>
-          <p className="text-xs text-white/50">Twórz, publikuj i zarządzaj egzaminami.</p>
-        </div>
-        <button onClick={createNew} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent to-blue-500 hover:from-accent hover:to-blue-500 text-white text-sm font-semibold shadow-lg shadow-accent/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
-          <Plus className="w-4 h-4"/>Nowy egzamin
-        </button>
-      </div>
-
-      {/* Stats row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatCard icon={FileText} label="Wszystkie" value={exams.length} color="from-accent to-blue-500" />
-        <StatCard icon={Eye} label="Opublikowane" value={published} color="from-accent to-blue-500" />
-        <StatCard icon={Edit3} label="Szkice" value={drafts} color="from-accent to-blue-500" />
-        <StatCard icon={BarChart3} label="Śr. czas" value={exams.length ? `${Math.round(exams.reduce((a, e) => a + e.duration_minutes, 0) / exams.length)} min` : "—"} color="from-accent to-blue-500" />
-      </div>
-
-      {/* Secondary stats */}
-      <div className="flex flex-wrap gap-3 text-xs text-white/50">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/10">
-          <HelpCircle className="w-3.5 h-3.5 text-sky-400"/>{totalQuestions} pytań
-        </span>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/10">
-          <Users className="w-3.5 h-3.5 text-violet-400"/>{totalAttempts} podejść
-        </span>
-        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.03] border border-white/10">
-          <Sigma className="w-3.5 h-3.5 text-emerald-400"/>{exams.length ? Math.round(totalQuestions / exams.length) : 0} średnio pytań/egzamin
-        </span>
-      </div>
-
-      {/* Search + filter + sort */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-          <input
-            value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Szukaj egzaminu po tytule lub przedmiocie…"
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 outline-none focus:border-sky-400/50 text-sm text-white placeholder-white/30 transition"
-          />
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {(["all", "published", "draft"] as const).map((f) => (
-            <button key={f} onClick={() => setStatusFilter(f)}
-              className={`px-3 py-2 rounded-lg text-xs font-mono tracking-wide transition ${
-                statusFilter === f
-                  ? "bg-gradient-to-r from-accent/20 to-accent/20 text-sky-300 border border-sky-400/30"
-                  : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"
-              }`}>
-              {f === "all" ? "WSZYSTKIE" : f === "published" ? "OPUBLIKOWANE" : "SZKICE"}
+    <div className="space-y-6 text-slate-950">
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <div className="text-xs font-semibold uppercase tracking-[0.12em] text-[#0067b8]">Nauczanie</div>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">Egzaminy</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              Twórz pytania, publikuj egzamin, generuj aktywny PIN i analizuj liczbę podejść w jednym procesie.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => void load(true)}
+              disabled={refreshing}
+              className="inline-flex h-11 items-center gap-2 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
+            >
+              <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+              Odśwież
             </button>
-          ))}
-          <div className="relative">
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-3 py-2 rounded-lg text-xs font-mono bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 outline-none appearance-none cursor-pointer pr-8">
-              <option value="date">Data ↓</option>
-              <option value="title">Tytuł A-Z</option>
-              <option value="duration">Czas ↑</option>
-              <option value="questions">Pytań ↓</option>
-            </select>
-            <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-white/30 pointer-events-none" />
+            <button
+              type="button"
+              onClick={() => void createNew()}
+              disabled={busyExamId === "new"}
+              className="inline-flex h-11 items-center gap-2 rounded-md bg-[#0067b8] px-4 text-sm font-semibold text-white transition hover:bg-[#005a9e] disabled:opacity-60"
+            >
+              {busyExamId === "new" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              Nowy egzamin
+            </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* List */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-4 sm:p-5">
+      {loadError && (
+        <div className="flex flex-col gap-3 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-900 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="font-semibold">Nie udało się pobrać egzaminów</div>
+            <div className="mt-1 text-xs leading-5">{loadError}</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => void load(true)}
+            className="h-9 rounded-md border border-red-300 bg-white px-3 text-xs font-semibold text-red-800"
+          >
+            Spróbuj ponownie
+          </button>
+        </div>
+      )}
+
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard icon={FileText} label="Wszystkie egzaminy" value={exams.length} />
+        <StatCard icon={Eye} label="Opublikowane" value={published} />
+        <StatCard icon={Edit3} label="Szkice" value={drafts} />
+        <StatCard icon={BarChart3} label="Średni czas" value={averageDuration ? `${averageDuration} min` : "—"} />
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-wrap gap-2 text-xs text-slate-600">
+          <span className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+            <HelpCircle className="h-4 w-4 text-[#0067b8]" /> {totalQuestions} pytań
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+            <Users className="h-4 w-4 text-[#0067b8]" /> {totalAttempts} podejść
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
+            <Sigma className="h-4 w-4 text-[#0067b8]" /> {exams.length ? Math.round(totalQuestions / exams.length) : 0} pytań średnio
+          </span>
+        </div>
+
+        <div className="mt-5 flex flex-col gap-3 lg:flex-row">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Szukaj po tytule lub przedmiocie"
+              className="h-11 w-full rounded-md border border-slate-300 bg-white pl-9 pr-3 text-sm outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8]"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(["all", "published", "draft"] as const).map((filter) => (
+              <button
+                key={filter}
+                type="button"
+                onClick={() => setStatusFilter(filter)}
+                className={`h-11 rounded-md border px-3 text-xs font-semibold transition ${
+                  statusFilter === filter
+                    ? "border-[#0067b8] bg-blue-50 text-[#0067b8]"
+                    : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+                }`}
+              >
+                {filter === "all" ? "Wszystkie" : filter === "published" ? "Opublikowane" : "Szkice"}
+              </button>
+            ))}
+            <label className="relative">
+              <span className="sr-only">Sortowanie</span>
+              <select
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value as SortBy)}
+                className="h-11 appearance-none rounded-md border border-slate-300 bg-white pl-3 pr-9 text-xs font-semibold text-slate-600 outline-none transition hover:border-slate-400 focus:border-[#0067b8]"
+              >
+                <option value="date">Najnowsze</option>
+                <option value="title">Tytuł A–Z</option>
+                <option value="duration">Najkrótszy czas</option>
+                <option value="questions">Najwięcej pytań</option>
+              </select>
+              <ArrowUpDown className="pointer-events-none absolute right-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         {loading ? (
-          <div className="py-16 text-center text-white/40"><Loader2 className="w-6 h-6 animate-spin inline"/></div>
+          <div className="grid min-h-72 place-items-center">
+            <div className="text-center">
+              <Loader2 className="mx-auto h-6 w-6 animate-spin text-[#0067b8]" />
+              <div className="mt-3 text-sm text-slate-600">Ładowanie egzaminów</div>
+            </div>
+          </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-16 text-white/40 text-sm border border-dashed border-white/10 rounded-xl">
-            {search || statusFilter !== "all"
-              ? "Brak wyników dla tej filtracji."
-              : (
-                <div className="space-y-3">
-                  <FileText className="w-12 h-12 mx-auto text-white/20" />
-                  <p>Brak egzaminów.</p>
-                  <button onClick={createNew} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 text-white text-sm font-semibold hover:brightness-110 transition">
-                    <Plus className="w-4 h-4"/>Utwórz pierwszy
-                  </button>
-                </div>
-              )}
+          <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-5 py-14 text-center">
+            <FileText className="mx-auto h-9 w-9 text-slate-400" />
+            <div className="mt-4 text-sm font-semibold text-slate-900">
+              {search || statusFilter !== "all" ? "Brak wyników dla wybranych filtrów" : "Nie masz jeszcze egzaminów"}
+            </div>
+            <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-slate-500">
+              {search || statusFilter !== "all"
+                ? "Zmień wyszukiwanie lub filtr statusu."
+                : "Utwórz pierwszy egzamin, dodaj pytania i opublikuj go z aktywnym kodem PIN."}
+            </p>
+            {!search && statusFilter === "all" && (
+              <button
+                type="button"
+                onClick={() => void createNew()}
+                className="mt-5 inline-flex h-10 items-center gap-2 rounded-md bg-slate-950 px-4 text-xs font-semibold text-white"
+              >
+                <Plus className="h-4 w-4" /> Utwórz pierwszy egzamin
+              </button>
+            )}
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filtered.map((e) => {
-              const grad = subjectGradient(e.subject);
-              const m = meta[e.id];
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((exam) => {
+              const itemMeta = meta[exam.id] ?? { questionCount: 0, attemptCount: 0, pin: null };
+              const busy = busyExamId === exam.id;
               return (
-                <div key={e.id} onClick={() => setOpenExamId(e.id)}
-                  className="group relative overflow-hidden rounded-xl bg-white/[0.02] border border-white/10 hover:border-accent/30 hover:bg-white/[0.04] transition cursor-pointer p-4">
+                <article
+                  key={exam.id}
+                  className="group flex min-h-[300px] flex-col rounded-xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_16px_45px_rgba(15,23,42,0.08)]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-md bg-slate-950 text-white">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${exam.status === "published" ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-800"}`}>
+                      {exam.status === "published" ? "Opublikowany" : "Szkic"}
+                    </span>
+                  </div>
 
-                  {/* Top gradient bar */}
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${grad}`} />
+                  <button type="button" onClick={() => setOpenExamId(exam.id)} className="mt-4 text-left">
+                    <h3 className="line-clamp-2 text-lg font-semibold leading-6 text-slate-950 transition group-hover:text-[#0067b8]">
+                      {exam.title || "Bez nazwy"}
+                    </h3>
+                    <div className="mt-2 inline-flex items-center gap-2 text-xs text-slate-500">
+                      <BookOpen className="h-3.5 w-3.5" /> {exam.subject || "Bez przedmiotu"}
+                    </div>
+                  </button>
 
-                  {/* Color dot + PIN badge */}
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                    <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${grad} opacity-60`} />
-                    {m?.pin && e.status === "published" && (
-                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-400/20">
-                        PIN: {m.pin}
-                      </span>
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-slate-600">
+                    <div className="rounded-md border border-slate-200 bg-slate-50 p-2.5"><Clock className="mb-1 h-3.5 w-3.5 text-[#0067b8]" />{exam.duration_minutes} min</div>
+                    <div className="rounded-md border border-slate-200 bg-slate-50 p-2.5"><Target className="mb-1 h-3.5 w-3.5 text-[#0067b8]" />Próg {exam.passing_score}%</div>
+                    <div className="rounded-md border border-slate-200 bg-slate-50 p-2.5"><HelpCircle className="mb-1 h-3.5 w-3.5 text-[#0067b8]" />{itemMeta.questionCount} pytań</div>
+                    <div className="rounded-md border border-slate-200 bg-slate-50 p-2.5"><Users className="mb-1 h-3.5 w-3.5 text-[#0067b8]" />{itemMeta.attemptCount} podejść</div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
+                    <div>
+                      <div className="text-[10px] uppercase tracking-[0.08em] text-slate-400">Aktywny PIN</div>
+                      <div className="mt-0.5 font-semibold tracking-[0.12em] text-slate-900">{itemMeta.pin ?? "Brak"}</div>
+                    </div>
+                    {itemMeta.pin && (
+                      <button type="button" onClick={() => void copyPin(exam.id)} className="grid h-8 w-8 place-items-center rounded-md border border-slate-200 bg-white text-slate-600" aria-label="Kopiuj PIN">
+                        <Copy className="h-3.5 w-3.5" />
+                      </button>
                     )}
                   </div>
 
-                  {/* Title + status */}
-                  <div className="flex items-start justify-between gap-2 mt-1">
-                    <h3 className="text-sm font-semibold text-white group-hover:text-sky-300 transition leading-snug line-clamp-2 pr-14">{e.title}</h3>
-                    <span className={`shrink-0 text-[9px] px-2 py-0.5 rounded-full font-mono tracking-wider ${
-                      e.status === "published"
-                        ? "bg-emerald-500/15 text-emerald-300 border border-emerald-400/20"
-                        : "bg-amber-500/10 text-amber-300 border border-amber-400/15"
-                    }`}>{e.status.toUpperCase()}</span>
-                  </div>
-
-                  {/* Subject badge */}
-                  {e.subject && (
-                    <div className="mt-2">
-                      <span className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-gradient-to-r ${grad} text-white/90 font-medium`}>
-                        <BookOpen className="w-3 h-3"/>{e.subject}
-                      </span>
+                  <div className="mt-auto pt-4">
+                    <div className="mb-3 flex items-center gap-2 text-[10px] text-slate-400">
+                      <CalendarDays className="h-3.5 w-3.5" />
+                      {new Date(exam.created_at).toLocaleString("pl-PL", { dateStyle: "short", timeStyle: "short" })}
                     </div>
-                  )}
-
-                  {/* Meta row - expanded */}
-                  <div className="mt-3 flex items-center gap-3 text-[11px] text-white/50 font-mono flex-wrap">
-                    <span className="inline-flex items-center gap-1"><Clock className="w-3 h-3 text-cyan-400"/>{e.duration_minutes} min</span>
-                    <span className="inline-flex items-center gap-1"><Target className="w-3 h-3 text-amber-400"/>{e.passing_score}%</span>
-                    <span className="inline-flex items-center gap-1"><HelpCircle className="w-3 h-3 text-sky-400"/>{m?.questionCount ?? "…"}</span>
-                    <span className="inline-flex items-center gap-1"><Users className="w-3 h-3 text-violet-400"/>{m?.attemptCount ?? "…"}</span>
-                  </div>
-
-                  {/* Date */}
-                  <div className="mt-2 flex items-center gap-1 text-[10px] text-white/30 font-mono">
-                    <CalendarDays className="w-3 h-3"/>{new Date(e.created_at).toLocaleString("pl-PL", { dateStyle: "short", timeStyle: "short" })}
-                  </div>
-
-                  {/* Progress bar (attempts / question count) */}
-                  {m && m.questionCount > 0 && (
-                    <div className="mt-2.5 h-1 rounded-full bg-white/5 overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-accent to-blue-500 transition-all"
-                        style={{ width: `${Math.min(100, ((m.attemptCount ?? 0) / m.questionCount) * 100)}%` }} />
+                    <div className="grid grid-cols-5 gap-1 border-t border-slate-200 pt-3">
+                      <ActionButton label={exam.status === "published" ? "Schowaj" : "Publikuj"} onClick={() => void toggleStatus(exam)} disabled={busy} icon={exam.status === "published" ? EyeOff : Eye} />
+                      <ActionButton label="Kopiuj PIN" onClick={() => void copyPin(exam.id)} disabled={!itemMeta.pin || busy} icon={Copy} />
+                      <ActionButton label="Nowy PIN" onClick={() => void regeneratePin(exam.id)} disabled={busy} icon={RefreshCw} />
+                      <ActionButton label="Edytuj" onClick={() => setOpenExamId(exam.id)} disabled={busy} icon={Edit3} />
+                      <ActionButton label="Usuń" onClick={() => void remove(exam)} disabled={busy} icon={Trash2} danger />
                     </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="mt-3 pt-3 border-t border-white/5 flex gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(ev) => ev.stopPropagation()}>
-                    <button onClick={() => toggleStatus(e)} title={e.status==="published"?"Schowaj":"Publikuj"}
-                      className={`p-1.5 rounded-md text-xs transition ${e.status==="published" ? "hover:bg-amber-500/15 text-amber-400" : "hover:bg-emerald-500/15 text-emerald-400"}`}>
-                      {e.status==="published" ? <EyeOff className="w-3.5 h-3.5"/> : <Eye className="w-3.5 h-3.5"/>}
-                    </button>
-                    <button onClick={() => copyPin(e.id)} title="Kopiuj PIN"
-                      className="p-1.5 rounded-md hover:bg-white/10 text-white/50 hover:text-white transition">
-                      <Copy className="w-3.5 h-3.5"/>
-                    </button>
-                    <button onClick={() => regeneratePin(e.id)} title="Generuj nowy PIN"
-                      className="p-1.5 rounded-md hover:bg-cyan-500/15 text-cyan-400 transition">
-                      <RefreshCw className="w-3.5 h-3.5"/>
-                    </button>
-                    <button onClick={() => setOpenExamId(e.id)} title="Edytuj"
-                      className="p-1.5 rounded-md hover:bg-sky-500/15 text-sky-400 transition">
-                      <Edit3 className="w-3.5 h-3.5"/>
-                    </button>
-                    <button onClick={() => remove(e)} title="Usuń"
-                      className="p-1.5 rounded-md hover:bg-pink-500/15 text-pink-400 transition ml-auto">
-                      <Trash2 className="w-3.5 h-3.5"/>
-                    </button>
                   </div>
-                </div>
+                </article>
               );
             })}
           </div>
         )}
+      </section>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value }: { icon: ComponentType<{ className?: string }>; label: string; value: string | number }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 place-items-center rounded-md bg-slate-100 text-slate-800"><Icon className="h-5 w-5" /></div>
+        <div><div className="text-xl font-semibold tracking-tight text-slate-950">{value}</div><div className="text-xs text-slate-500">{label}</div></div>
       </div>
     </div>
   );
 }
 
-function StatCard({ icon: Icon, label, value, color }: { icon: React.ComponentType<{className?:string}>; label: string; value: string | number; color: string }) {
+function ActionButton({ label, icon: Icon, onClick, disabled, danger = false }: { label: string; icon: ComponentType<{ className?: string }>; onClick: () => void; disabled?: boolean; danger?: boolean }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur p-4 group hover:border-white/20 transition">
-      <div className={`absolute -right-6 -top-6 w-16 h-16 rounded-full bg-gradient-to-br ${color} opacity-20 blur-xl group-hover:opacity-30 transition`} />
-      <div className="relative flex items-center gap-3">
-        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${color} grid place-items-center shadow-lg`}>
-          <Icon className="w-4 h-4 text-white" />
-        </div>
-        <div>
-          <div className="text-lg font-display font-bold text-white">{value}</div>
-          <div className="text-[10px] text-white/50">{label}</div>
-        </div>
-      </div>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={label}
+      aria-label={label}
+      className={`grid h-9 place-items-center rounded-md transition disabled:cursor-not-allowed disabled:opacity-35 ${danger ? "text-red-600 hover:bg-red-50" : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"}`}
+    >
+      <Icon className="h-4 w-4" />
+    </button>
   );
 }
 
-/* shared */
-export const inputCls = "w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-cyan-400/50 text-white placeholder-white/30 text-sm";
-export function Field({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
-  return <label className="block mb-3"><span className="text-[11px] uppercase tracking-wider text-white/50 mb-1.5 block font-mono">{label}</span>{children}</label>;
+export const inputCls = "h-11 w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8]";
+
+export function Field({ label, children }: { label: ReactNode; children: ReactNode }) {
+  return <label className="mb-4 block"><span className="mb-2 block text-sm font-medium text-slate-700">{label}</span>{children}</label>;
 }
-export function Modal({ title, children, onClose, wide }: { title: string; children: React.ReactNode; onClose: () => void; wide?: boolean }) {
+
+export function Modal({ title, children, onClose, wide }: { title: string; children: ReactNode; onClose: () => void; wide?: boolean }) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4" onClick={onClose}>
-      <div className={`w-full ${wide?"max-w-2xl":"max-w-md"} bg-[#0b1224] border border-white/10 rounded-2xl p-6 max-h-[90vh] overflow-auto`} onClick={(e)=>e.stopPropagation()}>
-        <h3 className="text-lg font-display font-bold text-white mb-4">{title}</h3>
-        {children}
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4 backdrop-blur-sm" onMouseDown={onClose} role="presentation">
+      <div className={`w-full ${wide ? "max-w-3xl" : "max-w-lg"} max-h-[92vh] overflow-auto rounded-xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.24)]`} onMouseDown={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={title}>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
+          <h3 className="text-lg font-semibold tracking-tight text-slate-950">{title}</h3>
+          <button type="button" onClick={onClose} className="grid h-9 w-9 place-items-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-50" aria-label="Zamknij">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="p-5 sm:p-6">{children}</div>
       </div>
     </div>
   );
