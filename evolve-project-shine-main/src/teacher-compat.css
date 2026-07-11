@@ -1,0 +1,48 @@
+/* Compatibility layer for legacy teacher modules that share the Egzaminy modal.
+   Scoped to the exact overlay class so Radix and public-site dialogs remain untouched. */
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] {
+  background: #0b1224 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #f8fafc;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] > .sticky {
+  background: rgba(11, 18, 36, 0.97) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h1,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h2,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h3,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h4 {
+  color: #f8fafc !important;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] label > span {
+  color: #cbd5e1 !important;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] input,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] textarea,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] select {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f8fafc !important;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] input::placeholder,
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] textarea::placeholder {
+  color: rgba(226, 232, 240, 0.45) !important;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] button[aria-label="Zamknij"] {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #e2e8f0 !important;
+}
