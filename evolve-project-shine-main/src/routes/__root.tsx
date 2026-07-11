@@ -8,7 +8,7 @@ import {
   Scripts,
   useLocation,
 } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import ultraCss from "../ultra.css?url";
@@ -16,26 +16,22 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
-import { TeacherCommandCenter } from "@/components/teacher/TeacherCommandCenter";
-import { TeacherOperationalEnhancements } from "@/components/teacher/TeacherOperationalEnhancements";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+    <div className="flex min-h-screen items-center justify-center bg-[#f7f7f8] px-4 text-slate-950">
+      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">Błąd 404</div>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight">Nie znaleziono strony</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
+          Adres może być nieaktualny albo strona została przeniesiona.
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="mt-6 inline-flex h-11 items-center justify-center rounded-md bg-slate-950 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+        >
+          Wróć na stronę główną
+        </Link>
       </div>
     </div>
   );
@@ -46,13 +42,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+    <div className="flex min-h-screen items-center justify-center bg-[#f7f7f8] px-4 text-slate-950">
+      <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">Błąd aplikacji</div>
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight">Nie udało się załadować widoku</h1>
+        <p className="mt-3 text-sm leading-6 text-slate-600">
+          Spróbuj ponownie. Jeżeli problem będzie się powtarzał, wróć do strony głównej.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -60,15 +55,15 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex h-11 items-center justify-center rounded-md bg-[#0067b8] px-4 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
           >
-            Try again
+            Spróbuj ponownie
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
           >
-            Go home
+            Strona główna
           </a>
         </div>
       </div>
@@ -82,7 +77,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
-      { name: "description", content: "EduNex - bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem." },
+      {
+        name: "description",
+        content: "EduNex - bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem.",
+      },
       { name: "author", content: "EduNex" },
       { property: "og:title", content: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
       { property: "og:description", content: "Bezpieczne egzaminy online z AI i monitoringiem." },
@@ -119,14 +117,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap",
       },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      {
-        rel: "stylesheet",
-        href: ultraCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "stylesheet", href: ultraCss },
     ],
   }),
   shellComponent: RootShell,
@@ -140,8 +132,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="pl">
       <head>
         <HeadContent />
-        <script defer src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-        <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XXXXXXXXXX');` }} />
       </head>
       <body>
         {children}
@@ -154,26 +144,24 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useLocation();
-  const isTeacherRoute = location.pathname.includes("/teacher");
+  const reduceMotion = useReducedMotion();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              initial={reduceMotion ? false : { opacity: 0, y: 8, filter: "blur(3px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5, filter: "blur(2px)" }}
+              transition={{ duration: reduceMotion ? 0.08 : 0.24, ease: [0.22, 1, 0.36, 1] }}
             >
               <Outlet />
             </motion.div>
           </AnimatePresence>
           <RouteTransitionOverlay />
-          {isTeacherRoute && <TeacherCommandCenter />}
-          {isTeacherRoute && <TeacherOperationalEnhancements />}
           <ConfirmDialog />
         </AuthProvider>
       </ThemeProvider>
