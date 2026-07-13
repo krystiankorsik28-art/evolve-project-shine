@@ -12,7 +12,7 @@ type Mounts = {
 };
 
 export function LandingEnhancements() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounts, setMounts] = useState<Mounts>({ product: null, ai: null, enterprise: null });
 
   useEffect(() => {
@@ -47,9 +47,9 @@ export function LandingEnhancements() {
 
   return (
     <>
-      {mounts.product && createPortal(<ProductDemoSection isLight={theme === "light"} />, mounts.product)}
-      {mounts.ai && createPortal(<AIShowcaseSection isLight={theme === "light"} />, mounts.ai)}
-      {mounts.enterprise && createPortal(<EnterpriseTrustSection isLight={theme === "light"} />, mounts.enterprise)}
+      {mounts.product && createPortal(<ProductDemoSection isLight={resolvedTheme === "light"} />, mounts.product)}
+      {mounts.ai && createPortal(<AIShowcaseSection isLight={resolvedTheme === "light"} />, mounts.ai)}
+      {mounts.enterprise && createPortal(<EnterpriseTrustSection isLight={resolvedTheme === "light"} />, mounts.enterprise)}
     </>
   );
 }

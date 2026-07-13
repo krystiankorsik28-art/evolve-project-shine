@@ -69,8 +69,8 @@ export function Sprawdziany() {
     <div className="space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-display font-bold text-white inline-flex items-center gap-2"><ScrollText className="w-5 h-5 text-amber-400"/>Sprawdziany</h2>
-          <p className="text-xs text-white/50">Szybkie kartkówki i testy dla Twojej klasy.</p>
+          <h2 className="text-xl font-display font-bold text-slate-950 inline-flex items-center gap-2"><ScrollText className="w-5 h-5 text-amber-500"/>Sprawdziany</h2>
+          <p className="text-xs text-slate-500">Szybkie kartkówki i testy dla Twojej klasy.</p>
         </div>
         <button onClick={createNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white text-sm font-semibold shadow-lg shadow-accent/20">
           <Plus className="w-4 h-4"/>Nowy sprawdzian
@@ -81,37 +81,37 @@ export function Sprawdziany() {
       <div className="flex gap-2">
         {(["all", "published", "draft"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-mono tracking-wide transition ${filter === f ? "bg-amber-500/20 text-amber-300 border border-amber-400/30" : "bg-white/5 text-white/50 border border-white/10 hover:bg-white/10"}`}>
+            className={`px-3 py-1.5 rounded-lg text-xs font-mono tracking-wide transition ${filter === f ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:text-slate-900"}`}>
             {f === "all" ? "WSZYSTKIE" : f === "published" ? "OPUBLIKOWANE" : "SZKICE"}
           </button>
         ))}
       </div>
 
       {/* Lista */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-4">
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         {loading ? (
-          <div className="py-12 text-center text-white/40"><Loader2 className="w-5 h-5 animate-spin inline"/></div>
+          <div className="py-12 text-center text-slate-400"><Loader2 className="w-5 h-5 animate-spin inline"/></div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-12 text-white/40 text-sm border border-dashed border-white/10 rounded-xl">
-            Brak sprawdzianów. <button onClick={createNew} className="text-amber-300 hover:text-amber-200 underline">Utwórz pierwszy</button>
+          <div className="text-center py-12 text-slate-500 text-sm border border-dashed border-slate-300 bg-slate-50 rounded-xl">
+            Brak sprawdzianów. <button onClick={createNew} className="text-amber-700 hover:text-amber-800 underline">Utwórz pierwszy</button>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {filtered.map((e) => (
-              <div key={e.id} className="group p-4 rounded-xl bg-white/[0.02] border border-white/10 hover:border-amber-400/30 hover:bg-amber-500/[0.03] transition cursor-pointer" onClick={() => setOpenExamId(e.id)}>
+              <div key={e.id} className="group p-4 rounded-xl bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50/40 hover:shadow-md transition cursor-pointer" onClick={() => setOpenExamId(e.id)}>
                 <div className="flex items-start justify-between mb-2">
-                  <div className="text-sm font-semibold text-white group-hover:text-amber-300 transition">{e.title}</div>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono shrink-0 ${e.status==="published"?"bg-emerald-500/15 text-emerald-300 border border-emerald-400/20":"bg-white/5 text-white/50 border border-white/10"}`}>{e.status.toUpperCase()}</span>
+                  <div className="text-sm font-semibold text-slate-900 group-hover:text-amber-700 transition">{e.title}</div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono shrink-0 ${e.status==="published"?"bg-emerald-50 text-emerald-700 border border-emerald-200":"bg-slate-100 text-slate-600 border border-slate-200"}`}>{e.status.toUpperCase()}</span>
                 </div>
-                {e.subject && <div className="text-[11px] text-white/40 mb-2 font-mono">{e.subject}</div>}
-                <div className="flex items-center gap-3 text-[11px] text-white/40 font-mono">
+                {e.subject && <div className="text-[11px] text-slate-500 mb-2 font-mono">{e.subject}</div>}
+                <div className="flex items-center gap-3 text-[11px] text-slate-500 font-mono">
                   <span>{e.duration_minutes} min</span>
                   <span>Próg: {e.passing_score}%</span>
                 </div>
-                <div className="mt-3 pt-3 border-t border-white/5 flex gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(ev) => ev.stopPropagation()}>
-                  <button onClick={() => toggleStatus(e)} title={e.status==="published"?"Schowaj":"Publikuj"} className="p-1.5 rounded hover:bg-white/10 text-white/60 hover:text-white"><Eye className="w-3.5 h-3.5"/></button>
-                  <button onClick={() => setOpenExamId(e.id)} title="Edytuj" className="p-1.5 rounded hover:bg-white/10 text-amber-300"><Edit3 className="w-3.5 h-3.5"/></button>
-                  <button onClick={() => remove(e)} title="Usuń" className="p-1.5 rounded hover:bg-white/10 text-pink-400"><Trash2 className="w-3.5 h-3.5"/></button>
+                <div className="mt-3 pt-3 border-t border-slate-100 flex gap-1 opacity-0 group-hover:opacity-100 transition" onClick={(ev) => ev.stopPropagation()}>
+                  <button onClick={() => toggleStatus(e)} title={e.status==="published"?"Schowaj":"Publikuj"} className="p-1.5 rounded text-slate-500 hover:bg-slate-100 hover:text-slate-900"><Eye className="w-3.5 h-3.5"/></button>
+                  <button onClick={() => setOpenExamId(e.id)} title="Edytuj" className="p-1.5 rounded text-amber-600 hover:bg-amber-50 hover:text-amber-800"><Edit3 className="w-3.5 h-3.5"/></button>
+                  <button onClick={() => remove(e)} title="Usuń" className="p-1.5 rounded text-rose-500 hover:bg-rose-50 hover:text-rose-700"><Trash2 className="w-3.5 h-3.5"/></button>
                 </div>
               </div>
             ))}

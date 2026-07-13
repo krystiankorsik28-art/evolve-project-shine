@@ -54,6 +54,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Pulpit } from "@/components/teacher/PulpitSection";
 import { AISection } from "@/components/teacher/AISection";
 import { Certyfikaty } from "@/components/teacher/CertyfikatySection";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { useTheme } from "@/lib/theme";
 
 const lazyLoad = <T,>(fn: () => Promise<T>, name: keyof T) =>
   lazy(async () => {
@@ -181,6 +183,12 @@ const allNav = navGroups.flatMap((group) => group.items);
 
 export const Route = createFileRoute("/_authenticated/teacher")({
   component: TeacherPanel,
+  validateSearch: (search: Record<string, unknown>): { tab?: TabKey } => ({
+    tab:
+      typeof search.tab === "string" && allNav.some((item) => item.k === search.tab)
+        ? (search.tab as TabKey)
+        : undefined,
+  }),
   head: () => ({ meta: [{ title: "Panel nauczyciela | EduNex" }] }),
 });
 
@@ -277,12 +285,14 @@ function TeacherSidebar({
 }
 
 function TeacherPanel() {
+  const { resolvedTheme } = useTheme();
+  const routeSearch = Route.useSearch();
   const navigate = useNavigate();
   const reduceMotion = useReducedMotion();
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("nauczycielu");
   const [exams, setExams] = useState<Exam[]>([]);
-  const [tab, setTab] = useState<TabKey>("pulpit");
+  const [tab, setTab] = useState<TabKey>(routeSearch.tab ?? "pulpit");
   const [attempts, setAttempts] = useState(0);
   const [pendingReview, setPendingReview] = useState(0);
   const [activePins, setActivePins] = useState(0);
@@ -296,7 +306,8 @@ function TeacherPanel() {
 
   const loadDashboard = useCallback(
     async (manual = false) => {
-      manual ? setRefreshing(true) : setLoading(true);
+      if (manual) setRefreshing(true);
+      else setLoading(true);
       setLoadError(null);
 
       try {
@@ -396,6 +407,7 @@ function TeacherPanel() {
 
   const selectTab = (nextTab: TabKey) => {
     setTab(nextTab);
+    void navigate({ to: "/teacher", search: { tab: nextTab }, replace: true });
     setSearch("");
     setSidebarOpen(false);
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
@@ -453,8 +465,8 @@ function TeacherPanel() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f7fa] text-slate-950">
-      <Toaster position="top-center" theme="light" richColors />
+    <div className="teacher-shell min-h-screen bg-[#f5f7fa] text-slate-950 dark:bg-[#111214] dark:text-slate-100">
+      <Toaster position="top-center" theme={resolvedTheme} richColors />
 
       <AnimatePresence>
         {sidebarOpen && (
@@ -489,14 +501,14 @@ function TeacherPanel() {
         )}
       </AnimatePresence>
 
-      <div className="lg:grid lg:min-h-screen lg:grid-cols-[280px_1fr]">
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
-          <div className="sticky top-0 h-screen">
+      <div className="lg:min-h-screen">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] overflow-hidden border-r border-slate-200 bg-white lg:block">
+          <div className="h-full">
             <TeacherSidebar tab={tab} email={email} onSelect={selectTab} onLogout={logout} />
           </div>
         </aside>
 
-        <main className="min-w-0">
+        <main className="min-w-0 lg:ml-[280px]">
           <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
             <div className="flex min-h-16 flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:px-7">
               <div className="flex min-w-0 items-center gap-3">
@@ -555,6 +567,7 @@ function TeacherPanel() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  <ThemeSwitcher compact />
                   <div className={`inline-flex h-10 items-center gap-2 rounded-md border px-3 text-xs font-medium ${online ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>
                     {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
                     {online ? "Online" : "Brak sieci"}
@@ -611,6 +624,7 @@ function TeacherPanel() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.section
                 key={tab}
+                className="teacher-module-light"
                 initial={reduceMotion ? false : { opacity: 0, y: 12, filter: "blur(3px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(2px)" }}

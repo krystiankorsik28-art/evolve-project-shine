@@ -16,8 +16,7 @@ export default function NavBar2() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("");
-  const { theme, setTheme } = useTheme();
-  const [isLight, setIsLight] = useState(theme === "light");
+  const { resolvedTheme, setTheme } = useTheme();
   const navigate = useNavigate();
   const headerRef = useRef<HTMLElement>(null);
 
@@ -48,9 +47,7 @@ export default function NavBar2() {
   }, []);
 
   const toggleTheme = () => {
-    const next = !isLight;
-    setIsLight(next);
-    setTheme(next ? "light" : "dark");
+    setTheme(resolvedTheme === "light" ? "dark" : "light");
   };
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
@@ -141,7 +138,7 @@ export default function NavBar2() {
             onMouseLeave={(e) => { e.currentTarget.style.background = "oklch(1 0 0 / 0.04)"; e.currentTarget.style.color = "oklch(1 0 0 / 0.5)"; }}
             aria-label="Przełącz motyw"
           >
-            {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+            {resolvedTheme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
 
           <Link

@@ -532,20 +532,20 @@ body,
     radial-gradient(ellipse at 80% 80%, oklch(0.60 0.12 200 / 0.03) 0%, transparent 50%),
     oklch(0.97 0.01 260);
 }
-.light .text-white { color: oklch(0.06 0.04 264) !important; }
-.light .text-white\/90 { color: color-mix(in oklab, oklch(0.06 0.04 264) 90%, transparent) !important; }
-.light .text-white\/80 { color: color-mix(in oklab, oklch(0.06 0.04 264) 80%, transparent) !important; }
-.light .text-white\/70 { color: color-mix(in oklab, oklch(0.06 0.04 264) 70%, transparent) !important; }
-.light .text-white\/60 { color: color-mix(in oklab, oklch(0.06 0.04 264) 60%, transparent) !important; }
-.light .text-white\/50 { color: color-mix(in oklab, oklch(0.06 0.04 264) 50%, transparent) !important; }
-.light .text-white\/40 { color: color-mix(in oklab, oklch(0.06 0.04 264) 40%, transparent) !important; }
-.light .text-white\/30 { color: color-mix(in oklab, oklch(0.06 0.04 264) 30%, transparent) !important; }
-.light .border-white\/\[0\.06\] { border-color: oklch(0.85 0.02 260) !important; }
-.light .border-white\/\[0\.08\] { border-color: oklch(0.85 0.02 260) !important; }
-.light .bg-white\/\[0\.02\] { background: oklch(0.15 0.02 260 / 0.05) !important; }
-.light .bg-white\/\[0\.03\] { background: oklch(0.15 0.02 260 / 0.08) !important; }
-.light .bg-white\/\[0\.04\] { background: oklch(0.15 0.02 260 / 0.1) !important; }
-.light .bg-black { background: oklch(0.97 0.01 260) !important; }
+.light [data-light-adaptive] .text-white { color: oklch(0.06 0.04 264) !important; }
+.light [data-light-adaptive] .text-white\/90 { color: color-mix(in oklab, oklch(0.06 0.04 264) 90%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/80 { color: color-mix(in oklab, oklch(0.06 0.04 264) 80%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/70 { color: color-mix(in oklab, oklch(0.06 0.04 264) 70%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/60 { color: color-mix(in oklab, oklch(0.06 0.04 264) 60%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/50 { color: color-mix(in oklab, oklch(0.06 0.04 264) 50%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/40 { color: color-mix(in oklab, oklch(0.06 0.04 264) 40%, transparent) !important; }
+.light [data-light-adaptive] .text-white\/30 { color: color-mix(in oklab, oklch(0.06 0.04 264) 30%, transparent) !important; }
+.light [data-light-adaptive] .border-white\/\[0\.06\] { border-color: oklch(0.85 0.02 260) !important; }
+.light [data-light-adaptive] .border-white\/\[0\.08\] { border-color: oklch(0.85 0.02 260) !important; }
+.light [data-light-adaptive] .bg-white\/\[0\.02\] { background: oklch(0.15 0.02 260 / 0.05) !important; }
+.light [data-light-adaptive] .bg-white\/\[0\.03\] { background: oklch(0.15 0.02 260 / 0.08) !important; }
+.light [data-light-adaptive] .bg-white\/\[0\.04\] { background: oklch(0.15 0.02 260 / 0.1) !important; }
+.light [data-light-adaptive] .bg-black { background: oklch(0.97 0.01 260) !important; }
 .light .card-premium { background: oklch(1 0 0); border-color: oklch(0.85 0.02 260); }
 .light .card-premium:hover { border-color: oklch(0.60 0.12 200 / 0.2); }
 .light .nav-premium.scrolled { background: oklch(0.97 0.01 260 / 0.85); border-bottom-color: oklch(0.85 0.02 260); }

@@ -2,13 +2,23 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
+import { getGeminiLiteModel, getGeminiTextModel } from "./gemini-models";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const getModel = (m = "gemini-1.5-flash") => {
+const getModel = (m = getGeminiTextModel()) => {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("Brak GEMINI_API_KEY");
   return createGeminiProvider(key)(m);
 };
+
+const SUPPORTED_QUESTION_TYPES = [
+  "single_choice",
+  "multiple_choice",
+  "true_false",
+  "short_answer",
+  "essay",
+] as const;
+type SupportedQuestionType = (typeof SUPPORTED_QUESTION_TYPES)[number];
 
 /* ============ AI TUTOR (streaming chat) ============ */
 
@@ -121,7 +131,8 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
     const systemInstruction = sys;
-    const chatMessages = (history ?? []).map((m) => ({
+    type GeminiPart = { text: string } | { inline_data: { mime_type: string; data: string } };
+    const chatMessages: Array<{ role: string; parts: GeminiPart[] }> = (history ?? []).map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
@@ -132,10 +143,10 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
     chatMessages.push({ role: "user", parts: userParts });
 
     const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1/models/${getGeminiTextModel()}:generateContent`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": key },
         body: JSON.stringify({
           system_instruction: { parts: [{ text: systemInstruction }] },
           contents: chatMessages,
@@ -157,17 +168,26 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
     // Handle function call from Gemini
     if (part?.functionCall?.name === "createExam") {
       const args = part.functionCall.args as {
-        title: string; subject: string; description?: string;
+        title: string; subject: string; category?: string; description?: string;
         duration_minutes?: number; passing_score?: number;
         questions: Array<{ prompt: string; question_type: string; points: number; difficulty?: string; options?: unknown; correct_answer?: unknown; explanation?: string | null }>;
       };
 
       const cat = args.category === "sprawdzian" ? "sprawdzian" : "egzamin";
-      const { data: exam, error } = await supabase.from("exams").insert({
-        title: args.title, subject: args.subject, description: args.description || null,
-        duration_minutes: args.duration_minutes || 45, passing_score: args.passing_score ?? 50,
-        status: "draft", created_by: userId, category: cat,
-      }).select("id").single();
+      const { data: exam, error } = await supabase
+        .from("exams")
+        .insert({
+          title: args.title,
+          subject: args.subject,
+          description: args.description || null,
+          duration_minutes: args.duration_minutes || 45,
+          passing_score: args.passing_score ?? 50,
+          status: "draft",
+          created_by: userId,
+          category: cat,
+        } as never)
+        .select("id")
+        .single();
       if (error) throw new Error("Nie udało się utworzyć egzaminu: " + error.message);
 
       const normalizeOpts = (qtype: string, opts: unknown): string[] => {
@@ -193,12 +213,18 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
       let qCount = 0;
       for (const q of (args.questions ?? [])) {
         if (!q.prompt || !q.question_type) continue;
-        const opts = normalizeOpts(q.question_type, q.options);
-        const ans = normalizeAnswer(q.question_type, q.correct_answer, opts);
+        const questionType: SupportedQuestionType = SUPPORTED_QUESTION_TYPES.includes(
+          q.question_type as SupportedQuestionType,
+        )
+          ? (q.question_type as SupportedQuestionType)
+          : "short_answer";
+        const difficulty = q.difficulty === "easy" || q.difficulty === "hard" ? q.difficulty : "medium";
+        const opts = normalizeOpts(questionType, q.options);
+        const ans = normalizeAnswer(questionType, q.correct_answer, opts);
         const { error: qErr } = await supabase.from("questions").insert({
           exam_id: exam.id, order_index: qCount,
-          prompt: q.prompt, question_type: q.question_type, points: q.points ?? 1,
-          difficulty: q.difficulty || "medium",
+          prompt: q.prompt, question_type: questionType, points: q.points ?? 1,
+          difficulty,
           options: opts, correct_answer: ans,
           explanation: q.explanation ?? null,
         });
@@ -264,7 +290,7 @@ export const aiGradeAnswer = createServerFn({ method: "POST" })
     const q = (ans as unknown as { questions: Qref }).questions;
     const max = Number(q.points || 1);
 
-    const model = getModel("google/gemini-1.5-flash");
+    const model = getModel();
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -318,7 +344,7 @@ export const aiPredictStudent = createServerFn({ method: "POST" })
       return { exam: ex?.title, subject: ex?.subject, score: a.score, max: a.max_score, status: a.status, when: a.started_at };
     });
 
-    const model = getModel("google/gemini-1.5-flash");
+    const model = getModel();
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -368,7 +394,7 @@ export const aiGenerateLessonPlan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => PlanIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel("google/gemini-1.5-flash");
+    const model = getModel();
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -421,7 +447,7 @@ export const aiLibrarySearch = createServerFn({ method: "POST" })
       .limit(20);
     if (!rows || rows.length === 0) return { results: [], answer: "Nie znaleziono materiałów." };
 
-    const model = getModel("google/gemini-1.5-flash-lite");
+    const model = getModel(getGeminiLiteModel());
     const { text } = await generateText({
       model,
       prompt: `Jesteś bibliotekarzem AI. Odpowiedz krótko po polsku na pytanie nauczyciela na podstawie fragmentów biblioteki.

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
+import { getGeminiImageModel, getGeminiTextModel } from "./gemini-models";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const ALL_TYPES = [
@@ -33,7 +34,7 @@ export const aiQuestionFromPhoto = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-1.5-flash");
+    const model = createGeminiProvider(key)(getGeminiTextModel());
 
     const { experimental_output } = await generateText({
       model,
@@ -75,7 +76,7 @@ export const aiGenerateQuestions = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-1.5-flash");
+    const model = createGeminiProvider(key)(getGeminiTextModel());
 
     const typeHelp = `Dozwolone typy: ${data.types.join(", ")}.
 Reguły struktury (POLE options/correct_answer):
@@ -122,25 +123,44 @@ export const aiGenerateQuestionImage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1/models/${getGeminiImageModel()}:generateContent`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": key,
+        },
         body: JSON.stringify({
-          instances: [{ prompt: `Edukacyjna ilustracja: ${data.prompt}. Czysty styl, dobra czytelność, bez tekstu.` }],
-          parameters: { sampleCount: 1 },
+          contents: [
+            {
+              parts: [
+                {
+                  text: `Edukacyjna ilustracja: ${data.prompt}. Czysty styl, dobra czytelność, bez tekstu.`,
+                },
+              ],
+            },
+          ],
+          generationConfig: {
+            responseModalities: ["IMAGE"],
+          },
         }),
       },
     );
 
     if (!res.ok) {
       const t = await res.text();
-      throw new Error(`Imagen API error ${res.status}: ${t.slice(0, 200)}`);
+      throw new Error(`Gemini Image API ${res.status}: ${t.slice(0, 200)}`);
     }
-    const json = await res.json() as { predictions?: Array<{ bytesBase64Encoded?: string }> };
-    const b64 = json.predictions?.[0]?.bytesBase64Encoded;
-    if (!b64) throw new Error("Brak obrazka w odpowiedzi Imagen");
-    return { image_url: `data:image/png;base64,${b64}` };
+    const json = (await res.json()) as {
+      candidates?: Array<{
+        content?: {
+          parts?: Array<{ inlineData?: { data?: string; mimeType?: string } }>;
+        };
+      }>;
+    };
+    const image = json.candidates?.[0]?.content?.parts?.find((part) => part.inlineData?.data)?.inlineData;
+    if (!image?.data) throw new Error("Brak obrazka w odpowiedzi Gemini");
+    return { image_url: `data:${image.mimeType || "image/png"};base64,${image.data}` };
   });
 
 /* ───────────────────────────── AI EXAM AGENT ─────────────────────────────
@@ -166,7 +186,7 @@ export const aiExamAgent = createServerFn({ method: "POST" })
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
-    const model = createGeminiProvider(key)("gemini-1.5-flash");
+    const model = createGeminiProvider(key)(getGeminiTextModel());
 
     const imgCount = data.images_base64.length;
     const imageHelp = imgCount > 0
@@ -223,7 +243,7 @@ export const aiGradeEssay = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
-    const model = createGeminiProvider(key)("gemini-1.5-flash");
+    const model = createGeminiProvider(key)(getGeminiTextModel());
 
     const { experimental_output } = await generateText({
       model,
@@ -279,7 +299,7 @@ export const aiExamInsights = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const key = process.env.GEMINI_API_KEY;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
-    const model = createGeminiProvider(key)("gemini-1.5-flash");
+    const model = createGeminiProvider(key)(getGeminiTextModel());
 
     const { experimental_output } = await generateText({
       model,
