@@ -489,14 +489,14 @@ function TeacherPanel() {
         )}
       </AnimatePresence>
 
-      <div className="lg:grid lg:min-h-screen lg:grid-cols-[280px_1fr]">
-        <aside className="hidden border-r border-slate-200 bg-white lg:block">
-          <div className="sticky top-0 h-screen">
+      <div className="lg:min-h-screen">
+        <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] overflow-hidden border-r border-slate-200 bg-white lg:block">
+          <div className="h-full">
             <TeacherSidebar tab={tab} email={email} onSelect={selectTab} onLogout={logout} />
           </div>
         </aside>
 
-        <main className="min-w-0">
+        <main className="min-w-0 lg:ml-[280px]">
           <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
             <div className="flex min-h-16 flex-col gap-3 px-4 py-3 sm:px-5 lg:flex-row lg:items-center lg:justify-between lg:px-7">
               <div className="flex min-w-0 items-center gap-3">
