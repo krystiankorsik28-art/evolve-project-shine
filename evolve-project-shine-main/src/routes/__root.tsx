@@ -18,6 +18,8 @@ import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
 import { AuthProvider } from "@/lib/auth/auth-context";
 
+const themeBootScript = `(function(){try{var t=localStorage.getItem('edunex.theme');if(t!=='light'&&t!=='dark'&&t!=='system')t='system';var r=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;var d=document.documentElement;d.classList.remove('light','dark');d.classList.add(r);d.dataset.theme=t;d.dataset.resolvedTheme=r;d.style.colorScheme=r;}catch(e){}})();`;
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f7f7f8] px-4 text-slate-950">
@@ -131,8 +133,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pl">
+    <html lang="pl" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
         <HeadContent />
       </head>
       <body>

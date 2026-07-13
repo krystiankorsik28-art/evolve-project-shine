@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { getGeminiTextModel } from "@/lib/gemini-models";
 
 /* =========================================================================
    STREAMING AI TUTOR (SSE, token po tokenie)
@@ -131,10 +132,13 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
           }));
 
           const upstream = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1/models/${getGeminiTextModel()}:streamGenerateContent?alt=sse`,
             {
               method: "POST",
-              headers: { "Content-Type": "application/json" },
+              headers: {
+                "Content-Type": "application/json",
+                "x-goog-api-key": GEMINI_API_KEY,
+              },
               body: JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstruction }] },
                 contents: chatMessages,

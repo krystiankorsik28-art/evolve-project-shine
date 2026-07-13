@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
+import { getGeminiLiteModel, getGeminiTextModel } from "./gemini-models";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /* =========================================================================
@@ -11,11 +12,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
    istniejących ai.functions.ts ani ai-advanced.functions.ts.
    ========================================================================= */
 
-const MODEL_FAST = "gemini-1.5-flash";
-const MODEL_LITE = "gemini-1.5-flash-8b";
-const MODEL_PRO = "gemini-1.5-pro";
+const MODEL_FAST = getGeminiTextModel;
+const MODEL_LITE = getGeminiLiteModel;
+const MODEL_PRO = getGeminiTextModel;
 
-function getModel(name: string = MODEL_FAST) {
+function getModel(name: string = MODEL_FAST()) {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new Error("Brak GEMINI_API_KEY");
   return createGeminiProvider(key)(name);
@@ -51,7 +52,7 @@ export const aiImproveQuestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => ImproveIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_FAST);
+    const model = getModel(MODEL_FAST());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -90,7 +91,7 @@ export const aiGenerateDistractors = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => DistractorsIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_LITE);
+    const model = getModel(MODEL_LITE());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -133,7 +134,7 @@ export const aiBloomTaxonomyQuestions = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => BloomIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_FAST);
+    const model = getModel(MODEL_FAST());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -186,7 +187,7 @@ export const aiQuestionVariants = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => VariantsIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_FAST);
+    const model = getModel(MODEL_FAST());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -223,7 +224,7 @@ export const aiExplainAnswer = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => ExplainIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_LITE);
+    const model = getModel(MODEL_LITE());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -264,7 +265,7 @@ export const aiSummarizeMaterial = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => SummarizeIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_FAST);
+    const model = getModel(MODEL_FAST());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -310,7 +311,7 @@ export const aiProofread = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) => ProofreadIn.parse(i))
   .handler(async ({ data }) => {
-    const model = getModel(MODEL_LITE);
+    const model = getModel(MODEL_LITE());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
@@ -359,7 +360,7 @@ export const aiExamInsights = createServerFn({ method: "POST" })
       pct: a.max_score ? Math.round(((a.score ?? 0) / a.max_score) * 100) : null,
     }));
 
-    const model = getModel(MODEL_PRO);
+    const model = getModel(MODEL_PRO());
     const { experimental_output } = await generateText({
       model,
       experimental_output: Output.object({
