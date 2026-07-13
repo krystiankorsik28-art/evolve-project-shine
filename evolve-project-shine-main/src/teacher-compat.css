@@ -1,48 +1,116 @@
-/* Compatibility layer for legacy teacher modules that share the Egzaminy modal.
-   Scoped to the exact overlay class so Radix and public-site dialogs remain untouched. */
+/* Light compatibility layer for legacy teacher modules.
+   It is scoped to the animated module surface, so the public site, auth pages,
+   teacher navigation and intentionally dark brand elements stay untouched. */
 
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] {
-  background: #0b1224 !important;
-  border-color: rgba(255, 255, 255, 0.12) !important;
-  color: #f8fafc;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] > .sticky {
-  background: rgba(11, 18, 36, 0.97) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h1,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h2,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h3,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] h4 {
-  color: #f8fafc !important;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] label > span {
-  color: #cbd5e1 !important;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] input,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] textarea,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] select {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
-  color: #f8fafc !important;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] input::placeholder,
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] textarea::placeholder {
-  color: rgba(226, 232, 240, 0.45) !important;
-}
-
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] select option {
-  background: #ffffff;
+.teacher-module-light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --color-fg: #0f172a;
+  --color-fg-muted: #64748b;
+  --color-fg-subtle: #94a3b8;
+  --border: #dbe3ee;
+  --surface: #ffffff;
+  --surface-elevated: #f8fafc;
+  --accent: #0067b8;
   color: #0f172a;
 }
 
-div.bg-slate-950\/45 > [role="dialog"][aria-modal="true"] button[aria-label="Zamknij"] {
-  background: rgba(255, 255, 255, 0.06) !important;
-  border-color: rgba(255, 255, 255, 0.14) !important;
-  color: #e2e8f0 !important;
+.teacher-module-light [class~="bg-white/5"],
+.teacher-module-light [class~="bg-white/10"],
+.teacher-module-light [class~="bg-white/15"],
+.teacher-module-light [class~="bg-white/20"],
+.teacher-module-light [class~="bg-white/[0.01]"],
+.teacher-module-light [class~="bg-white/[0.02]"],
+.teacher-module-light [class~="bg-white/[0.03]"],
+.teacher-module-light [class~="bg-white/[0.035]"],
+.teacher-module-light [class~="bg-white/[0.04]"],
+.teacher-module-light [class~="bg-white/[0.05]"],
+.teacher-module-light [class~="bg-white/[0.06]"],
+.teacher-module-light [class~="bg-black/10"],
+.teacher-module-light [class~="bg-black/15"] {
+  background-color: #ffffff !important;
+}
+
+.teacher-module-light [class~="border-white/5"],
+.teacher-module-light [class~="border-white/10"],
+.teacher-module-light [class~="border-white/15"],
+.teacher-module-light [class~="border-white/20"],
+.teacher-module-light [class~="border-white/8"],
+.teacher-module-light [class~="border-white/[0.05]"],
+.teacher-module-light [class~="border-white/[0.06]"],
+.teacher-module-light [class~="border-white/[0.08]"] {
+  border-color: #dbe3ee !important;
+}
+
+.teacher-module-light [class~="hover:bg-white/5"]:hover,
+.teacher-module-light [class~="hover:bg-white/10"]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.teacher-module-light [class~="text-white/20"] {
+  color: #94a3b8 !important;
+}
+
+.teacher-module-light [class~="text-white/75"] {
+  color: #475569 !important;
+}
+
+.teacher-module-light [class~="text-cyan-300"],
+.teacher-module-light [class~="text-cyan-300/70"],
+.teacher-module-light [class~="text-cyan-200"] {
+  color: #0369a1 !important;
+}
+
+.teacher-module-light [class~="text-emerald-300"],
+.teacher-module-light [class~="text-emerald-300/70"],
+.teacher-module-light [class~="text-emerald-200"] {
+  color: #047857 !important;
+}
+
+.teacher-module-light [class~="text-amber-300"],
+.teacher-module-light [class~="text-amber-300/70"],
+.teacher-module-light [class~="text-amber-200"] {
+  color: #a16207 !important;
+}
+
+.teacher-module-light [class~="text-violet-300"],
+.teacher-module-light [class~="text-violet-300/70"] {
+  color: #6d28d9 !important;
+}
+
+.teacher-module-light [class~="text-pink-400"] {
+  color: #e11d48 !important;
+}
+
+.teacher-module-light [class~="placeholder-white/30"]::placeholder,
+.teacher-module-light [class~="placeholder-white/40"]::placeholder {
+  color: #94a3b8 !important;
+}
+
+.teacher-module-light option[class~="bg-slate-900"],
+.teacher-module-light select option {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Preserve accessible white labels on strong action and brand surfaces. */
+.teacher-module-light :is(button, a)[class~="text-white"][class*="bg-"],
+.teacher-module-light [class~="bg-slate-950"][class~="text-white"],
+.teacher-module-light [class~="bg-slate-950"] [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+.teacher-module-light :is(button, a)[class*="bg-gradient"] [class~="text-white"] {
+  color: #ffffff !important;
+}
+
+.teacher-module-light input,
+.teacher-module-light textarea,
+.teacher-module-light select {
+  color-scheme: light;
+}
+
+.teacher-module-light :focus-visible {
+  outline: 2px solid #0067b8;
+  outline-offset: 2px;
 }

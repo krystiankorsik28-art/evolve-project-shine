@@ -611,6 +611,7 @@ function TeacherPanel() {
             <AnimatePresence mode="wait" initial={false}>
               <motion.section
                 key={tab}
+                className="teacher-module-light light"
                 initial={reduceMotion ? false : { opacity: 0, y: 12, filter: "blur(3px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8, filter: "blur(2px)" }}

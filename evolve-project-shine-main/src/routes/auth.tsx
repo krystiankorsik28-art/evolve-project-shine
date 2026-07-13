@@ -11,10 +11,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  BadgeCheck,
   Building2,
-  Check,
   Eye,
   EyeOff,
+  Fingerprint,
   GraduationCap,
   HelpCircle,
   KeyRound,
@@ -23,7 +24,9 @@ import {
   LockKeyhole,
   Mail,
   School,
+  Server,
   ShieldCheck,
+  UserCheck,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -82,15 +85,27 @@ const roles: Array<{
 ];
 
 const providers: Array<{ id: Provider; label: string }> = [
-  { id: "microsoft", label: "Kontynuuj przez Microsoft" },
+  { id: "microsoft", label: "Zaloguj się przez Microsoft 365" },
   { id: "google", label: "Google" },
   { id: "github", label: "GitHub" },
 ];
 
 const platformPoints = [
-  "Jedno konto i właściwy panel po zalogowaniu",
-  "Logowanie służbowe Microsoft, Google lub e-mail",
-  "Oddzielna, uproszczona ścieżka egzaminu dla ucznia",
+  {
+    icon: UserCheck,
+    title: "Dostęp dopasowany do roli",
+    text: "Po zalogowaniu otwieramy właściwy panel nauczyciela, ucznia, rodzica lub dyrekcji.",
+  },
+  {
+    icon: Fingerprint,
+    title: "Logowanie instytucjonalne",
+    text: "Obsługa kont Microsoft 365, Google oraz bezpiecznego dostępu przez e-mail.",
+  },
+  {
+    icon: Server,
+    title: "Jedno środowisko szkoły",
+    text: "Egzaminy, klasy, raporty i komunikacja pozostają w jednym uporządkowanym systemie.",
+  },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -231,16 +246,14 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
             onChange(next);
             if (next[index]) {
               const sibling = event.currentTarget.parentElement?.children[index + 1] as
-                | HTMLInputElement
-                | undefined;
+                HTMLInputElement | undefined;
               sibling?.focus();
             }
           }}
           onKeyDown={(event) => {
             if (event.key === "Backspace" && !digit && index > 0) {
               const sibling = event.currentTarget.parentElement?.children[index - 1] as
-                | HTMLInputElement
-                | undefined;
+                HTMLInputElement | undefined;
               sibling?.focus();
             }
           }}
@@ -253,7 +266,11 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
 
 function RoleSelector({ role, onChange }: { role: RoleId; onChange: (role: RoleId) => void }) {
   return (
-    <div className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 sm:grid-cols-4" role="group" aria-label="Typ konta">
+    <div
+      className="grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 sm:grid-cols-4"
+      role="group"
+      aria-label="Typ konta"
+    >
       {roles.map((item) => {
         const Icon = item.icon;
         const selected = item.id === role;
@@ -322,7 +339,9 @@ function AuthPage() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const resolvedRole = (user?.app_metadata?.role || user?.user_metadata?.role || role) as RoleId;
+      const resolvedRole = (user?.app_metadata?.role ||
+        user?.user_metadata?.role ||
+        role) as RoleId;
       toast.success("Zalogowano do EduNex");
       await navigate({ to: ROLE_DASHBOARD[resolvedRole] || ROLE_DASHBOARD[role], replace: true });
     } finally {
@@ -358,21 +377,23 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f8] text-slate-950">
+    <div className="min-h-screen bg-[#f5f7fa] text-slate-950">
       <Toaster position="top-center" theme="light" />
 
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
+      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-[68px] w-full max-w-7xl items-center justify-between px-5 sm:px-6 lg:px-8">
           <Link
             to="/"
             className="inline-flex items-center gap-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0067b8]/30"
           >
-            <span className="grid h-9 w-9 place-items-center rounded-md bg-slate-950 text-white">
-              <Layers3 className="h-4 w-4" />
+            <span className="grid h-10 w-10 place-items-center rounded-md bg-[#0b1730] text-white shadow-sm">
+              <Layers3 className="h-[18px] w-[18px]" />
             </span>
             <span>
-              <span className="block text-sm font-semibold leading-4">EduNex</span>
-              <span className="block text-xs text-slate-500">Portal dostępu</span>
+              <span className="block text-[15px] font-semibold leading-4">EduNex</span>
+              <span className="mt-0.5 block text-[11px] font-medium uppercase tracking-[0.08em] text-slate-500">
+                Portal dostępu
+              </span>
             </span>
           </Link>
 
@@ -388,68 +409,81 @@ function AuthPage() {
               to="/auth/register"
               className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
             >
-              Utwórz konto
+              Zarejestruj konto
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-6xl items-center px-4 py-8 sm:px-6 sm:py-12 lg:min-h-[calc(100vh-65px)] lg:px-8">
+      <main className="mx-auto flex w-full max-w-7xl items-center px-4 py-8 sm:px-6 sm:py-12 lg:min-h-[calc(100vh-69px)] lg:px-8">
         <motion.section
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.28 }}
-          className="grid w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.10)] lg:grid-cols-[0.76fr_1.24fr]"
+          className="grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.10)] lg:grid-cols-[0.9fr_1.1fr]"
         >
-          <aside className="border-b border-slate-200 bg-slate-50 p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-10">
+          <aside className="relative overflow-hidden border-b border-slate-200 bg-[#eef4fb] p-6 sm:p-8 lg:border-b-0 lg:border-r lg:p-10 xl:p-12">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-[#0067b8]/10 blur-3xl" />
             <div className="flex h-full flex-col">
-              <div>
-                <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+              <div className="relative">
+                <div className="inline-flex items-center gap-2 rounded-full border border-[#0067b8]/15 bg-white/70 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#005a9e]">
                   <ShieldCheck className="h-4 w-4 text-[#0067b8]" />
-                  EduNex Enterprise Access
+                  EduNex Identity
                 </div>
-                <h1 className="mt-5 max-w-md text-3xl font-semibold leading-tight tracking-tight text-slate-950 lg:text-4xl">
-                  Bezpieczny dostęp do cyfrowego środowiska szkoły.
+                <h1 className="mt-6 max-w-lg text-3xl font-semibold leading-[1.12] tracking-[-0.035em] text-slate-950 lg:text-[42px]">
+                  Bezpieczna przestrzeń pracy dla całej szkoły.
                 </h1>
-                <p className="mt-4 max-w-md text-sm leading-7 text-slate-600">
-                  Zaloguj się kontem placówki albo skorzystaj z uproszczonego wejścia ucznia do egzaminu.
+                <p className="mt-4 max-w-lg text-[15px] leading-7 text-slate-600">
+                  Jedno konto łączy użytkownika z właściwymi narzędziami, danymi i uprawnieniami
+                  placówki.
                 </p>
 
-                <div className="mt-8 space-y-4">
-                  {platformPoints.map((point) => (
-                    <div key={point} className="flex items-start gap-3 text-sm leading-6 text-slate-700">
-                      <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-slate-300 bg-white">
-                        <Check className="h-3 w-3 text-[#0067b8]" />
+                <div className="mt-8 space-y-3">
+                  {platformPoints.map(({ icon: Icon, title, text }) => (
+                    <div
+                      key={title}
+                      className="flex items-start gap-3 rounded-lg border border-white/80 bg-white/75 p-4 shadow-sm"
+                    >
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#0067b8]/10 text-[#0067b8]">
+                        <Icon className="h-[18px] w-[18px]" />
                       </span>
-                      <span>{point}</span>
+                      <span>
+                        <span className="block text-sm font-semibold text-slate-900">{title}</span>
+                        <span className="mt-1 block text-xs leading-5 text-slate-600">{text}</span>
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="mt-10 border-t border-slate-200 pt-5 lg:mt-auto">
-                <div className="flex items-center justify-between gap-4 text-xs text-slate-500">
+              <div className="relative mt-10 rounded-lg border border-slate-200/80 bg-white/70 p-4 lg:mt-auto">
+                <div className="flex items-center justify-between gap-4 text-xs text-slate-600">
                   <span className="inline-flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                    Usługa dostępna
+                    System operacyjny
                   </span>
-                  <span>edunex.pl</span>
+                  <span className="inline-flex items-center gap-1.5 font-medium text-slate-700">
+                    <BadgeCheck className="h-3.5 w-3.5 text-[#0067b8]" />
+                    Chronione połączenie
+                  </span>
                 </div>
               </div>
             </div>
           </aside>
 
-          <div className="p-5 sm:p-8 lg:p-10">
-            <div className="mx-auto w-full max-w-[500px]">
+          <div className="p-5 sm:p-8 lg:p-10 xl:p-12">
+            <div className="mx-auto w-full max-w-[520px]">
               <div>
-                <div className="text-sm font-semibold text-[#0067b8]">Logowanie</div>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
-                  {mode === "forgot" ? "Odzyskaj dostęp" : "Zaloguj się do EduNex"}
+                <div className="text-xs font-semibold uppercase tracking-[0.1em] text-[#0067b8]">
+                  Bezpieczne logowanie
+                </div>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-slate-950">
+                  {mode === "forgot" ? "Odzyskaj dostęp" : "Witaj ponownie"}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
                   {mode === "forgot"
                     ? "Podaj adres e-mail przypisany do konta."
-                    : "Wybierz typ konta i preferowaną metodę logowania."}
+                    : "Wybierz rolę i zaloguj się metodą używaną przez Twoją placówkę."}
                 </p>
               </div>
 
@@ -505,7 +539,9 @@ function AuthPage() {
                     <div className="grid gap-2">
                       <div className="text-sm font-medium text-slate-800">6-cyfrowy kod PIN</div>
                       <PinInput value={pinDigits} onChange={setPinDigits} />
-                      <div className="text-xs text-slate-500">Kod możesz również wkleić w całości.</div>
+                      <div className="text-xs text-slate-500">
+                        Kod możesz również wkleić w całości.
+                      </div>
                     </div>
 
                     <button
@@ -513,7 +549,11 @@ function AuthPage() {
                       disabled={pinLoading}
                       className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-[#0067b8] px-4 text-sm font-semibold text-white transition hover:bg-[#005a9e] disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {pinLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                      {pinLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <KeyRound className="h-4 w-4" />
+                      )}
                       Przejdź do egzaminu
                     </button>
                   </form>
@@ -524,10 +564,15 @@ function AuthPage() {
                         <button
                           type="button"
                           onClick={() => providerLogin(providers[0].id)}
-                          className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-md border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
+                          className="flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:border-[#0067b8] hover:bg-[#f5f9fd] focus:outline-none focus:ring-2 focus:ring-[#0067b8]/25"
                         >
-                          <ProviderMark provider="microsoft" />
-                          {providers[0].label}
+                          <span className="inline-flex items-center gap-3">
+                            <ProviderMark provider="microsoft" />
+                            {providers[0].label}
+                          </span>
+                          <span className="rounded-full bg-[#0067b8]/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-[#005a9e]">
+                            Zalecane
+                          </span>
                         </button>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -576,7 +621,11 @@ function AuthPage() {
                             className="rounded-md p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
                             aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
                           >
-                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            {showPassword ? (
+                              <EyeOff className="h-4 w-4" />
+                            ) : (
+                              <Eye className="h-4 w-4" />
+                            )}
                           </button>
                         }
                       />
@@ -616,8 +665,19 @@ function AuthPage() {
                 )}
               </section>
 
-              <div className="mt-7 border-t border-slate-200 pt-5 text-xs leading-5 text-slate-500">
-                Logując się, potwierdzasz zapoznanie z zasadami dostępu. Informacje o prywatności i RODO są dostępne w{" "}
+              <div className="mt-7 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                Nie masz jeszcze konta?{" "}
+                <Link
+                  to="/auth/register"
+                  className="font-semibold text-[#0067b8] hover:text-[#004f8b]"
+                >
+                  Rozpocznij rejestrację
+                </Link>
+              </div>
+
+              <div className="mt-5 border-t border-slate-200 pt-5 text-xs leading-5 text-slate-500">
+                Logując się, potwierdzasz zapoznanie z zasadami dostępu. Informacje o prywatności i
+                RODO są dostępne w{" "}
                 <Link to="/dokumenty" className="font-semibold text-slate-700 hover:text-slate-950">
                   dokumentach EduNex
                 </Link>
