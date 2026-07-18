@@ -9,9 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PomocRouteImport } from './routes/pomoc'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as ModulyRouteImport } from './routes/moduly'
+import { Route as EdziennikRouteImport } from './routes/edziennik'
+import { Route as EDziennikRouteImport } from './routes/e-dziennik'
 import { Route as DokumentyRouteImport } from './routes/dokumenty'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as CentrumDokumentowRouteImport } from './routes/centrum-dokumentow'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -27,16 +32,38 @@ import { Route as AuthRegisterRouteImport } from './routes/auth.register'
 import { Route as AuthParentRouteImport } from './routes/auth.parent'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthAdminRouteImport } from './routes/auth.admin'
+import { Route as ApiDocumentTemplatesRouteImport } from './routes/api/document-templates'
 import { Route as ApiAiTutorStreamRouteImport } from './routes/api/ai-tutor-stream'
+import { Route as ApiAiHealthRouteImport } from './routes/api/ai-health'
 import { Route as AuthenticatedTeacherRouteImport } from './routes/_authenticated.teacher'
 import { Route as AuthenticatedParentRouteImport } from './routes/_authenticated.parent'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as StudentExamAttemptIdRouteImport } from './routes/student.exam.$attemptId'
 import { Route as ApiAdminFixAuthRouteImport } from './routes/api/admin/fix-auth'
 
+const PomocRoute = PomocRouteImport.update({
+  id: '/pomoc',
+  path: '/pomoc',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModulyRoute = ModulyRouteImport.update({
+  id: '/moduly',
+  path: '/moduly',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EdziennikRoute = EdziennikRouteImport.update({
+  id: '/edziennik',
+  path: '/edziennik',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EDziennikRoute = EDziennikRouteImport.update({
+  id: '/e-dziennik',
+  path: '/e-dziennik',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DokumentyRoute = DokumentyRouteImport.update({
@@ -47,6 +74,11 @@ const DokumentyRoute = DokumentyRouteImport.update({
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CentrumDokumentowRoute = CentrumDokumentowRouteImport.update({
+  id: '/centrum-dokumentow',
+  path: '/centrum-dokumentow',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -123,9 +155,19 @@ const AuthAdminRoute = AuthAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthRoute,
 } as any)
+const ApiDocumentTemplatesRoute = ApiDocumentTemplatesRouteImport.update({
+  id: '/api/document-templates',
+  path: '/api/document-templates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAiTutorStreamRoute = ApiAiTutorStreamRouteImport.update({
   id: '/api/ai-tutor-stream',
   path: '/api/ai-tutor-stream',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAiHealthRoute = ApiAiHealthRouteImport.update({
+  id: '/api/ai-health',
+  path: '/api/ai-health',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTeacherRoute = AuthenticatedTeacherRouteImport.update({
@@ -157,13 +199,20 @@ const ApiAdminFixAuthRoute = ApiAdminFixAuthRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
+  '/e-dziennik': typeof EDziennikRoute
+  '/edziennik': typeof EdziennikRoute
+  '/moduly': typeof ModulyRoute
   '/onboarding': typeof OnboardingRoute
+  '/pomoc': typeof PomocRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/parent': typeof AuthenticatedParentRoute
   '/teacher': typeof AuthenticatedTeacherRoute
+  '/api/ai-health': typeof ApiAiHealthRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
+  '/api/document-templates': typeof ApiDocumentTemplatesRoute
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
@@ -182,13 +231,20 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
+  '/e-dziennik': typeof EDziennikRoute
+  '/edziennik': typeof EdziennikRoute
+  '/moduly': typeof ModulyRoute
   '/onboarding': typeof OnboardingRoute
+  '/pomoc': typeof PomocRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/parent': typeof AuthenticatedParentRoute
   '/teacher': typeof AuthenticatedTeacherRoute
+  '/api/ai-health': typeof ApiAiHealthRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
+  '/api/document-templates': typeof ApiDocumentTemplatesRoute
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
@@ -209,13 +265,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
+  '/e-dziennik': typeof EDziennikRoute
+  '/edziennik': typeof EdziennikRoute
+  '/moduly': typeof ModulyRoute
   '/onboarding': typeof OnboardingRoute
+  '/pomoc': typeof PomocRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/parent': typeof AuthenticatedParentRoute
   '/_authenticated/teacher': typeof AuthenticatedTeacherRoute
+  '/api/ai-health': typeof ApiAiHealthRoute
   '/api/ai-tutor-stream': typeof ApiAiTutorStreamRoute
+  '/api/document-templates': typeof ApiDocumentTemplatesRoute
   '/auth/admin': typeof AuthAdminRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/parent': typeof AuthParentRoute
@@ -236,13 +299,20 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
+    | '/e-dziennik'
+    | '/edziennik'
+    | '/moduly'
     | '/onboarding'
+    | '/pomoc'
     | '/admin'
     | '/parent'
     | '/teacher'
+    | '/api/ai-health'
     | '/api/ai-tutor-stream'
+    | '/api/document-templates'
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
@@ -261,13 +331,20 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
+    | '/e-dziennik'
+    | '/edziennik'
+    | '/moduly'
     | '/onboarding'
+    | '/pomoc'
     | '/admin'
     | '/parent'
     | '/teacher'
+    | '/api/ai-health'
     | '/api/ai-tutor-stream'
+    | '/api/document-templates'
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
@@ -287,13 +364,20 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
+    | '/e-dziennik'
+    | '/edziennik'
+    | '/moduly'
     | '/onboarding'
+    | '/pomoc'
     | '/_authenticated/admin'
     | '/_authenticated/parent'
     | '/_authenticated/teacher'
+    | '/api/ai-health'
     | '/api/ai-tutor-stream'
+    | '/api/document-templates'
     | '/auth/admin'
     | '/auth/callback'
     | '/auth/parent'
@@ -314,10 +398,17 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  CentrumDokumentowRoute: typeof CentrumDokumentowRoute
   DemoRoute: typeof DemoRouteWithChildren
   DokumentyRoute: typeof DokumentyRoute
+  EDziennikRoute: typeof EDziennikRoute
+  EdziennikRoute: typeof EdziennikRoute
+  ModulyRoute: typeof ModulyRoute
   OnboardingRoute: typeof OnboardingRoute
+  PomocRoute: typeof PomocRoute
+  ApiAiHealthRoute: typeof ApiAiHealthRoute
   ApiAiTutorStreamRoute: typeof ApiAiTutorStreamRoute
+  ApiDocumentTemplatesRoute: typeof ApiDocumentTemplatesRoute
   StudentDashboardRoute: typeof StudentDashboardRoute
   VerifySerialRoute: typeof VerifySerialRoute
   ApiAdminFixAuthRoute: typeof ApiAdminFixAuthRoute
@@ -326,11 +417,39 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pomoc': {
+      id: '/pomoc'
+      path: '/pomoc'
+      fullPath: '/pomoc'
+      preLoaderRoute: typeof PomocRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moduly': {
+      id: '/moduly'
+      path: '/moduly'
+      fullPath: '/moduly'
+      preLoaderRoute: typeof ModulyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/edziennik': {
+      id: '/edziennik'
+      path: '/edziennik'
+      fullPath: '/edziennik'
+      preLoaderRoute: typeof EdziennikRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/e-dziennik': {
+      id: '/e-dziennik'
+      path: '/e-dziennik'
+      fullPath: '/e-dziennik'
+      preLoaderRoute: typeof EDziennikRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dokumenty': {
@@ -345,6 +464,13 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/centrum-dokumentow': {
+      id: '/centrum-dokumentow'
+      path: '/centrum-dokumentow'
+      fullPath: '/centrum-dokumentow'
+      preLoaderRoute: typeof CentrumDokumentowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -452,11 +578,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAdminRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/api/document-templates': {
+      id: '/api/document-templates'
+      path: '/api/document-templates'
+      fullPath: '/api/document-templates'
+      preLoaderRoute: typeof ApiDocumentTemplatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ai-tutor-stream': {
       id: '/api/ai-tutor-stream'
       path: '/api/ai-tutor-stream'
       fullPath: '/api/ai-tutor-stream'
       preLoaderRoute: typeof ApiAiTutorStreamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ai-health': {
+      id: '/api/ai-health'
+      path: '/api/ai-health'
+      fullPath: '/api/ai-health'
+      preLoaderRoute: typeof ApiAiHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/teacher': {
@@ -553,10 +693,17 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  CentrumDokumentowRoute: CentrumDokumentowRoute,
   DemoRoute: DemoRouteWithChildren,
   DokumentyRoute: DokumentyRoute,
+  EDziennikRoute: EDziennikRoute,
+  EdziennikRoute: EdziennikRoute,
+  ModulyRoute: ModulyRoute,
   OnboardingRoute: OnboardingRoute,
+  PomocRoute: PomocRoute,
+  ApiAiHealthRoute: ApiAiHealthRoute,
   ApiAiTutorStreamRoute: ApiAiTutorStreamRoute,
+  ApiDocumentTemplatesRoute: ApiDocumentTemplatesRoute,
   StudentDashboardRoute: StudentDashboardRoute,
   VerifySerialRoute: VerifySerialRoute,
   ApiAdminFixAuthRoute: ApiAdminFixAuthRoute,

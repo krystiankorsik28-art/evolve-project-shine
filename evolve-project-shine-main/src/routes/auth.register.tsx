@@ -513,11 +513,16 @@ function RegisterPanel() {
                   "Potwierdź adres e-mail",
                   "Otwórz wiadomość od EduNex i kliknij bezpieczny link.",
                 ],
-                ["2", `Weryfikacja roli: ${activeRole.shortLabel}`, activeRole.approval],
                 [
-                  "3",
-                  "Wejdź do panelu",
-                  "Po akceptacji roli system automatycznie otworzy właściwe środowisko.",
+                  "2",
+                  "Poznajmy Twój sposób pracy",
+                  "Po potwierdzeniu odpowiesz na kilka krótkich pytań, a EduNex dopasuje pierwszy widok.",
+                ],
+                ["3", `Weryfikacja roli: ${activeRole.shortLabel}`, activeRole.approval],
+                [
+                  "4",
+                  "Wejdź do właściwego panelu",
+                  "Po akceptacji roli system automatycznie otworzy bezpieczne środowisko.",
                 ],
               ].map(([number, title, description]) => (
                 <div
@@ -575,7 +580,7 @@ function RegisterPanel() {
 
           <div className="flex items-center gap-2 sm:gap-5">
             <Link
-              to="/dokumenty"
+              to="/pomoc"
               className="hidden items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 sm:inline-flex"
             >
               <HelpCircle className="h-4 w-4" />

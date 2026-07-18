@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  Activity,
   ArrowLeft,
   ArrowRight,
   Bell,
@@ -13,7 +14,10 @@ import {
   LayoutDashboard,
   Loader2,
   Megaphone,
+  MessageSquareText,
   ShieldCheck,
+  Smartphone,
+  Sparkles,
   TrendingUp,
   UserCheck,
   Users,
@@ -25,11 +29,11 @@ export const Route = createFileRoute("/edziennik")({
   component: Edziennik,
   head: () => ({
     meta: [
-      { title: "E-dziennik — EduNex" },
+      { title: "NexDziennik — e-dziennik od EduNex" },
       {
         name: "description",
         content:
-          "Centrum E-dziennika EduNex: klasy, lekcje, frekwencja, oceny, zadania i komunikacja szkoły.",
+          "NexDziennik to własny e-dziennik EduNex: klasy, lekcje, frekwencja, oceny, zadania i komunikacja szkoły.",
       },
     ],
   }),
@@ -111,6 +115,24 @@ const initialCounts = Object.fromEntries(metrics.map((metric) => [metric.table, 
   number | null
 >;
 
+const PRODUCT_VALUES = [
+  {
+    icon: Activity,
+    title: "Jeden rytm dnia",
+    description: "Plan lekcji, obecności, oceny i zadania układają się w czytelną oś pracy.",
+  },
+  {
+    icon: MessageSquareText,
+    title: "Komunikacja z kontekstem",
+    description: "Wiadomość zawsze dotyczy właściwej klasy, ucznia albo wydarzenia.",
+  },
+  {
+    icon: Smartphone,
+    title: "Działa na każdym ekranie",
+    description: "Nauczyciel, uczeń i rodzic widzą dokładnie to, czego potrzebują.",
+  },
+] as const;
+
 function Edziennik() {
   const [counts, setCounts] = useState<Record<TableName, number | null>>(initialCounts);
   const [loading, setLoading] = useState(true);
@@ -167,12 +189,12 @@ function Edziennik() {
             className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-white/10 dark:bg-[#202123] dark:text-slate-200 dark:hover:bg-[#2a2b32]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Strona główna
+            EduNex
           </Link>
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold text-emerald-800 sm:inline-flex dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200">
               <ShieldCheck className="h-4 w-4" />
-              Moduł operacyjny EduNex
+              Własny produkt EduNex
             </span>
             <ThemeSwitcher />
           </div>
@@ -182,15 +204,15 @@ function Edziennik() {
           <div className="grid lg:grid-cols-[1fr_340px]">
             <div className="p-7 sm:p-9 lg:p-10">
               <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8] dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-200">
-                <GraduationCap className="h-3.5 w-3.5" />
-                E-dziennik
+                <Sparkles className="h-3.5 w-3.5" />
+                NexDziennik · by EduNex
               </div>
               <h1 className="mt-5 max-w-3xl text-4xl font-semibold tracking-[-0.05em] sm:text-5xl lg:text-6xl">
-                Centrum codziennej pracy szkoły.
+                E-dziennik, który nie przeszkadza w prowadzeniu szkoły.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-400 sm:text-lg">
-                Jeden widok dla klas, lekcji, frekwencji, ocen, zadań, wydarzeń i komunikacji — z
-                bezpośrednim przejściem do narzędzi nauczyciela.
+                NexDziennik łączy plan, klasy, frekwencję, oceny, zadania, wydarzenia i komunikację.
+                Mniej przełączania kart, więcej spokojnej pracy z uczniem.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link
@@ -198,7 +220,7 @@ function Edziennik() {
                   search={{ tab: "edziennik" }}
                   className="inline-flex h-11 items-center gap-2 rounded-lg bg-[#0067b8] px-5 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
                 >
-                  Otwórz E-dziennik
+                  Otwórz NexDziennik
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
@@ -211,9 +233,15 @@ function Edziennik() {
             </div>
 
             <div className="border-t border-slate-200 bg-slate-50 p-7 dark:border-white/10 dark:bg-[#202123] lg:border-l lg:border-t-0">
-              <LayoutDashboard className="h-5 w-5 text-[#0067b8] dark:text-[#10a37f]" />
+              <div className="flex items-center justify-between">
+                <LayoutDashboard className="h-5 w-5 text-[#0067b8] dark:text-[#10a37f]" />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-200">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Online
+                </span>
+              </div>
               <div className="mt-7 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
-                Status danych
+                Moduły z danymi
               </div>
               <div className="mt-3 flex items-end gap-3">
                 <div className="text-5xl font-semibold tracking-[-0.06em]">
@@ -224,8 +252,8 @@ function Edziennik() {
                 </div>
               </div>
               <p className="mt-5 text-sm leading-6 text-slate-600 dark:text-slate-400">
-                Pusty moduł jest gotowy do pracy — pojawią się w nim dane po dodaniu klas, lekcji
-                lub ocen.
+                Każdy moduł działa w tym samym modelu ról EduNex. Pusty widok jest gotowy do pracy
+                po dodaniu klas, lekcji lub ocen.
               </p>
             </div>
           </div>
@@ -238,7 +266,38 @@ function Edziennik() {
           </div>
         )}
 
-        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mt-6 grid gap-4 md:grid-cols-3">
+          {PRODUCT_VALUES.map(({ icon: Icon, title, description }) => (
+            <article
+              key={title}
+              className="rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-sm dark:border-white/10"
+            >
+              <Icon className="h-5 w-5 text-blue-300" />
+              <h2 className="mt-5 text-lg font-semibold">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-300">{description}</p>
+            </article>
+          ))}
+        </section>
+
+        <div className="mb-4 mt-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#0067b8] dark:text-blue-300">
+              Moduły NexDziennika
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] sm:text-3xl">
+              Cała szkoła w jednym spójnym systemie.
+            </h2>
+          </div>
+          <Link
+            to="/pomoc"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#0067b8] hover:text-[#004f8b] dark:text-blue-300"
+          >
+            Zobacz pomoc do NexDziennika
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric) => {
             const Icon = metric.icon;
             const value = counts[metric.table];
@@ -282,6 +341,32 @@ function Edziennik() {
               </article>
             );
           })}
+        </section>
+
+        <section className="my-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-[#17181b]">
+          <div className="grid lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="p-7 sm:p-9">
+              <p className="text-xs font-semibold uppercase tracking-[0.13em] text-[#0067b8] dark:text-blue-300">
+                Gotowy na spokojniejszy dzień?
+              </p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em]">
+                Uruchom NexDziennik w panelu nauczyciela.
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-400">
+                Zacznij od klas i planu, a później dołącz oceny, frekwencję, komunikację oraz
+                raporty — bez zmiany środowiska.
+              </p>
+            </div>
+            <div className="border-t border-slate-200 p-7 dark:border-white/10 lg:border-l lg:border-t-0 lg:p-9">
+              <Link
+                to="/auth/teacher"
+                className="inline-flex h-12 items-center gap-2 rounded-lg bg-[#0067b8] px-5 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
+              >
+                Zacznij jako nauczyciel
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
     </div>

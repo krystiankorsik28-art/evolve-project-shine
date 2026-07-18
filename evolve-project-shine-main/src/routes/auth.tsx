@@ -689,7 +689,7 @@ function AuthPage() {
 
           <div className="flex items-center gap-2 sm:gap-5">
             <Link
-              to="/dokumenty"
+              to="/pomoc"
               className="hidden items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 sm:inline-flex"
             >
               <HelpCircle className="h-4 w-4" />

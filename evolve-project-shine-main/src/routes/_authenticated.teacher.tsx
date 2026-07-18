@@ -169,7 +169,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Organizacja",
     items: [
-      { k: "edziennik", l: "E-dziennik", i: Globe },
+      { k: "edziennik", l: "NexDziennik", i: Globe },
       { k: "eksport", l: "Eksport", i: Database },
       { k: "ogloszenia", l: "Ogłoszenia", i: Megaphone },
       { k: "wiadomosci", l: "Wiadomości", i: MessageCircle },
@@ -218,13 +218,18 @@ function TeacherSidebar({
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="border-b border-slate-200 p-5">
-        <Link to="/" className="flex items-center gap-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0067b8]/30">
+        <Link
+          to="/"
+          className="flex items-center gap-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0067b8]/30"
+        >
           <div className="grid h-10 w-10 place-items-center rounded-md bg-slate-950 text-white">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
             <div className="font-semibold text-slate-950">EduNex</div>
-            <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">Panel nauczyciela</div>
+            <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">
+              Panel nauczyciela
+            </div>
           </div>
         </Link>
       </div>
@@ -233,7 +238,9 @@ function TeacherSidebar({
         <div className="space-y-5">
           {navGroups.map((group) => (
             <div key={group.label}>
-              <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">{group.label}</div>
+              <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+                {group.label}
+              </div>
               <div className="space-y-1">
                 {group.items.map((item) => {
                   const Icon = item.i;
@@ -253,7 +260,9 @@ function TeacherSidebar({
                       <Icon className="h-4 w-4 shrink-0" />
                       <span className="flex-1 truncate">{item.l}</span>
                       {item.badge && (
-                        <span className={`rounded px-1.5 py-0.5 text-[9px] font-semibold ${active ? "bg-white/15 text-white" : "bg-blue-50 text-blue-800"}`}>
+                        <span
+                          className={`rounded px-1.5 py-0.5 text-[9px] font-semibold ${active ? "bg-white/15 text-white" : "bg-blue-50 text-blue-800"}`}
+                        >
                           {item.badge}
                         </span>
                       )}
@@ -268,8 +277,12 @@ function TeacherSidebar({
 
       <div className="border-t border-slate-200 p-4">
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">Zalogowane konto</div>
-          <div className="mt-1 truncate text-sm font-semibold text-slate-950">{email || "Ładowanie konta..."}</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400">
+            Zalogowane konto
+          </div>
+          <div className="mt-1 truncate text-sm font-semibold text-slate-950">
+            {email || "Ładowanie konta..."}
+          </div>
         </div>
         <button
           type="button"
@@ -323,26 +336,30 @@ function TeacherPanel() {
 
         setEmail(user.email ?? "");
 
-        const [profileResult, examsResult, attemptsResult, pendingResult, pinsResult] = await Promise.all([
-          supabase
-            .from("profiles")
-            .select("display_name,first_name,last_name")
-            .eq("user_id", user.id)
-            .maybeSingle(),
-          supabase
-            .from("exams")
-            .select("id,title,subject,status,created_at,available_from,available_until")
-            .eq("created_by", user.id)
-            .order("created_at", { ascending: false })
-            .limit(100),
-          supabase.from("attempts").select("id", { count: "exact", head: true }),
-          supabase.from("attempts").select("id", { count: "exact", head: true }).eq("status", "submitted"),
-          supabase
-            .from("exam_pins")
-            .select("id", { count: "exact", head: true })
-            .eq("created_by", user.id)
-            .eq("active", true),
-        ]);
+        const [profileResult, examsResult, attemptsResult, pendingResult, pinsResult] =
+          await Promise.all([
+            supabase
+              .from("profiles")
+              .select("display_name,first_name,last_name")
+              .eq("user_id", user.id)
+              .maybeSingle(),
+            supabase
+              .from("exams")
+              .select("id,title,subject,status,created_at,available_from,available_until")
+              .eq("created_by", user.id)
+              .order("created_at", { ascending: false })
+              .limit(100),
+            supabase.from("attempts").select("id", { count: "exact", head: true }),
+            supabase
+              .from("attempts")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "submitted"),
+            supabase
+              .from("exam_pins")
+              .select("id", { count: "exact", head: true })
+              .eq("created_by", user.id)
+              .eq("active", true),
+          ]);
 
         const firstError =
           profileResult.error ||
@@ -358,7 +375,9 @@ function TeacherPanel() {
           profile?.display_name?.trim() ||
           [profile?.first_name, profile?.last_name].filter(Boolean).join(" ").trim();
         const metadataName =
-          user.user_metadata?.display_name ?? user.user_metadata?.full_name ?? user.email?.split("@")[0];
+          user.user_metadata?.display_name ??
+          user.user_metadata?.full_name ??
+          user.email?.split("@")[0];
 
         setDisplayName(profileName || metadataName || "nauczycielu");
         setExams((examsResult.data ?? []) as Exam[]);
@@ -368,7 +387,8 @@ function TeacherPanel() {
         setLastUpdated(new Date());
       } catch (error) {
         console.error(error);
-        const message = error instanceof Error ? error.message : "Nie udało się pobrać danych panelu.";
+        const message =
+          error instanceof Error ? error.message : "Nie udało się pobrać danych panelu.";
         setLoadError(message);
         if (manual) toast.error("Nie udało się odświeżyć panelu");
       } finally {
@@ -560,7 +580,9 @@ function TeacherPanel() {
                           );
                         })
                       ) : (
-                        <div className="px-3 py-3 text-sm text-slate-500">Brak pasującego modułu.</div>
+                        <div className="px-3 py-3 text-sm text-slate-500">
+                          Brak pasującego modułu.
+                        </div>
                       )}
                     </div>
                   )}
@@ -568,8 +590,14 @@ function TeacherPanel() {
 
                 <div className="flex items-center gap-2">
                   <ThemeSwitcher compact />
-                  <div className={`inline-flex h-10 items-center gap-2 rounded-md border px-3 text-xs font-medium ${online ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}>
-                    {online ? <Wifi className="h-3.5 w-3.5" /> : <WifiOff className="h-3.5 w-3.5" />}
+                  <div
+                    className={`inline-flex h-10 items-center gap-2 rounded-md border px-3 text-xs font-medium ${online ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-red-200 bg-red-50 text-red-800"}`}
+                  >
+                    {online ? (
+                      <Wifi className="h-3.5 w-3.5" />
+                    ) : (
+                      <WifiOff className="h-3.5 w-3.5" />
+                    )}
                     {online ? "Online" : "Brak sieci"}
                   </div>
                   <button
@@ -617,7 +645,9 @@ function TeacherPanel() {
                 {allNav.length} moduły w jednym obszarze roboczym
               </div>
               <div>
-                {lastUpdated ? `Dane zaktualizowane ${lastUpdated.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}` : "Ładowanie danych..."}
+                {lastUpdated
+                  ? `Dane zaktualizowane ${lastUpdated.toLocaleTimeString("pl-PL", { hour: "2-digit", minute: "2-digit" })}`
+                  : "Ładowanie danych..."}
               </div>
             </div>
 

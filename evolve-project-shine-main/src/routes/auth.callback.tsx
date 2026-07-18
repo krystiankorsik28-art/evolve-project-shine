@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { CheckCircle2, Clock3, Loader2, ShieldCheck, XCircle } from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, ShieldCheck, Sparkles, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { isPortalRole, resolveUserAccess, ROLE_DASHBOARD, ROLE_LABEL } from "@/lib/auth/access";
 
-type CallbackStatus = "loading" | "success" | "pending" | "error";
+type CallbackStatus = "loading" | "onboarding" | "success" | "pending" | "error";
 
 export const Route = createFileRoute("/auth/callback")({
   component: AuthCallback,
@@ -32,6 +32,17 @@ function AuthCallback() {
           data: { user },
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Nie udało się pobrać użytkownika");
+
+        if (user.user_metadata?.onboarding_completed !== true) {
+          setStatus("onboarding");
+          setMessage(
+            "Adres został potwierdzony. Za chwilę zadamy kilka krótkich pytań i przygotujemy Twój pierwszy widok EduNex.",
+          );
+          window.setTimeout(() => {
+            navigate({ to: "/onboarding", replace: true });
+          }, 750);
+          return;
+        }
 
         const intendedRoleValue = window.sessionStorage.getItem("edunex_intended_role");
         const intendedRole = isPortalRole(intendedRoleValue) ? intendedRoleValue : null;
@@ -71,11 +82,13 @@ function AuthCallback() {
   const Icon =
     status === "success"
       ? CheckCircle2
-      : status === "pending"
-        ? Clock3
-        : status === "error"
-          ? XCircle
-          : Loader2;
+      : status === "onboarding"
+        ? Sparkles
+        : status === "pending"
+          ? Clock3
+          : status === "error"
+            ? XCircle
+            : Loader2;
 
   return (
     <div className="grid min-h-screen place-items-center bg-[#f4f7fb] px-5 text-slate-950">
@@ -100,6 +113,7 @@ function AuthCallback() {
         </div>
         <h1 className="mt-6 text-3xl font-semibold">
           {status === "loading" && "Trwa weryfikacja"}
+          {status === "onboarding" && "Zacznijmy od krótkiego startu"}
           {status === "success" && "Dostęp potwierdzony"}
           {status === "pending" && "Dostęp oczekuje na akceptację"}
           {status === "error" && "Nie udało się zalogować"}
