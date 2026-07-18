@@ -4,47 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Route as rootRoute } from "./__root";
 import { AppShell } from "@/components/dashboard/AppShell";
 import { toast } from "sonner";
+import { ROLE_DASHBOARD, resolveUserAccess, type PortalRole } from "@/lib/auth/access";
 
 const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 const WARNING_MS = 60 * 1000;
 
-type DashboardRole = "student" | "teacher" | "parent" | "admin";
-
-const ROLE_DASHBOARD: Record<DashboardRole, string> = {
-  student: "/student/dashboard",
-  teacher: "/teacher",
-  parent: "/parent",
-  admin: "/admin",
-};
-
-function isDashboardRole(value: unknown): value is DashboardRole {
-  return value === "student" || value === "teacher" || value === "parent" || value === "admin";
-}
-
-async function resolveApprovedRole(userId: string, appMetadataRole: unknown): Promise<DashboardRole> {
-  const { data, error } = await supabase
-    .from("user_roles")
-    .select("role,approval_status")
-    .eq("user_id", userId);
-
-  if (error) {
-    console.error("Unable to resolve user role", error);
-  }
-
-  const approvedRoles = (data ?? [])
-    .filter((entry) => entry.approval_status === "approved")
-    .map((entry) => entry.role as DashboardRole);
-
-  if (approvedRoles.includes("admin")) return "admin";
-  if (approvedRoles.includes("teacher")) return "teacher";
-  if (approvedRoles.includes("student")) return "student";
-
-  // app_metadata is controlled by the authentication backend and is safe as a trusted fallback.
-  if (isDashboardRole(appMetadataRole)) return appMetadataRole;
-  return "student";
-}
-
-function roleCanOpenPath(role: DashboardRole, pathname: string) {
+function roleCanOpenPath(role: PortalRole, pathname: string) {
   if (pathname.startsWith("/admin")) return role === "admin";
   if (pathname.startsWith("/teacher")) return role === "teacher" || role === "admin";
   if (pathname.startsWith("/parent")) return role === "parent" || role === "admin";
@@ -63,7 +28,8 @@ export const Route = createRoute({
 
     if (error || !user) throw redirect({ to: "/auth", replace: true });
 
-    const role = await resolveApprovedRole(user.id, user.app_metadata?.role);
+    const { approvedRole: role } = await resolveUserAccess(user);
+    if (!role) throw redirect({ to: "/auth", replace: true });
     if (!roleCanOpenPath(role, location.pathname)) {
       throw redirect({ to: ROLE_DASHBOARD[role], replace: true });
     }

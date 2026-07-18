@@ -57,9 +57,6 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const existingCtx = useContext(AuthContext);
-  if (existingCtx) return <>{children}</>;
-
   const [state, setState] = useState<AuthState>({ user: null, session: null, isLoading: true, isAuthenticated: false });
   const [sessions, setSessions] = useState<Session[]>([]);
   const [devices, setDevices] = useState<AuthDevice[]>([]);
@@ -108,7 +105,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
       options: {
-        data: { role, ...metadata },
+        // The role in user metadata is only a registration request. Route access is
+        // resolved from user_roles/app_metadata, which the browser cannot approve.
+        data: { ...metadata, role, requested_role: role },
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
@@ -117,7 +116,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     setState({ user: null, session: null, isLoading: false, isAuthenticated: false });
   }, []);
 
@@ -306,7 +305,11 @@ export function useAuth() {
 
 function mapUser(session: any): AuthUser {
   const user = session.user;
-  const role = user?.user_metadata?.role || user?.app_metadata?.role || 'student';
+  const role =
+    user?.app_metadata?.role ||
+    user?.user_metadata?.requested_role ||
+    user?.user_metadata?.role ||
+    "student";
   return {
     id: user.id,
     email: user.email,
