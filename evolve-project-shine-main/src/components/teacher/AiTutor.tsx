@@ -115,14 +115,22 @@ export function AiTutor() {
   };
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages.length]);
+    const frame = window.requestAnimationFrame(() => {
+      const container = scrollRef.current;
+      container?.scrollTo({
+        top: container.scrollHeight,
+        behavior: busy ? "auto" : "smooth",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [busy, messages]);
 
   return (
-    <div className="grid lg:grid-cols-[280px_1fr] gap-4 h-[calc(100vh-180px)] min-h-[500px]">
+    <div className="grid min-h-0 gap-4 lg:h-[calc(100dvh-190px)] lg:min-h-[520px] lg:grid-cols-[280px_minmax(0,1fr)]">
       {/* Sidebar wątków */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col">
-        <div className="p-3 border-b border-white/5 space-y-2">
+      <div className="flex max-h-64 min-h-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] lg:max-h-none">
+        <div className="shrink-0 space-y-2 border-b border-white/5 p-3">
           <button onClick={newThread} className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-accent to-blue-500 hover:from-accent/80 hover:to-blue-500/80 text-white text-sm font-semibold">
             <Plus className="w-4 h-4"/>Nowa rozmowa
           </button>
@@ -130,7 +138,7 @@ export function AiTutor() {
             {SUBJECTS.map(s => <option key={s} value={s} className="bg-slate-900">{s || "Wszystkie przedmioty"}</option>)}
           </select>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 space-y-1 min-h-0">
+        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain p-2 [scrollbar-gutter:stable]">
           {threads.length === 0 && <div className="text-xs text-white/40 p-3">Brak rozmów. Zacznij nową.</div>}
           {threads.map(t => (
             <div key={t.id} className={`group flex items-center gap-1 rounded-lg ${activeId === t.id ? "bg-cyan-500/10 border border-accent/20" : "hover:bg-white/5 border border-transparent"}`}>
@@ -145,15 +153,18 @@ export function AiTutor() {
       </div>
 
       {/* Chat */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] flex flex-col">
-        <div className="p-4 border-b border-white/5 flex items-center gap-2">
+      <div className="flex h-[min(720px,calc(100dvh-180px))] min-h-[520px] min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] lg:h-auto lg:min-h-0">
+        <div className="flex shrink-0 items-center gap-2 border-b border-white/5 p-4">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent to-blue-500 grid place-items-center"><Brain className="w-5 h-5 text-white"/></div>
           <div>
             <div className="text-sm font-bold text-white">NexAi Tutor</div>
             <div className="text-[11px] text-white/40">Wytłumaczy każdy temat, krok po kroku. Po polsku.</div>
           </div>
         </div>
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
+        <div
+          ref={scrollRef}
+          className="min-h-0 flex-1 space-y-4 overflow-y-scroll overscroll-contain p-5 [scrollbar-gutter:stable]"
+        >
           {messages.length === 0 && (
             <div className="text-center py-12">
               <Sparkles className="w-12 h-12 text-cyan-400/40 mx-auto mb-3"/>
@@ -169,13 +180,13 @@ export function AiTutor() {
           )}
           {messages.map((m, i) => (
             <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${m.role === "user" ? "bg-cyan-500 text-slate-900 font-medium" : "bg-white/[0.06] text-white/90 border border-white/10"}`}>
+              <div className={`min-w-0 max-w-[85%] overflow-hidden rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap [overflow-wrap:anywhere] ${m.role === "user" ? "bg-cyan-500 text-slate-900 font-medium" : "bg-white/[0.06] text-white/90 border border-white/10"}`}>
                 {m.content || <Loader2 className="w-4 h-4 animate-spin"/>}
               </div>
             </div>
           ))}
         </div>
-        <div className="p-3 border-t border-white/5">
+        <div className="shrink-0 border-t border-white/5 p-3">
           {image && (
             <div className="mb-2 flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10">
               <img src={image.preview} alt="" className="w-10 h-10 rounded object-cover"/>
