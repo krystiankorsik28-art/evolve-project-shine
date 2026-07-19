@@ -12,7 +12,7 @@ export function AppShell({ children, role = "student" }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   return (
-    <div className="h-screen flex flex-col bg-bg text-white overflow-hidden">
+    <div className="edunex-next-gen-panel h-screen flex flex-col bg-bg text-white overflow-hidden">
       <TopBar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} sidebarOpen={sidebarOpen} />
       <div className="flex-1 flex overflow-hidden">
         <Sidebar open={sidebarOpen} role={role} />

@@ -166,7 +166,7 @@ function AdminPanel() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 grid place-items-center">
+      <div className="edunex-next-gen-panel min-h-screen bg-slate-50 text-slate-900 grid place-items-center">
         <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm">
           <Loader2 className="h-4 w-4 animate-spin text-blue-700" />
           <span className="text-sm font-medium">Ładowanie konsoli administratora...</span>
@@ -176,7 +176,7 @@ function AdminPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f6f8fb] text-slate-950">
+    <div className="edunex-next-gen-panel min-h-screen bg-[#f6f8fb] text-slate-950">
       <Toaster richColors />
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">

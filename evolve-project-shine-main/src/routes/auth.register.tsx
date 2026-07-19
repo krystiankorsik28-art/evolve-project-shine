@@ -560,7 +560,7 @@ function RegisterPanel() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
+    <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
       <Toaster position="top-center" theme="light" richColors />
 
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">

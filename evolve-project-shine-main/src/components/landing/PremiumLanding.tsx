@@ -774,7 +774,7 @@ export function PremiumLanding() {
   );
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-[#f7f7f8] text-slate-950">
+    <div className="edunex-next-gen-landing min-h-screen w-full overflow-x-hidden bg-[#f7f7f8] text-slate-950">
       <Toaster richColors />
 
       <div className="border-b border-slate-800 bg-slate-950 text-white">
@@ -782,7 +782,7 @@ export function PremiumLanding() {
           <span className="hidden rounded-full bg-white/10 px-2 py-0.5 font-semibold text-white sm:inline">
             Nowość
           </span>
-          <span>Nowy portal dostępu dla nauczyciela, ucznia, dyrekcji i administratora.</span>
+          <span>EduNex Next Generation — nowy standard cyfrowej pracy szkoły.</span>
           <Link
             to="/auth"
             className="inline-flex shrink-0 items-center gap-1 font-semibold text-white"
