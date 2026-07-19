@@ -43,6 +43,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { IdentityTrustCenter } from "@/components/auth/IdentityTrustCenter";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import {
@@ -409,6 +410,45 @@ function MethodSelector({
           {methodLabels[method]}
         </button>
       ))}
+    </div>
+  );
+}
+
+function AccessRouteSummary({ role, method }: { role: RoleConfig; method: LoginMethod }) {
+  const RoleIcon = role.icon;
+  const methodDescription: Record<LoginMethod, string> = {
+    account: "Weryfikacja adresu, hasła i aktywnej roli",
+    pin: "Jednorazowe wejście bez zakładania konta",
+    sso: "Przekierowanie do systemu tożsamości szkoły",
+  };
+
+  return (
+    <div className="mt-3 grid gap-2 rounded-xl border border-slate-200 bg-slate-50 p-3 sm:grid-cols-[1fr_auto_1fr_auto_1fr] sm:items-center">
+      <div className="flex items-center gap-2.5 rounded-lg bg-white px-3 py-2 shadow-sm">
+        <RoleIcon className="h-4 w-4 text-[#0067b8]" />
+        <span>
+          <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
+            Rola
+          </span>
+          <span className="block text-xs font-semibold text-slate-900">{role.shortLabel}</span>
+        </span>
+      </div>
+      <ArrowRight className="hidden h-4 w-4 text-slate-300 sm:block" />
+      <div className="rounded-lg bg-white px-3 py-2 shadow-sm">
+        <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
+          Metoda
+        </span>
+        <span className="block text-xs font-semibold text-slate-900">{methodLabels[method]}</span>
+      </div>
+      <ArrowRight className="hidden h-4 w-4 text-slate-300 sm:block" />
+      <div className="rounded-lg bg-white px-3 py-2 shadow-sm">
+        <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
+          Kontrola
+        </span>
+        <span className="block text-xs font-semibold text-emerald-700">
+          {methodDescription[method]}
+        </span>
+      </div>
     </div>
   );
 }
@@ -853,6 +893,7 @@ function AuthPage() {
                           setFieldErrors({});
                         }}
                       />
+                      <AccessRouteSummary role={activeRole} method={method} />
                     </div>
                   )}
 
@@ -1151,6 +1192,7 @@ function AuthPage() {
               </div>
             </div>
           </div>
+          <IdentityTrustCenter mode="login" className="lg:col-span-2" />
         </motion.section>
       </main>
     </div>

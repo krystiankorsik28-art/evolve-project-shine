@@ -26,6 +26,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { IdentityTrustCenter } from "@/components/auth/IdentityTrustCenter";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured } from "@/integrations/supabase/client";
 import { ROLE_LABEL, type PortalRole } from "@/lib/auth/access";
@@ -1199,6 +1200,7 @@ function RegisterPanel() {
                 </div>
               </div>
             </section>
+            <IdentityTrustCenter mode="register" className="lg:col-span-2" />
           </motion.div>
         </form>
       </main>
