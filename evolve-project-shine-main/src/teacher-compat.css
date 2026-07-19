@@ -2,7 +2,7 @@
    It is scoped to the animated module surface, so the public site, auth pages,
    teacher navigation and intentionally dark brand elements stay untouched. */
 
-.teacher-module-light {
+.light .teacher-shell .teacher-module-light {
   --background: #f8fafc;
   --foreground: #0f172a;
   --color-fg: #0f172a;
@@ -15,102 +15,212 @@
   color: #0f172a;
 }
 
-.teacher-module-light [class~="bg-white/5"],
-.teacher-module-light [class~="bg-white/10"],
-.teacher-module-light [class~="bg-white/15"],
-.teacher-module-light [class~="bg-white/20"],
-.teacher-module-light [class~="bg-white/[0.01]"],
-.teacher-module-light [class~="bg-white/[0.02]"],
-.teacher-module-light [class~="bg-white/[0.03]"],
-.teacher-module-light [class~="bg-white/[0.035]"],
-.teacher-module-light [class~="bg-white/[0.04]"],
-.teacher-module-light [class~="bg-white/[0.05]"],
-.teacher-module-light [class~="bg-white/[0.06]"],
-.teacher-module-light [class~="bg-black/10"],
-.teacher-module-light [class~="bg-black/15"] {
+.light .teacher-shell .teacher-module-light [class~="bg-white/5"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/10"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/15"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/20"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.01]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.02]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.025]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.03]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.035]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.04]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.05]"],
+.light .teacher-shell .teacher-module-light [class~="bg-white/[0.06]"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/10"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/15"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/20"] {
   background-color: #ffffff !important;
 }
 
-.teacher-module-light [class~="border-white/5"],
-.teacher-module-light [class~="border-white/10"],
-.teacher-module-light [class~="border-white/15"],
-.teacher-module-light [class~="border-white/20"],
-.teacher-module-light [class~="border-white/8"],
-.teacher-module-light [class~="border-white/[0.05]"],
-.teacher-module-light [class~="border-white/[0.06]"],
-.teacher-module-light [class~="border-white/[0.08]"] {
+.light .teacher-shell .teacher-module-light [class~="border-white/5"],
+.light .teacher-shell .teacher-module-light [class~="border-white/10"],
+.light .teacher-shell .teacher-module-light [class~="border-white/15"],
+.light .teacher-shell .teacher-module-light [class~="border-white/20"],
+.light .teacher-shell .teacher-module-light [class~="border-white/8"],
+.light .teacher-shell .teacher-module-light [class~="border-white/[0.05]"],
+.light .teacher-shell .teacher-module-light [class~="border-white/[0.06]"],
+.light .teacher-shell .teacher-module-light [class~="border-white/[0.08]"] {
   border-color: #dbe3ee !important;
 }
 
-.teacher-module-light [class~="hover:bg-white/5"]:hover,
-.teacher-module-light [class~="hover:bg-white/10"]:hover {
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/5"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/10"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/[0.03]"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/[0.04]"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/[0.05]"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:bg-white/[0.06]"]:hover {
   background-color: #f1f5f9 !important;
 }
 
-.teacher-module-light [class~="text-white/20"] {
-  color: #94a3b8 !important;
+.light .teacher-shell .teacher-module-light [class~="hover:border-white/10"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:border-white/15"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:border-white/20"]:hover {
+  border-color: #94a3b8 !important;
 }
 
-.teacher-module-light [class~="text-white/75"] {
+.light .teacher-shell .teacher-module-light [class~="from-accent"][class~="to-blue-500"] {
+  --tw-gradient-from: #0067b8 !important;
+  --tw-gradient-to: #005a9e !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="text-white"],
+.light .teacher-shell .teacher-module-light [class~="text-white/90"],
+.light .teacher-shell .teacher-module-light [class~="text-white/80"],
+.light .teacher-shell .teacher-module-light [class~="text-white/75"] {
+  color: #1e293b !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="text-white/70"],
+.light .teacher-shell .teacher-module-light [class~="text-white/60"] {
   color: #475569 !important;
 }
 
-.teacher-module-light [class~="text-cyan-300"],
-.teacher-module-light [class~="text-cyan-300/70"],
-.teacher-module-light [class~="text-cyan-200"] {
+.light .teacher-shell .teacher-module-light [class~="text-white/50"],
+.light .teacher-shell .teacher-module-light [class~="text-white/40"],
+.light .teacher-shell .teacher-module-light [class~="text-white/30"],
+.light .teacher-shell .teacher-module-light [class~="text-white/20"],
+.light .teacher-shell .teacher-module-light [class~="text-white/10"] {
+  color: #64748b !important;
+}
+
+/* Old dark-first modules also used very pale slate utilities as body copy.
+   They must meet the same readable light-mode floor as the white utilities. */
+.light .teacher-shell .teacher-module-light [class~="text-slate-100"],
+.light .teacher-shell .teacher-module-light [class~="text-slate-200"],
+.light .teacher-shell .teacher-module-light [class~="text-slate-300"],
+.light .teacher-shell .teacher-module-light [class~="text-slate-400"],
+.light .teacher-shell .teacher-module-light [class~="text-gray-100"],
+.light .teacher-shell .teacher-module-light [class~="text-gray-200"],
+.light .teacher-shell .teacher-module-light [class~="text-gray-300"],
+.light .teacher-shell .teacher-module-light [class~="text-gray-400"] {
+  color: #64748b !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="hover:text-white"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:text-white/90"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:text-white/80"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:text-white/70"]:hover,
+.light .teacher-shell .teacher-module-light [class~="hover:text-white/60"]:hover {
+  color: #0f172a !important;
+}
+
+.light .teacher-shell .teacher-module-light .group:hover [class~="group-hover:text-white"] {
+  color: #0f172a !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="text-cyan-300"],
+.light .teacher-shell .teacher-module-light [class~="text-cyan-300/70"],
+.light .teacher-shell .teacher-module-light [class~="text-cyan-200"] {
   color: #0369a1 !important;
 }
 
-.teacher-module-light [class~="text-emerald-300"],
-.teacher-module-light [class~="text-emerald-300/70"],
-.teacher-module-light [class~="text-emerald-200"] {
+.light .teacher-shell .teacher-module-light [class~="text-emerald-300"],
+.light .teacher-shell .teacher-module-light [class~="text-emerald-300/70"],
+.light .teacher-shell .teacher-module-light [class~="text-emerald-200"] {
   color: #047857 !important;
 }
 
-.teacher-module-light [class~="text-amber-300"],
-.teacher-module-light [class~="text-amber-300/70"],
-.teacher-module-light [class~="text-amber-200"] {
+.light .teacher-shell .teacher-module-light [class~="text-amber-300"],
+.light .teacher-shell .teacher-module-light [class~="text-amber-300/70"],
+.light .teacher-shell .teacher-module-light [class~="text-amber-200"] {
   color: #a16207 !important;
 }
 
-.teacher-module-light [class~="text-violet-300"],
-.teacher-module-light [class~="text-violet-300/70"] {
+.light .teacher-shell .teacher-module-light [class~="text-violet-300"],
+.light .teacher-shell .teacher-module-light [class~="text-violet-300/70"] {
   color: #6d28d9 !important;
 }
 
-.teacher-module-light [class~="text-pink-400"] {
+.light .teacher-shell .teacher-module-light [class~="text-pink-400"] {
   color: #e11d48 !important;
 }
 
-.teacher-module-light [class~="placeholder-white/30"]::placeholder,
-.teacher-module-light [class~="placeholder-white/40"]::placeholder {
-  color: #94a3b8 !important;
+.light .teacher-shell .teacher-module-light [class~="placeholder-white/20"]::placeholder,
+.light .teacher-shell .teacher-module-light [class~="placeholder-white/30"]::placeholder,
+.light .teacher-shell .teacher-module-light [class~="placeholder-white/40"]::placeholder,
+.light .teacher-shell .teacher-module-light [class~="placeholder-white/50"]::placeholder {
+  color: #64748b !important;
 }
 
-.teacher-module-light option[class~="bg-slate-900"],
-.teacher-module-light select option {
+.light .teacher-shell .teacher-module-light [class~="placeholder:text-slate-400"]::placeholder,
+.light .teacher-shell .teacher-module-light [class~="placeholder:text-gray-400"]::placeholder {
+  color: #64748b !important;
+}
+
+.light .teacher-shell .teacher-module-light option[class~="bg-slate-900"],
+.light .teacher-shell .teacher-module-light select option {
   background: #ffffff !important;
   color: #0f172a !important;
 }
 
-/* Preserve accessible white labels on strong action and brand surfaces. */
-.teacher-module-light :is(button, a)[class~="text-white"][class*="bg-"],
-.teacher-module-light [class~="bg-slate-950"][class~="text-white"],
-.teacher-module-light [class~="bg-slate-950"] [class~="text-white"] {
+/* Preserve light labels only on genuinely strong surfaces. This list is
+   intentionally explicit; translucent white controls stay dark in light mode. */
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] {
+  color: #f8fafc !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"][class~="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"][class~="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/50"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/70"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/80"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="from-accent"][class~="to-blue-500"] [class*="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class*="bg-gradient"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-[#0067b8]"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-blue-600"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-blue-500"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-cyan-500"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-emerald-700"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-violet-500"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-pink-500"][class~="text-white"],
+.light .teacher-shell .teacher-module-light :is(button, a, span, div)[class~="bg-red-500"][class~="text-white"] {
   color: #ffffff !important;
 }
 
-.teacher-module-light :is(button, a)[class*="bg-gradient"] [class~="text-white"] {
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"] [class~="text-slate-100"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"] [class~="text-slate-100"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] [class~="text-slate-100"] {
+  color: #f1f5f9 !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"] [class~="text-slate-200"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"] [class~="text-slate-200"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] [class~="text-slate-200"] {
+  color: #e2e8f0 !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"] [class~="text-slate-300"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"] [class~="text-slate-300"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] [class~="text-slate-300"] {
+  color: #cbd5e1 !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="bg-slate-950"] [class~="text-slate-400"],
+.light .teacher-shell .teacher-module-light [class~="bg-slate-900"] [class~="text-slate-400"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"] [class~="text-slate-400"] {
+  color: #94a3b8 !important;
+}
+
+.light .teacher-shell .teacher-module-light [class~="bg-black/50"][class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/70"][class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="bg-black/80"][class*="text-white"],
+.light .teacher-shell .teacher-module-light [class*="bg-[#0"][class*="text-white"],
+.light .teacher-shell .teacher-module-light [class~="from-accent"][class~="to-blue-500"][class*="text-white"],
+.light .teacher-shell .teacher-module-light .group:hover [class~="group-hover:bg-slate-950"][class~="group-hover:text-white"] {
   color: #ffffff !important;
 }
 
-.teacher-module-light input,
-.teacher-module-light textarea,
-.teacher-module-light select {
+.light .teacher-shell .teacher-module-light input,
+.light .teacher-shell .teacher-module-light textarea,
+.light .teacher-shell .teacher-module-light select {
   color-scheme: light;
 }
 
-.teacher-module-light :focus-visible {
+.light .teacher-shell .teacher-module-light :focus-visible {
   outline: 2px solid #0067b8;
   outline-offset: 2px;
 }
@@ -236,5 +346,6 @@
 }
 
 .dark .teacher-shell .teacher-module-light :focus-visible {
-  outline-color: #10a37f;
+  outline: 2px solid #10a37f;
+  outline-offset: 2px;
 }
