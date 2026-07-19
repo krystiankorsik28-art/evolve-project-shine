@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { sendEmail, otpEmailHtml } from "@/lib/email";
+import { sendEmail, otpEmailHtml } from "@/lib/email.server";
 
-// In-memory OTP store (per-instance; ok for demo, use Redis/DB in production)
+// In-memory OTP store is isolated per server instance. Replace with a durable,
+// single-use store before enabling multi-region production verification.
 const otpStore = new Map<string, { code: string; expires: number; email: string }>();
 
 function generateCode(): string {
@@ -24,19 +25,26 @@ export const sendAdminOtp = createServerFn({ method: "POST" })
 
     const code = generateCode();
     const key = sanitizeEmail(email);
-    otpStore.set(key, { code, expires: Date.now() + 10 * 60 * 1000, email });
+    const expires = Date.now() + 10 * 60 * 1000;
 
-    const { error } = await sendEmail({
+    const delivery = await sendEmail({
       to: email,
-      subject: "Twój kod dostępu — EduNex",
+      subject: "Kod weryfikacyjny EduNex",
       html: otpEmailHtml(code),
+      text: `Kod weryfikacyjny EduNex: ${code}. Kod jest ważny przez 10 minut.`,
+      tags: [
+        { name: "category", value: "admin-otp" },
+        { name: "system", value: "identity" },
+      ],
+      idempotencyKey: `admin-otp/${user.user?.id || key}/${Math.floor(expires / 60000)}`,
     });
 
-    if (error) {
-      // Fallback: log code for development
-      console.log(`[OTP] Code for ${email}: ${code}`);
+    if (!delivery.ok) {
+      throw new Error(delivery.error || "Nie udało się wysłać kodu weryfikacyjnego.");
     }
 
+    // Store the code only after the provider accepted the message. Never log OTP values.
+    otpStore.set(key, { code, expires, email });
     return { ok: true };
   });
 
@@ -67,7 +75,11 @@ export const verifyAdminAccessCode = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => z.object({ code: z.string().regex(/^\d{6}$/) }).parse(input))
   .handler(async ({ data }) => {
-    const expected = process.env.ADMIN_ACCESS_CODE ?? "482913";
+    const expected = process.env.ADMIN_ACCESS_CODE;
+    if (!expected || !/^\d{6}$/.test(expected)) {
+      throw new Error("Starszy kod dostępu administratora nie jest skonfigurowany.");
+    }
+
     const a = data.code;
     if (a.length !== expected.length) throw new Error("Nieprawidłowy kod dostępu");
     let diff = 0;
