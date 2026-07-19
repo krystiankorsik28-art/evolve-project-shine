@@ -101,6 +101,11 @@ begin
 end;
 $$;
 
+-- Funkcja jest wywoływana wyłącznie przez trigger auth.users. Nie wystawiamy
+-- jej jako publicznego RPC, szczególnie że działa z uprawnieniami właściciela.
+revoke execute on function public.capture_institution_access_request() from public, anon, authenticated;
+grant execute on function public.capture_institution_access_request() to postgres;
+
 drop trigger if exists on_auth_user_capture_institution_request on auth.users;
 create trigger on_auth_user_capture_institution_request
 after insert or update of raw_user_meta_data on auth.users
