@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  Bell,
   Building2,
   CheckCircle2,
   ExternalLink,
@@ -14,11 +13,14 @@ import {
   LockKeyhole,
   Megaphone,
   MessageCircle,
+  Pencil,
   Plus,
   ShieldCheck,
   Star,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ConfirmDialog";
 import { Eksport } from "../Eksport";
 import { classLabel, formatDateTime, type JournalSnapshot } from "./journal-types";
 import type { JournalActions } from "./use-journal-data";
@@ -108,6 +110,7 @@ function openSafeExternal(value: string) {
 
 export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     classId: selectedClassId,
@@ -123,14 +126,48 @@ export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }
     }
     setBusy(true);
     try {
-      await actions.createAnnouncement(form);
-      toast.success("Ogłoszenie zostało opublikowane.");
+      if (editingAnnouncementId) {
+        await actions.updateAnnouncement(editingAnnouncementId, form);
+        toast.success("Ogłoszenie zostało zaktualizowane.");
+      } else {
+        await actions.createAnnouncement(form);
+        toast.success("Ogłoszenie zostało opublikowane.");
+      }
       setForm({ ...form, title: "", body: "" });
+      setEditingAnnouncementId(null);
       setModalOpen(false);
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
       setBusy(false);
+    }
+  };
+
+  const openAnnouncementEditor = (announcementId: string) => {
+    const announcement = snapshot.announcements.find((item) => item.id === announcementId);
+    if (!announcement) return;
+    setEditingAnnouncementId(announcement.id);
+    setForm({
+      classId: announcement.class_id || "",
+      title: announcement.title,
+      body: announcement.body,
+      priority: announcement.priority as typeof form.priority,
+    });
+    setModalOpen(true);
+  };
+
+  const removeAnnouncement = async (announcementId: string, title: string) => {
+    const confirmed = await confirmDialog({
+      title: "Usunąć ogłoszenie?",
+      description: `„${title}” zniknie z paneli odbiorców. Operacja zostanie zapisana w historii.`,
+      confirmText: "Usuń ogłoszenie",
+    });
+    if (!confirmed) return;
+    try {
+      await actions.deleteAnnouncement(announcementId);
+      toast.success("Ogłoszenie zostało usunięte.");
+    } catch (error) {
+      toast.error((error as Error).message);
     }
   };
 
@@ -145,6 +182,7 @@ export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }
             action={
               <PrimaryButton
                 onClick={() => {
+                  setEditingAnnouncementId(null);
                   setForm((current) => ({ ...current, classId: selectedClassId }));
                   setModalOpen(true);
                 }}
@@ -220,8 +258,23 @@ export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }
                       {formatDateTime(announcement.created_at)}
                     </div>
                   </div>
-                  <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-slate-300">
-                    <Bell className="h-4 w-4" />
+                  <div className="flex shrink-0 gap-1">
+                    <button
+                      type="button"
+                      onClick={() => openAnnouncementEditor(announcement.id)}
+                      aria-label={`Edytuj ogłoszenie ${announcement.title}`}
+                      className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-blue-50 hover:text-blue-700 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-blue-400/10 dark:hover:text-blue-300"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeAnnouncement(announcement.id, announcement.title)}
+                      aria-label={`Usuń ogłoszenie ${announcement.title}`}
+                      className="grid h-10 w-10 place-items-center rounded-xl bg-slate-100 text-slate-500 transition hover:bg-rose-50 hover:text-rose-700 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-rose-400/10 dark:hover:text-rose-300"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
               </article>
@@ -232,9 +285,16 @@ export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }
 
       {modalOpen && (
         <JournalModal
-          title="Nowe ogłoszenie"
-          description="Opublikuj komunikat widoczny dla uczniów."
-          onClose={() => setModalOpen(false)}
+          title={editingAnnouncementId ? "Edytuj ogłoszenie" : "Nowe ogłoszenie"}
+          description={
+            editingAnnouncementId
+              ? "Zaktualizuj treść i grupę odbiorców."
+              : "Opublikuj komunikat widoczny dla uczniów."
+          }
+          onClose={() => {
+            setEditingAnnouncementId(null);
+            setModalOpen(false);
+          }}
           wide
         >
           <div className="grid gap-4 sm:grid-cols-2">
@@ -290,7 +350,8 @@ export function JournalCommunicationPanel({ snapshot, selectedClassId, actions }
           <div className="mt-6 flex justify-end gap-2">
             <SecondaryButton onClick={() => setModalOpen(false)}>Anuluj</SecondaryButton>
             <PrimaryButton disabled={busy} onClick={submit}>
-              {busy && <Loader2 className="h-4 w-4 animate-spin" />}Opublikuj
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+              {editingAnnouncementId ? "Zapisz zmiany" : "Opublikuj"}
             </PrimaryButton>
           </div>
         </JournalModal>

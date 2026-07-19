@@ -7,6 +7,7 @@ import {
   ClipboardCheck,
   Cloud,
   GraduationCap,
+  History,
   LayoutDashboard,
   Loader2,
   Megaphone,
@@ -23,6 +24,7 @@ import {
   JournalIntegrationsPanel,
 } from "./edziennik/JournalCommunication";
 import { JournalGradesPanel, JournalNotesPanel } from "./edziennik/JournalGradesNotes";
+import { JournalHistory } from "./edziennik/JournalHistory";
 import { JournalOverview } from "./edziennik/JournalOverview";
 import { classLabel, type JournalTab } from "./edziennik/journal-types";
 import { useJournalData } from "./edziennik/use-journal-data";
@@ -42,6 +44,7 @@ const tabs: {
   { id: "notes", label: "Uwagi i pochwały", shortLabel: "Uwagi", icon: MessageSquareText },
   { id: "communication", label: "Komunikacja", shortLabel: "Kontakt", icon: Megaphone },
   { id: "integrations", label: "Integracje i eksport", shortLabel: "Integracje", icon: Cloud },
+  { id: "history", label: "Historia operacji", shortLabel: "Historia", icon: History },
 ];
 
 export function EDziennik() {
@@ -152,7 +155,8 @@ export function EDziennik() {
         />
       );
     }
-    return <JournalIntegrationsPanel />;
+    if (activeTab === "integrations") return <JournalIntegrationsPanel />;
+    return <JournalHistory snapshot={snapshot} selectedClassId={selectedClassId} />;
   };
 
   return (
