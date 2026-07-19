@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useState,
-  type ComponentType,
-  type FormEvent,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   createFileRoute,
   Link,
@@ -36,105 +29,38 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
-  School,
   Server,
-  ShieldAlert,
   ShieldCheck,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { IdentityTrustCenter } from "@/components/auth/IdentityTrustCenter";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import {
   resolveUserAccess,
   ROLE_DASHBOARD,
   ROLE_LABEL,
-  type PortalRole,
   type ResolvedAccess,
 } from "@/lib/auth/access";
 import { useAuth } from "@/lib/auth/auth-context";
 import type { AuthProvider } from "@/lib/auth/auth-types";
+import { authRedirectUrl, ssoDomainFrom } from "@/lib/auth/security";
 import { studentPinLogin } from "@/lib/student-auth.functions";
 
-type RoleId = PortalRole;
 type Provider = "microsoft" | "google";
 type Mode = "login" | "forgot";
-type LoginMethod = "account" | "pin" | "sso";
-
-type RoleConfig = {
-  id: RoleId;
-  label: string;
-  shortLabel: string;
-  description: string;
-  accessNote: string;
-  icon: ComponentType<{ className?: string }>;
-  methods: LoginMethod[];
-  defaultMethod: LoginMethod;
-  providers: Provider[];
-};
-
-const roles: RoleConfig[] = [
-  {
-    id: "teacher",
-    label: "Nauczyciel",
-    shortLabel: "Nauczyciel",
-    description: "Klasy, egzaminy, wyniki i narzędzia NexAi.",
-    accessNote: "Konto służbowe może wymagać akceptacji administratora szkoły.",
-    icon: Users,
-    methods: ["account", "sso"],
-    defaultMethod: "account",
-    providers: ["microsoft", "google"],
-  },
-  {
-    id: "student",
-    label: "Uczeń",
-    shortLabel: "Uczeń",
-    description: "Szybki dostęp do egzaminu lub pełnego konta ucznia.",
-    accessNote: "Do jednorazowego egzaminu wystarczy imię, nazwisko i kod od nauczyciela.",
-    icon: GraduationCap,
-    methods: ["pin", "account"],
-    defaultMethod: "pin",
-    providers: ["microsoft", "google"],
-  },
-  {
-    id: "parent",
-    label: "Rodzic / opiekun",
-    shortLabel: "Rodzic",
-    description: "Postępy ucznia, wyniki i komunikacja ze szkołą.",
-    accessNote: "Dostęp do danych ucznia jest aktywowany kodem przekazanym przez placówkę.",
-    icon: School,
-    methods: ["account"],
-    defaultMethod: "account",
-    providers: ["microsoft", "google"],
-  },
-  {
-    id: "admin",
-    label: "Dyrekcja / administrator",
-    shortLabel: "Administracja",
-    description: "Placówka, role, zgodność, audyt i bezpieczeństwo.",
-    accessNote: "Wymagana jest zatwierdzona rola administratora lub firmowe SSO.",
-    icon: Building2,
-    methods: ["sso", "account"],
-    defaultMethod: "sso",
-    providers: ["microsoft"],
-  },
-];
+type AccessMode = "account" | "student";
 
 const providers: Record<Provider, { label: string; shortLabel: string }> = {
   microsoft: { label: "Kontynuuj z Microsoft 365", shortLabel: "Microsoft 365" },
   google: { label: "Kontynuuj z Google", shortLabel: "Google" },
 };
 
-const methodLabels: Record<LoginMethod, string> = {
-  account: "Konto EduNex",
-  pin: "Kod egzaminu",
-  sso: "Logowanie szkoły",
-};
-
 const trustPoints = [
-  { icon: ShieldCheck, value: "RLS", label: "Izolacja danych i kontrola ról" },
-  { icon: Fingerprint, value: "SSO", label: "Microsoft 365 i dostęp placówki" },
-  { icon: Server, value: "EU", label: "Bezpieczna infrastruktura danych" },
+  { icon: ShieldCheck, value: "RLS", label: "Uprawnienia weryfikowane po stronie serwera" },
+  { icon: Fingerprint, value: "MFA", label: "Silne uwierzytelnianie dla kont uprzywilejowanych" },
+  { icon: Server, value: "RODO", label: "Minimalizacja danych i privacy by design" },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -223,6 +149,7 @@ function Field({
   error,
   hint,
   right,
+  onCapsLockChange,
 }: {
   id: string;
   label: string;
@@ -235,6 +162,7 @@ function Field({
   error?: string;
   hint?: string;
   right?: ReactNode;
+  onCapsLockChange?: (active: boolean) => void;
 }) {
   const describedBy = error ? `${id}-error` : hint ? `${id}-hint` : undefined;
   return (
@@ -246,12 +174,14 @@ function Field({
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => onCapsLockChange?.(event.getModifierState("CapsLock"))}
+          onKeyUp={(event) => onCapsLockChange?.(event.getModifierState("CapsLock"))}
           placeholder={placeholder}
           autoComplete={autoComplete}
           inputMode={inputMode}
           aria-invalid={Boolean(error)}
           aria-describedby={describedBy}
-          className={`h-12 w-full rounded-[6px] border bg-white px-3 pr-11 text-[15px] text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:ring-1 ${
+          className={`h-[52px] w-full rounded-lg border bg-white px-3 pr-11 text-[15px] text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:ring-2 ${
             error
               ? "border-red-500 focus:border-red-600 focus:ring-red-600"
               : "border-slate-300 focus:border-[#0067b8] focus:ring-[#0067b8]"
@@ -279,7 +209,7 @@ function Field({
 function PinInput({ value, onChange }: { value: string[]; onChange: (value: string[]) => void }) {
   return (
     <div
-      className="grid grid-cols-6 gap-2"
+      className="grid grid-cols-6 gap-1.5 sm:gap-2"
       aria-label="6-cyfrowy kod egzaminu"
       onPaste={(event) => {
         const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
@@ -303,14 +233,16 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
             onChange(next);
             if (next[index]) {
               const sibling = event.currentTarget.parentElement?.children[index + 1] as
-                HTMLInputElement | undefined;
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
           }}
           onKeyDown={(event) => {
             if (event.key === "Backspace" && !digit && index > 0) {
               const sibling = event.currentTarget.parentElement?.children[index - 1] as
-                HTMLInputElement | undefined;
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
             if (event.key === "ArrowLeft" && index > 0) {
@@ -320,56 +252,64 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
               (event.currentTarget.parentElement?.children[index + 1] as HTMLInputElement)?.focus();
             }
           }}
-          className="h-12 min-w-0 rounded-[6px] border border-slate-300 bg-white text-center text-lg font-semibold tabular-nums text-slate-950 outline-none transition hover:border-slate-400 focus:border-[#0067b8] focus:ring-1 focus:ring-[#0067b8] sm:h-14 sm:text-xl"
+          className={`h-[52px] min-w-0 rounded-lg border border-slate-300 bg-white text-center text-lg font-semibold tabular-nums text-slate-950 outline-none transition hover:border-slate-400 focus:border-[#0067b8] focus:ring-2 focus:ring-[#0067b8]/20 sm:h-14 sm:text-xl ${index === 3 ? "ml-1 sm:ml-2" : ""}`}
         />
       ))}
     </div>
   );
 }
 
-function RoleSelector({ role, onChange }: { role: RoleId; onChange: (role: RoleId) => void }) {
+function AccessModeSelector({
+  value,
+  onChange,
+}: {
+  value: AccessMode;
+  onChange: (value: AccessMode) => void;
+}) {
+  const options = [
+    {
+      id: "account" as const,
+      label: "Konto użytkownika",
+      description: "Nauczyciel, rodzic, dyrekcja i administracja",
+      icon: Users,
+    },
+    {
+      id: "student" as const,
+      label: "Wejście ucznia",
+      description: "Jednorazowy egzamin z 6-cyfrowym kodem",
+      icon: GraduationCap,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Wybierz typ konta">
-      {roles.map((item) => {
-        const Icon = item.icon;
-        const selected = item.id === role;
+    <div
+      className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100 p-1.5"
+      role="tablist"
+      aria-label="Sposób dostępu"
+    >
+      {options.map((option) => {
+        const Icon = option.icon;
+        const selected = option.id === value;
         return (
           <button
-            key={item.id}
+            key={option.id}
             type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(item.id)}
-            className={`group relative min-h-[74px] rounded-lg border px-3.5 py-3 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0067b8]/35 ${
+            role="tab"
+            aria-selected={selected}
+            onClick={() => onChange(option.id)}
+            className={`min-h-[66px] rounded-lg px-3 py-2.5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0067b8]/30 ${
               selected
-                ? "border-[#0067b8] bg-[#f3f8fc] shadow-[0_0_0_1px_rgba(0,103,184,.08)]"
-                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200"
+                : "text-slate-600 hover:text-slate-950"
             }`}
           >
-            <span className="flex items-start gap-3">
-              <span
-                className={`grid h-8 w-8 shrink-0 place-items-center rounded-md ${
-                  selected ? "bg-[#0067b8] text-white" : "bg-slate-100 text-slate-600"
-                }`}
-              >
-                <Icon className="h-4 w-4" />
-              </span>
-              <span className="min-w-0 pt-0.5">
-                <span className="block text-[13px] font-semibold leading-4 text-slate-950">
-                  {item.shortLabel}
-                </span>
-                <span className="mt-1 block text-[11px] leading-4 text-slate-500">
-                  {item.id === "student"
-                    ? "PIN lub konto"
-                    : item.id === "admin"
-                      ? "SSO lub konto"
-                      : "Konto użytkownika"}
-                </span>
-              </span>
+            <span className="flex items-center gap-2 text-sm font-semibold">
+              <Icon className={`h-4 w-4 ${selected ? "text-[#0067b8]" : "text-slate-500"}`} />
+              {option.label}
             </span>
-            {selected && (
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-[#0067b8]" />
-            )}
+            <span className="mt-1 hidden text-[11px] leading-4 text-slate-500 sm:block">
+              {option.description}
+            </span>
           </button>
         );
       })}
@@ -377,61 +317,18 @@ function RoleSelector({ role, onChange }: { role: RoleId; onChange: (role: RoleI
   );
 }
 
-function MethodSelector({
-  methods,
-  value,
-  onChange,
-}: {
-  methods: LoginMethod[];
-  value: LoginMethod;
-  onChange: (method: LoginMethod) => void;
-}) {
-  if (methods.length < 2) return null;
-  return (
-    <div
-      className="grid grid-cols-2 rounded-lg bg-slate-100 p-1"
-      role="tablist"
-      aria-label="Metoda logowania"
-    >
-      {methods.map((method) => (
-        <button
-          key={method}
-          type="button"
-          role="tab"
-          aria-selected={method === value}
-          onClick={() => onChange(method)}
-          className={`min-h-9 rounded-md px-3 py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0067b8]/30 ${
-            method === value
-              ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200"
-              : "text-slate-600 hover:text-slate-950"
-          }`}
-        >
-          {methodLabels[method]}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function AccessNotice({
   access,
-  selectedRole,
-  onContinue,
   onUseAnotherAccount,
 }: {
   access: ResolvedAccess;
-  selectedRole: RoleId;
-  onContinue: () => void;
   onUseAnotherAccount: () => void;
 }) {
-  const mismatch = Boolean(access.approvedRole && access.approvedRole !== selectedRole);
   const rejected = access.selectedStatus === "rejected";
-  const Icon = mismatch ? ShieldAlert : rejected ? CircleAlert : Clock3;
-  const tone = mismatch
-    ? "border-blue-200 bg-blue-50 text-blue-900"
-    : rejected
-      ? "border-red-200 bg-red-50 text-red-900"
-      : "border-amber-200 bg-amber-50 text-amber-950";
+  const Icon = rejected ? CircleAlert : Clock3;
+  const tone = rejected
+    ? "border-red-200 bg-red-50 text-red-900"
+    : "border-amber-200 bg-amber-50 text-amber-950";
 
   return (
     <section className="mt-7" aria-live="polite">
@@ -440,19 +337,13 @@ function AccessNotice({
           <Icon className="h-5 w-5" />
         </span>
         <h3 className="mt-5 text-xl font-semibold tracking-[-0.02em]">
-          {mismatch
-            ? "Konto ma inną aktywną rolę"
-            : rejected
-              ? "Dostęp nie został zatwierdzony"
-              : "Wniosek oczekuje na akceptację"}
+          {rejected ? "Dostęp nie został zatwierdzony" : "Wniosek oczekuje na akceptację"}
         </h3>
         <p className="mt-2 text-sm leading-6 opacity-80">
-          {mismatch && access.approvedRole
-            ? `Wybrano rolę „${ROLE_LABEL[selectedRole]}”, ale to konto ma aktywny dostęp jako „${ROLE_LABEL[access.approvedRole]}”. Możesz bezpiecznie otworzyć przypisany panel.`
-            : rejected
-              ? access.rejectionReason ||
-                "Administrator placówki odrzucił wniosek o tę rolę. Skontaktuj się ze szkołą, aby wyjaśnić status konta."
-              : "Tożsamość została potwierdzona, jednak rola musi zostać aktywowana przez administratora placówki. Nie musisz zakładać kolejnego konta."}
+          {rejected
+            ? access.rejectionReason ||
+              "Placówka odrzuciła wniosek o dostęp. Skontaktuj się z upoważnionym administratorem, aby wyjaśnić status konta."
+            : "Tożsamość została potwierdzona, jednak uprawnienia musi aktywować placówka. Nie zakładaj kolejnego konta."}
         </p>
         {access.lookupFailed && (
           <p className="mt-3 rounded-md border border-current/15 bg-white/50 px-3 py-2 text-xs leading-5">
@@ -460,17 +351,7 @@ function AccessNotice({
           </p>
         )}
       </div>
-      <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        {mismatch && access.approvedRole && (
-          <button
-            type="button"
-            onClick={onContinue}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-[6px] bg-[#0067b8] px-4 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
-          >
-            Otwórz panel: {ROLE_LABEL[access.approvedRole]}
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        )}
+      <div className="mt-4">
         <button
           type="button"
           onClick={onUseAnotherAccount}
@@ -489,15 +370,18 @@ function AuthPage() {
   const reduceMotion = useReducedMotion();
   const pinLogin = useServerFn(studentPinLogin);
   const { signInWithEmail, signInWithProvider, resetPassword } = useAuth();
-  const [role, setRole] = useState<RoleId>("teacher");
-  const [method, setMethod] = useState<LoginMethod>("account");
+  const [accessMode, setAccessMode] = useState<AccessMode>("account");
+  const [showSso, setShowSso] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [capsLock, setCapsLock] = useState(false);
   const [rememberEmail, setRememberEmail] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [studentReference, setStudentReference] = useState("");
+  const [studentClass, setStudentClass] = useState("");
   const [pinDigits, setPinDigits] = useState(["", "", "", "", "", ""]);
   const [ssoDomain, setSsoDomain] = useState("");
   const [loading, setLoading] = useState(false);
@@ -506,7 +390,6 @@ function AuthPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [accessNotice, setAccessNotice] = useState<ResolvedAccess | null>(null);
 
-  const activeRole = useMemo(() => roles.find((item) => item.id === role) ?? roles[0], [role]);
   const pin = pinDigits.join("");
 
   useEffect(() => {
@@ -514,10 +397,9 @@ function AuthPage() {
     if (savedEmail) setEmail(savedEmail);
   }, []);
 
-  const changeRole = (nextRole: RoleId) => {
-    const config = roles.find((item) => item.id === nextRole) ?? roles[0];
-    setRole(nextRole);
-    setMethod(config.defaultMethod);
+  const changeAccessMode = (nextMode: AccessMode) => {
+    setAccessMode(nextMode);
+    setShowSso(false);
     setMode("login");
     setFormError("");
     setFieldErrors({});
@@ -568,10 +450,10 @@ function AuthPage() {
         return;
       }
 
-      const access = await resolveUserAccess(user, role);
-      if (access.approvedRole === role) {
-        toast.success(`Zalogowano jako ${ROLE_LABEL[role]}`);
-        await navigate({ to: ROLE_DASHBOARD[role], replace: true });
+      const access = await resolveUserAccess(user);
+      if (access.approvedRole) {
+        toast.success(`Zalogowano: ${ROLE_LABEL[access.approvedRole]}`);
+        await navigate({ to: ROLE_DASHBOARD[access.approvedRole], replace: true });
         return;
       }
       setAccessNotice(access);
@@ -597,7 +479,14 @@ function AuthPage() {
       const result = await pinLogin({
         data: { first_name: firstName.trim(), last_name: lastName.trim(), pin },
       });
-      sessionStorage.setItem("edunex_student", JSON.stringify(result));
+      sessionStorage.setItem(
+        "edunex_student",
+        JSON.stringify({
+          ...result,
+          student_reference: studentReference.trim(),
+          student_class: studentClass.trim(),
+        }),
+      );
       toast.success(`Egzamin: ${result.exam_title}`);
       await navigate({ to: "/student/exam/$attemptId", params: { attemptId: result.attempt_id } });
     } catch (error) {
@@ -609,8 +498,8 @@ function AuthPage() {
   const submitSso = async (event: FormEvent) => {
     event.preventDefault();
     setFormError("");
-    const domain = ssoDomain.trim().toLowerCase().split("@").pop() || "";
-    if (!domain.includes(".")) {
+    const domain = ssoDomainFrom(ssoDomain);
+    if (!domain) {
       setFieldErrors({ ssoDomain: "Podaj domenę szkoły, np. liceum.edu.pl." });
       return;
     }
@@ -621,17 +510,13 @@ function AuthPage() {
 
     setFieldErrors({});
     setLoading(true);
-    window.sessionStorage.setItem("edunex_intended_role", role);
     const { error } = await supabase.auth.signInWithSSO({
       domain,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: authRedirectUrl("/auth/callback") },
     });
     if (error) {
-      window.sessionStorage.removeItem("edunex_intended_role");
       setFormError(
-        error.message.includes("SSO")
-          ? "Nie znaleziono konfiguracji SSO dla tej domeny. Użyj konta EduNex albo skontaktuj się z administratorem szkoły."
-          : error.message,
+        "Nie udało się rozpocząć logowania instytucjonalnego. Sprawdź domenę lub skontaktuj się z administratorem placówki.",
       );
       setLoading(false);
     }
@@ -644,11 +529,9 @@ function AuthPage() {
     }
     setFormError("");
     setLoading(true);
-    window.sessionStorage.setItem("edunex_intended_role", role);
     try {
       await signInWithProvider(provider as AuthProvider);
     } catch (error) {
-      window.sessionStorage.removeItem("edunex_intended_role");
       setFormError(error instanceof Error ? error.message : "Nie udało się rozpocząć logowania.");
       setLoading(false);
     }
@@ -661,13 +544,8 @@ function AuthPage() {
     setFormError("");
   };
 
-  const continueWithApprovedRole = async () => {
-    if (!accessNotice?.approvedRole) return;
-    await navigate({ to: ROLE_DASHBOARD[accessNotice.approvedRole], replace: true });
-  };
-
   return (
-    <div className="min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
+    <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
       <Toaster position="top-center" theme="light" richColors />
 
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">
@@ -697,10 +575,11 @@ function AuthPage() {
             </Link>
             <Link
               to="/auth/register"
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3.5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[6px] border border-slate-300 bg-white px-2.5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50 sm:gap-2 sm:px-3.5"
             >
-              Utwórz konto
-              <ChevronRight className="h-4 w-4" />
+              <span className="sm:hidden">Rejestracja</span>
+              <span className="hidden sm:inline">Utwórz konto</span>
+              <ChevronRight className="hidden h-4 w-4 sm:block" />
             </Link>
           </div>
         </div>
@@ -713,60 +592,60 @@ function AuthPage() {
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[minmax(360px,0.82fr)_minmax(580px,1.18fr)]"
         >
-          <aside className="relative hidden overflow-hidden border-r border-slate-200 bg-[#edf4fa] p-9 lg:block xl:p-12">
+          <aside className="identity-institutional relative hidden overflow-hidden border-r border-slate-800 bg-[#071426] p-9 text-white lg:block xl:p-12">
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.34]"
               style={{
                 backgroundImage:
-                  "linear-gradient(rgba(0,103,184,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(0,103,184,.09) 1px,transparent 1px)",
+                  "linear-gradient(rgba(148,163,184,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.09) 1px,transparent 1px)",
                 backgroundSize: "36px 36px",
                 maskImage: "linear-gradient(to bottom, black, transparent 78%)",
               }}
             />
-            <div className="pointer-events-none absolute -left-32 top-12 h-80 w-80 rounded-full bg-[#0078d4]/15 blur-3xl" />
+            <div className="pointer-events-none absolute -left-32 top-12 h-80 w-80 rounded-full bg-[#0078d4]/20 blur-3xl" />
 
             <div className="relative flex h-full min-h-[690px] flex-col">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0067b8]/15 bg-white/75 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#005a9e] shadow-sm">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-200">
                 <ShieldCheck className="h-4 w-4" />
                 EduNex Identity
               </div>
-              <h1 className="mt-7 max-w-xl text-[42px] font-semibold leading-[1.08] tracking-[-0.045em] text-[#0b1730] xl:text-[48px]">
+              <h1 className="mt-7 max-w-xl text-[42px] font-semibold leading-[1.08] tracking-[-0.045em] text-white xl:text-[48px]">
                 Jedno bezpieczne wejście do całej szkoły.
               </h1>
-              <p className="mt-5 max-w-lg text-[15px] leading-7 text-slate-600">
-                Portal rozpoznaje rolę, metodę logowania i zatwierdzone uprawnienia, a następnie
-                otwiera właściwe środowisko pracy.
+              <p className="mt-5 max-w-lg text-[15px] leading-7 text-slate-300">
+                Jedna tożsamość, serwerowa kontrola ról i bezpieczne wejście do właściwego
+                środowiska pracy — bez deklarowania uprawnień na ekranie logowania.
               </p>
 
               <div className="mt-9 grid gap-3">
                 {trustPoints.map(({ icon: Icon, value, label }) => (
                   <div
                     key={value}
-                    className="grid grid-cols-[42px_54px_1fr] items-center gap-3 rounded-xl border border-white/90 bg-white/75 p-3.5 shadow-[0_8px_24px_rgba(15,23,42,.04)] backdrop-blur"
+                    className="grid grid-cols-[42px_54px_1fr] items-center gap-3 rounded-xl border border-white/10 bg-white/[0.055] p-3.5 backdrop-blur"
                   >
-                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-[#0067b8]/10 text-[#0067b8]">
+                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-blue-400/10 text-blue-200">
                       <Icon className="h-[18px] w-[18px]" />
                     </span>
-                    <span className="text-sm font-bold text-[#0b1730]">{value}</span>
-                    <span className="text-xs leading-5 text-slate-600">{label}</span>
+                    <span className="text-sm font-bold text-white">{value}</span>
+                    <span className="text-xs leading-5 text-slate-300">{label}</span>
                   </div>
                 ))}
               </div>
 
               <div className="mt-auto pt-10">
-                <div className="rounded-xl border border-slate-200/80 bg-white/75 p-4 backdrop-blur">
+                <div className="rounded-xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur">
                   <div className="flex items-center justify-between gap-4">
-                    <span className="inline-flex items-center gap-2 text-xs font-medium text-slate-700">
+                    <span className="inline-flex items-center gap-2 text-xs font-medium text-slate-200">
                       <span className="relative flex h-2.5 w-2.5">
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
                         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                       </span>
                       Usługi logowania działają
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-500">Status 100%</span>
+                    <span className="text-[11px] font-semibold text-slate-400">System online</span>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-4 text-[11px] text-slate-500">
+                <div className="mt-4 flex items-center gap-4 text-[11px] text-slate-400">
                   <span>RODO</span>
                   <span className="h-3 w-px bg-slate-300" />
                   <span>Szyfrowanie TLS</span>
@@ -790,7 +669,7 @@ function AuthPage() {
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     {mode === "forgot"
                       ? "Wyślemy link resetujący na zweryfikowany adres konta."
-                      : "Najpierw wybierz, w jakiej roli wchodzisz do platformy."}
+                      : "Wybierz konto użytkownika albo szybkie wejście ucznia do egzaminu."}
                   </p>
                 </div>
                 <span className="hidden shrink-0 items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-800 sm:inline-flex">
@@ -809,53 +688,22 @@ function AuthPage() {
               )}
 
               {!accessNotice && mode === "login" && (
-                <section className="mt-6" aria-labelledby="account-type-label">
-                  <div className="mb-2.5 flex items-center justify-between gap-3">
-                    <div id="account-type-label" className="text-sm font-semibold text-slate-900">
-                      1. Wybierz typ dostępu
-                    </div>
-                    <span className="text-[11px] font-medium text-slate-500">4 role systemowe</span>
-                  </div>
-                  <RoleSelector role={role} onChange={changeRole} />
-                  <div className="mt-3 flex items-start gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-xs leading-5 text-slate-600">
+                <section className="mt-6" aria-label="Sposób dostępu">
+                  <AccessModeSelector value={accessMode} onChange={changeAccessMode} />
+                  <div className="mt-3 flex items-start gap-2 rounded-lg border border-blue-100 bg-blue-50/70 px-3 py-2.5 text-xs leading-5 text-slate-700">
                     <BadgeCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#0067b8]" />
                     <span>
-                      <strong className="font-semibold text-slate-800">{activeRole.label}:</strong>{" "}
-                      {activeRole.accessNote}
+                      Rola konta jest pobierana z zatwierdzonych uprawnień po zalogowaniu. Sam
+                      formularz nigdy jej nie nadaje.
                     </span>
                   </div>
                 </section>
               )}
 
               {accessNotice ? (
-                <AccessNotice
-                  access={accessNotice}
-                  selectedRole={role}
-                  onContinue={continueWithApprovedRole}
-                  onUseAnotherAccount={useAnotherAccount}
-                />
+                <AccessNotice access={accessNotice} onUseAnotherAccount={useAnotherAccount} />
               ) : (
-                <section
-                  className="mt-6 border-t border-slate-200 pt-6"
-                  aria-label="Dane logowania"
-                >
-                  {mode === "login" && (
-                    <div className="mb-5">
-                      <div className="mb-2.5 text-sm font-semibold text-slate-900">
-                        2. Wybierz metodę
-                      </div>
-                      <MethodSelector
-                        methods={activeRole.methods}
-                        value={method}
-                        onChange={(next) => {
-                          setMethod(next);
-                          setFormError("");
-                          setFieldErrors({});
-                        }}
-                      />
-                    </div>
-                  )}
-
+                <section className="mt-6" aria-label="Dane logowania">
                   {formError && (
                     <div
                       role="alert"
@@ -866,7 +714,7 @@ function AuthPage() {
                     </div>
                   )}
 
-                  {mode === "login" && method === "pin" ? (
+                  {mode === "login" && accessMode === "student" ? (
                     <form onSubmit={submitPin} className="space-y-4" noValidate>
                       <div>
                         <h3 className="text-lg font-semibold text-slate-950">Dołącz do egzaminu</h3>
@@ -898,6 +746,24 @@ function AuthPage() {
                           placeholder="Kowalski"
                           autoComplete="family-name"
                           error={fieldErrors.lastName}
+                        />
+                      </div>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          id="student-reference"
+                          label="Identyfikator ucznia (opcjonalnie)"
+                          value={studentReference}
+                          onChange={setStudentReference}
+                          placeholder="Numer z dziennika lub legitymacji"
+                          autoComplete="off"
+                        />
+                        <Field
+                          id="student-class"
+                          label="Klasa (opcjonalnie)"
+                          value={studentClass}
+                          onChange={setStudentClass}
+                          placeholder="np. 2A"
+                          autoComplete="off"
                         />
                       </div>
                       <div className="grid gap-2">
@@ -934,8 +800,20 @@ function AuthPage() {
                         {pinLoading ? "Sprawdzanie kodu..." : "Otwórz bezpieczny egzamin"}
                       </button>
                     </form>
-                  ) : mode === "login" && method === "sso" ? (
+                  ) : mode === "login" && accessMode === "account" && showSso ? (
                     <form onSubmit={submitSso} className="space-y-4" noValidate>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowSso(false);
+                          setFormError("");
+                          setFieldErrors({});
+                        }}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-[#0067b8] hover:text-[#004f8b]"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        Wróć do konta użytkownika
+                      </button>
                       <div className="rounded-xl border border-blue-100 bg-[#f5f9fd] p-4">
                         <div className="flex items-start gap-3">
                           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-white text-[#0067b8] shadow-sm">
@@ -984,10 +862,10 @@ function AuthPage() {
                     </form>
                   ) : (
                     <form onSubmit={submitAccount} className="space-y-4" noValidate>
-                      {mode === "login" && activeRole.providers.length > 0 && (
+                      {mode === "login" && (
                         <>
                           <div className="grid gap-2 sm:grid-cols-2">
-                            {activeRole.providers.map((provider, index) => (
+                            {(["microsoft", "google"] as Provider[]).map((provider, index) => (
                               <button
                                 key={provider}
                                 type="button"
@@ -997,12 +875,10 @@ function AuthPage() {
                                   index === 0
                                     ? "border-slate-400 bg-white text-slate-950 hover:border-[#0067b8] hover:bg-[#f5f9fd]"
                                     : "border-slate-300 bg-white text-slate-800 hover:border-slate-400 hover:bg-slate-50"
-                                } ${activeRole.providers.length === 1 ? "sm:col-span-2" : ""}`}
+                                }`}
                               >
                                 <ProviderMark provider={provider} />
-                                {activeRole.providers.length === 1
-                                  ? providers[provider].label
-                                  : providers[provider].shortLabel}
+                                {providers[provider].shortLabel}
                               </button>
                             ))}
                           </div>
@@ -1059,6 +935,7 @@ function AuthPage() {
                           placeholder="Wpisz hasło"
                           autoComplete="current-password"
                           error={fieldErrors.password}
+                          onCapsLockChange={setCapsLock}
                           right={
                             <button
                               type="button"
@@ -1074,6 +951,16 @@ function AuthPage() {
                             </button>
                           }
                         />
+                      )}
+
+                      {mode === "login" && capsLock && (
+                        <div
+                          className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900"
+                          role="status"
+                        >
+                          <CircleAlert className="h-3.5 w-3.5 shrink-0" />
+                          Caps Lock jest włączony.
+                        </div>
                       )}
 
                       {mode === "login" && (
@@ -1101,6 +988,21 @@ function AuthPage() {
                         </div>
                       )}
 
+                      {mode === "login" && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowSso(true);
+                            setFormError("");
+                            setFieldErrors({});
+                          }}
+                          className="flex min-h-[52px] w-full items-center justify-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-4 text-sm font-semibold text-slate-800 transition hover:border-[#0067b8] hover:bg-blue-50"
+                        >
+                          <Building2 className="h-4 w-4 text-[#0067b8]" />
+                          Zaloguj przez SSO placówki
+                        </button>
+                      )}
+
                       <button
                         type="submit"
                         disabled={loading}
@@ -1117,7 +1019,7 @@ function AuthPage() {
                           ? "Proszę czekać..."
                           : mode === "forgot"
                             ? "Wyślij link resetujący"
-                            : `Zaloguj jako: ${activeRole.shortLabel}`}
+                            : "Zaloguj bezpiecznie"}
                       </button>
                     </form>
                   )}
@@ -1147,10 +1049,11 @@ function AuthPage() {
                 <Link to="/dokumenty" className="font-medium text-slate-600 hover:text-slate-950">
                   dokumentach EduNex
                 </Link>
-                . Wybrana rola nie nadaje uprawnień — potwierdza je placówka.
+                . Uprawnienia są weryfikowane po stronie serwera i potwierdzane przez placówkę.
               </div>
             </div>
           </div>
+          <IdentityTrustCenter mode="login" className="lg:col-span-2" />
         </motion.section>
       </main>
     </div>

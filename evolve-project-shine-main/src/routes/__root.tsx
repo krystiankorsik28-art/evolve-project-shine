@@ -13,6 +13,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import appCss from "../styles.css?url";
 import ultraCss from "../ultra.css?url";
 import teacherCompatCss from "../teacher-compat.css?url";
+import nextGenerationCss from "../next-generation.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
@@ -123,6 +124,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "stylesheet", href: ultraCss },
       { rel: "stylesheet", href: teacherCompatCss },
+      { rel: "stylesheet", href: nextGenerationCss },
     ],
   }),
   shellComponent: RootShell,
@@ -158,6 +160,7 @@ function RootComponent() {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={location.pathname}
+              className="edunex-next-generation"
               initial={reduceMotion ? false : { opacity: 0, y: 8, filter: "blur(3px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5, filter: "blur(2px)" }}

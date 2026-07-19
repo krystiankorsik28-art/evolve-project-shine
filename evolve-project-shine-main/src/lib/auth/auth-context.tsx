@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { supabase } from "@/integrations/supabase/client";
 import type { AuthProvider, AuthState, AuthUser, Session, AuthDevice, PasskeyCredential, Organization } from "./auth-types";
 import { resolveUserDisplayName } from "./user-display-name";
+import { authRedirectUrl, normalizeEmail, publicSignInError } from "./security";
 
 const PROVIDER_CONFIG: Record<AuthProvider, { name: string; icon: string; color: string }> = {
   google: { name: "Google", icon: "G", color: "#4285F4" },
@@ -90,26 +91,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithProvider = useCallback(async (provider: AuthProvider) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: provider === "microsoft" ? "azure" : provider as any,
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: authRedirectUrl("/auth/callback") },
     });
     if (error) throw error;
   }, []);
 
   const signInWithEmail = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { error: formatAuthError(error.message) };
+    const { error } = await supabase.auth.signInWithPassword({
+      email: normalizeEmail(email),
+      password,
+    });
+    if (error) return { error: publicSignInError() };
     return {};
   }, []);
 
   const signUpWithEmail = useCallback(async (email: string, password: string, role: string, metadata?: Record<string, string>) => {
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: normalizeEmail(email),
       password,
       options: {
         // The role in user metadata is only a registration request. Route access is
         // resolved from user_roles/app_metadata, which the browser cannot approve.
         data: { ...metadata, role, requested_role: role },
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: authRedirectUrl("/auth/callback"),
       },
     });
     if (error) return { error: formatAuthError(error.message) };
@@ -148,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const resetPassword = useCallback(async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: authRedirectUrl("/auth/reset-password"),
     });
     if (error) return { error: formatAuthError(error.message) };
     return {};
@@ -358,11 +362,12 @@ export function useAuth() {
 
 function mapUser(session: any): AuthUser {
   const user = session.user;
-  const role =
-    user?.app_metadata?.role ||
-    user?.user_metadata?.requested_role ||
-    user?.user_metadata?.role ||
-    "student";
+  const trustedRole = user?.app_metadata?.role;
+  const role = ["student", "teacher", "admin", "parent", "organization_admin", "super_admin"].includes(
+    trustedRole,
+  )
+    ? trustedRole
+    : null;
   return {
     id: user.id,
     email: user.email,
@@ -371,8 +376,8 @@ function mapUser(session: any): AuthUser {
     lastName: user.user_metadata?.last_name || null,
     avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
     role: role,
-    roles: [role],
-    isApproved: true,
+    roles: role ? [role] : [],
+    isApproved: Boolean(role),
     twoFactorEnabled: false,
     language: user.user_metadata?.language || 'pl',
     createdAt: user.created_at,

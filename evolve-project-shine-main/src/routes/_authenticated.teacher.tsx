@@ -483,7 +483,7 @@ function TeacherPanel() {
   };
 
   return (
-    <div className="teacher-shell min-h-screen bg-[#f5f7fa] text-slate-950 dark:bg-[#111214] dark:text-slate-100">
+    <div className="teacher-shell edunex-next-gen-panel min-h-screen bg-[#f5f7fa] text-slate-950 dark:bg-[#111214] dark:text-slate-100">
       <Toaster position="top-center" theme={resolvedTheme} richColors />
 
       <AnimatePresence>
