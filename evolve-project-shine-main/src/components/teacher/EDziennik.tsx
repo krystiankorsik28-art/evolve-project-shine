@@ -39,7 +39,7 @@ const tabs: {
   { id: "lessons", label: "Lekcje", shortLabel: "Lekcje", icon: BookOpenCheck },
   { id: "attendance", label: "Frekwencja", shortLabel: "Frekwencja", icon: ClipboardCheck },
   { id: "grades", label: "Oceny", shortLabel: "Oceny", icon: TrendingUp },
-  { id: "notes", label: "Uwagi i pochwaĹ‚y", shortLabel: "Uwagi", icon: MessageSquareText },
+  { id: "notes", label: "Uwagi i pochwały", shortLabel: "Uwagi", icon: MessageSquareText },
   { id: "communication", label: "Komunikacja", shortLabel: "Kontakt", icon: Megaphone },
   { id: "integrations", label: "Integracje i eksport", shortLabel: "Integracje", icon: Cloud },
 ];
@@ -171,11 +171,11 @@ export function EDziennik() {
               </span>
             </div>
             <h1 className="mt-5 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-slate-950 dark:text-slate-100 sm:text-4xl">
-              PeĹ‚ny obraz klasy. Jedno miejsce pracy nauczyciela.
+              Pełny obraz klasy. Jedno miejsce pracy nauczyciela.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400 sm:text-base">
-              Lekcje, frekwencja, oceny, uwagi, komunikacja i eksport do systemu szkoĹ‚y â€” bez
-              przeĹ‚Ä…czania siÄ™ miÄ™dzy przypadkowymi narzÄ™dziami.
+              Lekcje, frekwencja, oceny, uwagi, komunikacja i eksport do systemu szkoły — bez
+              przełączania się między przypadkowymi narzędziami.
             </p>
             <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
               <span className="font-medium capitalize">{today}</span>
@@ -184,7 +184,7 @@ export function EDziennik() {
                 {snapshot.classes.length} {snapshot.classes.length === 1 ? "klasa" : "klas"}
               </span>
               <span className="h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600" />
-              <span>{snapshot.students.length} uczniĂłw</span>
+              <span>{snapshot.students.length} uczniów</span>
             </div>
           </div>
 
@@ -198,7 +198,7 @@ export function EDziennik() {
                 onClick={() => void actions.refresh()}
                 disabled={refreshing}
                 className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-slate-950 disabled:opacity-50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:text-white"
-                aria-label="OdĹ›wieĹĽ E-dziennik"
+                aria-label="Odśwież E-dziennik"
               >
                 <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
               </button>
@@ -242,10 +242,10 @@ export function EDziennik() {
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <div className="text-sm font-semibold">
-              ModuĹ‚y dziennika oczekujÄ… na aktualizacjÄ™ bazy danych
+              Moduły dziennika oczekują na aktualizację bazy danych
             </div>
             <p className="mt-1 text-xs leading-5 text-amber-900/75 dark:text-amber-200/75">
-              Klasy i komunikacja nadal dziaĹ‚ajÄ…. Frekwencja, oceny i uwagi uruchomiÄ… siÄ™ po
+              Klasy i komunikacja nadal działają. Frekwencja, oceny i uwagi uruchomią się po
               zastosowaniu migracji E-dziennika.
             </p>
           </div>
@@ -255,7 +255,7 @@ export function EDziennik() {
       {error && (
         <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-100">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>Nie udaĹ‚o siÄ™ pobraÄ‡ czÄ™Ĺ›ci danych: {error}</span>
+          <span>Nie udało się pobrać części danych: {error}</span>
         </div>
       )}
 
@@ -292,9 +292,11 @@ export function EDziennik() {
               <Loader2 className="h-5 w-5 animate-spin" />
             </div>
             <div className="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-200">
-              Ĺadowanie E-dziennika
+              Ładowanie E-dziennika
             </div>
-            <div className="mt-1 text-xs text-slate-400">SynchronizujÄ™ klasy, lekcje i wpisy.</div>
+            <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              Synchronizuję klasy, lekcje i wpisy.
+            </div>
           </div>
         </div>
       ) : (
@@ -304,11 +306,11 @@ export function EDziennik() {
       <footer className="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500 shadow-sm dark:border-white/10 dark:bg-[#17181b] dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
         <span className="inline-flex items-center gap-2">
           <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-          Dane sÄ… ograniczone do nauczyciela, jego klas i przypisanych uczniĂłw.
+          Dane są ograniczone do nauczyciela, jego klas i przypisanych uczniów.
         </span>
         <span className="inline-flex items-center gap-2">
           <BarChart3 className="h-3.5 w-3.5" />
-          {selectedClass ? classLabel(selectedClass) : "Widok ogĂłlny"}
+          {selectedClass ? classLabel(selectedClass) : "Widok ogólny"}
         </span>
       </footer>
     </div>
