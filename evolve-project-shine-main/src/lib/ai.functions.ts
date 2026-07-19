@@ -2,6 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
+import {
+  createGeminiGenerateContentBody,
+  getGeminiGenerateContentUrl,
+} from "./gemini-native";
 import { getGeminiImageModel, getGeminiTextModel } from "./gemini-models";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -123,14 +127,14 @@ export const aiGenerateQuestionImage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${getGeminiImageModel()}:generateContent`,
+      getGeminiGenerateContentUrl(getGeminiImageModel()),
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "x-goog-api-key": key,
         },
-        body: JSON.stringify({
+        body: JSON.stringify(createGeminiGenerateContentBody({
           contents: [
             {
               parts: [
@@ -143,7 +147,7 @@ export const aiGenerateQuestionImage = createServerFn({ method: "POST" })
           generationConfig: {
             responseModalities: ["IMAGE"],
           },
-        }),
+        })),
       },
     );
 

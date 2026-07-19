@@ -2,6 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output } from "ai";
 import { createGeminiProvider } from "./ai-gateway";
+import {
+  createGeminiGenerateContentBody,
+  createGeminiInlineDataPart,
+  getGeminiGenerateContentUrl,
+  type GeminiContent,
+  type GeminiPart,
+  type GeminiTool,
+} from "./gemini-native";
 import { getGeminiLiteModel, getGeminiTextModel } from "./gemini-models";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -32,8 +40,8 @@ const TutorIn = z.object({
   }).optional(),
 });
 
-const EXAM_TOOLS = {
-  function_declarations: [{
+const EXAM_TOOLS: GeminiTool = {
+  functionDeclarations: [{
     name: "createExam",
         description: "Tworzy egzamin lub sprawdzian w systemie EduNex i zapisuje go na koncie nauczyciela. Użyj tej funkcji gdy nauczyciel poprosi o stworzenie egzaminu, sprawdzianu, kartkówki lub testu.",
     parameters: {
@@ -131,27 +139,26 @@ TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
     if (!key) throw new Error("Brak GEMINI_API_KEY");
 
     const systemInstruction = sys;
-    type GeminiPart = { text: string } | { inline_data: { mime_type: string; data: string } };
-    const chatMessages: Array<{ role: string; parts: GeminiPart[] }> = (history ?? []).map((m) => ({
+    const chatMessages: GeminiContent[] = (history ?? []).map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }],
     }));
-    const userParts: Array<{ text: string } | { inline_data: { mime_type: string; data: string } }> = [{ text: data.message }];
+    const userParts: GeminiPart[] = [{ text: data.message }];
     if (data.image) {
-      userParts.push({ inline_data: { mime_type: data.image.mime_type, data: data.image.data } });
+      userParts.push(createGeminiInlineDataPart(data.image.mime_type, data.image.data));
     }
     chatMessages.push({ role: "user", parts: userParts });
 
     const upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${getGeminiTextModel()}:generateContent`,
+      getGeminiGenerateContentUrl(getGeminiTextModel()),
       {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: systemInstruction }] },
+        body: JSON.stringify(createGeminiGenerateContentBody({
+          systemInstruction,
           contents: chatMessages,
           tools: [EXAM_TOOLS],
-        }),
+        })),
       },
     );
 

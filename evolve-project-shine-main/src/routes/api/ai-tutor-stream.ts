@@ -1,5 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import {
+  createGeminiGenerateContentBody,
+  getGeminiStreamGenerateContentUrl,
+  type GeminiContent,
+} from "@/lib/gemini-native";
 import { getGeminiTextModel } from "@/lib/gemini-models";
 
 /* =========================================================================
@@ -126,23 +131,23 @@ ZASADY:
 TON: profesjonalny, pomocny, rzeczowy. To asystent nauczyciela, nie ucznia.`;
 
           const systemInstruction = systemPrompt;
-          const chatMessages = (history ?? []).map((m) => ({
+          const chatMessages: GeminiContent[] = (history ?? []).map((m) => ({
             role: m.role === "assistant" ? "model" : "user",
             parts: [{ text: m.content }],
           }));
 
           const upstream = await fetch(
-            `https://generativelanguage.googleapis.com/v1/models/${getGeminiTextModel()}:streamGenerateContent?alt=sse`,
+            getGeminiStreamGenerateContentUrl(getGeminiTextModel()),
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 "x-goog-api-key": GEMINI_API_KEY,
               },
-              body: JSON.stringify({
-                system_instruction: { parts: [{ text: systemInstruction }] },
+              body: JSON.stringify(createGeminiGenerateContentBody({
+                systemInstruction,
                 contents: chatMessages,
-              }),
+              })),
             },
           );
 
