@@ -27,6 +27,7 @@ import {
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveUserDisplayName } from "@/lib/auth/user-display-name";
 
 export const Route = createFileRoute("/_authenticated/parent")({
   component: ParentPanel,
@@ -108,11 +109,15 @@ function ParentPanel() {
         return;
       }
 
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name,first_name,last_name")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
       setUser({
         email: session.user.email,
-        name: session.user.user_metadata?.first_name
-          ? `${session.user.user_metadata.first_name} ${session.user.user_metadata.last_name || ""}`.trim()
-          : session.user.email,
+        name: resolveUserDisplayName({ profile, metadata: session.user.user_metadata, role: "parent" }),
       });
       setChecking(false);
     };
@@ -171,7 +176,7 @@ function ParentPanel() {
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 sm:flex">
               <Mail className="h-3.5 w-3.5 text-blue-700" />
-              {user?.name || user?.email}
+              {user?.name || "Rodzicu"}
             </div>
             <button onClick={logout} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
               <LogOut className="h-3.5 w-3.5" />

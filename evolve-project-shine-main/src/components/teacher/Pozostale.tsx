@@ -461,14 +461,31 @@ export function Ustawienia() {
   }, []);
   const save = async () => {
     if (!profile) return;
+    const firstName = profile.first_name?.trim() ?? "";
+    const lastName = profile.last_name?.trim() ?? "";
+    if (!firstName || !lastName) {
+      toast.error("Podaj imię i nazwisko.");
+      return;
+    }
+    const fullName = `${firstName} ${lastName}`;
+    const displayName = profile.display_name?.trim() || fullName;
     setBusy(true);
-    const { error } = await supabase.from("profiles").update({
-      first_name: profile.first_name, last_name: profile.last_name,
-      display_name: profile.display_name, phone: profile.phone,
-      language: profile.language, two_factor_enabled: profile.two_factor_enabled,
-    }).eq("user_id", profile.user_id);
+    const [{ error }, { error: authError }] = await Promise.all([
+      supabase.from("profiles").update({
+        first_name: firstName, last_name: lastName,
+        display_name: displayName, phone: profile.phone,
+        language: profile.language, two_factor_enabled: profile.two_factor_enabled,
+      }).eq("user_id", profile.user_id),
+      supabase.auth.updateUser({ data: {
+        first_name: firstName,
+        last_name: lastName,
+        full_name: fullName,
+        display_name: displayName,
+      } }),
+    ]);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error || authError) return toast.error(error?.message || authError?.message);
+    setProfile({ ...profile, first_name: firstName, last_name: lastName, display_name: displayName });
     toast.success("Zapisano profil");
   };
   const changePassword = async () => {

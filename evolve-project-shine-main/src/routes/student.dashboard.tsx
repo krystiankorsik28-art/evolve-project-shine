@@ -34,6 +34,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { generateSerial, downloadCertPdf } from "@/lib/certificate";
 import { studentPinLogin } from "@/lib/student-auth.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveUserDisplayName } from "@/lib/auth/user-display-name";
 
 export const Route = createFileRoute("/student/dashboard")({
   beforeLoad: async () => {
@@ -62,6 +63,7 @@ type StudentProfile = {
   email?: string;
   first_name?: string;
   last_name?: string;
+  display_name: string;
 };
 
 const tabs: Array<{ id: TabKey; label: string; icon: ComponentType<{ className?: string }> }> = [
@@ -117,11 +119,29 @@ function StudentDashboard() {
         return;
       }
 
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name,first_name,last_name")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      const firstName =
+        profile?.first_name?.trim() ||
+        (typeof meta.first_name === "string" ? meta.first_name.trim() : "");
+      const lastName =
+        profile?.last_name?.trim() ||
+        (typeof meta.last_name === "string" ? meta.last_name.trim() : "");
+
       setUser({
         id: session.user.id,
         email: session.user.email,
-        first_name: meta.first_name || "",
-        last_name: meta.last_name || "",
+        first_name: firstName,
+        last_name: lastName,
+        display_name: resolveUserDisplayName({
+          profile,
+          metadata: meta,
+          role: "student",
+        }),
       });
       setChecking(false);
     };
@@ -137,7 +157,7 @@ function StudentDashboard() {
       const { data } = await supabase
         .from("attempts")
         .select("id, exam_id, status, score, max_score, percent, passed, created_at")
-        .eq("student_name", `${user.first_name} ${user.last_name}`.trim())
+        .eq("student_name", user.display_name)
         .order("created_at", { ascending: false })
         .limit(30);
 
@@ -170,9 +190,7 @@ function StudentDashboard() {
     return () => { active = false; };
   }, [user]);
 
-  const displayName = user?.first_name
-    ? `${user.first_name} ${user.last_name || ""}`.trim()
-    : user?.email || "Uczeń";
+  const displayName = user?.display_name || "Uczniu";
 
   const pin = pinDigits.join("");
   const pinReady = pin.length === 6;
@@ -205,7 +223,7 @@ function StudentDashboard() {
 
     setPinLoading(true);
     try {
-      const nameParts = displayName.split(" ");
+      const nameParts = displayName === "Uczniu" ? [] : displayName.split(" ");
       const result = await login({
         data: {
           first_name: nameParts[0] || "Uczeń",
@@ -288,7 +306,7 @@ function StudentDashboard() {
                 Bezpieczny dostęp do egzaminów
               </div>
               <h1 className="text-2xl font-semibold sm:text-3xl">
-                Dzień dobry, {displayName.split(" ")[0] || "uczniu"}.
+                Dzień dobry, {displayName}.
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
                 Wpisz kod PIN od nauczyciela, rozpocznij przypisany egzamin i wróć do wyników lub certyfikatów bez zbędnych elementów.

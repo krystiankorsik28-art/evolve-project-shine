@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { AuthProvider, AuthState, AuthUser, Session, AuthDevice, PasskeyCredential, Organization } from "./auth-types";
+import { resolveUserDisplayName } from "./user-display-name";
 
 const PROVIDER_CONFIG: Record<AuthProvider, { name: string; icon: string; color: string }> = {
   google: { name: "Google", icon: "G", color: "#4285F4" },
@@ -101,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signUpWithEmail = useCallback(async (email: string, password: string, role: string, metadata?: Record<string, string>) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -112,6 +113,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     if (error) return { error: formatAuthError(error.message) };
+
+    if (data.user && data.session && (metadata?.first_name || metadata?.last_name)) {
+      const firstName = metadata?.first_name?.trim() || null;
+      const lastName = metadata?.last_name?.trim() || null;
+      const displayName =
+        metadata?.display_name?.trim() || [firstName, lastName].filter(Boolean).join(" ") || null;
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          user_id: data.user.id,
+          first_name: firstName,
+          last_name: lastName,
+          display_name: displayName,
+        },
+        { onConflict: "user_id" },
+      );
+      if (profileError) return { error: formatAuthError(profileError.message) };
+    }
+
     return {};
   }, []);
 
@@ -136,8 +155,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateProfile = useCallback(async (data: Partial<AuthUser>) => {
-    const { error } = await supabase.auth.updateUser({ data });
+    const metadata: Record<string, string | null> = {};
+    if (data.firstName !== undefined) metadata.first_name = data.firstName;
+    if (data.lastName !== undefined) metadata.last_name = data.lastName;
+    if (data.displayName !== undefined) metadata.display_name = data.displayName;
+    if (data.avatarUrl !== undefined) metadata.avatar_url = data.avatarUrl;
+    if (data.language !== undefined) metadata.language = data.language;
+
+    if (data.firstName !== undefined || data.lastName !== undefined) {
+      const fullName = [data.firstName, data.lastName].filter(Boolean).join(" ").trim();
+      if (fullName) {
+        metadata.full_name = fullName;
+        if (data.displayName === undefined) metadata.display_name = fullName;
+      }
+    }
+
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.updateUser({ data: metadata });
     if (error) return { error: formatAuthError(error.message) };
+
+    if (user && Object.keys(metadata).length > 0) {
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          user_id: user.id,
+          first_name: metadata.first_name,
+          last_name: metadata.last_name,
+          display_name: metadata.display_name,
+          avatar_url: metadata.avatar_url,
+          language: metadata.language || undefined,
+        },
+        { onConflict: "user_id" },
+      );
+      if (profileError) return { error: formatAuthError(profileError.message) };
+    }
+
     return {};
   }, []);
 
@@ -313,7 +366,7 @@ function mapUser(session: any): AuthUser {
   return {
     id: user.id,
     email: user.email,
-    displayName: user.user_metadata?.display_name || user.user_metadata?.full_name || user.email?.split('@')[0] || null,
+    displayName: resolveUserDisplayName({ metadata: user.user_metadata, role }),
     firstName: user.user_metadata?.first_name || null,
     lastName: user.user_metadata?.last_name || null,
     avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
