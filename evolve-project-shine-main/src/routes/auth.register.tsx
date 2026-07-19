@@ -31,6 +31,12 @@ import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured } from "@/integrations/supabase/client";
 import { ROLE_LABEL, type PortalRole } from "@/lib/auth/access";
 import { useAuth } from "@/lib/auth/auth-context";
+import {
+  requiresManualInstitutionReview,
+  validateNip,
+  validateRegon,
+  validateRspo,
+} from "@/lib/auth/institution-validation";
 
 type RoleId = PortalRole;
 type StepId = "role" | "identity" | "organization" | "security";
@@ -46,6 +52,11 @@ type RegistrationData = {
   studentName: string;
   studentClass: string;
   accessCode: string;
+  rspo: string;
+  regon: string;
+  nip: string;
+  website: string;
+  authorizationBasis: string;
   password: string;
   confirmPassword: string;
 };
@@ -93,7 +104,7 @@ const roles: RoleConfig[] = [
     label: "Dyrekcja / administrator",
     shortLabel: "Administracja",
     description: "Zarządzaj organizacją, rolami, zgodnością i audytem.",
-    approval: "Wymagany jest kod zaproszenia administratora organizacji.",
+    approval: "Wymagana jest wieloetapowa weryfikacja placówki i umocowania służbowego.",
     icon: Building2,
     benefits: ["Role i dostęp", "Audyt i zgodność", "Konfiguracja szkoły"],
   },
@@ -122,6 +133,11 @@ const initialData: RegistrationData = {
   studentName: "",
   studentClass: "",
   accessCode: "",
+  rspo: "",
+  regon: "",
+  nip: "",
+  website: "",
+  authorizationBasis: "",
   password: "",
   confirmPassword: "",
 };
@@ -170,7 +186,7 @@ function Input({
   placeholder?: string;
   required?: boolean;
   autoComplete?: string;
-  inputMode?: "text" | "email" | "tel";
+  inputMode?: "text" | "email" | "tel" | "numeric" | "url";
   error?: string;
   hint?: string;
   right?: ReactNode;
@@ -198,7 +214,7 @@ function Input({
           aria-describedby={describedBy}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
-          className={`h-12 w-full rounded-[6px] border bg-white px-3 pr-11 text-[15px] text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:ring-1 ${
+          className={`h-[52px] w-full rounded-lg border bg-white px-3 pr-11 text-[15px] text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:ring-2 ${
             error
               ? "border-red-500 focus:border-red-600 focus:ring-red-600"
               : "border-slate-300 focus:border-[#0067b8] focus:ring-[#0067b8]"
@@ -236,10 +252,10 @@ function StepRail({ currentStep }: { currentStep: number }) {
             aria-current={active ? "step" : undefined}
             className={`grid grid-cols-[42px_1fr_auto] items-center gap-3 rounded-xl border px-3.5 py-3 transition ${
               active
-                ? "border-[#0067b8]/25 bg-white text-slate-950 shadow-sm"
+                ? "border-blue-300/30 bg-white/10 text-white"
                 : done
-                  ? "border-emerald-200/80 bg-emerald-50/70 text-slate-800"
-                  : "border-transparent bg-white/45 text-slate-500"
+                  ? "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+                  : "border-transparent bg-white/[0.035] text-slate-400"
             }`}
           >
             <span
@@ -248,7 +264,7 @@ function StepRail({ currentStep }: { currentStep: number }) {
                   ? "bg-[#0067b8] text-white"
                   : done
                     ? "bg-emerald-600 text-white"
-                    : "bg-white text-slate-500 ring-1 ring-slate-200"
+                    : "bg-white/10 text-slate-300 ring-1 ring-white/10"
               }`}
             >
               {done ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
@@ -351,6 +367,8 @@ function RegisterPanel() {
   const [terms, setTerms] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const [guardianConsent, setGuardianConsent] = useState(false);
+  const [authorityDeclaration, setAuthorityDeclaration] = useState(false);
+  const [mfaDeclaration, setMfaDeclaration] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -379,6 +397,9 @@ function RegisterPanel() {
       if (data.phone && !/^[+\d][\d\s-]{7,}$/.test(data.phone.trim())) {
         nextErrors.phone = "Sprawdź format numeru telefonu.";
       }
+      if (role === "admin" && !data.phone.trim()) {
+        nextErrors.phone = "Numer służbowy jest wymagany do weryfikacji administracji.";
+      }
     }
 
     if (stepIndex === 2) {
@@ -390,7 +411,14 @@ function RegisterPanel() {
       if (role === "admin") {
         if (!data.school.trim()) nextErrors.school = "Podaj nazwę organizacji.";
         if (!data.position.trim()) nextErrors.position = "Podaj stanowisko służbowe.";
-        if (data.accessCode.trim().length < 6) {
+        if (!validateRspo(data.rspo)) nextErrors.rspo = "Wpisz prawidłowy numer RSPO (4–10 cyfr).";
+        if (!validateRegon(data.regon))
+          nextErrors.regon = "Wpisz prawidłowy REGON z poprawną sumą kontrolną.";
+        if (data.nip.trim() && !validateNip(data.nip))
+          nextErrors.nip = "Wpisz prawidłowy NIP z poprawną sumą kontrolną.";
+        if (!data.authorizationBasis.trim())
+          nextErrors.authorizationBasis = "Opisz podstawę umocowania do reprezentowania placówki.";
+        if (data.accessCode.trim() && data.accessCode.trim().length < 6) {
           nextErrors.accessCode = "Kod zaproszenia ma co najmniej 6 znaków.";
         }
       }
@@ -426,6 +454,12 @@ function RegisterPanel() {
       if (!privacy) nextErrors.privacy = "Zaakceptuj politykę prywatności.";
       if (role === "student" && !guardianConsent) {
         nextErrors.guardianConsent = "Wymagane jest potwierdzenie wieku lub zgody opiekuna.";
+      }
+      if (role === "admin" && !authorityDeclaration) {
+        nextErrors.authorityDeclaration = "Potwierdź umocowanie i prawdziwość danych.";
+      }
+      if (role === "admin" && !mfaDeclaration) {
+        nextErrors.mfaDeclaration = "Potwierdź obowiązek silnego uwierzytelniania.";
       }
     }
 
@@ -471,7 +505,16 @@ function RegisterPanel() {
       student_name: data.studentName.trim(),
       student_class: data.studentClass.trim(),
       access_code: data.accessCode.trim().toUpperCase(),
-      registration_source: "identity_portal_v2",
+      institution_rspo: data.rspo.replace(/\D/g, ""),
+      institution_regon: data.regon.replace(/\D/g, ""),
+      institution_nip: data.nip.replace(/\D/g, ""),
+      institution_website: data.website.trim(),
+      authorization_basis: data.authorizationBasis.trim(),
+      institution_manual_review: String(
+        role === "admin" && requiresManualInstitutionReview(data.email),
+      ),
+      privileged_access_requires_mfa: String(role === "admin"),
+      registration_source: "identity_portal_v3",
     });
     setLoading(false);
 
@@ -607,41 +650,41 @@ function RegisterPanel() {
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[380px_minmax(0,1fr)]"
           >
-            <aside className="relative hidden overflow-hidden border-r border-slate-200 bg-[#edf4fa] p-8 lg:block xl:p-10">
+            <aside className="identity-institutional relative hidden overflow-hidden border-r border-slate-800 bg-[#071426] p-8 text-white lg:block xl:p-10">
               <div
                 className="pointer-events-none absolute inset-0 opacity-[0.3]"
                 style={{
                   backgroundImage:
-                    "linear-gradient(rgba(0,103,184,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(0,103,184,.09) 1px,transparent 1px)",
+                    "linear-gradient(rgba(148,163,184,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.09) 1px,transparent 1px)",
                   backgroundSize: "36px 36px",
                   maskImage: "linear-gradient(to bottom, black, transparent 75%)",
                 }}
               />
               <div className="relative flex h-full min-h-[700px] flex-col">
-                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#0067b8]/15 bg-white/75 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#005a9e] shadow-sm">
+                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-200">
                   <ClipboardCheck className="h-4 w-4" />
                   Konfiguracja konta
                 </div>
-                <h1 className="mt-6 text-[36px] font-semibold leading-[1.1] tracking-[-0.04em] text-[#0b1730]">
+                <h1 className="mt-6 text-[36px] font-semibold leading-[1.1] tracking-[-0.04em] text-white">
                   Konto dopasowane do Twojej roli.
                 </h1>
-                <p className="mt-4 text-sm leading-6 text-slate-600">
+                <p className="mt-4 text-sm leading-6 text-slate-300">
                   Cztery krótkie etapy prowadzą od wyboru roli do bezpiecznego wniosku o dostęp.
                 </p>
 
                 <StepRail currentStep={step} />
 
                 <div className="mt-auto pt-8">
-                  <div className="rounded-xl border border-white/90 bg-white/75 p-4 shadow-sm backdrop-blur">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.055] p-4 backdrop-blur">
                     <div className="flex items-start gap-3">
                       <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-700">
                         <ShieldCheck className="h-[18px] w-[18px]" />
                       </span>
                       <span>
-                        <span className="block text-sm font-semibold text-slate-900">
+                        <span className="block text-sm font-semibold text-white">
                           Kontrolowany dostęp
                         </span>
-                        <span className="mt-1 block text-xs leading-5 text-slate-600">
+                        <span className="mt-1 block text-xs leading-5 text-slate-300">
                           Wybór roli składa wniosek. Uprawnienia aktywuje dopiero placówka.
                         </span>
                       </span>
@@ -822,14 +865,23 @@ function RegisterPanel() {
                           />
                           <Input
                             id="phone"
-                            label="Telefon kontaktowy"
+                            label={
+                              role === "admin"
+                                ? "Służbowy telefon kontaktowy"
+                                : "Telefon kontaktowy"
+                            }
                             value={data.phone}
                             onChange={(value) => setField("phone", value)}
                             placeholder="+48 000 000 000"
                             autoComplete="tel"
                             inputMode="tel"
+                            required={role === "admin"}
                             error={errors.phone}
-                            hint="Opcjonalny; pomocny przy weryfikacji konta."
+                            hint={
+                              role === "admin"
+                                ? "Numer zostanie użyty do niezależnego potwierdzenia w placówce."
+                                : "Opcjonalny; pomocny przy weryfikacji konta."
+                            }
                           />
                         </div>
                         <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
@@ -901,6 +953,19 @@ function RegisterPanel() {
 
                         {role === "admin" && (
                           <>
+                            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+                              <div className="flex items-start gap-3">
+                                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
+                                <span>
+                                  <strong className="block font-semibold">
+                                    Dostęp uprzywilejowany
+                                  </strong>
+                                  Formularz składa wniosek. Nie nadaje roli administracyjnej. Dane
+                                  zostaną porównane z rejestrem placówki, a umocowanie potwierdzone
+                                  niezależnym kanałem.
+                                </span>
+                              </div>
+                            </div>
                             <div className="grid gap-4 sm:grid-cols-2">
                               <Input
                                 id="school"
@@ -923,16 +988,77 @@ function RegisterPanel() {
                                 error={errors.position}
                               />
                             </div>
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                              <Input
+                                id="rspo"
+                                label="Numer RSPO"
+                                value={data.rspo}
+                                onChange={(value) => setField("rspo", value.replace(/\D/g, ""))}
+                                placeholder="np. 123456"
+                                inputMode="numeric"
+                                required
+                                error={errors.rspo}
+                                hint="Identyfikator z publicznego rejestru szkół i placówek."
+                              />
+                              <Input
+                                id="regon"
+                                label="REGON placówki"
+                                value={data.regon}
+                                onChange={(value) => setField("regon", value.replace(/\D/g, ""))}
+                                placeholder="9 lub 14 cyfr"
+                                inputMode="numeric"
+                                required
+                                error={errors.regon}
+                              />
+                              <Input
+                                id="nip"
+                                label="NIP (jeśli nadany)"
+                                value={data.nip}
+                                onChange={(value) => setField("nip", value.replace(/\D/g, ""))}
+                                placeholder="10 cyfr"
+                                inputMode="numeric"
+                                error={errors.nip}
+                              />
+                            </div>
+                            <div className="grid gap-4 sm:grid-cols-2">
+                              <Input
+                                id="website"
+                                label="Oficjalna strona placówki"
+                                type="url"
+                                value={data.website}
+                                onChange={(value) => setField("website", value)}
+                                placeholder="https://szkola.edu.pl"
+                                inputMode="url"
+                                autoComplete="url"
+                              />
+                              <Input
+                                id="accessCode"
+                                label="Kod zaproszenia (opcjonalnie)"
+                                value={data.accessCode}
+                                onChange={(value) => setField("accessCode", value.toUpperCase())}
+                                placeholder="EDX-ADMIN-XXXX"
+                                error={errors.accessCode}
+                                hint="Kod przyspiesza kontrolę, ale jej nie zastępuje."
+                              />
+                            </div>
                             <Input
-                              id="accessCode"
-                              label="Kod zaproszenia administratora"
-                              value={data.accessCode}
-                              onChange={(value) => setField("accessCode", value.toUpperCase())}
-                              placeholder="EDX-ADMIN-XXXX"
+                              id="authorizationBasis"
+                              label="Podstawa umocowania"
+                              value={data.authorizationBasis}
+                              onChange={(value) => setField("authorizationBasis", value)}
+                              placeholder="np. dyrektor wskazany w RSPO / pełnomocnictwo organu prowadzącego"
                               required
-                              error={errors.accessCode}
-                              hint="Kod otrzymasz od właściciela organizacji lub zespołu wdrożeniowego EduNex."
+                              error={errors.authorizationBasis}
+                              hint="Nie przesyłaj dokumentów ani danych wrażliwych w tym polu. Zespół weryfikacyjny poprosi o nie bezpiecznym kanałem, jeżeli będą konieczne."
                             />
+                            {requiresManualInstitutionReview(data.email) && (
+                              <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm leading-6 text-blue-950">
+                                <MailCheck className="mt-0.5 h-4 w-4 shrink-0" />
+                                Publiczna domena pocztowa wymaga dodatkowej weryfikacji
+                                telefonicznej z placówką. Użyj adresu służbowego, jeśli go
+                                posiadasz.
+                              </div>
+                            )}
                           </>
                         )}
 
@@ -1156,6 +1282,36 @@ function RegisterPanel() {
                               na utworzenie konta.
                             </Consent>
                           )}
+                          {role === "admin" && (
+                            <>
+                              <Consent
+                                checked={authorityDeclaration}
+                                onChange={(checked) => {
+                                  setAuthorityDeclaration(checked);
+                                  setErrors((current) => ({
+                                    ...current,
+                                    authorityDeclaration: "",
+                                  }));
+                                }}
+                                error={Boolean(errors.authorityDeclaration)}
+                              >
+                                Oświadczam, że dane są prawdziwe i posiadam umocowanie do złożenia
+                                wniosku w imieniu wskazanej placówki. Przyjmuję do wiadomości, że
+                                EduNex zweryfikuje je niezależnym kanałem.
+                              </Consent>
+                              <Consent
+                                checked={mfaDeclaration}
+                                onChange={(checked) => {
+                                  setMfaDeclaration(checked);
+                                  setErrors((current) => ({ ...current, mfaDeclaration: "" }));
+                                }}
+                                error={Boolean(errors.mfaDeclaration)}
+                              >
+                                Akceptuję obowiązkowe silne uwierzytelnianie (MFA) dla dostępu
+                                dyrekcji i administracji oraz cykliczny przegląd aktywnych sesji.
+                              </Consent>
+                            </>
+                          )}
                         </div>
                       </div>
                     )}
@@ -1188,7 +1344,9 @@ function RegisterPanel() {
                       {loading
                         ? "Tworzenie wniosku..."
                         : step === 3
-                          ? "Utwórz bezpieczne konto"
+                          ? role === "admin"
+                            ? "Wyślij wniosek do weryfikacji"
+                            : "Utwórz bezpieczne konto"
                           : "Przejdź dalej"}
                     </button>
                     <span className="text-[11px] text-slate-400">

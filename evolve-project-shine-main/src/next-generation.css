@@ -151,6 +151,12 @@
     linear-gradient(145deg, rgba(238, 246, 253, 0.96), rgba(248, 251, 254, 0.98)) !important;
 }
 
+.edunex-next-gen-identity aside.identity-institutional {
+  background:
+    radial-gradient(circle at 8% 6%, rgba(0, 120, 212, 0.22), transparent 25rem),
+    linear-gradient(145deg, #071426, #0b1b33 72%, #0d203d) !important;
+}
+
 .edunex-next-gen-identity :is(input, select, textarea) {
   border-color: #cbd5e1 !important;
   background: #ffffff !important;

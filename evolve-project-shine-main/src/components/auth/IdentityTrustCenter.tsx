@@ -31,7 +31,7 @@ const trustItems: Record<IdentityTrustCenterProps["mode"], TrustItem[]> = {
     {
       icon: Fingerprint,
       label: "Dostęp wielokanałowy",
-      description: "Konto EduNex, kod egzaminu albo SSO szkoły — zależnie od roli.",
+      description: "Konto użytkownika, kod egzaminu albo zweryfikowane SSO placówki.",
     },
     {
       icon: LockKeyhole,
@@ -62,8 +62,8 @@ const trustItems: Record<IdentityTrustCenterProps["mode"], TrustItem[]> = {
     },
     {
       icon: LockKeyhole,
-      label: "Bezpieczny start",
-      description: "Silne hasło, wymagane zgody i kontrola danych przed utworzeniem konta.",
+      label: "Europejskie zasady ochrony",
+      description: "Proces projektowany z myślą o minimalizacji danych, RODO i privacy by design.",
     },
   ],
 };
