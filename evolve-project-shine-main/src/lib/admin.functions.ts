@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
@@ -36,7 +37,7 @@ export const sendAdminOtp = createServerFn({ method: "POST" })
         { name: "category", value: "admin-otp" },
         { name: "system", value: "identity" },
       ],
-      idempotencyKey: `admin-otp/${user.user?.id || key}/${Math.floor(expires / 60000)}`,
+      idempotencyKey: `admin-otp/${user.user?.id || key}/${randomUUID()}`,
     });
 
     if (!delivery.ok) {
