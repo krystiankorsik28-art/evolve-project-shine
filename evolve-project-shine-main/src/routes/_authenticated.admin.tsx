@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { resolveUserDisplayName } from "@/lib/auth/user-display-name";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPanel,
@@ -56,7 +57,7 @@ const governanceItems = [
 function AdminPanel() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("Administratorze");
   const [pending, setPending] = useState<PendingTeacher[]>([]);
   const [stats, setStats] = useState({ exams: 0, attempts: 0, messages: 0 });
   const [query, setQuery] = useState("");
@@ -71,8 +72,12 @@ function AdminPanel() {
         return;
       }
 
-      setEmail(user.email ?? "");
-      const [{ data: roles }, { count: examCount }, { count: attemptCount }] = await Promise.all([
+      const [{ data: profile }, { data: roles }, { count: examCount }, { count: attemptCount }] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("display_name,first_name,last_name")
+          .eq("user_id", user.id)
+          .maybeSingle(),
         supabase
           .from("user_roles")
           .select("id,user_id,role,approval_status,created_at")
@@ -82,6 +87,7 @@ function AdminPanel() {
       ]);
 
       if (!active) return;
+      setDisplayName(resolveUserDisplayName({ profile, metadata: user.user_metadata, role: "admin" }));
       setPending((roles ?? []) as PendingTeacher[]);
       setStats({ exams: examCount ?? 0, attempts: attemptCount ?? 0, messages: 0 });
       setLoading(false);
@@ -187,7 +193,7 @@ function AdminPanel() {
           <div className="flex items-center gap-3">
             <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600 sm:flex">
               <MailCheck className="h-3.5 w-3.5 text-blue-700" />
-              {email || "administrator"}
+              {displayName}
             </div>
             <button
               onClick={logout}

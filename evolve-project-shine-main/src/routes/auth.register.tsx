@@ -461,6 +461,7 @@ function RegisterPanel() {
     const { error } = await signUpWithEmail(data.email.trim(), data.password, role, {
       first_name: data.firstName.trim(),
       last_name: data.lastName.trim(),
+      full_name: `${data.firstName.trim()} ${data.lastName.trim()}`,
       display_name: `${data.firstName.trim()} ${data.lastName.trim()}`,
       phone: data.phone.trim(),
       school: data.school.trim(),

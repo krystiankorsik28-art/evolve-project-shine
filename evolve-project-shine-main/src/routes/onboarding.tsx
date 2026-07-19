@@ -242,7 +242,7 @@ function OnboardingPage() {
 
   const canContinue =
     (step === 0 && purpose !== null) ||
-    (step === 1 && firstName.trim().length > 0) ||
+    (step === 1 && firstName.trim().length > 0 && lastName.trim().length > 0) ||
     (step === 2 && modules.length > 0) ||
     step >= 3;
 
@@ -266,12 +266,17 @@ function OnboardingPage() {
 
   const complete = async () => {
     setSaving(true);
-    const { error } = await supabase.auth.updateUser({
+    const normalizedFirstName = firstName.trim();
+    const normalizedLastName = lastName.trim();
+    const fullName = `${normalizedFirstName} ${normalizedLastName}`.trim();
+    const { data: authData, error } = await supabase.auth.updateUser({
       data: {
+        first_name: normalizedFirstName,
+        last_name: normalizedLastName,
+        full_name: fullName,
+        display_name: fullName,
         onboarding_completed: true,
         onboarding_version: 2,
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
         organization_name: organization.trim(),
         onboarding_profile: purpose,
         onboarding_modules: modules,
@@ -285,6 +290,24 @@ function OnboardingPage() {
       setSaving(false);
       toast.error("Nie udało się zapisać konfiguracji. Spróbuj ponownie.");
       return;
+    }
+
+    if (authData.user) {
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          user_id: authData.user.id,
+          first_name: normalizedFirstName,
+          last_name: normalizedLastName,
+          display_name: fullName,
+        },
+        { onConflict: "user_id" },
+      );
+
+      if (profileError) {
+        setSaving(false);
+        toast.error("Nie udało się zapisać imienia i nazwiska w profilu.");
+        return;
+      }
     }
 
     toast.success("Przestrzeń EduNex jest gotowa.");

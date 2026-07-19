@@ -1053,6 +1053,242 @@ export type Database = {
         }
         Relationships: []
       }
+      journal_attendance: {
+        Row: {
+          created_by: string
+          id: string
+          lesson_id: string
+          minutes_late: number
+          note: string | null
+          recorded_at: string
+          status: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_by: string
+          id?: string
+          lesson_id: string
+          minutes_late?: number
+          note?: string | null
+          recorded_at?: string
+          status?: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_by?: string
+          id?: string
+          lesson_id?: string
+          minutes_late?: number
+          note?: string | null
+          recorded_at?: string
+          status?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_attendance_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "journal_lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "class_students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_grades: {
+        Row: {
+          category: string
+          class_id: string
+          comment: string | null
+          created_at: string
+          created_by: string
+          graded_at: string
+          id: string
+          max_points: number | null
+          points: number | null
+          student_id: string
+          subject: string
+          title: string
+          updated_at: string
+          value: number
+          visible_to_student: boolean
+          weight: number
+        }
+        Insert: {
+          category?: string
+          class_id: string
+          comment?: string | null
+          created_at?: string
+          created_by: string
+          graded_at?: string
+          id?: string
+          max_points?: number | null
+          points?: number | null
+          student_id: string
+          subject: string
+          title: string
+          updated_at?: string
+          value: number
+          visible_to_student?: boolean
+          weight?: number
+        }
+        Update: {
+          category?: string
+          class_id?: string
+          comment?: string | null
+          created_at?: string
+          created_by?: string
+          graded_at?: string
+          id?: string
+          max_points?: number | null
+          points?: number | null
+          student_id?: string
+          subject?: string
+          title?: string
+          updated_at?: string
+          value?: number
+          visible_to_student?: boolean
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_grades_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_grades_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "class_students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_lessons: {
+        Row: {
+          class_id: string
+          created_at: string
+          created_by: string
+          ends_at: string | null
+          id: string
+          notes: string | null
+          room: string | null
+          starts_at: string
+          status: string
+          subject: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          class_id: string
+          created_at?: string
+          created_by: string
+          ends_at?: string | null
+          id?: string
+          notes?: string | null
+          room?: string | null
+          starts_at: string
+          status?: string
+          subject: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          ends_at?: string | null
+          id?: string
+          notes?: string | null
+          room?: string | null
+          starts_at?: string
+          status?: string
+          subject?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_lessons_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      journal_notes: {
+        Row: {
+          body: string | null
+          class_id: string
+          created_at: string
+          created_by: string
+          event_date: string
+          id: string
+          kind: string
+          points: number
+          student_id: string
+          title: string
+          updated_at: string
+          visible_to_student: boolean
+        }
+        Insert: {
+          body?: string | null
+          class_id: string
+          created_at?: string
+          created_by: string
+          event_date?: string
+          id?: string
+          kind?: string
+          points?: number
+          student_id: string
+          title: string
+          updated_at?: string
+          visible_to_student?: boolean
+        }
+        Update: {
+          body?: string | null
+          class_id?: string
+          created_at?: string
+          created_by?: string
+          event_date?: string
+          id?: string
+          kind?: string
+          points?: number
+          student_id?: string
+          title?: string
+          updated_at?: string
+          visible_to_student?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "journal_notes_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "classes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "journal_notes_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "class_students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_plans: {
         Row: {
           ai_generated: boolean | null

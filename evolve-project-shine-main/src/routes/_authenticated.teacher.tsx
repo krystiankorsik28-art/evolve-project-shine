@@ -55,6 +55,7 @@ import { Pulpit } from "@/components/teacher/PulpitSection";
 import { AISection } from "@/components/teacher/AISection";
 import { Certyfikaty } from "@/components/teacher/CertyfikatySection";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { resolveUserDisplayName } from "@/lib/auth/user-display-name";
 import { useTheme } from "@/lib/theme";
 
 const lazyLoad = <T,>(fn: () => Promise<T>, name: keyof T) =>
@@ -370,16 +371,13 @@ function TeacherPanel() {
 
         if (firstError) throw firstError;
 
-        const profile = profileResult.data;
-        const profileName =
-          profile?.display_name?.trim() ||
-          [profile?.first_name, profile?.last_name].filter(Boolean).join(" ").trim();
-        const metadataName =
-          user.user_metadata?.display_name ??
-          user.user_metadata?.full_name ??
-          user.email?.split("@")[0];
-
-        setDisplayName(profileName || metadataName || "nauczycielu");
+        setDisplayName(
+          resolveUserDisplayName({
+            profile: profileResult.data,
+            metadata: user.user_metadata,
+            role: "teacher",
+          }),
+        );
         setExams((examsResult.data ?? []) as Exam[]);
         setAttempts(attemptsResult.count ?? 0);
         setPendingReview(pendingResult.count ?? 0);

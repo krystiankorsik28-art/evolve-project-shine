@@ -48,19 +48,19 @@ const metrics = [
     icon: GraduationCap,
   },
   {
-    table: "lessons",
+    table: "journal_lessons",
     label: "Lekcje",
     description: "Tematy, terminy i sale lekcyjne",
     icon: BookOpenCheck,
   },
   {
-    table: "lesson_attendance",
+    table: "journal_attendance",
     label: "Frekwencja",
     description: "Obecności i usprawiedliwienia",
     icon: UserCheck,
   },
   {
-    table: "grade_entries",
+    table: "journal_grades",
     label: "Oceny",
     description: "Oceny cząstkowe i wyniki uczniów",
     icon: TrendingUp,
@@ -100,6 +100,12 @@ const metrics = [
     label: "Eksporty ocen",
     description: "Pliki i raporty ocen",
     icon: FileSpreadsheet,
+  },
+  {
+    table: "journal_notes",
+    label: "Uwagi i pochwały",
+    description: "Wpisy wychowawcze i osiągnięcia",
+    icon: ShieldCheck,
   },
 ] as const;
 

@@ -9,12 +9,13 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test:names": "node --experimental-strip-types --test src/lib/auth/user-display-name.test.ts",
     "format": "prettier --write ."
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^2.0.47",
     "@cloudflare/vite-plugin": "^1.25.5",
-    "@edunex/design-system": "file:../../packages/design-system",
+    "@edunex/design-system": "file:../packages/design-system",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
