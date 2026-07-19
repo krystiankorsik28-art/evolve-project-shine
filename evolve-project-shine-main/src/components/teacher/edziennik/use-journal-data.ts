@@ -9,7 +9,7 @@ import {
   type NoteKind,
 } from "./journal-types";
 
-type NewLesson = {
+export type NewLesson = {
   classId: string;
   subject: string;
   topic: string;
@@ -26,7 +26,7 @@ type AttendanceDraft = {
   note?: string;
 };
 
-type NewGrade = {
+export type NewGrade = {
   classId: string;
   studentId: string;
   subject: string;
@@ -38,7 +38,7 @@ type NewGrade = {
   visibleToStudent: boolean;
 };
 
-type NewNote = {
+export type NewNote = {
   classId: string;
   studentId: string;
   kind: NoteKind;
@@ -49,7 +49,7 @@ type NewNote = {
   visibleToStudent: boolean;
 };
 
-type NewAnnouncement = {
+export type NewAnnouncement = {
   classId?: string;
   title: string;
   body: string;
@@ -58,7 +58,9 @@ type NewAnnouncement = {
 
 function isMissingJournalSchema(message?: string) {
   if (!message) return false;
-  return /journal_(lessons|attendance|grades|notes)|schema cache|does not exist/i.test(message);
+  return /journal_(lessons|attendance|grades|notes|activity_log)|schema cache|does not exist/i.test(
+    message,
+  );
 }
 
 export function useJournalData() {
@@ -117,6 +119,7 @@ export function useJournalData() {
       attendanceResult,
       gradesResult,
       notesResult,
+      activityResult,
       announcementsResult,
       eventsResult,
       messagesResult,
@@ -147,6 +150,12 @@ export function useJournalData() {
         .order("event_date", { ascending: false })
         .limit(1000),
       supabase
+        .from("journal_activity_log")
+        .select("*")
+        .eq("actor_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(100),
+      supabase
         .from("announcements")
         .select("*")
         .eq("created_by", user.id)
@@ -171,6 +180,7 @@ export function useJournalData() {
       attendanceResult.error,
       gradesResult.error,
       notesResult.error,
+      activityResult.error,
     ].filter(Boolean);
     const journalSchemaReady = !journalErrors.some((journalError) =>
       isMissingJournalSchema(journalError?.message),
@@ -194,6 +204,7 @@ export function useJournalData() {
       attendance: attendanceResult.data ?? [],
       grades: gradesResult.data ?? [],
       notes: notesResult.data ?? [],
+      activity: activityResult.data ?? [],
       announcements: announcementsResult.data ?? [],
       events: eventsResult.data ?? [],
       unreadMessages: messagesResult.count ?? 0,
@@ -227,6 +238,36 @@ export function useJournalData() {
     [load, requireUser],
   );
 
+  const updateClass = useCallback(
+    async (classId: string, name: string, year: string) => {
+      const { data, error: mutationError } = await supabase
+        .from("classes")
+        .update({ name: name.trim(), year: year.trim() })
+        .eq("id", classId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono klasy lub nie masz prawa jej edytować.");
+      await load(true);
+    },
+    [load],
+  );
+
+  const deleteClass = useCallback(
+    async (classId: string) => {
+      const { data, error: mutationError } = await supabase
+        .from("classes")
+        .delete()
+        .eq("id", classId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono klasy lub nie masz prawa jej usunąć.");
+      await load(true);
+    },
+    [load],
+  );
+
   const addStudent = useCallback(
     async (classId: string, name: string) => {
       const { error: mutationError } = await supabase.from("class_students").insert({
@@ -234,6 +275,36 @@ export function useJournalData() {
         student_name: name.trim(),
       });
       if (mutationError) throw mutationError;
+      await load(true);
+    },
+    [load],
+  );
+
+  const updateStudent = useCallback(
+    async (studentId: string, name: string) => {
+      const { data, error: mutationError } = await supabase
+        .from("class_students")
+        .update({ student_name: name.trim() })
+        .eq("id", studentId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono ucznia lub nie masz prawa go edytować.");
+      await load(true);
+    },
+    [load],
+  );
+
+  const deleteStudent = useCallback(
+    async (studentId: string) => {
+      const { data, error: mutationError } = await supabase
+        .from("class_students")
+        .delete()
+        .eq("id", studentId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono ucznia lub nie masz prawa go usunąć.");
       await load(true);
     },
     [load],
@@ -257,6 +328,50 @@ export function useJournalData() {
       await load(true);
     },
     [load, requireUser],
+  );
+
+  const updateLesson = useCallback(
+    async (lessonId: string, input: NewLesson) => {
+      const { data, error: mutationError } = await supabase
+        .from("journal_lessons")
+        .update({
+          class_id: input.classId,
+          subject: input.subject.trim(),
+          topic: input.topic.trim(),
+          room: input.room?.trim() || null,
+          starts_at: new Date(input.startsAt).toISOString(),
+          ends_at: input.endsAt ? new Date(input.endsAt).toISOString() : null,
+          notes: input.notes?.trim() || null,
+        })
+        .eq("id", lessonId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono lekcji lub nie masz prawa jej edytować.");
+      await load(true);
+    },
+    [load],
+  );
+
+  const duplicateLesson = useCallback(
+    async (lessonId: string) => {
+      const lesson = snapshot.lessons.find((item) => item.id === lessonId);
+      if (!lesson) throw new Error("Nie znaleziono lekcji do skopiowania.");
+      const start = new Date(lesson.starts_at);
+      const end = lesson.ends_at ? new Date(lesson.ends_at) : null;
+      start.setDate(start.getDate() + 7);
+      end?.setDate(end.getDate() + 7);
+      await createLesson({
+        classId: lesson.class_id,
+        subject: lesson.subject,
+        topic: lesson.topic,
+        room: lesson.room || undefined,
+        startsAt: start.toISOString(),
+        endsAt: end?.toISOString(),
+        notes: lesson.notes || undefined,
+      });
+    },
+    [createLesson, snapshot.lessons],
   );
 
   const setLessonStatus = useCallback(
@@ -304,6 +419,18 @@ export function useJournalData() {
     [load, requireUser],
   );
 
+  const clearAttendance = useCallback(
+    async (lessonId: string) => {
+      const { error: mutationError } = await supabase
+        .from("journal_attendance")
+        .delete()
+        .eq("lesson_id", lessonId);
+      if (mutationError) throw mutationError;
+      await load(true);
+    },
+    [load],
+  );
+
   const createGrade = useCallback(
     async (input: NewGrade) => {
       const createdBy = requireUser();
@@ -332,6 +459,31 @@ export function useJournalData() {
         .delete()
         .eq("id", gradeId);
       if (mutationError) throw mutationError;
+      await load(true);
+    },
+    [load],
+  );
+
+  const updateGrade = useCallback(
+    async (gradeId: string, input: NewGrade) => {
+      const { data, error: mutationError } = await supabase
+        .from("journal_grades")
+        .update({
+          class_id: input.classId,
+          student_id: input.studentId,
+          subject: input.subject.trim(),
+          category: input.category.trim(),
+          title: input.title.trim(),
+          value: input.value,
+          weight: input.weight,
+          comment: input.comment?.trim() || null,
+          visible_to_student: input.visibleToStudent,
+        })
+        .eq("id", gradeId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono oceny lub nie masz prawa jej edytować.");
       await load(true);
     },
     [load],
@@ -369,6 +521,30 @@ export function useJournalData() {
     [load],
   );
 
+  const updateNote = useCallback(
+    async (noteId: string, input: NewNote) => {
+      const { data, error: mutationError } = await supabase
+        .from("journal_notes")
+        .update({
+          class_id: input.classId,
+          student_id: input.studentId,
+          kind: input.kind,
+          title: input.title.trim(),
+          body: input.body?.trim() || null,
+          points: input.points,
+          event_date: input.eventDate,
+          visible_to_student: input.visibleToStudent,
+        })
+        .eq("id", noteId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono wpisu lub nie masz prawa go edytować.");
+      await load(true);
+    },
+    [load],
+  );
+
   const createAnnouncement = useCallback(
     async (input: NewAnnouncement) => {
       const createdBy = requireUser();
@@ -386,6 +562,41 @@ export function useJournalData() {
     [load, requireUser],
   );
 
+  const updateAnnouncement = useCallback(
+    async (announcementId: string, input: NewAnnouncement) => {
+      const { data, error: mutationError } = await supabase
+        .from("announcements")
+        .update({
+          class_id: input.classId || null,
+          title: input.title.trim(),
+          body: input.body.trim(),
+          priority: input.priority,
+        })
+        .eq("id", announcementId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono ogłoszenia lub nie masz prawa go edytować.");
+      await load(true);
+    },
+    [load],
+  );
+
+  const deleteAnnouncement = useCallback(
+    async (announcementId: string) => {
+      const { data, error: mutationError } = await supabase
+        .from("announcements")
+        .delete()
+        .eq("id", announcementId)
+        .select("id")
+        .single();
+      if (mutationError) throw mutationError;
+      if (!data) throw new Error("Nie znaleziono ogłoszenia lub nie masz prawa go usunąć.");
+      await load(true);
+    },
+    [load],
+  );
+
   return {
     snapshot,
     loading,
@@ -394,16 +605,27 @@ export function useJournalData() {
     error,
     refresh: () => load(true),
     createClass,
+    updateClass,
+    deleteClass,
     addStudent,
+    updateStudent,
+    deleteStudent,
     createLesson,
+    updateLesson,
+    duplicateLesson,
     setLessonStatus,
     deleteLesson,
     saveAttendance,
+    clearAttendance,
     createGrade,
+    updateGrade,
     deleteGrade,
     createNote,
+    updateNote,
     deleteNote,
     createAnnouncement,
+    updateAnnouncement,
+    deleteAnnouncement,
   };
 }
 

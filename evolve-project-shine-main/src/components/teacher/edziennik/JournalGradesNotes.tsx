@@ -6,6 +6,7 @@ import {
   FileWarning,
   Loader2,
   MessageSquareText,
+  Pencil,
   Plus,
   Search,
   Sparkles,
@@ -45,6 +46,7 @@ type Props = {
 
 export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, actions }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingGradeId, setEditingGradeId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState({
@@ -78,8 +80,23 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
     [grades, search, students],
   );
 
-  const openModal = (studentId = "") => {
-    setForm((current) => ({ ...current, studentId }));
+  const openModal = (studentId = "", gradeId?: string) => {
+    const grade = gradeId ? snapshot.grades.find((item) => item.id === gradeId) : null;
+    setEditingGradeId(grade?.id || null);
+    setForm((current) =>
+      grade
+        ? {
+            studentId: grade.student_id,
+            subject: grade.subject,
+            category: grade.category,
+            title: grade.title,
+            value: String(grade.value),
+            weight: String(grade.weight),
+            comment: grade.comment || "",
+            visibleToStudent: grade.visible_to_student,
+          }
+        : { ...current, studentId },
+    );
     setModalOpen(true);
   };
 
@@ -103,7 +120,7 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
     }
     setBusy(true);
     try {
-      await actions.createGrade({
+      const input = {
         classId: selectedClass.id,
         studentId: form.studentId,
         subject: form.subject,
@@ -113,9 +130,12 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
         weight,
         comment: form.comment,
         visibleToStudent: form.visibleToStudent,
-      });
-      toast.success("Ocena została wystawiona.");
+      };
+      if (editingGradeId) await actions.updateGrade(editingGradeId, input);
+      else await actions.createGrade(input);
+      toast.success(editingGradeId ? "Ocena została zaktualizowana." : "Ocena została wystawiona.");
       setForm({ ...form, title: "", comment: "" });
+      setEditingGradeId(null);
       setModalOpen(false);
     } catch (error) {
       toast.error((error as Error).message);
@@ -232,14 +252,24 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
                             title={`${grade.subject} · ${grade.title} · waga ${grade.weight}`}
                           >
                             {Number.isInteger(grade.value) ? grade.value : grade.value.toFixed(1)}
-                            <button
-                              type="button"
-                              onClick={() => remove(grade.id)}
-                              aria-label={`Usuń ocenę ${grade.value}`}
-                              className="absolute -right-1.5 -top-1.5 hidden h-5 w-5 place-items-center rounded-full bg-slate-950 text-white shadow group-hover:grid dark:bg-white dark:text-slate-950"
-                            >
-                              <Trash2 className="h-2.5 w-2.5" />
-                            </button>
+                            <span className="absolute -right-2 -top-2 hidden items-center overflow-hidden rounded-lg bg-slate-950 text-white shadow group-hover:flex dark:bg-white dark:text-slate-950">
+                              <button
+                                type="button"
+                                onClick={() => openModal(grade.student_id, grade.id)}
+                                aria-label={`Edytuj ocenę ${grade.value}`}
+                                className="grid h-6 w-6 place-items-center hover:bg-white/15 dark:hover:bg-slate-200"
+                              >
+                                <Pencil className="h-2.5 w-2.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => remove(grade.id)}
+                                aria-label={`Usuń ocenę ${grade.value}`}
+                                className="grid h-6 w-6 place-items-center hover:bg-rose-600 hover:text-white"
+                              >
+                                <Trash2 className="h-2.5 w-2.5" />
+                              </button>
+                            </span>
                           </span>
                         ))}
                         {studentGrades.length === 0 && (
@@ -274,9 +304,12 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
 
       {modalOpen && selectedClass && (
         <JournalModal
-          title="Wystaw ocenę"
+          title={editingGradeId ? "Edytuj ocenę" : "Wystaw ocenę"}
           description={classLabel(selectedClass)}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            setEditingGradeId(null);
+            setModalOpen(false);
+          }}
           wide
         >
           <div className="grid gap-4 sm:grid-cols-2">
@@ -386,7 +419,8 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
           <div className="mt-6 flex justify-end gap-2">
             <SecondaryButton onClick={() => setModalOpen(false)}>Anuluj</SecondaryButton>
             <PrimaryButton disabled={busy} onClick={submit}>
-              {busy && <Loader2 className="h-4 w-4 animate-spin" />}Wystaw ocenę
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+              {editingGradeId ? "Zapisz ocenę" : "Wystaw ocenę"}
             </PrimaryButton>
           </div>
         </JournalModal>
@@ -397,6 +431,7 @@ export function JournalGradesPanel({ snapshot, selectedClassId, onClassChange, a
 
 export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, actions }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({
     studentId: "",
@@ -418,7 +453,7 @@ export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, ac
     }
     setBusy(true);
     try {
-      await actions.createNote({
+      const input = {
         classId: selectedClass.id,
         studentId: form.studentId,
         kind: form.kind,
@@ -427,15 +462,34 @@ export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, ac
         points: Number(form.points) || 0,
         eventDate: form.eventDate,
         visibleToStudent: form.visibleToStudent,
-      });
-      toast.success("Wpis został dodany.");
+      };
+      if (editingNoteId) await actions.updateNote(editingNoteId, input);
+      else await actions.createNote(input);
+      toast.success(editingNoteId ? "Wpis został zaktualizowany." : "Wpis został dodany.");
       setForm({ ...form, title: "", body: "" });
+      setEditingNoteId(null);
       setModalOpen(false);
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
       setBusy(false);
     }
+  };
+
+  const openNoteEditor = (noteId: string) => {
+    const note = snapshot.notes.find((item) => item.id === noteId);
+    if (!note) return;
+    setEditingNoteId(note.id);
+    setForm({
+      studentId: note.student_id,
+      kind: note.kind as NoteKind,
+      title: note.title,
+      body: note.body || "",
+      points: String(note.points),
+      eventDate: note.event_date,
+      visibleToStudent: note.visible_to_student,
+    });
+    setModalOpen(true);
   };
 
   const remove = async (noteId: string) => {
@@ -559,14 +613,24 @@ export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, ac
                       </span>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => remove(note.id)}
-                    aria-label={`Usuń wpis ${note.title}`}
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-xl text-slate-400 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-400/10 dark:hover:text-rose-300"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex shrink-0 gap-1">
+                    <button
+                      type="button"
+                      onClick={() => openNoteEditor(note.id)}
+                      aria-label={`Edytuj wpis ${note.title}`}
+                      className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-400/10 dark:hover:text-blue-300"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => remove(note.id)}
+                      aria-label={`Usuń wpis ${note.title}`}
+                      className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-400/10 dark:hover:text-rose-300"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </article>
             );
@@ -576,9 +640,12 @@ export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, ac
 
       {modalOpen && selectedClass && (
         <JournalModal
-          title="Nowa uwaga lub pochwała"
+          title={editingNoteId ? "Edytuj uwagę lub pochwałę" : "Nowa uwaga lub pochwała"}
           description={classLabel(selectedClass)}
-          onClose={() => setModalOpen(false)}
+          onClose={() => {
+            setEditingNoteId(null);
+            setModalOpen(false);
+          }}
           wide
         >
           <div className="grid gap-4 sm:grid-cols-2">
@@ -671,7 +738,8 @@ export function JournalNotesPanel({ snapshot, selectedClassId, onClassChange, ac
           <div className="mt-6 flex justify-end gap-2">
             <SecondaryButton onClick={() => setModalOpen(false)}>Anuluj</SecondaryButton>
             <PrimaryButton disabled={busy} onClick={submit}>
-              {busy && <Loader2 className="h-4 w-4 animate-spin" />}Dodaj wpis
+              {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+              {editingNoteId ? "Zapisz wpis" : "Dodaj wpis"}
             </PrimaryButton>
           </div>
         </JournalModal>

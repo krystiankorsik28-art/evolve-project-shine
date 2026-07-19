@@ -7,11 +7,13 @@ import {
   Loader2,
   Save,
   ShieldCheck,
+  Trash2,
   UserCheck,
   UserMinus,
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { confirmDialog } from "@/components/ConfirmDialog";
 import {
   ATTENDANCE_LABELS,
   ATTENDANCE_SHORT_LABELS,
@@ -152,6 +154,25 @@ export function JournalAttendance({ snapshot, selectedClassId, onClassChange, ac
     }
   };
 
+  const clear = async () => {
+    if (!lesson || savedRows.length === 0) return;
+    const confirmed = await confirmDialog({
+      title: "Wyczyścić listę obecności?",
+      description: `Usuniętych zostanie ${savedRows.length} zapisanych wpisów dla lekcji „${lesson.topic}”.`,
+      confirmText: "Wyczyść frekwencję",
+    });
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      await actions.clearAttendance(lesson.id);
+      toast.success("Lista obecności została wyczyszczona.");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const summary = statuses.map((status) => ({
     ...status,
     count: Object.values(draft).filter((entry) => entry.status === status.value).length,
@@ -176,10 +197,27 @@ export function JournalAttendance({ snapshot, selectedClassId, onClassChange, ac
           description="Wybierz lekcję, oznacz status każdego ucznia i zapisz kompletny wpis."
           action={
             lesson && students.length > 0 ? (
-              <PrimaryButton disabled={busy} onClick={save}>
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                Zapisz obecność
-              </PrimaryButton>
+              <div className="flex flex-wrap gap-2">
+                {savedRows.length > 0 && (
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={clear}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:opacity-50 dark:border-rose-400/20 dark:bg-rose-400/5 dark:text-rose-300"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Wyczyść
+                  </button>
+                )}
+                <PrimaryButton disabled={busy} onClick={save}>
+                  {busy ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  Zapisz obecność
+                </PrimaryButton>
+              </div>
             ) : undefined
           }
         />

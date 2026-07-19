@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BookOpenCheck,
   CalendarClock,
   Check,
   Clock3,
+  Copy,
   DoorOpen,
   GraduationCap,
   Loader2,
-  MoreHorizontal,
+  Pencil,
   Play,
   Plus,
   Trash2,
@@ -36,6 +37,7 @@ import {
   journalCard,
   journalInput,
 } from "./journal-ui";
+import { lessonTimeError } from "./journal-validation";
 
 type CommonProps = {
   snapshot: JournalSnapshot;
@@ -43,6 +45,12 @@ type CommonProps = {
   onClassChange: (classId: string) => void;
   actions: JournalActions;
 };
+
+function defaultLessonStart() {
+  const next = new Date();
+  next.setMinutes(Math.ceil(next.getMinutes() / 15) * 15, 0, 0);
+  return toDateInputValue(next);
+}
 
 export function JournalClassesPanel({
   snapshot,
@@ -52,6 +60,8 @@ export function JournalClassesPanel({
 }: CommonProps) {
   const [classModal, setClassModal] = useState(false);
   const [studentModal, setStudentModal] = useState(false);
+  const [editingClassId, setEditingClassId] = useState<string | null>(null);
+  const [editingStudentId, setEditingStudentId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [className, setClassName] = useState("");
   const [schoolYear, setSchoolYear] = useState("2026/27");
@@ -66,9 +76,15 @@ export function JournalClassesPanel({
     }
     setBusy(true);
     try {
-      await actions.createClass(className, schoolYear);
-      toast.success("Klasa została utworzona.");
+      if (editingClassId) {
+        await actions.updateClass(editingClassId, className, schoolYear);
+        toast.success("Dane klasy zostały zaktualizowane.");
+      } else {
+        await actions.createClass(className, schoolYear);
+        toast.success("Klasa została utworzona.");
+      }
       setClassName("");
+      setEditingClassId(null);
       setClassModal(false);
     } catch (error) {
       toast.error((error as Error).message);
@@ -81,10 +97,70 @@ export function JournalClassesPanel({
     if (!selectedClass || !studentName.trim()) return;
     setBusy(true);
     try {
-      await actions.addStudent(selectedClass.id, studentName);
-      toast.success("Uczeń został dodany do klasy.");
+      if (editingStudentId) {
+        await actions.updateStudent(editingStudentId, studentName);
+        toast.success("Dane ucznia zostały zaktualizowane.");
+      } else {
+        await actions.addStudent(selectedClass.id, studentName);
+        toast.success("Uczeń został dodany do klasy.");
+      }
       setStudentName("");
+      setEditingStudentId(null);
       setStudentModal(false);
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openClassEditor = () => {
+    if (!selectedClass) return;
+    setEditingClassId(selectedClass.id);
+    setClassName(selectedClass.name);
+    setSchoolYear(selectedClass.year);
+    setClassModal(true);
+  };
+
+  const removeClass = async () => {
+    if (!selectedClass) return;
+    const confirmed = await confirmDialog({
+      title: `Usunąć klasę ${selectedClass.name}?`,
+      description:
+        "Usunięta zostanie lista uczniów oraz powiązane lekcje, frekwencja, oceny i wpisy. Operacja zostanie odnotowana w historii zmian.",
+      confirmText: "Usuń klasę i dane",
+    });
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      await actions.deleteClass(selectedClass.id);
+      onClassChange("");
+      toast.success("Klasa i powiązane dane zostały usunięte.");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openStudentEditor = (studentId: string, name: string | null) => {
+    setEditingStudentId(studentId);
+    setStudentName(name?.trim() || "");
+    setStudentModal(true);
+  };
+
+  const removeStudent = async (studentId: string, name: string) => {
+    const confirmed = await confirmDialog({
+      title: `Usunąć ucznia ${name}?`,
+      description:
+        "Usunięte zostaną także jego wpisy frekwencji, oceny i uwagi w tej klasie. Operacja zostanie zapisana w historii.",
+      confirmText: "Usuń ucznia",
+    });
+    if (!confirmed) return;
+    setBusy(true);
+    try {
+      await actions.deleteStudent(studentId);
+      toast.success("Uczeń i powiązane wpisy zostały usunięte.");
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
@@ -167,10 +243,31 @@ export function JournalClassesPanel({
               title={classLabel(selectedClass)}
               description={`${students.length} osób przypisanych do klasy`}
               action={
-                <SecondaryButton onClick={() => setStudentModal(true)}>
-                  <UserPlus className="h-4 w-4" />
-                  Dodaj ucznia
-                </SecondaryButton>
+                <div className="flex flex-wrap gap-2">
+                  <SecondaryButton onClick={openClassEditor}>
+                    <Pencil className="h-4 w-4" />
+                    Edytuj klasę
+                  </SecondaryButton>
+                  <SecondaryButton
+                    onClick={() => {
+                      setEditingStudentId(null);
+                      setStudentName("");
+                      setStudentModal(true);
+                    }}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Dodaj ucznia
+                  </SecondaryButton>
+                  <button
+                    type="button"
+                    onClick={removeClass}
+                    disabled={busy}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-50 disabled:opacity-50 dark:border-rose-400/20 dark:bg-rose-400/5 dark:text-rose-300"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Usuń klasę
+                  </button>
+                </div>
               }
             />
           </div>
@@ -197,6 +294,7 @@ export function JournalClassesPanel({
                     <th className="px-5 py-3">Konto EduNex</th>
                     <th className="px-5 py-3">Oceny</th>
                     <th className="px-5 py-3">Wpisy frekwencji</th>
+                    <th className="px-5 py-3 text-right">Zarządzanie</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -222,6 +320,26 @@ export function JournalClassesPanel({
                             .length
                         }
                       </td>
+                      <td className="px-5 py-3">
+                        <div className="flex justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openStudentEditor(student.id, student.student_name)}
+                            aria-label={`Edytuj ucznia ${studentLabel(student)}`}
+                            className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-400/10 dark:hover:text-blue-300"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeStudent(student.id, studentLabel(student))}
+                            aria-label={`Usuń ucznia ${studentLabel(student)}`}
+                            className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-rose-50 hover:text-rose-700 dark:hover:bg-rose-400/10 dark:hover:text-rose-300"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -233,9 +351,16 @@ export function JournalClassesPanel({
 
       {classModal && (
         <JournalModal
-          title="Nowa klasa"
-          description="Utwórz oddział lub grupę zajęciową."
-          onClose={() => setClassModal(false)}
+          title={editingClassId ? "Edytuj klasę" : "Nowa klasa"}
+          description={
+            editingClassId
+              ? "Zmień nazwę oddziału lub rok szkolny."
+              : "Utwórz oddział lub grupę zajęciową."
+          }
+          onClose={() => {
+            setEditingClassId(null);
+            setClassModal(false);
+          }}
         >
           <div className="grid gap-4">
             <JournalField label="Nazwa klasy">
@@ -259,7 +384,7 @@ export function JournalClassesPanel({
               <SecondaryButton onClick={() => setClassModal(false)}>Anuluj</SecondaryButton>
               <PrimaryButton disabled={busy} onClick={submitClass}>
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                Utwórz klasę
+                {editingClassId ? "Zapisz zmiany" : "Utwórz klasę"}
               </PrimaryButton>
             </div>
           </div>
@@ -268,9 +393,16 @@ export function JournalClassesPanel({
 
       {studentModal && selectedClass && (
         <JournalModal
-          title="Dodaj ucznia"
-          description={`Nowa osoba w klasie ${selectedClass.name}.`}
-          onClose={() => setStudentModal(false)}
+          title={editingStudentId ? "Edytuj ucznia" : "Dodaj ucznia"}
+          description={
+            editingStudentId
+              ? `Aktualizacja danych w klasie ${selectedClass.name}.`
+              : `Nowa osoba w klasie ${selectedClass.name}.`
+          }
+          onClose={() => {
+            setEditingStudentId(null);
+            setStudentModal(false);
+          }}
         >
           <div className="grid gap-4">
             <JournalField label="Imię i nazwisko">
@@ -286,7 +418,7 @@ export function JournalClassesPanel({
               <SecondaryButton onClick={() => setStudentModal(false)}>Anuluj</SecondaryButton>
               <PrimaryButton disabled={busy} onClick={submitStudent}>
                 {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-                Dodaj ucznia
+                {editingStudentId ? "Zapisz dane" : "Dodaj ucznia"}
               </PrimaryButton>
             </div>
           </div>
@@ -305,17 +437,13 @@ export function JournalLessonsPanel({
   onComposerChange,
 }: CommonProps & { composerOpen: boolean; onComposerChange: (open: boolean) => void }) {
   const [busy, setBusy] = useState(false);
-  const defaultStart = () => {
-    const next = new Date();
-    next.setMinutes(Math.ceil(next.getMinutes() / 15) * 15, 0, 0);
-    return toDateInputValue(next);
-  };
+  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [form, setForm] = useState({
     classId: selectedClassId,
     subject: "",
     topic: "",
     room: "",
-    startsAt: defaultStart(),
+    startsAt: defaultLessonStart(),
     endsAt: "",
     notes: "",
   });
@@ -324,11 +452,37 @@ export function JournalLessonsPanel({
     .sort((a, b) => b.starts_at.localeCompare(a.starts_at));
 
   const openComposer = () => {
+    setEditingLessonId(null);
     setForm((current) => ({
       ...current,
       classId: selectedClassId || snapshot.classes[0]?.id || "",
-      startsAt: defaultStart(),
+      startsAt: defaultLessonStart(),
     }));
+    onComposerChange(true);
+  };
+
+  useEffect(() => {
+    if (!composerOpen || editingLessonId) return;
+    setForm((current) => ({
+      ...current,
+      classId: current.classId || selectedClassId || snapshot.classes[0]?.id || "",
+      startsAt: current.startsAt || defaultLessonStart(),
+    }));
+  }, [composerOpen, editingLessonId, selectedClassId, snapshot.classes]);
+
+  const openEditor = (lessonId: string) => {
+    const lesson = snapshot.lessons.find((item) => item.id === lessonId);
+    if (!lesson) return;
+    setEditingLessonId(lesson.id);
+    setForm({
+      classId: lesson.class_id,
+      subject: lesson.subject,
+      topic: lesson.topic,
+      room: lesson.room || "",
+      startsAt: toDateInputValue(new Date(lesson.starts_at)),
+      endsAt: lesson.ends_at ? toDateInputValue(new Date(lesson.ends_at)) : "",
+      notes: lesson.notes || "",
+    });
     onComposerChange(true);
   };
 
@@ -337,17 +491,35 @@ export function JournalLessonsPanel({
       toast.error("Wybierz klasę i uzupełnij przedmiot, temat oraz termin.");
       return;
     }
+    const timeError = lessonTimeError(form.startsAt, form.endsAt);
+    if (timeError) {
+      toast.error(timeError);
+      return;
+    }
     setBusy(true);
     try {
-      await actions.createLesson(form);
+      if (editingLessonId) await actions.updateLesson(editingLessonId, form);
+      else await actions.createLesson(form);
       onClassChange(form.classId);
-      toast.success("Lekcja została zaplanowana.");
+      toast.success(
+        editingLessonId ? "Lekcja została zaktualizowana." : "Lekcja została zaplanowana.",
+      );
       setForm({ ...form, subject: "", topic: "", room: "", notes: "", endsAt: "" });
+      setEditingLessonId(null);
       onComposerChange(false);
     } catch (error) {
       toast.error((error as Error).message);
     } finally {
       setBusy(false);
+    }
+  };
+
+  const duplicate = async (lessonId: string) => {
+    try {
+      await actions.duplicateLesson(lessonId);
+      toast.success("Utworzono kopię lekcji w terminie za 7 dni.");
+    } catch (error) {
+      toast.error((error as Error).message);
     }
   };
 
@@ -497,10 +669,19 @@ export function JournalLessonsPanel({
                     </button>
                     <button
                       type="button"
-                      aria-label="Więcej opcji"
+                      onClick={() => duplicate(lesson.id)}
+                      aria-label={`Powiel lekcję ${lesson.topic}`}
                       className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-white/5 dark:hover:text-slate-200"
                     >
-                      <MoreHorizontal className="h-4 w-4" />
+                      <Copy className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openEditor(lesson.id)}
+                      aria-label={`Edytuj lekcję ${lesson.topic}`}
+                      className="grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-blue-400/10 dark:hover:text-blue-300"
+                    >
+                      <Pencil className="h-4 w-4" />
                     </button>
                   </div>
                 </article>
@@ -512,9 +693,16 @@ export function JournalLessonsPanel({
 
       {composerOpen && (
         <JournalModal
-          title="Nowa lekcja"
-          description="Zapisz termin, klasę i temat realizowanych zajęć."
-          onClose={() => onComposerChange(false)}
+          title={editingLessonId ? "Edytuj lekcję" : "Nowa lekcja"}
+          description={
+            editingLessonId
+              ? "Aktualizuj termin, temat i dane organizacyjne."
+              : "Zapisz termin, klasę i temat realizowanych zajęć."
+          }
+          onClose={() => {
+            setEditingLessonId(null);
+            onComposerChange(false);
+          }}
           wide
         >
           <div className="grid gap-4 sm:grid-cols-2">
@@ -587,7 +775,7 @@ export function JournalLessonsPanel({
             <SecondaryButton onClick={() => onComposerChange(false)}>Anuluj</SecondaryButton>
             <PrimaryButton disabled={busy} onClick={submit}>
               {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-              Zapisz lekcję
+              {editingLessonId ? "Zapisz zmiany" : "Zapisz lekcję"}
             </PrimaryButton>
           </div>
         </JournalModal>

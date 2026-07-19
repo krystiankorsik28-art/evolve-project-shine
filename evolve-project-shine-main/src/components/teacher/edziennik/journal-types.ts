@@ -8,7 +8,8 @@ export type JournalTab =
   | "grades"
   | "notes"
   | "communication"
-  | "integrations";
+  | "integrations"
+  | "history";
 
 export type SchoolClass = Tables<"classes">;
 export type ClassStudent = Tables<"class_students">;
@@ -16,6 +17,7 @@ export type JournalLesson = Tables<"journal_lessons">;
 export type AttendanceEntry = Tables<"journal_attendance">;
 export type JournalGrade = Tables<"journal_grades">;
 export type JournalNote = Tables<"journal_notes">;
+export type JournalActivity = Tables<"journal_activity_log">;
 export type Announcement = Tables<"announcements">;
 export type CalendarEvent = Tables<"calendar_events">;
 
@@ -30,6 +32,7 @@ export type JournalSnapshot = {
   attendance: AttendanceEntry[];
   grades: JournalGrade[];
   notes: JournalNote[];
+  activity: JournalActivity[];
   announcements: Announcement[];
   events: CalendarEvent[];
   unreadMessages: number;
@@ -42,6 +45,7 @@ export const EMPTY_SNAPSHOT: JournalSnapshot = {
   attendance: [],
   grades: [],
   notes: [],
+  activity: [],
   announcements: [],
   events: [],
   unreadMessages: 0,
