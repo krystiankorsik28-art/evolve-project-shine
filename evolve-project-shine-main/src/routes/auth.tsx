@@ -330,7 +330,7 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
 
 function RoleSelector({ role, onChange }: { role: RoleId; onChange: (role: RoleId) => void }) {
   return (
-    <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Wybierz typ konta">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Wybierz typ konta">
       {roles.map((item) => {
         const Icon = item.icon;
         const selected = item.id === role;
@@ -737,10 +737,11 @@ function AuthPage() {
             </Link>
             <Link
               to="/auth/register"
-              className="inline-flex h-9 items-center justify-center gap-2 rounded-[6px] border border-slate-300 bg-white px-3.5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-[6px] border border-slate-300 bg-white px-2.5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50 sm:gap-2 sm:px-3.5"
             >
-              Utwórz konto
-              <ChevronRight className="h-4 w-4" />
+              <span className="sm:hidden">Rejestracja</span>
+              <span className="hidden sm:inline">Utwórz konto</span>
+              <ChevronRight className="hidden h-4 w-4 sm:block" />
             </Link>
           </div>
         </div>
