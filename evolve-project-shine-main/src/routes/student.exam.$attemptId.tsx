@@ -11,6 +11,7 @@ import {
   CheckSquare, ListOrdered, AlignLeft, Hash, Code, Shuffle, Type,
   Gauge, GraduationCap, Lightbulb, Zap, ArrowRight,
   Layers, ClipboardCheck, Hourglass, Award, Download, ExternalLink, Timer,
+  Sun, Moon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
@@ -72,6 +73,7 @@ function ExamRunner() {
   const [activeWarning, setActiveWarning] = useState<string | null>(null);
   const [transitionDir, setTransitionDir] = useState<"left" | "right">("right");
   const [showResultDetails, setShowResultDetails] = useState(false);
+  const [examTheme, setExamTheme] = useState<"light" | "dark">("light");
   const [questionResults, setQuestionResults] = useState<Record<string, { is_correct: boolean | null; points_awarded: number | null; correct_answer: unknown }>>({});
   const screenStreamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -80,6 +82,17 @@ function ExamRunner() {
   const startedAt = useRef<number>(Date.now());
   const submittedRef = useRef(false);
   const warnedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    const saved = localStorage.getItem("edunex_exam_theme");
+    if (saved === "dark" || saved === "light") setExamTheme(saved);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.studentTheme = examTheme;
+    localStorage.setItem("edunex_exam_theme", examTheme);
+    return () => { delete document.documentElement.dataset.studentTheme; };
+  }, [examTheme]);
 
   // load session + data
   useEffect(() => {
@@ -333,16 +346,28 @@ function ExamRunner() {
     if (!video || !stream || video.readyState < 2 || !session) return;
     const canvas = canvasRef.current ?? document.createElement("canvas");
     canvasRef.current = canvas;
-    const vw = video.videoWidth || 1280;
-    const vh = video.videoHeight || 720;
+    let source: CanvasImageSource = video;
+    let bitmap: ImageBitmap | null = null;
+    try {
+      const ImageCaptureCtor = (window as unknown as { ImageCapture?: new (track: MediaStreamTrack) => { grabFrame: () => Promise<ImageBitmap> } }).ImageCapture;
+      if (ImageCaptureCtor) {
+        bitmap = await new ImageCaptureCtor(stream.getVideoTracks()[0]).grabFrame();
+        source = bitmap;
+      }
+    } catch { /* hidden-video fallback */ }
+    const vw = bitmap?.width || video.videoWidth || 1280;
+    const vh = bitmap?.height || video.videoHeight || 720;
     const maxW = 800;
     const scale = Math.min(1, maxW / vw);
     canvas.width = Math.round(vw * scale);
     canvas.height = Math.round(vh * scale);
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL("image/jpeg", 0.55);
+    ctx.fillStyle = "#0f172a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(source, 0, 0, canvas.width, canvas.height);
+    bitmap?.close();
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
     try {
       const { error } = await supabase.from("attempt_screen_frames").insert({
         attempt_id: attemptId,
@@ -359,7 +384,7 @@ function ExamRunner() {
   useEffect(() => {
     if (!screenSharing || result) return;
     const kickoff = setTimeout(() => { void captureAndUploadFrame(); }, 2000);
-    frameTimerRef.current = setInterval(() => { void captureAndUploadFrame(); }, 10000);
+    frameTimerRef.current = setInterval(() => { void captureAndUploadFrame(); }, 5000);
     return () => {
       clearTimeout(kickoff);
       if (frameTimerRef.current) { clearInterval(frameTimerRef.current); frameTimerRef.current = null; }
@@ -447,6 +472,8 @@ function ExamRunner() {
         session={session}
         questions={questions}
         onStart={() => setShowWelcome(false)}
+        theme={examTheme}
+        onToggleTheme={() => setExamTheme((value) => value === "light" ? "dark" : "light")}
       />
     );
   }
@@ -519,7 +546,7 @@ function ExamRunner() {
   };
 
   return (
-    <div className="min-h-screen bg-aurora text-white select-none" style={{ userSelect: "none" }}>
+    <div className="student-exam-page min-h-[100dvh] bg-aurora text-white select-none" style={{ userSelect: "none" }}>
       <Toaster />
       <StudentTools attemptId={attemptId} />
       <video ref={videoRef} muted playsInline className="hidden" />
@@ -554,6 +581,7 @@ function ExamRunner() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeButton theme={examTheme} onClick={() => setExamTheme((value) => value === "light" ? "dark" : "light")} />
             <div className="hidden sm:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-400/30 text-emerald-200" title="Udostępnianie ekranu aktywne">
               <ScreenShare className="w-3.5 h-3.5" /> Ekran
             </div>
@@ -713,8 +741,17 @@ function ExamRunner() {
   );
 }
 
+function ThemeButton({ theme, onClick }: { theme: "light" | "dark"; onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick} className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white/70 shadow-sm transition hover:bg-white/10" aria-label="Zmień motyw egzaminu">
+      {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      <span className="hidden md:inline">{theme === "light" ? "Tryb ciemny" : "Tryb jasny"}</span>
+    </button>
+  );
+}
+
 /* ============================ WELCOME SCREEN ============================ */
-function WelcomeScreen({ session, questions, onStart }: { session: Session; questions: Question[]; onStart: () => void }) {
+function WelcomeScreen({ session, questions, onStart, theme, onToggleTheme }: { session: Session; questions: Question[]; onStart: () => void; theme: "light" | "dark"; onToggleTheme: () => void }) {
   const totalPoints = questions.reduce((s, q) => s + q.points, 0);
   const typesCount = useMemo(() => {
     const m: Record<string, number> = {};
@@ -723,7 +760,8 @@ function WelcomeScreen({ session, questions, onStart }: { session: Session; ques
   }, [questions]);
 
   return (
-    <div className="min-h-screen bg-aurora text-white flex items-center justify-center p-4 md:p-6">
+    <div className="student-exam-page min-h-[100dvh] bg-aurora text-white flex items-center justify-center p-4 md:p-6">
+      <div className="fixed right-5 top-5 z-40"><ThemeButton theme={theme} onClick={onToggleTheme} /></div>
       <div className="max-w-2xl w-full bg-white/[0.03] backdrop-blur border border-white/10 rounded-3xl overflow-hidden relative animate-fadeIn">
         {/* Decorative gradient */}
         <div className="absolute -top-32 -right-32 w-64 h-64 rounded-full bg-cyan-500/10 blur-3xl" />
