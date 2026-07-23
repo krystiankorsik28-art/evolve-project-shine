@@ -259,7 +259,7 @@
       rgba(5, 18, 32, 0.84) 38%,
       rgba(5, 18, 32, 0.38) 100%
     ),
-    url("/images/edunex-hero-director-samsung.webp") 66% center / cover fixed !important;
+    url("/images/edunex-identity-access-gateway.webp") 66% center / cover fixed !important;
 }
 
 .edunex-next-gen-identity::before {
@@ -360,7 +360,7 @@
       rgba(3, 13, 24, 0.97) 100%
     ),
     linear-gradient(90deg, rgba(3, 13, 24, 0.78), rgba(3, 13, 24, 0.1)),
-    url("/images/edunex-hero-director-samsung.webp") 67% center / cover !important;
+    url("/images/edunex-identity-access-gateway.webp") 67% center / cover !important;
 }
 
 .edunex-next-gen-identity aside.identity-institutional::after {
@@ -422,7 +422,7 @@
 .identity-confirmation {
   background:
     linear-gradient(112deg, rgba(4, 14, 25, 0.94), rgba(5, 18, 32, 0.5)),
-    url("/images/edunex-hero-director-samsung.webp") 66% center / cover fixed !important;
+    url("/images/edunex-identity-access-gateway.webp") 66% center / cover fixed !important;
 }
 
 .identity-confirmation-card {
@@ -632,7 +632,7 @@
   .identity-confirmation {
     background:
       linear-gradient(180deg, rgba(4, 14, 25, 0.9), rgba(4, 14, 25, 0.6)),
-      url("/images/edunex-hero-director-samsung.webp") 64% center / auto 100% fixed !important;
+      url("/images/edunex-identity-access-gateway.webp") 64% center / auto 100% fixed !important;
   }
 
   .edunex-next-gen-identity::before {
