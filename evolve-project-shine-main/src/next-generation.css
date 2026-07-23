@@ -360,7 +360,7 @@
       rgba(3, 13, 24, 0.97) 100%
     ),
     linear-gradient(90deg, rgba(3, 13, 24, 0.78), rgba(3, 13, 24, 0.1)),
-    url("/images/edunex-identity-access-gateway.webp") 67% center / cover !important;
+    url("/images/edunex-identity-access-gateway.webp") 54% center / cover !important;
 }
 
 .edunex-next-gen-identity aside.identity-institutional::after {
@@ -666,7 +666,7 @@
 
   .identity-reset-shell aside.identity-institutional {
     min-height: 19rem;
-    background-position: 66% 35% !important;
+    background-position: 54% 35% !important;
   }
 
   .student-hero,
