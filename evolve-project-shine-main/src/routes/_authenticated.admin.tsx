@@ -176,9 +176,9 @@ function AdminPanel() {
   }
 
   return (
-    <div className="edunex-next-gen-panel min-h-screen bg-[#f6f8fb] text-slate-950">
+    <div className="edunex-next-gen-panel edunex-admin-workspace min-h-screen bg-[#f6f8fb] text-slate-950">
       <Toaster richColors />
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <header className="workspace-topbar sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white shadow-sm">
@@ -206,9 +206,9 @@ function AdminPanel() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="workspace-main mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <section className="grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="workspace-hero admin-hero overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 bg-slate-950 px-6 py-7 text-white">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/75">
                 <Sparkles className="h-3.5 w-3.5" />
@@ -228,7 +228,7 @@ function AdminPanel() {
             </div>
           </div>
 
-          <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <aside className="workspace-status-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-slate-950">Gotowość operacyjna</h2>
@@ -250,7 +250,7 @@ function AdminPanel() {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-          <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="workspace-panel rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-base font-semibold text-slate-950">Wnioski nauczycieli</h2>

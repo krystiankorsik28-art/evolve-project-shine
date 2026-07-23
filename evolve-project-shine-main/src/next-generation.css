@@ -87,6 +87,229 @@
 
 .edunex-next-gen-landing,
 .edunex-next-gen-identity,
+/* Workspace 2026 — jeden spokojny, instytucjonalny język dla wszystkich ról. */
+.edunex-next-gen-panel {
+  --workspace-ink: #081426;
+  --workspace-muted: #566a82;
+  --workspace-line: rgba(18, 49, 82, 0.12);
+  --workspace-blue: #0878d1;
+  --workspace-cyan: #31b7dc;
+  --workspace-surface: rgba(255, 255, 255, 0.94);
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 88% -4%, rgba(34, 153, 230, 0.13), transparent 27rem),
+    radial-gradient(circle at 9% 38%, rgba(83, 184, 219, 0.055), transparent 25rem),
+    linear-gradient(180deg, #f8fbfe 0, #f1f6fa 34rem, #f6f8fb 100%) !important;
+}
+
+.edunex-next-gen-panel::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.58;
+  background:
+    linear-gradient(rgba(34, 95, 145, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 95, 145, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(135deg, #000 0, transparent 76%);
+}
+
+.light .edunex-next-gen-panel ::selection {
+  background: rgba(22, 140, 255, 0.2);
+  color: #061425;
+}
+
+.light .edunex-next-gen-panel .workspace-topbar,
+.light .teacher-shell main > header {
+  border-color: rgba(19, 50, 81, 0.1) !important;
+  background: rgba(250, 253, 255, 0.86) !important;
+  box-shadow:
+    0 12px 36px rgba(19, 55, 91, 0.065),
+    0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  backdrop-filter: blur(24px) saturate(145%);
+}
+
+.workspace-main {
+  position: relative;
+}
+
+.workspace-main::before {
+  content: "";
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 9rem;
+  height: 9rem;
+  z-index: -1;
+  border: 1px solid rgba(30, 144, 220, 0.1);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 2.6rem rgba(30, 144, 220, 0.025),
+    0 0 0 5.2rem rgba(30, 144, 220, 0.018);
+}
+
+.light .edunex-next-gen-panel .workspace-hero,
+.light .edunex-next-gen-panel .workspace-status-card,
+.light .edunex-next-gen-panel .workspace-panel,
+.light .edunex-next-gen-panel .student-panel,
+.light .edunex-next-gen-panel [class*="rounded-lg"][class*="border-slate-200"][class*="bg-white"],
+.light .edunex-next-gen-panel [class*="rounded-xl"][class*="border-slate-200"][class*="bg-white"] {
+  border-color: var(--workspace-line) !important;
+  border-radius: 1.25rem !important;
+  background-color: var(--workspace-surface) !important;
+  box-shadow:
+    0 18px 52px rgba(30, 60, 91, 0.075),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset !important;
+}
+
+.light .edunex-next-gen-panel :is(.workspace-status-card, .workspace-panel, .student-panel):hover {
+  border-color: rgba(8, 120, 209, 0.2) !important;
+  box-shadow:
+    0 24px 64px rgba(22, 64, 105, 0.105),
+    0 1px 0 rgba(255, 255, 255, 0.92) inset !important;
+}
+
+.light .edunex-next-gen-panel .admin-hero > div:first-child,
+.light .edunex-next-gen-panel .parent-hero > div > div:first-child {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(72, 188, 255, 0.24), transparent 16rem),
+    linear-gradient(125deg, #071425 0%, #0b2745 58%, #0a5681 100%) !important;
+}
+
+.light .edunex-next-gen-panel .admin-hero > div:first-child::after,
+.light .edunex-next-gen-panel .parent-hero > div > div:first-child::after {
+  content: "";
+  position: absolute;
+  inset: auto -7rem -8rem auto;
+  width: 19rem;
+  height: 19rem;
+  border: 1px solid rgba(113, 207, 255, 0.26);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 3.5rem rgba(80, 183, 242, 0.04),
+    0 0 70px rgba(60, 176, 241, 0.16);
+}
+
+.light .edunex-next-gen-panel .workspace-hero {
+  border-radius: 1.5rem !important;
+  box-shadow: 0 28px 76px rgba(22, 56, 91, 0.12) !important;
+}
+
+.light .edunex-next-gen-panel :is(input, select, textarea) {
+  border-color: rgba(24, 57, 89, 0.16) !important;
+  background-color: rgba(249, 252, 255, 0.9) !important;
+  color: #0a1830 !important;
+}
+
+.light .edunex-next-gen-panel :is(input, select, textarea):focus {
+  border-color: rgba(8, 120, 209, 0.62) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(22, 140, 255, 0.11) !important;
+}
+
+.light .edunex-next-gen-panel :is(button, a):focus-visible {
+  outline: 3px solid rgba(22, 140, 255, 0.42);
+  outline-offset: 3px;
+}
+
+.light .edunex-next-gen-panel table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.light .edunex-next-gen-panel thead {
+  background: rgba(239, 246, 252, 0.88);
+  color: #41566f;
+}
+
+.light .edunex-next-gen-panel tbody tr {
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.light .edunex-next-gen-panel tbody tr:hover {
+  background: rgba(236, 246, 254, 0.72);
+}
+
+/* Teacher cockpit: jasny sidebar z mocnym i czytelnym stanem aktywnym. */
+.light .teacher-shell > div:last-child > aside,
+.light .teacher-shell > div:last-child > aside > div > div {
+  border-color: rgba(18, 49, 82, 0.1) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 253, 0.96)) !important;
+}
+
+.light .teacher-shell > div:last-child > aside {
+  box-shadow: 18px 0 55px rgba(22, 58, 93, 0.07);
+}
+
+.light .teacher-shell > div:last-child > aside nav {
+  scrollbar-color: rgba(63, 111, 151, 0.22) transparent;
+}
+
+.light .teacher-shell > div:last-child > aside nav button {
+  min-height: 2.8rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem !important;
+}
+
+.light .teacher-shell > div:last-child > aside nav button[aria-current="page"] {
+  border-color: rgba(89, 190, 244, 0.2);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(75, 192, 255, 0.2), transparent 7rem),
+    linear-gradient(110deg, #07182c, #0a2d4e) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 12px 28px rgba(4, 25, 46, 0.18),
+    3px 0 0 #42baf2 inset !important;
+}
+
+.light .teacher-shell main > header {
+  min-height: 4.75rem;
+}
+
+.light .teacher-shell main > header h1 {
+  letter-spacing: -0.035em;
+  color: var(--workspace-ink) !important;
+}
+
+.light .teacher-shell main > header input {
+  border-radius: 0.85rem !important;
+  box-shadow: 0 8px 24px rgba(26, 67, 105, 0.045);
+}
+
+@media (max-width: 767px) {
+  .edunex-next-gen-panel {
+    background:
+      radial-gradient(circle at 90% 0%, rgba(34, 153, 230, 0.1), transparent 18rem),
+      #f4f8fb !important;
+  }
+
+  .edunex-next-gen-panel::before,
+  .workspace-main::before {
+    display: none;
+  }
+
+  .workspace-main {
+    padding-top: 1.25rem !important;
+  }
+
+  .light .edunex-next-gen-panel .workspace-hero,
+  .light .edunex-next-gen-panel .workspace-status-card,
+  .light .edunex-next-gen-panel .workspace-panel,
+  .light .edunex-next-gen-panel .student-panel {
+    border-radius: 1rem !important;
+    box-shadow: 0 12px 34px rgba(28, 63, 96, 0.07) !important;
+  }
+}
+
 .edunex-student-workspace {
   --evo-text: #0b1730;
   --evo-muted: #52657b;

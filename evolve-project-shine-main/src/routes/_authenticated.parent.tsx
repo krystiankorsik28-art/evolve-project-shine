@@ -160,9 +160,9 @@ function ParentPanel() {
   }
 
   return (
-    <div className="edunex-next-gen-panel min-h-screen bg-[#f6f8fb] text-slate-950">
+    <div className="edunex-next-gen-panel edunex-parent-workspace min-h-screen bg-[#f6f8fb] text-slate-950">
       <Toaster richColors />
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <header className="workspace-topbar sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
@@ -186,8 +186,8 @@ function ParentPanel() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <main className="workspace-main mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="workspace-hero parent-hero overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
           <div className="grid gap-px bg-slate-200 lg:grid-cols-[1fr_420px]">
             <div className="bg-slate-950 px-6 py-8 text-white">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/75">

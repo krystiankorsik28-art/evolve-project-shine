@@ -265,7 +265,7 @@ function StudentDashboard() {
   return (
     <div className="edunex-next-gen-panel edunex-student-workspace min-h-screen bg-[#f6f8fb] text-slate-950">
       <Toaster richColors />
-      <header className="student-topbar border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <header className="student-topbar workspace-topbar border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white">
@@ -293,7 +293,7 @@ function StudentDashboard() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="workspace-main mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <section className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
