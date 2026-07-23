@@ -97,8 +97,8 @@ function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+    <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
+      <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link
             to="/"
@@ -119,13 +119,13 @@ function ResetPassword() {
         </div>
       </header>
 
-      <main className="mx-auto grid min-h-[calc(100vh-68px)] w-full max-w-[1180px] place-items-center px-5 py-10 sm:px-8">
+      <main className="identity-main mx-auto grid min-h-[calc(100vh-68px)] w-full max-w-[1180px] place-items-center px-5 py-10 sm:px-8">
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid w-full max-w-[940px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.09)] lg:grid-cols-[0.82fr_1.18fr]"
+          className="identity-shell identity-reset-shell grid w-full max-w-[940px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.09)] lg:grid-cols-[0.82fr_1.18fr]"
         >
-          <aside className="bg-[#0b1730] p-8 text-white sm:p-10">
+          <aside className="identity-institutional bg-[#0b1730] p-8 text-white sm:p-10">
             <span className="grid h-12 w-12 place-items-center rounded-xl bg-white/10 ring-1 ring-white/15">
               <LockKeyhole className="h-5 w-5" />
             </span>
@@ -151,7 +151,7 @@ function ResetPassword() {
             </div>
           </aside>
 
-          <div className="p-7 sm:p-10">
+          <div className="identity-content p-7 sm:p-10">
             {state === "checking" && (
               <Status
                 icon={<Loader2 className="h-6 w-6 animate-spin" />}
