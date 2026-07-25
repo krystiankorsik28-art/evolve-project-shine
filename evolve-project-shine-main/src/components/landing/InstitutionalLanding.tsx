@@ -314,7 +314,7 @@ function Heading({
   const reduceMotion = useReducedMotion();
   return (
     <motion.div
-      initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+      initial={false}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.28 }}
       transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
@@ -341,7 +341,7 @@ function ProductPreview() {
 
   return (
     <motion.div
-      initial={reduceMotion ? false : { opacity: 0, y: 30, scale: 0.985 }}
+      initial={false}
       whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.18 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -517,7 +517,7 @@ function AudiencePanel() {
       </div>
       <motion.div
         key={active}
-        initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+        initial={false}
         animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         id="audience-panel"
@@ -856,7 +856,7 @@ export function InstitutionalLanding() {
             alt="Dyrektorka szkoły przed nowoczesnym budynkiem, trzymająca tablet"
             className="absolute inset-0 h-full w-full object-cover object-[64%_center] sm:object-center"
             fetchPriority="high"
-            initial={reduceMotion ? false : { scale: 1.025, opacity: 0.82 }}
+            initial={false}
             animate={reduceMotion ? undefined : { scale: 1, opacity: 1 }}
             transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           />
@@ -865,7 +865,7 @@ export function InstitutionalLanding() {
           <div className="relative mx-auto grid max-w-[1440px] items-center px-4 py-16 sm:px-7 lg:min-h-[720px] lg:grid-cols-[.9fr_1.1fr] lg:py-24">
             <div className="max-w-3xl">
               <motion.span
-                initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                initial={false}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[11px] font-extrabold !text-[#bce7fa] backdrop-blur"
@@ -874,7 +874,7 @@ export function InstitutionalLanding() {
                 Platforma egzaminacyjna dla polskiej edukacji
               </motion.span>
               <motion.h1
-                initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                initial={false}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="mt-6 text-[clamp(3rem,5.4vw,5.8rem)] font-semibold leading-[.96] tracking-[-.065em] !text-[#fff]"
@@ -883,7 +883,7 @@ export function InstitutionalLanding() {
                 <span className="block !text-[#77d1f2]">Spójna praca całej szkoły.</span>
               </motion.h1>
               <motion.p
-                initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+                initial={false}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.16 }}
                 className="mt-7 max-w-2xl text-base leading-8 !text-[#c4d0de]"
@@ -892,7 +892,7 @@ export function InstitutionalLanding() {
                 jednym systemie projektowanym dla szkół oraz instytucji publicznych.
               </motion.p>
               <motion.div
-                initial={reduceMotion ? false : { opacity: 0, y: 18 }}
+                initial={false}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.23 }}
                 className="mt-8 flex flex-wrap gap-3"
