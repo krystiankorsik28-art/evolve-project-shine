@@ -272,9 +272,14 @@ function Brand() {
       className="inline-flex items-center gap-3 rounded-lg"
       aria-label="EduNex — strona główna"
     >
-      <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#07182e] !text-[#fff] shadow-lg">
-        <Layers3 className="h-5 w-5" aria-hidden="true" />
-      </span>
+      <img
+        src="/images/edunex-liquid-glass-logo.png"
+        alt=""
+        width={512}
+        height={512}
+        className="h-11 w-11 rounded-xl object-cover shadow-[0_10px_26px_rgba(8,105,199,.24)] ring-1 ring-white/60"
+        aria-hidden="true"
+      />
       <span>
         <strong className="block text-[15px] leading-4 tracking-tight text-slate-950">
           EduNex
