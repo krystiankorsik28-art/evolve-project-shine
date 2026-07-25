@@ -43,9 +43,13 @@
     radial-gradient(circle at 82% 2%, rgba(0, 120, 212, 0.1), transparent 31rem),
     radial-gradient(circle at 4% 68%, rgba(52, 178, 241, 0.06), transparent 27rem),
     linear-gradient(rgba(55, 102, 148, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(55, 102, 148, 0.035) 1px, transparent 1px),
-    var(--evo-canvas);
-  background-size: auto, auto, 56px 56px, 56px 56px, auto;
+    linear-gradient(90deg, rgba(55, 102, 148, 0.035) 1px, transparent 1px), var(--evo-canvas);
+  background-size:
+    auto,
+    auto,
+    56px 56px,
+    56px 56px,
+    auto;
   animation: edunex-evolution-drift 30s linear infinite;
 }
 
@@ -83,6 +87,229 @@
 
 .edunex-next-gen-landing,
 .edunex-next-gen-identity,
+/* Workspace 2026 — jeden spokojny, instytucjonalny język dla wszystkich ról. */
+.edunex-next-gen-panel {
+  --workspace-ink: #081426;
+  --workspace-muted: #566a82;
+  --workspace-line: rgba(18, 49, 82, 0.12);
+  --workspace-blue: #0878d1;
+  --workspace-cyan: #31b7dc;
+  --workspace-surface: rgba(255, 255, 255, 0.94);
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 88% -4%, rgba(34, 153, 230, 0.13), transparent 27rem),
+    radial-gradient(circle at 9% 38%, rgba(83, 184, 219, 0.055), transparent 25rem),
+    linear-gradient(180deg, #f8fbfe 0, #f1f6fa 34rem, #f6f8fb 100%) !important;
+}
+
+.edunex-next-gen-panel::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.58;
+  background:
+    linear-gradient(rgba(34, 95, 145, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 95, 145, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: linear-gradient(135deg, #000 0, transparent 76%);
+}
+
+.light .edunex-next-gen-panel ::selection {
+  background: rgba(22, 140, 255, 0.2);
+  color: #061425;
+}
+
+.light .edunex-next-gen-panel .workspace-topbar,
+.light .teacher-shell main > header {
+  border-color: rgba(19, 50, 81, 0.1) !important;
+  background: rgba(250, 253, 255, 0.86) !important;
+  box-shadow:
+    0 12px 36px rgba(19, 55, 91, 0.065),
+    0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  backdrop-filter: blur(24px) saturate(145%);
+}
+
+.workspace-main {
+  position: relative;
+}
+
+.workspace-main::before {
+  content: "";
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  width: 9rem;
+  height: 9rem;
+  z-index: -1;
+  border: 1px solid rgba(30, 144, 220, 0.1);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 2.6rem rgba(30, 144, 220, 0.025),
+    0 0 0 5.2rem rgba(30, 144, 220, 0.018);
+}
+
+.light .edunex-next-gen-panel .workspace-hero,
+.light .edunex-next-gen-panel .workspace-status-card,
+.light .edunex-next-gen-panel .workspace-panel,
+.light .edunex-next-gen-panel .student-panel,
+.light .edunex-next-gen-panel [class*="rounded-lg"][class*="border-slate-200"][class*="bg-white"],
+.light .edunex-next-gen-panel [class*="rounded-xl"][class*="border-slate-200"][class*="bg-white"] {
+  border-color: var(--workspace-line) !important;
+  border-radius: 1.25rem !important;
+  background-color: var(--workspace-surface) !important;
+  box-shadow:
+    0 18px 52px rgba(30, 60, 91, 0.075),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset !important;
+}
+
+.light .edunex-next-gen-panel :is(.workspace-status-card, .workspace-panel, .student-panel):hover {
+  border-color: rgba(8, 120, 209, 0.2) !important;
+  box-shadow:
+    0 24px 64px rgba(22, 64, 105, 0.105),
+    0 1px 0 rgba(255, 255, 255, 0.92) inset !important;
+}
+
+.light .edunex-next-gen-panel .admin-hero > div:first-child,
+.light .edunex-next-gen-panel .parent-hero > div > div:first-child {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(72, 188, 255, 0.24), transparent 16rem),
+    linear-gradient(125deg, #071425 0%, #0b2745 58%, #0a5681 100%) !important;
+}
+
+.light .edunex-next-gen-panel .admin-hero > div:first-child::after,
+.light .edunex-next-gen-panel .parent-hero > div > div:first-child::after {
+  content: "";
+  position: absolute;
+  inset: auto -7rem -8rem auto;
+  width: 19rem;
+  height: 19rem;
+  border: 1px solid rgba(113, 207, 255, 0.26);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 3.5rem rgba(80, 183, 242, 0.04),
+    0 0 70px rgba(60, 176, 241, 0.16);
+}
+
+.light .edunex-next-gen-panel .workspace-hero {
+  border-radius: 1.5rem !important;
+  box-shadow: 0 28px 76px rgba(22, 56, 91, 0.12) !important;
+}
+
+.light .edunex-next-gen-panel :is(input, select, textarea) {
+  border-color: rgba(24, 57, 89, 0.16) !important;
+  background-color: rgba(249, 252, 255, 0.9) !important;
+  color: #0a1830 !important;
+}
+
+.light .edunex-next-gen-panel :is(input, select, textarea):focus {
+  border-color: rgba(8, 120, 209, 0.62) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 4px rgba(22, 140, 255, 0.11) !important;
+}
+
+.light .edunex-next-gen-panel :is(button, a):focus-visible {
+  outline: 3px solid rgba(22, 140, 255, 0.42);
+  outline-offset: 3px;
+}
+
+.light .edunex-next-gen-panel table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.light .edunex-next-gen-panel thead {
+  background: rgba(239, 246, 252, 0.88);
+  color: #41566f;
+}
+
+.light .edunex-next-gen-panel tbody tr {
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.light .edunex-next-gen-panel tbody tr:hover {
+  background: rgba(236, 246, 254, 0.72);
+}
+
+/* Teacher cockpit: jasny sidebar z mocnym i czytelnym stanem aktywnym. */
+.light .teacher-shell > div:last-child > aside,
+.light .teacher-shell > div:last-child > aside > div > div {
+  border-color: rgba(18, 49, 82, 0.1) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 253, 0.96)) !important;
+}
+
+.light .teacher-shell > div:last-child > aside {
+  box-shadow: 18px 0 55px rgba(22, 58, 93, 0.07);
+}
+
+.light .teacher-shell > div:last-child > aside nav {
+  scrollbar-color: rgba(63, 111, 151, 0.22) transparent;
+}
+
+.light .teacher-shell > div:last-child > aside nav button {
+  min-height: 2.8rem;
+  border: 1px solid transparent;
+  border-radius: 0.75rem !important;
+}
+
+.light .teacher-shell > div:last-child > aside nav button[aria-current="page"] {
+  border-color: rgba(89, 190, 244, 0.2);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(75, 192, 255, 0.2), transparent 7rem),
+    linear-gradient(110deg, #07182c, #0a2d4e) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 12px 28px rgba(4, 25, 46, 0.18),
+    3px 0 0 #42baf2 inset !important;
+}
+
+.light .teacher-shell main > header {
+  min-height: 4.75rem;
+}
+
+.light .teacher-shell main > header h1 {
+  letter-spacing: -0.035em;
+  color: var(--workspace-ink) !important;
+}
+
+.light .teacher-shell main > header input {
+  border-radius: 0.85rem !important;
+  box-shadow: 0 8px 24px rgba(26, 67, 105, 0.045);
+}
+
+@media (max-width: 767px) {
+  .edunex-next-gen-panel {
+    background:
+      radial-gradient(circle at 90% 0%, rgba(34, 153, 230, 0.1), transparent 18rem),
+      #f4f8fb !important;
+  }
+
+  .edunex-next-gen-panel::before,
+  .workspace-main::before {
+    display: none;
+  }
+
+  .workspace-main {
+    padding-top: 1.25rem !important;
+  }
+
+  .light .edunex-next-gen-panel .workspace-hero,
+  .light .edunex-next-gen-panel .workspace-status-card,
+  .light .edunex-next-gen-panel .workspace-panel,
+  .light .edunex-next-gen-panel .student-panel {
+    border-radius: 1rem !important;
+    box-shadow: 0 12px 34px rgba(28, 63, 96, 0.07) !important;
+  }
+}
+
 .edunex-student-workspace {
   --evo-text: #0b1730;
   --evo-muted: #52657b;
@@ -93,8 +320,7 @@
 /* Landing — obecny biały język wizualny, tylko głębsze powierzchnie i ruch. */
 .edunex-next-gen-landing {
   background:
-    radial-gradient(circle at 86% 5%, rgba(0, 120, 212, 0.08), transparent 30rem),
-    #f7f8fa !important;
+    radial-gradient(circle at 86% 5%, rgba(0, 120, 212, 0.08), transparent 30rem), #f7f8fa !important;
   color: var(--evo-text);
 }
 
@@ -122,12 +348,81 @@
   transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Landing XTB-inspired — pełnoekranowy obraz, wyraźna marka i produkt na pierwszym planie. */
+.edunex-xtb-landing {
+  --landing-ink: #06111e;
+  --landing-blue: #168cff;
+  background: #f7f8fa !important;
+}
+
+.edunex-xtb-landing > header {
+  background: rgba(6, 17, 30, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(16px) saturate(125%);
+}
+
+.edunex-xtb-hero {
+  isolation: isolate;
+}
+
+.edunex-xtb-hero-image {
+  transform: scale(1.018);
+  transform-origin: 68% 50%;
+  animation: edunex-hero-breathe 18s ease-in-out infinite alternate;
+}
+
+.edunex-xtb-hero-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, black, transparent 58%);
+}
+
+.edunex-xtb-primary-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.edunex-xtb-primary-cta::after {
+  content: "";
+  position: absolute;
+  inset: -80% auto -80% -35%;
+  z-index: -1;
+  width: 28%;
+  transform: rotate(16deg);
+  background: rgba(255, 255, 255, 0.24);
+  transition: transform 520ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.edunex-xtb-primary-cta:hover::after {
+  transform: translateX(510%) rotate(16deg);
+}
+
+.edunex-xtb-landing main > section {
+  scroll-margin-top: 1.5rem;
+}
+
+.edunex-xtb-landing main > section:not(.edunex-xtb-hero) article {
+  border-radius: 1.25rem;
+}
+
+@keyframes edunex-hero-breathe {
+  from {
+    transform: scale(1.018);
+  }
+  to {
+    transform: scale(1.055);
+  }
+}
+
 /* Identity Portal — jasny, spokojny i zgodny z systemami klasy enterprise. */
 .edunex-next-gen-identity {
   background:
     radial-gradient(circle at 11% 10%, rgba(0, 120, 212, 0.09), transparent 29rem),
-    radial-gradient(circle at 92% 84%, rgba(38, 160, 218, 0.06), transparent 26rem),
-    #f4f6f8 !important;
+    radial-gradient(circle at 92% 84%, rgba(38, 160, 218, 0.06), transparent 26rem), #f4f6f8 !important;
   color: var(--evo-text);
 }
 
@@ -147,8 +442,11 @@
 }
 
 .edunex-next-gen-identity aside {
-  background:
-    linear-gradient(145deg, rgba(238, 246, 253, 0.96), rgba(248, 251, 254, 0.98)) !important;
+  background: linear-gradient(
+    145deg,
+    rgba(238, 246, 253, 0.96),
+    rgba(248, 251, 254, 0.98)
+  ) !important;
 }
 
 .edunex-next-gen-identity aside.identity-institutional {
@@ -171,6 +469,189 @@
 
 .edunex-next-gen-identity :is(input, textarea)::placeholder {
   color: #64748b !important;
+}
+
+/* Identity Portal — ten sam filmowy język co nowy landing, bez zmiany przepływów auth. */
+.edunex-next-gen-identity {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(
+      112deg,
+      rgba(4, 14, 25, 0.96) 0%,
+      rgba(5, 18, 32, 0.84) 38%,
+      rgba(5, 18, 32, 0.38) 100%
+    ),
+    url("/images/edunex-identity-access-gateway.webp") 66% center / cover fixed !important;
+}
+
+.edunex-next-gen-identity::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(120, 190, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 190, 255, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.9), transparent 80%);
+}
+
+.edunex-next-gen-identity > .identity-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  background: rgba(5, 16, 29, 0.78) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(24px) saturate(135%);
+}
+
+.identity-topbar > div > a > span:first-child {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.identity-topbar :is(a, span) {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.identity-topbar :is(.text-slate-500, .text-slate-600, .text-slate-700, .text-slate-800) {
+  color: rgba(255, 255, 255, 0.64) !important;
+}
+
+.identity-topbar > div > div > a:last-child {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  background: linear-gradient(110deg, #0876d2, #168cff) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 30px rgba(22, 140, 255, 0.26);
+}
+
+.identity-main {
+  position: relative;
+}
+
+.identity-main::before {
+  content: "";
+  position: absolute;
+  left: 5%;
+  top: 7%;
+  width: min(34vw, 32rem);
+  aspect-ratio: 1;
+  z-index: -1;
+  pointer-events: none;
+  border: 1px solid rgba(83, 174, 255, 0.16);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 5rem rgba(29, 123, 211, 0.025),
+    0 0 0 10rem rgba(29, 123, 211, 0.018);
+}
+
+.identity-shell {
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 1.75rem !important;
+  background: rgba(255, 255, 255, 0.965) !important;
+  box-shadow:
+    0 42px 130px rgba(0, 0, 0, 0.38),
+    0 1px 0 rgba(255, 255, 255, 0.55) inset !important;
+  backdrop-filter: blur(28px) saturate(120%);
+}
+
+.identity-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 20;
+  height: 3px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, #168cff 38%, #68c8ff 60%, transparent);
+  opacity: 0.85;
+}
+
+.edunex-next-gen-identity aside.identity-institutional {
+  position: relative;
+  isolation: isolate;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(3, 13, 24, 0.48) 0%,
+      rgba(3, 13, 24, 0.72) 48%,
+      rgba(3, 13, 24, 0.97) 100%
+    ),
+    linear-gradient(90deg, rgba(3, 13, 24, 0.78), rgba(3, 13, 24, 0.1)),
+    url("/images/edunex-identity-access-gateway.webp") 54% center / cover !important;
+}
+
+.edunex-next-gen-identity aside.identity-institutional::after {
+  content: "";
+  position: absolute;
+  inset: auto -24% -18% 30%;
+  z-index: -1;
+  height: 18rem;
+  pointer-events: none;
+  border: 1px solid rgba(86, 184, 255, 0.24);
+  border-radius: 999px;
+  box-shadow:
+    0 0 0 4rem rgba(40, 146, 240, 0.04),
+    0 0 70px rgba(40, 146, 240, 0.12);
+}
+
+.identity-institutional > div:last-child > :is(div, ol) {
+  text-shadow: 0 1px 20px rgba(0, 0, 0, 0.18);
+}
+
+.identity-content {
+  position: relative;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(22, 140, 255, 0.075), transparent 23rem),
+    rgba(255, 255, 255, 0.965);
+}
+
+.identity-content :is(input, select, textarea) {
+  border-radius: 0.8rem !important;
+  box-shadow:
+    inset 0 1px 1px rgba(15, 23, 42, 0.025),
+    0 8px 24px rgba(32, 68, 104, 0.035);
+}
+
+.identity-content :is(button, a[class*="inline-flex"]) {
+  border-radius: 0.75rem !important;
+}
+
+.identity-content button[type="submit"] {
+  background: linear-gradient(108deg, #0069bd, #168cff) !important;
+  box-shadow: 0 14px 34px rgba(0, 103, 184, 0.2);
+}
+
+.identity-content button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 40px rgba(0, 103, 184, 0.27);
+}
+
+.identity-content :is(button, a, input, select, textarea) {
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.identity-content :is(button, a):focus-visible {
+  outline: 2px solid rgba(22, 140, 255, 0.72);
+  outline-offset: 3px;
+}
+
+.identity-confirmation {
+  background:
+    linear-gradient(112deg, rgba(4, 14, 25, 0.94), rgba(5, 18, 32, 0.5)),
+    url("/images/edunex-identity-access-gateway.webp") 66% center / cover fixed !important;
+}
+
+.identity-confirmation-card {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 1.75rem !important;
+  box-shadow: 0 42px 130px rgba(0, 0, 0, 0.38) !important;
 }
 
 /* Panele aplikacji — delikatne światło bez zmiany ich semantyki kolorów. */
@@ -234,8 +715,12 @@
 .student-hero-banner {
   position: relative;
   z-index: 1;
-  background:
-    linear-gradient(120deg, rgba(239, 247, 255, 0.96), rgba(255, 255, 255, 0.98) 58%, rgba(244, 250, 255, 0.96)) !important;
+  background: linear-gradient(
+    120deg,
+    rgba(239, 247, 255, 0.96),
+    rgba(255, 255, 255, 0.98) 58%,
+    rgba(244, 250, 255, 0.96)
+  ) !important;
 }
 
 .student-pin-card {
@@ -301,19 +786,26 @@
 
 @keyframes edunex-evolution-drift {
   to {
-    background-position: 0 0, 0 0, 56px 56px, 56px 56px, 0 0;
+    background-position:
+      0 0,
+      0 0,
+      56px 56px,
+      56px 56px,
+      0 0;
   }
 }
 
 @keyframes edunex-evolution-light {
-  0%, 40% {
+  0%,
+  40% {
     transform: translateX(-52%);
     opacity: 0;
   }
   52% {
     opacity: 0.2;
   }
-  67%, 100% {
+  67%,
+  100% {
     transform: translateX(52%);
     opacity: 0;
   }
@@ -325,6 +817,11 @@
     animation: none;
   }
 
+  .edunex-xtb-hero-image {
+    animation: none;
+    transform: none;
+  }
+
   .student-focus-button::after {
     display: none;
   }
@@ -332,12 +829,67 @@
 
 @media (max-width: 767px) {
   .edunex-next-generation::before {
-    background-size: auto, auto, 36px 36px, 36px 36px, auto;
+    background-size:
+      auto,
+      auto,
+      36px 36px,
+      36px 36px,
+      auto;
   }
 
   .edunex-next-generation::after,
   .student-hero::after {
     display: none;
+  }
+
+  .edunex-xtb-hero-image {
+    filter: saturate(0.86) contrast(1.04);
+  }
+
+  .edunex-xtb-hero-grid {
+    background-size: 48px 48px;
+    opacity: 0.18;
+  }
+
+  .edunex-next-gen-identity,
+  .identity-confirmation {
+    background:
+      linear-gradient(180deg, rgba(4, 14, 25, 0.9), rgba(4, 14, 25, 0.6)),
+      url("/images/edunex-identity-access-gateway.webp") 64% center / auto 100% fixed !important;
+  }
+
+  .edunex-next-gen-identity::before {
+    background-size: 48px 48px;
+    opacity: 0.45;
+  }
+
+  .edunex-next-gen-identity > .identity-topbar {
+    background: rgba(5, 16, 29, 0.9) !important;
+  }
+
+  .identity-main {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+
+  .identity-main::before {
+    display: none;
+  }
+
+  .identity-shell,
+  .identity-confirmation-card {
+    border-radius: 1.25rem !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .identity-content {
+    background:
+      radial-gradient(circle at 100% 0%, rgba(22, 140, 255, 0.065), transparent 18rem), #ffffff;
+  }
+
+  .identity-reset-shell aside.identity-institutional {
+    min-height: 19rem;
+    background-position: 54% 35% !important;
   }
 
   .student-hero,

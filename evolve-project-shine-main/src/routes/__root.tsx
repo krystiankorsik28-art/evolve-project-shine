@@ -6,14 +6,14 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  useLocation,
 } from "@tanstack/react-router";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import ultraCss from "../ultra.css?url";
 import teacherCompatCss from "../teacher-compat.css?url";
 import nextGenerationCss from "../next-generation.css?url";
+import identityInstitutionalCss from "../identity-institutional.css?url";
+import institutionalLiquidGlassCss from "../institutional-liquid-glass.css?url";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { RouteTransitionOverlay } from "@/components/RouteTransitionOverlay";
 import { ThemeProvider } from "@/lib/theme";
@@ -25,7 +25,9 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f7f7f8] px-4 text-slate-950">
       <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
-        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">Błąd 404</div>
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">
+          Błąd 404
+        </div>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">Nie znaleziono strony</h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">
           Adres może być nieaktualny albo strona została przeniesiona.
@@ -48,8 +50,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f7f7f8] px-4 text-slate-950">
       <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-[0_18px_55px_rgba(15,23,42,0.10)]">
-        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">Błąd aplikacji</div>
-        <h1 className="mt-3 text-2xl font-semibold tracking-tight">Nie udało się załadować widoku</h1>
+        <div className="text-xs font-semibold uppercase tracking-[0.14em] text-red-700">
+          Błąd aplikacji
+        </div>
+        <h1 className="mt-3 text-2xl font-semibold tracking-tight">
+          Nie udało się załadować widoku
+        </h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">
           Spróbuj ponownie. Jeżeli problem będzie się powtarzał, wróć do strony głównej.
         </p>
@@ -86,7 +92,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "EduNex - bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem.",
       },
       { name: "author", content: "EduNex" },
-      { property: "og:title", content: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem" },
+      {
+        property: "og:title",
+        content: "EduNex - bezpieczna platforma egzaminacyjna z AI i monitoringiem",
+      },
       { property: "og:description", content: "Bezpieczne egzaminy online z AI i monitoringiem." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -100,7 +109,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               name: "EduNex",
               url: "https://edunex.pl",
               logo: "https://edunex.pl/favicon.svg",
-              description: "Bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem.",
+              description:
+                "Bezpieczna platforma egzaminacyjna z AI, monitoringiem i e-dziennikiem.",
             },
             {
               "@type": "WebSite",
@@ -125,6 +135,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: ultraCss },
       { rel: "stylesheet", href: teacherCompatCss },
       { rel: "stylesheet", href: nextGenerationCss },
+      { rel: "stylesheet", href: identityInstitutionalCss },
+      { rel: "stylesheet", href: institutionalLiquidGlassCss },
     ],
   }),
   shellComponent: RootShell,
@@ -150,25 +162,14 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const location = useLocation();
-  const reduceMotion = useReducedMotion();
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={location.pathname}
-              className="edunex-next-generation"
-              initial={reduceMotion ? false : { opacity: 0, y: 8, filter: "blur(3px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5, filter: "blur(2px)" }}
-              transition={{ duration: reduceMotion ? 0.08 : 0.24, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
+          <div className="edunex-next-generation">
+            <Outlet />
+          </div>
           <RouteTransitionOverlay />
           <ConfirmDialog />
         </AuthProvider>

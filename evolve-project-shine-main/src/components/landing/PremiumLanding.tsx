@@ -568,7 +568,7 @@ function SectionHeader({
       <div className="text-xs font-semibold uppercase tracking-[0.14em] text-[#0067b8]">
         {eyebrow}
       </div>
-      <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl">
+      <h2 className="mt-4 text-4xl font-semibold leading-[1.04] tracking-[-0.04em] text-slate-950 sm:text-[3.5rem]">
         {title}
       </h2>
       <p className="mt-5 text-base leading-8 text-slate-600">{text}</p>
@@ -774,18 +774,18 @@ export function PremiumLanding() {
   );
 
   return (
-    <div className="edunex-next-gen-landing min-h-screen w-full overflow-x-hidden bg-[#f7f7f8] text-slate-950">
+    <div className="edunex-next-gen-landing edunex-xtb-landing min-h-screen w-full overflow-x-hidden bg-[#f7f7f8] text-slate-950">
       <Toaster richColors />
 
-      <div className="border-b border-slate-800 bg-slate-950 text-white">
-        <div className="mx-auto flex min-h-10 max-w-7xl items-center justify-center gap-2 px-4 py-2 text-center text-xs text-slate-300 sm:px-6">
+      <div className="relative z-[60] h-10 overflow-hidden border-b border-white/10 bg-[#06111e] text-white">
+        <div className="mx-auto flex h-10 max-w-[1500px] items-center justify-center gap-2 px-4 text-center text-[11px] text-slate-300 sm:px-6 sm:text-xs">
           <span className="hidden rounded-full bg-white/10 px-2 py-0.5 font-semibold text-white sm:inline">
             Nowość
           </span>
-          <span>EduNex Next Generation — nowy standard cyfrowej pracy szkoły.</span>
+          <span>EduNex Next Generation — jeden bezpieczny system dla całej szkoły.</span>
           <Link
             to="/auth"
-            className="inline-flex shrink-0 items-center gap-1 font-semibold text-white"
+            className="inline-flex shrink-0 items-center gap-1 font-semibold text-sky-300 transition hover:text-white"
           >
             Zobacz
             <ChevronRight className="h-3.5 w-3.5" />
@@ -793,31 +793,35 @@ export function PremiumLanding() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <header className="absolute inset-x-0 top-10 z-50 border-b border-white/15 bg-[#06111e]/10 text-white backdrop-blur-md">
+        <div className="mx-auto flex h-20 w-full max-w-[1500px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
           <Link
             to="/"
-            className="flex min-w-0 items-center gap-3 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0067b8]/30"
+            className="flex min-w-0 items-center gap-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50"
           >
-            <div className="grid h-9 w-9 place-items-center rounded-md bg-slate-950 text-white">
-              <Layers3 className="h-4 w-4" />
+            <div className="grid h-10 w-10 place-items-center rounded-xl border border-white/20 bg-white/10 text-white shadow-lg backdrop-blur">
+              <Layers3 className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-semibold leading-4">EduNex</div>
-              <div className="hidden text-xs text-slate-500 sm:block">System operacyjny szkoły</div>
+              <div className="text-base font-semibold leading-4 tracking-tight text-white">
+                EduNex
+              </div>
+              <div className="hidden text-[10px] font-medium uppercase tracking-[0.17em] text-white/60 sm:block">
+                System operacyjny szkoły
+              </div>
             </div>
           </Link>
 
           <nav className="hidden items-center gap-6 xl:flex">
             <Link
               to="/edziennik"
-              className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+              className="text-sm font-medium text-white/75 transition hover:text-white"
             >
               NexDziennik
             </Link>
             <Link
               to="/pomoc"
-              className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+              className="text-sm font-medium text-white/75 transition hover:text-white"
             >
               Pomoc
             </Link>
@@ -825,7 +829,7 @@ export function PremiumLanding() {
               <a
                 key={href}
                 href={href}
-                className="text-sm font-medium text-slate-600 transition hover:text-slate-950"
+                className="text-sm font-medium text-white/75 transition hover:text-white"
               >
                 {label}
               </a>
@@ -835,13 +839,13 @@ export function PremiumLanding() {
           <div className="flex shrink-0 items-center gap-2">
             <Link
               to="/auth"
-              className="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+              className="hidden h-10 items-center justify-center rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20 sm:inline-flex"
             >
               Logowanie
             </Link>
             <Link
               to="/auth/register"
-              className="inline-flex h-9 items-center justify-center rounded-md bg-slate-950 px-3 text-sm font-semibold text-white transition hover:bg-slate-800 sm:px-4"
+              className="inline-flex h-10 items-center justify-center rounded-xl bg-[#168cff] px-4 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(22,140,255,.3)] transition hover:bg-[#087ce9] sm:px-5"
             >
               Załóż konto
             </Link>
@@ -850,64 +854,141 @@ export function PremiumLanding() {
       </header>
 
       <main>
-        <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-80 bg-[linear-gradient(180deg,rgba(0,103,184,0.07),rgba(255,255,255,0))]" />
-          <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-8 lg:py-24">
+        <section className="edunex-xtb-hero relative min-h-[calc(100svh-2.5rem)] overflow-hidden bg-[#06111e] text-white">
+          <img
+            src="/images/edunex-hero-director-samsung.webp"
+            alt=""
+            aria-hidden="true"
+            className="edunex-xtb-hero-image absolute inset-0 h-full w-full object-cover object-[67%_center] sm:object-center"
+            fetchPriority="high"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(3,13,24,.98)_0%,rgba(3,13,24,.90)_29%,rgba(3,13,24,.52)_52%,rgba(3,13,24,.08)_78%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,9,17,.2)_0%,transparent_45%,rgba(2,9,17,.72)_100%)]" />
+          <div className="edunex-xtb-hero-grid pointer-events-none absolute inset-0 opacity-30" />
+
+          <div className="mx-auto flex min-h-[calc(100svh-2.5rem)] max-w-[1500px] items-center px-4 pb-32 pt-36 sm:px-6 sm:pb-40 sm:pt-40 lg:px-10">
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative z-10"
+              transition={{ duration: 0.65 }}
+              className="relative z-10 max-w-[760px]"
             >
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm">
-                <ShieldCheck className="h-3.5 w-3.5 text-[#0067b8]" />
-                Platforma dla szkół i instytucji edukacyjnych
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md">
+                  <ShieldCheck className="h-3.5 w-3.5 text-sky-300" />
+                  Dane chronione i dostęp według roli
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur-md">
+                  <Sparkles className="h-3.5 w-3.5 text-sky-300" />
+                  NexAI pod kontrolą nauczyciela
+                </span>
               </div>
-              <h1 className="mt-7 max-w-3xl text-4xl font-semibold leading-[1.03] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-[4.6rem]">
-                Jedno środowisko do prowadzenia cyfrowej pracy szkoły.
+              <h1 className="mt-7 max-w-3xl text-[3.5rem] font-semibold leading-[0.92] tracking-[-0.055em] text-white sm:text-7xl lg:text-[5.5rem]">
+                Tu działa
+                <br />
+                nowoczesna szkoła.
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                EduNex łączy bezpieczne egzaminy, klasy, raporty, własny NexDziennik, dokumenty i
-                NexAi w produkcie zaprojektowanym dla codziennej pracy nauczyciela oraz zarządzania
-                placówką.
+              <p className="mt-7 max-w-xl text-base leading-8 text-white/72 sm:text-lg">
+                NexDziennik, egzaminy, komunikacja i NexAI w jednym bezpiecznym systemie
+                zaprojektowanym dla codziennej pracy całej placówki.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link
                   to="/auth/register"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[#0067b8] px-5 text-sm font-semibold text-white transition hover:bg-[#005a9e]"
+                  className="edunex-xtb-primary-cta inline-flex h-13 items-center justify-center gap-2 rounded-xl bg-[#168cff] px-6 text-sm font-semibold text-white shadow-[0_16px_45px_rgba(22,140,255,.34)] transition hover:-translate-y-0.5 hover:bg-[#087ce9]"
                 >
-                  Rozpocznij pracę
+                  Uruchom EduNex
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <a
-                  href="#kontakt"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50"
+                  href="#platforma"
+                  className="inline-flex h-13 items-center justify-center gap-2 rounded-xl border border-white/25 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-md transition hover:-translate-y-0.5 hover:bg-white/18"
                 >
-                  Porozmawiaj o wdrożeniu
+                  Zobacz system
                   <ChevronRight className="h-4 w-4" />
                 </a>
               </div>
-              <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs text-slate-500">
-                {[
-                  "Dostęp według roli",
-                  "Wejście ucznia kodem PIN",
-                  "Dokumenty publiczne",
-                  "Kontrola człowieka nad AI",
-                ].map((item) => (
-                  <span key={item} className="inline-flex items-center gap-2">
-                    <Check className="h-3.5 w-3.5 text-[#0067b8]" />
-                    {item}
-                  </span>
-                ))}
+              <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-xs text-white/60">
+                {["Wejście ucznia kodem PIN", "4 niezależne role", "NexDziennik 360°"].map(
+                  (item) => (
+                    <span key={item} className="inline-flex items-center gap-2">
+                      <Check className="h-3.5 w-3.5 text-sky-300" />
+                      {item}
+                    </span>
+                  ),
+                )}
               </div>
             </motion.div>
+          </div>
+
+          <div className="absolute inset-x-0 bottom-0 z-20 hidden border-t border-white/15 bg-[#06111e]/35 backdrop-blur-xl md:block">
+            <div className="mx-auto grid max-w-[1500px] grid-cols-4 gap-px px-6 lg:px-10">
+              {[
+                [MonitorDot, "Egzaminy", "Bezpieczne sesje PIN"],
+                [BookOpenCheck, "NexDziennik", "Pełny obraz placówki"],
+                [Sparkles, "NexAI", "Asystent pracy nauczyciela"],
+                [BarChart3, "Analityka", "Decyzje oparte na danych"],
+              ].map(([Icon, title, copy]) => {
+                const FeatureIcon = Icon as IconType;
+                return (
+                  <a
+                    key={String(title)}
+                    href="#platforma"
+                    className="group flex min-h-24 items-center gap-4 border-x border-white/10 px-5 text-white transition hover:bg-white/10"
+                  >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-[#06111e] transition group-hover:scale-105">
+                      <FeatureIcon className="h-4 w-4" />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-semibold">{title as string}</span>
+                      <span className="mt-1 block text-[11px] text-white/55">{copy as string}</span>
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden bg-[#071422] py-20 text-white sm:py-28">
+          <div className="pointer-events-none absolute -right-44 -top-52 h-[620px] w-[620px] rounded-full border border-sky-300/10" />
+          <div className="pointer-events-none absolute -right-16 -top-24 h-[360px] w-[360px] rounded-full border border-sky-300/10" />
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[1fr_.72fr] lg:items-end">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.16em] text-sky-300">
+                  EduNex od środka
+                </div>
+                <h2 className="mt-5 max-w-4xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] sm:text-6xl">
+                  Cała szkoła widoczna w jednym ruchu.
+                </h2>
+              </div>
+              <p className="max-w-xl text-sm leading-7 text-slate-300 sm:text-base">
+                Prawdziwy pulpit zamiast marketingowej makiety. Nauczyciel widzi sesje, klasy,
+                wyniki i kolejne działania, a dyrekcja otrzymuje uporządkowany obraz pracy placówki.
+              </p>
+            </div>
 
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.12 }}
-              className="relative z-10 min-w-0"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: 0.65 }}
+              className="relative mt-12 rounded-[2rem] border border-white/10 bg-white/[0.055] p-3 shadow-[0_45px_140px_rgba(0,0,0,.38)] sm:p-6 lg:p-10"
             >
+              <div className="pointer-events-none absolute -left-5 top-24 hidden rounded-xl border border-white/15 bg-[#0c2036]/90 px-4 py-3 shadow-xl backdrop-blur lg:block">
+                <div className="text-[9px] uppercase tracking-[0.14em] text-white/45">Status</div>
+                <div className="mt-1 flex items-center gap-2 text-xs font-semibold text-white">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_14px_rgba(52,211,153,.8)]" />
+                  System działa prawidłowo
+                </div>
+              </div>
+              <div className="pointer-events-none absolute -right-5 bottom-24 z-10 hidden rounded-xl border border-white/15 bg-[#0c2036]/90 px-4 py-3 shadow-xl backdrop-blur lg:block">
+                <div className="text-[9px] uppercase tracking-[0.14em] text-white/45">NexAI</div>
+                <div className="mt-1 text-xs font-semibold text-white">
+                  Analiza gotowa do sprawdzenia
+                </div>
+              </div>
               <ProductConsole />
             </motion.div>
           </div>

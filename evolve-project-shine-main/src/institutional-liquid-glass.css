@@ -1,0 +1,187 @@
+.institutional-landing {
+  --glass-bg: rgb(255 255 255 / 72%);
+  --glass-border: rgb(255 255 255 / 68%);
+  --glass-shadow: 0 24px 80px rgb(7 24 46 / 12%);
+  background:
+    radial-gradient(circle at 12% 18%, rgb(92 197 240 / 14%), transparent 32rem),
+    radial-gradient(circle at 88% 54%, rgb(60 116 255 / 9%), transparent 38rem), #f7fafd;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+.institutional-landing .liquid-nav,
+.institutional-landing .liquid-panel,
+.institutional-landing .liquid-tablist,
+.institutional-landing .liquid-chip {
+  border-color: var(--glass-border) !important;
+  background: var(--glass-bg) !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 82%),
+    var(--glass-shadow);
+}
+
+.institutional-landing .liquid-nav {
+  box-shadow:
+    inset 0 -1px 0 rgb(15 40 70 / 7%),
+    0 14px 40px rgb(7 24 46 / 8%);
+}
+
+.institutional-landing .liquid-panel,
+.institutional-landing .liquid-chip,
+.institutional-landing .pricing-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.institutional-landing .liquid-panel::before,
+.institutional-landing .liquid-chip::before,
+.institutional-landing .pricing-card::before {
+  position: absolute;
+  z-index: -1;
+  top: -55%;
+  left: -25%;
+  width: 80%;
+  height: 100%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgb(255 255 255 / 58%), transparent 68%);
+  content: "";
+  pointer-events: none;
+  transform: rotate(-18deg);
+}
+
+.institutional-landing .pricing-card {
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.institutional-landing .pricing-card:hover {
+  transform: translateY(-5px);
+  border-color: rgb(22 140 255 / 35%) !important;
+  box-shadow: 0 32px 95px rgb(7 24 46 / 16%);
+}
+
+.institutional-landing .pricing-card-featured {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(113 208 249 / 25%), transparent 18rem),
+    rgb(255 255 255 / 82%) !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 92%),
+    0 30px 90px rgb(22 140 255 / 17%);
+}
+
+.institutional-landing .contact-section {
+  background:
+    radial-gradient(circle at 9% 20%, rgb(90 205 245 / 15%), transparent 27rem),
+    radial-gradient(circle at 92% 80%, rgb(77 121 255 / 10%), transparent 30rem),
+    rgb(241 246 251 / 82%);
+}
+
+@supports (backdrop-filter: blur(18px)) {
+  .institutional-landing .liquid-nav,
+  .institutional-landing .liquid-panel,
+  .institutional-landing .liquid-tablist,
+  .institutional-landing .liquid-chip {
+    backdrop-filter: blur(24px) saturate(150%);
+  }
+}
+
+.dark .institutional-landing {
+  --glass-bg: rgb(12 29 48 / 70%);
+  --glass-border: rgb(153 205 240 / 15%);
+  --glass-shadow: 0 28px 90px rgb(0 0 0 / 34%);
+  background:
+    radial-gradient(circle at 10% 12%, rgb(42 157 211 / 17%), transparent 34rem),
+    radial-gradient(circle at 86% 52%, rgb(54 92 218 / 13%), transparent 40rem), #050d17;
+  color: #e8f0f8;
+}
+
+.dark .institutional-landing .liquid-nav {
+  background: rgb(5 16 29 / 78%) !important;
+  box-shadow:
+    inset 0 -1px 0 rgb(153 205 240 / 10%),
+    0 16px 46px rgb(0 0 0 / 28%);
+}
+
+.dark .institutional-landing .pricing-section,
+.dark .institutional-landing .contact-section,
+.dark .institutional-landing .landing-light-surface,
+.dark .institutional-landing .landing-muted-surface {
+  background-color: #081522 !important;
+  background-image:
+    radial-gradient(circle at 10% 16%, rgb(49 169 218 / 13%), transparent 28rem),
+    radial-gradient(circle at 88% 78%, rgb(75 101 222 / 11%), transparent 32rem) !important;
+}
+
+.dark .institutional-landing article,
+.dark .institutional-landing details,
+.dark .institutional-landing #dostepnosc > div,
+.dark .institutional-landing #audience-panel > aside {
+  border-color: rgb(148 185 218 / 14%) !important;
+  background-color: rgb(12 29 48 / 76%) !important;
+}
+
+.dark .institutional-landing :is(h1, h2, h3, strong, summary, label) {
+  color: #f2f7fb !important;
+}
+
+.dark .institutional-landing :is(p, li, small) {
+  color: #aebdcd;
+}
+
+.dark .institutional-landing header :is(a, button) {
+  color: #dce8f3 !important;
+}
+
+.dark .institutional-landing .liquid-field {
+  border-color: rgb(149 186 218 / 18%) !important;
+  background: rgb(5 15 27 / 74%) !important;
+  color: #f4f8fb !important;
+}
+
+.dark .institutional-landing .liquid-field::placeholder {
+  color: #70849a !important;
+}
+
+.dark .institutional-landing .pricing-card-featured {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(82 191 238 / 22%), transparent 18rem),
+    rgb(12 29 48 / 84%) !important;
+}
+
+.dark .pricing-page .pricing-compare {
+  border-color: rgb(148 185 218 / 14%) !important;
+  background: rgb(8 21 34 / 88%) !important;
+}
+
+.dark .pricing-page .pricing-compare thead tr {
+  background: rgb(12 29 48 / 92%) !important;
+}
+
+.dark .pricing-page .pricing-compare tr,
+.dark .pricing-page .pricing-compare td,
+.dark .pricing-page .pricing-compare th {
+  border-color: rgb(148 185 218 / 14%) !important;
+}
+
+.dark .pricing-page .pricing-compare :is(td, th) {
+  color: #c5d2df;
+}
+
+.dark .institutional-landing footer {
+  border-color: #19314b !important;
+  background: #030a12 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .institutional-landing *,
+  .institutional-landing *::before,
+  .institutional-landing *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

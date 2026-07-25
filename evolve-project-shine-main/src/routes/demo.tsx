@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight, Building2, GraduationCap, Lock, Mail, School, ShieldCheck, Sparkles } from "lucide-react";
 import { toast } from "sonner";
@@ -16,9 +16,19 @@ const DEMO = [
 ];
 
 export const Route = createFileRoute("/demo")({
-  component: DemoLauncher,
+  component: DemoRoute,
   head: () => ({ meta: [{ title: "Konta testowe | EduNex" }] }),
 });
+
+function DemoRoute() {
+  const location = useLocation();
+
+  if (location.pathname !== "/demo") {
+    return <Outlet />;
+  }
+
+  return <DemoLauncher />;
+}
 
 function DemoLauncher() {
   const navigate = useNavigate();

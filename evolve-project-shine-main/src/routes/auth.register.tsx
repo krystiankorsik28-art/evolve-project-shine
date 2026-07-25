@@ -528,12 +528,12 @@ function RegisterPanel() {
 
   if (completed) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[#f4f6f8] px-5 py-10 text-slate-950">
+      <div className="edunex-next-gen-identity identity-confirmation grid min-h-screen place-items-center bg-[#f4f6f8] px-5 py-10 text-slate-950">
         <Toaster position="top-center" theme="light" richColors />
         <motion.main
           initial={reduceMotion ? false : { opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[620px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,.12)]"
+          className="identity-confirmation-card w-full max-w-[620px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,.12)]"
         >
           <div className="border-b border-emerald-100 bg-emerald-50 px-6 py-7 text-center sm:px-10">
             <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-900/10">
@@ -606,7 +606,7 @@ function RegisterPanel() {
     <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
       <Toaster position="top-center" theme="light" richColors />
 
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+      <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link
             to="/"
@@ -642,13 +642,13 @@ function RegisterPanel() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8 sm:py-10 lg:px-10">
+      <main className="identity-main mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8 sm:py-10 lg:px-10">
         <form onSubmit={submit} noValidate>
           <motion.div
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[380px_minmax(0,1fr)]"
+            className="identity-shell grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[380px_minmax(0,1fr)]"
           >
             <aside className="identity-institutional relative hidden overflow-hidden border-r border-slate-800 bg-[#071426] p-8 text-white lg:block xl:p-10">
               <div
@@ -694,7 +694,7 @@ function RegisterPanel() {
               </div>
             </aside>
 
-            <section className="p-5 sm:p-8 lg:p-10 xl:p-12">
+            <section className="identity-content p-5 sm:p-8 lg:p-10 xl:p-12">
               <div className="mx-auto w-full max-w-[820px]">
                 <div className="lg:hidden">
                   <div className="flex items-center justify-between gap-3 text-xs font-semibold text-slate-600">

@@ -66,43 +66,51 @@ function AdminPanel() {
     let active = true;
 
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         navigate({ to: "/auth/admin" });
         return;
       }
 
-      const [{ data: profile }, { data: roles }, { count: examCount }, { count: attemptCount }] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("display_name,first_name,last_name")
-          .eq("user_id", user.id)
-          .maybeSingle(),
-        supabase
-          .from("user_roles")
-          .select("id,user_id,role,approval_status,created_at")
-          .eq("approval_status", "pending"),
-        supabase.from("exams").select("*", { count: "exact", head: true }),
-        supabase.from("attempts").select("*", { count: "exact", head: true }),
-      ]);
+      const [{ data: profile }, { data: roles }, { count: examCount }, { count: attemptCount }] =
+        await Promise.all([
+          supabase
+            .from("profiles")
+            .select("display_name,first_name,last_name")
+            .eq("user_id", user.id)
+            .maybeSingle(),
+          supabase
+            .from("user_roles")
+            .select("id,user_id,role,approval_status,created_at")
+            .eq("approval_status", "pending"),
+          supabase.from("exams").select("*", { count: "exact", head: true }),
+          supabase.from("attempts").select("*", { count: "exact", head: true }),
+        ]);
 
       if (!active) return;
-      setDisplayName(resolveUserDisplayName({ profile, metadata: user.user_metadata, role: "admin" }));
+      setDisplayName(
+        resolveUserDisplayName({ profile, metadata: user.user_metadata, role: "admin" }),
+      );
       setPending((roles ?? []) as PendingTeacher[]);
       setStats({ exams: examCount ?? 0, attempts: attemptCount ?? 0, messages: 0 });
       setLoading(false);
     })();
 
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [navigate]);
 
   const filteredPending = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return pending;
-    return pending.filter((item) =>
-      item.user_id.toLowerCase().includes(term) ||
-      item.role.toLowerCase().includes(term) ||
-      item.approval_status.toLowerCase().includes(term),
+    return pending.filter(
+      (item) =>
+        item.user_id.toLowerCase().includes(term) ||
+        item.role.toLowerCase().includes(term) ||
+        item.approval_status.toLowerCase().includes(term),
     );
   }, [pending, query]);
 
@@ -176,16 +184,16 @@ function AdminPanel() {
   }
 
   return (
-    <div className="edunex-next-gen-panel min-h-screen bg-[#f6f8fb] text-slate-950">
+    <div className="edunex-next-gen-panel edunex-admin-workspace min-h-screen bg-[#f6f8fb] text-slate-950">
       <Toaster richColors />
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <header className="workspace-topbar sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-slate-950 text-white shadow-sm">
               <Shield className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-sm font-semibold">EduNex</div>
+              <div className="text-sm font-semibold">EduNex Workspace</div>
               <div className="text-xs text-slate-500">Konsola szkoły</div>
             </div>
           </Link>
@@ -206,18 +214,21 @@ function AdminPanel() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <main className="workspace-main mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <section className="grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
-          <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="workspace-hero admin-hero overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="border-b border-slate-200 bg-slate-950 px-6 py-7 text-white">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs text-white/75">
                 <Sparkles className="h-3.5 w-3.5" />
                 Instytucjonalny nadzór platformy
               </div>
               <div className="max-w-2xl">
-                <h1 className="text-2xl font-semibold sm:text-3xl">Konsola administracyjna EduNex</h1>
+                <h1 className="text-2xl font-semibold sm:text-3xl">
+                  Konsola administracyjna EduNex
+                </h1>
                 <p className="mt-3 text-sm leading-6 text-slate-300">
-                  Zarządzaj dostępem nauczycieli, kontroluj aktywność egzaminacyjną i utrzymuj standard bezpieczeństwa danych w jednej, spokojnej konsoli.
+                  Zarządzaj dostępem nauczycieli, kontroluj aktywność egzaminacyjną i utrzymuj
+                  standard bezpieczeństwa danych w jednej, spokojnej konsoli.
                 </p>
               </div>
             </div>
@@ -228,11 +239,13 @@ function AdminPanel() {
             </div>
           </div>
 
-          <aside className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+          <aside className="workspace-status-card rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-slate-950">Gotowość operacyjna</h2>
-                <p className="mt-1 text-xs leading-5 text-slate-500">Podstawowe punkty kontroli dla wdrożenia szkolnego.</p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Podstawowe punkty kontroli dla wdrożenia szkolnego.
+                </p>
               </div>
               <div className="grid h-9 w-9 place-items-center rounded-lg bg-emerald-50 text-emerald-700">
                 <BadgeCheck className="h-4 w-4" />
@@ -250,11 +263,13 @@ function AdminPanel() {
         </section>
 
         <section className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
-          <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="workspace-panel rounded-lg border border-slate-200 bg-white shadow-sm">
             <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-base font-semibold text-slate-950">Wnioski nauczycieli</h2>
-                <p className="mt-1 text-sm text-slate-500">Zatwierdź tylko zweryfikowane konta powiązane ze szkołą.</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Zatwierdź tylko zweryfikowane konta powiązane ze szkołą.
+                </p>
               </div>
               <div className="flex min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 sm:w-72">
                 <Search className="h-4 w-4 shrink-0 text-slate-400" />
@@ -272,16 +287,23 @@ function AdminPanel() {
                 <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-emerald-50 text-emerald-700">
                   <ClipboardCheck className="h-5 w-5" />
                 </div>
-                <h3 className="mt-4 text-sm font-semibold text-slate-950">Brak oczekujących wniosków</h3>
+                <h3 className="mt-4 text-sm font-semibold text-slate-950">
+                  Brak oczekujących wniosków
+                </h3>
                 <p className="mt-1 text-sm text-slate-500">Kolejka weryfikacji jest czysta.</p>
               </div>
             ) : (
               <div className="divide-y divide-slate-200">
                 {filteredPending.map((item) => (
-                  <article key={item.id} className="grid gap-4 px-5 py-4 transition hover:bg-slate-50/80 md:grid-cols-[1fr_auto] md:items-center">
+                  <article
+                    key={item.id}
+                    className="grid gap-4 px-5 py-4 transition hover:bg-slate-50/80 md:grid-cols-[1fr_auto] md:items-center"
+                  >
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-700">{item.user_id}</span>
+                        <span className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-700">
+                          {item.user_id}
+                        </span>
                         <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-800">
                           {item.role}
                         </span>
@@ -330,7 +352,8 @@ function AdminPanel() {
                 <div>
                   <h2 className="text-sm font-semibold text-slate-950">Zasada dostępu</h2>
                   <p className="mt-1 text-xs leading-5 text-slate-500">
-                    Panel administracyjny nie nadaje uprawnień automatycznie. Każda decyzja zmienia status w istniejącej tabeli ról.
+                    Panel administracyjny nie nadaje uprawnień automatycznie. Każda decyzja zmienia
+                    status w istniejącej tabeli ról.
                   </p>
                 </div>
               </div>
@@ -362,7 +385,15 @@ function MetricTile({ metric }: { metric: SystemMetric }) {
   );
 }
 
-function QuickLink({ icon: Icon, label, to }: { icon: ComponentType<{ className?: string }>; label: string; to: string }) {
+function QuickLink({
+  icon: Icon,
+  label,
+  to,
+}: {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  to: string;
+}) {
   return (
     <Link
       to={to}

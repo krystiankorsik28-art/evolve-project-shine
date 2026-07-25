@@ -58,9 +58,9 @@ const providers: Record<Provider, { label: string; shortLabel: string }> = {
 };
 
 const trustPoints = [
-  { icon: ShieldCheck, value: "RLS", label: "Uprawnienia weryfikowane po stronie serwera" },
-  { icon: Fingerprint, value: "MFA", label: "Silne uwierzytelnianie dla kont uprzywilejowanych" },
-  { icon: Server, value: "RODO", label: "Minimalizacja danych i privacy by design" },
+  { icon: ShieldCheck, value: "DOSTĘP", label: "Uprawnienia wynikające z zatwierdzonej roli" },
+  { icon: Fingerprint, value: "MFA", label: "Dodatkowa ochrona kont uprzywilejowanych" },
+  { icon: Server, value: "DANE", label: "Minimalizacja zakresu danych w procesie logowania" },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -548,7 +548,7 @@ function AuthPage() {
     <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
       <Toaster position="top-center" theme="light" richColors />
 
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+      <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link
             to="/"
@@ -585,12 +585,12 @@ function AuthPage() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1440px] items-center px-4 py-6 sm:px-8 sm:py-10 lg:min-h-[calc(100vh-69px)] lg:px-10">
+      <main className="identity-main mx-auto flex w-full max-w-[1440px] items-center px-4 py-6 sm:px-8 sm:py-10 lg:min-h-[calc(100vh-69px)] lg:px-10">
         <motion.section
           initial={reduceMotion ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[minmax(360px,0.82fr)_minmax(580px,1.18fr)]"
+          className="identity-shell grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[minmax(360px,0.82fr)_minmax(580px,1.18fr)]"
         >
           <aside className="identity-institutional relative hidden overflow-hidden border-r border-slate-800 bg-[#071426] p-9 text-white lg:block xl:p-12">
             <div
@@ -610,11 +610,11 @@ function AuthPage() {
                 EduNex Identity
               </div>
               <h1 className="mt-7 max-w-xl text-[42px] font-semibold leading-[1.08] tracking-[-0.045em] text-white xl:text-[48px]">
-                Jedno bezpieczne wejście do całej szkoły.
+                Konto dopasowane do Twojej roli.
               </h1>
               <p className="mt-5 max-w-lg text-[15px] leading-7 text-slate-300">
-                Jedna tożsamość, serwerowa kontrola ról i bezpieczne wejście do właściwego
-                środowiska pracy — bez deklarowania uprawnień na ekranie logowania.
+                Jedna tożsamość, kontrola ról i wejście do właściwego środowiska szkoły — bez
+                nadawania uprawnień na podstawie samego formularza.
               </p>
 
               <div className="mt-9 grid gap-3">
@@ -640,9 +640,11 @@ function AuthPage() {
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
                         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                       </span>
-                      Usługi logowania działają
+                      Bezpieczna brama dostępu
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-400">System online</span>
+                    <span className="text-[11px] font-semibold text-slate-400">
+                      EduNex Identity
+                    </span>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center gap-4 text-[11px] text-slate-400">
@@ -656,7 +658,7 @@ function AuthPage() {
             </div>
           </aside>
 
-          <div className="p-5 sm:p-8 lg:p-10 xl:p-12">
+          <div className="identity-content p-5 sm:p-8 lg:p-10 xl:p-12">
             <div className="mx-auto w-full max-w-[610px]">
               <div className="flex items-start justify-between gap-4">
                 <div>
