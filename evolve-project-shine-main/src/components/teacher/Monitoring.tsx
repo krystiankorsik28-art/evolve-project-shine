@@ -96,7 +96,9 @@ export function Monitoring() {
     const mid = filtered.filter(r => r.suspicion_score >= 10 && r.suspicion_score < 30).length;
     const noFs = filtered.filter(r => !r.fullscreen_on).length;
     const totalEvents = filtered.reduce((s, r) => s + r.tab_hidden_count + r.blur_count + r.copy_count + r.paste_count + r.right_click_count + r.forbidden_key_count, 0);
-    return { total: filtered.length, high, mid, noFs, totalEvents };
+    const online = filtered.filter(r => Date.now() - new Date(r.updated_at).getTime() < 15000).length;
+    const avgProgress = filtered.length ? Math.round(filtered.reduce((sum, r) => sum + (r.answered_count / (r.total_questions || 1)) * 100, 0) / filtered.length) : 0;
+    return { total: filtered.length, high, mid, noFs, totalEvents, online, avgProgress };
   }, [filtered]);
 
   const risk = (s: number) => s >= 30 ? "high" : s >= 10 ? "mid" : "low";
@@ -196,7 +198,10 @@ export function Monitoring() {
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-xl font-display font-bold text-white inline-flex items-center gap-2">
+          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[.18em] text-emerald-300">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" /> Centrum nadzoru na żywo
+          </div>
+          <h2 className="text-2xl font-display font-bold text-white flex items-center gap-2">
             <MonitorUp className="w-5 h-5 text-emerald-300"/>Monitoring
           </h2>
           <p className="text-xs text-white/50">Na żywo · Postgres realtime · odświeżanie 5s</p>
@@ -215,12 +220,13 @@ export function Monitoring() {
       </div>
 
       {/* Stats tiles */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+        <Tile color="from-emerald-400 to-teal-500" label="Online teraz" value={stats.online} />
         <Tile color="from-accent to-blue-500" label="Aktywnych" value={stats.total} />
         <Tile color="from-accent to-blue-500" label="Średnie ryzyko" value={stats.mid} />
         <Tile color="from-accent to-blue-500" label="Wysokie ryzyko" value={stats.high} />
         <Tile color="from-accent to-blue-500" label="Bez fullscreen" value={stats.noFs} />
-        <Tile color="from-accent to-blue-500" label="Zdarzenia" value={stats.totalEvents} />
+        <Tile color="from-violet-400 to-indigo-500" label="Śr. postęp %" value={stats.avgProgress} />
       </div>
 
       {/* Filters */}
@@ -463,6 +469,7 @@ function FrameViewer({ row, onClose }: { row: Live; onClose: () => void }) {
   const [frames, setFrames] = useState<Frame[]>([]);
   const [idx, setIdx] = useState(0);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [imageError, setImageError] = useState(false);
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.from("attempt_screen_frames").select("*").eq("attempt_id", row.attempt_id).order("created_at", { ascending: false }).limit(30);
@@ -474,6 +481,7 @@ function FrameViewer({ row, onClose }: { row: Live; onClose: () => void }) {
     return () => clearInterval(iv);
   }, [row.attempt_id, autoRefresh]);
   const current = frames[idx];
+  useEffect(() => { setImageError(false); }, [current?.id]);
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm grid place-items-center p-4" onClick={onClose}>
       <div className="w-full max-w-5xl bg-gradient-to-b from-[#0b1224] to-[#070b17] border border-white/10 rounded-2xl p-6" onClick={(e) => e.stopPropagation()}>
@@ -492,9 +500,12 @@ function FrameViewer({ row, onClose }: { row: Live; onClose: () => void }) {
         </div>
 
         {/* Frame image */}
-        {current ? (
+        {current && !imageError ? (
           <>
-            <img src={current.image_data} alt={`Klatka ${idx + 1}`} className="w-full rounded-xl border border-white/10 max-h-[60vh] object-contain bg-black/50"/>
+            <div className="relative overflow-hidden rounded-xl border border-white/10 bg-slate-950">
+              <img src={current.image_data} onError={() => setImageError(true)} alt={`Klatka ${idx + 1}`} className="h-auto w-full max-h-[68vh] object-contain"/>
+              <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur"><span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400"/> PODGLĄD NA ŻYWO</div>
+            </div>
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-white/40 font-mono">{new Date(current.created_at).toLocaleString("pl-PL")}</span>
               <div className="flex items-center gap-2">
