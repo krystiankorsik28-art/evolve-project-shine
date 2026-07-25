@@ -1,32 +1,96 @@
 .edunex-next-gen-identity {
+  --identity-page: #f3f7fb;
+  --identity-surface: #ffffff;
+  --identity-surface-elevated: #ffffff;
+  --identity-surface-muted: #eef3f8;
   --identity-navy: #07182e;
+  --identity-text: #0b1424;
+  --identity-text-secondary: #4c5e74;
+  --identity-text-muted: #66788e;
+  --identity-border: #cad6e3;
+  --identity-border-strong: #9fb2c6;
   --identity-blue: #0869c7;
-  --identity-blue-dark: #0759aa;
-  --identity-border: #d7e0ea;
-  --identity-muted: #58687c;
+  --identity-blue-hover: #0759aa;
+  --identity-blue-soft: #e7f2ff;
+  --identity-success: #08775c;
+  --identity-success-soft: #e7f8f2;
+  --identity-warning: #8b5a00;
+  --identity-warning-soft: #fff4d8;
+  --identity-danger: #b42318;
+  --identity-danger-soft: #fff0ee;
+  --identity-focus: #ffb020;
+  --identity-shadow: 0 36px 95px rgb(7 24 46 / 13%), 0 3px 12px rgb(7 24 46 / 5%);
+  color-scheme: light;
   background:
     radial-gradient(circle at 6% 8%, rgb(101 199 235 / 13%), transparent 23rem),
-    linear-gradient(180deg, #f7fafd 0%, #f1f5f9 100%) !important;
-  color: #0b1424;
+    linear-gradient(180deg, #f7fafd 0%, var(--identity-page) 100%);
+  color: var(--identity-text);
   font-family: Inter, "Segoe UI", system-ui, sans-serif;
+}
+
+.dark .edunex-next-gen-identity {
+  --identity-page: #050c15;
+  --identity-surface: #0a1725;
+  --identity-surface-elevated: #0d1c2c;
+  --identity-surface-muted: #102235;
+  --identity-navy: #020912;
+  --identity-text: #f3f7fb;
+  --identity-text-secondary: #c4d1de;
+  --identity-text-muted: #90a4b9;
+  --identity-border: rgb(147 184 216 / 20%);
+  --identity-border-strong: rgb(158 199 230 / 34%);
+  --identity-blue: #58b9ff;
+  --identity-blue-hover: #86ceff;
+  --identity-blue-soft: rgb(42 145 219 / 17%);
+  --identity-success: #77e1bd;
+  --identity-success-soft: rgb(22 154 112 / 16%);
+  --identity-warning: #ffd278;
+  --identity-warning-soft: rgb(198 128 14 / 16%);
+  --identity-danger: #ff9a91;
+  --identity-danger-soft: rgb(190 52 43 / 17%);
+  --identity-focus: #ffd166;
+  --identity-shadow: 0 38px 100px rgb(0 0 0 / 43%), 0 3px 12px rgb(0 0 0 / 24%);
+  color-scheme: dark;
+  background:
+    radial-gradient(circle at 7% 7%, rgb(33 146 202 / 17%), transparent 25rem),
+    radial-gradient(circle at 92% 74%, rgb(56 82 190 / 11%), transparent 30rem),
+    var(--identity-page);
 }
 
 .edunex-next-gen-identity .identity-topbar {
   position: sticky;
   z-index: 50;
   top: 0;
-  border-color: rgb(49 76 105 / 92%) !important;
-  background: rgb(7 24 46 / 97%) !important;
+  border-color: rgb(49 76 105 / 92%);
+  background: rgb(7 24 46 / 97%);
   box-shadow: 0 1px 0 rgb(255 255 255 / 5%);
 }
 
 .edunex-next-gen-identity .identity-topbar > div > a:first-child {
-  color: #fff !important;
+  color: #fff;
 }
 
 .edunex-next-gen-identity .identity-topbar > div > a:first-child > span:first-child {
   border: 1px solid rgb(255 255 255 / 14%);
-  background: #102b49 !important;
+  background: #102b49;
+}
+
+.edunex-next-gen-identity .identity-topbar > div > span,
+.edunex-next-gen-identity .identity-topbar > div > div > span {
+  color: #c1cedc;
+}
+
+.edunex-next-gen-identity .identity-topbar button[aria-label^="Motyw:"] {
+  border-color: rgb(157 194 225 / 26%);
+  background: rgb(15 38 61 / 88%);
+  color: #d9e8f5;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.edunex-next-gen-identity .identity-topbar button[aria-label^="Motyw:"]:hover {
+  border-color: rgb(114 203 255 / 46%);
+  background: #15334f;
+  color: #ffffff;
 }
 
 .edunex-next-gen-identity .identity-main {
@@ -36,20 +100,19 @@
 }
 
 .edunex-next-gen-identity .identity-shell {
-  border-color: #cdd8e4 !important;
-  border-radius: 18px !important;
-  box-shadow:
-    0 36px 95px rgb(7 24 46 / 13%),
-    0 3px 12px rgb(7 24 46 / 5%) !important;
+  border-color: var(--identity-border);
+  border-radius: 18px;
+  background: var(--identity-surface);
+  box-shadow: var(--identity-shadow);
 }
 
 .edunex-next-gen-identity aside.identity-institutional {
   isolation: isolate;
-  border-color: #17324f !important;
+  border-color: #17324f;
   background:
     linear-gradient(90deg, rgb(3 13 24 / 90%) 0%, rgb(3 13 24 / 64%) 58%, rgb(3 13 24 / 34%) 100%),
     linear-gradient(180deg, rgb(3 13 24 / 24%) 0%, rgb(3 13 24 / 82%) 100%),
-    url("/images/edunex-identity-school-datacenter.webp") 57% center / cover !important;
+    url("/images/edunex-identity-school-datacenter.webp") 57% center / cover;
 }
 
 .edunex-next-gen-identity .identity-institutional::before {
@@ -79,14 +142,14 @@
 
 .edunex-next-gen-identity .identity-institutional h1 {
   max-width: 12ch;
-  font-size: clamp(2.35rem, 3.4vw, 3.6rem) !important;
-  font-weight: 650 !important;
-  letter-spacing: -0.055em !important;
-  line-height: 1.02 !important;
+  font-size: clamp(2.35rem, 3.4vw, 3.6rem);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
 }
 
 .edunex-next-gen-identity .identity-institutional p {
-  color: #c1cedc !important;
+  color: #c9d5e2;
 }
 
 .edunex-next-gen-identity .identity-institutional > div:last-child > div:not(:first-child) {
@@ -95,10 +158,18 @@
 
 .edunex-next-gen-identity .identity-content {
   position: relative;
+  color: var(--identity-text);
   background:
-    linear-gradient(rgb(255 255 255 / 96%), rgb(255 255 255 / 96%)),
-    linear-gradient(rgb(7 24 46 / 4%) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(7 24 46 / 4%) 1px, transparent 1px);
+    linear-gradient(
+      color-mix(in srgb, var(--identity-surface) 96%, transparent),
+      color-mix(in srgb, var(--identity-surface) 96%, transparent)
+    ),
+    linear-gradient(color-mix(in srgb, var(--identity-text) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--identity-text) 4%, transparent) 1px,
+      transparent 1px
+    );
   background-size:
     auto,
     42px 42px,
@@ -106,60 +177,242 @@
 }
 
 .edunex-next-gen-identity .identity-content h2 {
-  color: #07182e !important;
-  font-weight: 650 !important;
-  letter-spacing: -0.045em !important;
+  color: var(--identity-text);
+  font-weight: 650;
+  letter-spacing: -0.045em;
 }
 
 .edunex-next-gen-identity .identity-content input,
 .edunex-next-gen-identity .identity-content select,
 .edunex-next-gen-identity .identity-content textarea {
-  border-color: #cbd6e2 !important;
-  border-radius: 8px !important;
-  background: #fff !important;
-  color: #0b1424 !important;
+  border-color: var(--identity-border);
+  border-radius: 8px;
+  background: var(--identity-surface-elevated);
+  color: var(--identity-text);
+  caret-color: var(--identity-blue);
   box-shadow: 0 1px 2px rgb(7 24 46 / 3%);
+}
+
+.edunex-next-gen-identity .identity-content input::placeholder,
+.edunex-next-gen-identity .identity-content textarea::placeholder {
+  color: var(--identity-text-muted);
+  opacity: 1;
 }
 
 .edunex-next-gen-identity .identity-content input:hover,
 .edunex-next-gen-identity .identity-content select:hover,
 .edunex-next-gen-identity .identity-content textarea:hover {
-  border-color: #9eb0c3 !important;
+  border-color: var(--identity-border-strong);
 }
 
 .edunex-next-gen-identity .identity-content input:focus,
 .edunex-next-gen-identity .identity-content select:focus,
 .edunex-next-gen-identity .identity-content textarea:focus {
-  border-color: var(--identity-blue) !important;
-  box-shadow: 0 0 0 3px rgb(8 105 199 / 14%) !important;
+  border-color: var(--identity-blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--identity-blue) 18%, transparent);
+}
+
+.edunex-next-gen-identity .identity-content select,
+.edunex-next-gen-identity .identity-content option {
+  background-color: var(--identity-surface-elevated);
+  color: var(--identity-text);
+}
+
+.edunex-next-gen-identity .identity-content input:-webkit-autofill,
+.edunex-next-gen-identity .identity-content input:-webkit-autofill:hover,
+.edunex-next-gen-identity .identity-content input:-webkit-autofill:focus,
+.edunex-next-gen-identity .identity-content input:autofill {
+  -webkit-text-fill-color: var(--identity-text);
+  caret-color: var(--identity-blue);
+  box-shadow: 0 0 0 1000px var(--identity-surface-elevated) inset;
+  transition: background-color 9999s ease-out;
 }
 
 .edunex-next-gen-identity .identity-content button[type="submit"] {
-  border-radius: 8px !important;
-  background: var(--identity-blue) !important;
+  border-radius: 8px;
+  background: #0872d8;
+  color: #fff;
   box-shadow: 0 10px 24px rgb(8 105 199 / 20%);
 }
 
 .edunex-next-gen-identity .identity-content button[type="submit"]:hover {
-  background: var(--identity-blue-dark) !important;
+  background: #0759aa;
   transform: translateY(-1px);
 }
 
 .edunex-next-gen-identity .identity-content [role="tablist"] {
-  border-color: #d5dfe9 !important;
-  background: #f1f5f9 !important;
+  border-color: var(--identity-border);
+  background: var(--identity-surface-muted);
+}
+
+.edunex-next-gen-identity .identity-content [role="tab"] {
+  color: var(--identity-text-secondary);
 }
 
 .edunex-next-gen-identity .identity-content [role="tab"][aria-selected="true"] {
-  border-color: #bed5eb !important;
-  background: #fff !important;
-  color: #075aa8 !important;
+  border-color: color-mix(in srgb, var(--identity-blue) 28%, var(--identity-border));
+  background: var(--identity-surface-elevated);
+  color: var(--identity-blue);
   box-shadow: 0 3px 10px rgb(7 24 46 / 7%);
 }
 
 .edunex-next-gen-identity :focus-visible {
-  outline: 3px solid #ffbd3d !important;
-  outline-offset: 3px !important;
+  outline: 3px solid var(--identity-focus);
+  outline-offset: 3px;
+}
+
+.edunex-next-gen-identity ::selection {
+  background: color-mix(in srgb, var(--identity-blue) 30%, transparent);
+  color: var(--identity-text);
+}
+
+/* Exact, route-scoped utility compatibility — no global text rewriting. */
+.dark .edunex-next-gen-identity.bg-\[\#f4f6f8\],
+.dark .edunex-next-gen-identity.bg-\[\#f5f7fa\],
+.dark .edunex-next-gen-identity .bg-\[\#f4f6f8\],
+.dark .edunex-next-gen-identity .bg-\[\#f5f7fa\] {
+  background-color: var(--identity-page);
+}
+
+.dark .edunex-next-gen-identity .bg-white,
+.dark .edunex-next-gen-identity [class~="bg-white/95"],
+.dark .edunex-next-gen-identity [class~="bg-white/94"] {
+  background-color: var(--identity-surface);
+}
+
+.dark .edunex-next-gen-identity .bg-slate-50,
+.dark .edunex-next-gen-identity .bg-slate-100 {
+  background-color: var(--identity-surface-muted);
+}
+
+.dark .edunex-next-gen-identity .border-slate-200,
+.dark .edunex-next-gen-identity .border-slate-300 {
+  border-color: var(--identity-border);
+}
+
+.dark .edunex-next-gen-identity .text-slate-950,
+.dark .edunex-next-gen-identity .text-slate-900,
+.dark .edunex-next-gen-identity .text-slate-800,
+.dark .edunex-next-gen-identity .text-slate-700 {
+  color: var(--identity-text);
+}
+
+.dark .edunex-next-gen-identity .text-slate-600,
+.dark .edunex-next-gen-identity .text-slate-500 {
+  color: var(--identity-text-secondary);
+}
+
+.dark .edunex-next-gen-identity .text-slate-400 {
+  color: var(--identity-text-muted);
+}
+
+.dark .edunex-next-gen-identity .bg-blue-50 {
+  background: var(--identity-blue-soft);
+}
+
+.dark .edunex-next-gen-identity .identity-content [class~="bg-blue-50/60"],
+.dark .edunex-next-gen-identity .identity-content [class~="bg-blue-50/70"] {
+  border-color: rgb(85 184 255 / 22%) !important;
+  background: rgb(30 111 170 / 14%) !important;
+  color: #cde6f8 !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content button[class~="bg-[#f3f8fc]"] {
+  border-color: #55b8ff !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgb(85 184 255 / 14%), transparent 11rem), #0c2a42 !important;
+  box-shadow:
+    0 0 0 1px rgb(85 184 255 / 12%),
+    0 14px 36px rgb(0 0 0 / 18%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content .bg-amber-50 {
+  border-color: rgb(255 194 82 / 26%) !important;
+  background: rgb(151 95 8 / 18%) !important;
+  color: #ffe0a3 !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content .text-amber-950 {
+  color: #ffe0a3 !important;
+}
+
+.dark .edunex-next-gen-identity .text-blue-700,
+.dark .edunex-next-gen-identity .text-blue-600,
+.dark .edunex-next-gen-identity [class~="text-[#0067b8]"] {
+  color: var(--identity-blue);
+}
+
+.dark .edunex-next-gen-identity .bg-emerald-50 {
+  background: var(--identity-success-soft);
+}
+
+.dark .edunex-next-gen-identity .text-emerald-700,
+.dark .edunex-next-gen-identity .text-emerald-600 {
+  color: var(--identity-success);
+}
+
+.dark .edunex-next-gen-identity .bg-red-50 {
+  background: var(--identity-danger-soft);
+}
+
+.dark .edunex-next-gen-identity .text-red-700,
+.dark .edunex-next-gen-identity .text-red-600 {
+  color: var(--identity-danger);
+}
+
+/*
+ * Legacy next-generation.css uses !important for these exact surfaces.
+ * Keep the exception route-scoped so the production dark theme remains coherent.
+ */
+.dark .edunex-next-gen-identity .identity-shell {
+  border-color: rgb(112 174 219 / 24%) !important;
+  background:
+    radial-gradient(circle at 92% 5%, rgb(31 118 184 / 13%), transparent 24rem), rgb(6 17 29 / 97%) !important;
+  box-shadow:
+    0 40px 110px rgb(0 0 0 / 52%),
+    inset 0 1px 0 rgb(177 219 246 / 8%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(39 135 204 / 10%), transparent 22rem),
+    linear-gradient(rgb(10 25 40 / 98%), rgb(7 20 33 / 98%)),
+    linear-gradient(rgb(168 205 232 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(168 205 232 / 4%) 1px, transparent 1px) !important;
+  background-size:
+    auto,
+    auto,
+    42px 42px,
+    42px 42px !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea) {
+  border-color: rgb(142 183 216 / 24%) !important;
+  background: rgb(4 15 26 / 82%) !important;
+  color: #f3f7fb !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 3%),
+    0 1px 2px rgb(0 0 0 / 22%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, textarea)::placeholder {
+  color: #8499ae !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea):hover {
+  border-color: rgb(111 194 247 / 42%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea):focus {
+  border-color: #55b8ff !important;
+  box-shadow: 0 0 0 3px rgb(85 184 255 / 18%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill,
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill:hover,
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f7fb !important;
+  box-shadow: 0 0 0 1000px #081a2a inset !important;
 }
 
 @media (max-width: 1023px) {
@@ -175,19 +428,19 @@
 
 @media (max-width: 640px) {
   .edunex-next-gen-identity .identity-main {
-    padding-inline: 0.75rem !important;
+    padding-inline: 0.75rem;
   }
 
   .edunex-next-gen-identity .identity-shell {
-    border-radius: 14px !important;
+    border-radius: 14px;
   }
 
   .edunex-next-gen-identity .identity-content {
-    padding: 1.2rem !important;
+    padding: 1.2rem;
   }
 
   .edunex-next-gen-identity .identity-content h2 {
-    font-size: 1.75rem !important;
+    font-size: 1.75rem;
   }
 }
 
@@ -195,9 +448,9 @@
   .edunex-next-gen-identity *,
   .edunex-next-gen-identity *::before,
   .edunex-next-gen-identity *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }

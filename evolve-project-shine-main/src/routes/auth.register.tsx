@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { IdentityTrustCenter } from "@/components/auth/IdentityTrustCenter";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured } from "@/integrations/supabase/client";
 import { ROLE_LABEL, type PortalRole } from "@/lib/auth/access";
@@ -37,6 +38,7 @@ import {
   validateRegon,
   validateRspo,
 } from "@/lib/auth/institution-validation";
+import { useTheme } from "@/lib/theme";
 
 type RoleId = PortalRole;
 type StepId = "role" | "identity" | "organization" | "security";
@@ -358,6 +360,7 @@ function Consent({
 
 function RegisterPanel() {
   const reduceMotion = useReducedMotion();
+  const { resolvedTheme } = useTheme();
   const { signUpWithEmail } = useAuth();
   const [step, setStep] = useState(0);
   const [role, setRole] = useState<RoleId>("teacher");
@@ -529,9 +532,9 @@ function RegisterPanel() {
   if (completed) {
     return (
       <div className="edunex-next-gen-identity identity-confirmation grid min-h-screen place-items-center bg-[#f4f6f8] px-5 py-10 text-slate-950">
-        <Toaster position="top-center" theme="light" richColors />
+        <Toaster position="top-center" theme={resolvedTheme} richColors />
         <motion.main
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="identity-confirmation-card w-full max-w-[620px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,.12)]"
         >
@@ -604,7 +607,7 @@ function RegisterPanel() {
 
   return (
     <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
-      <Toaster position="top-center" theme="light" richColors />
+      <Toaster position="top-center" theme={resolvedTheme} richColors />
 
       <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
@@ -624,6 +627,7 @@ function RegisterPanel() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-5">
+            <ThemeSwitcher compact />
             <Link
               to="/pomoc"
               className="hidden items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 sm:inline-flex"
@@ -645,7 +649,7 @@ function RegisterPanel() {
       <main className="identity-main mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8 sm:py-10 lg:px-10">
         <form onSubmit={submit} noValidate>
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="identity-shell grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[380px_minmax(0,1fr)]"
@@ -760,7 +764,7 @@ function RegisterPanel() {
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={currentStep.id}
-                    initial={reduceMotion ? false : { opacity: 0, x: 10 }}
+                    initial={false}
                     animate={{ opacity: 1, x: 0 }}
                     exit={reduceMotion ? undefined : { opacity: 0, x: -8 }}
                     transition={{ duration: 0.2 }}

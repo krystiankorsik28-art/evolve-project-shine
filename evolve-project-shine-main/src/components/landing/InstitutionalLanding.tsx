@@ -1,6 +1,13 @@
-import { useState, type AriaAttributes, type ComponentType, type FormEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type AriaAttributes,
+  type ComponentType,
+  type FormEvent,
+} from "react";
 import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Accessibility,
   ArrowRight,
@@ -35,6 +42,7 @@ import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Toaster } from "@/components/ui/sonner";
 import { submitContact } from "@/lib/contact.functions";
+import { useTheme } from "@/lib/theme";
 
 type IconType = ComponentType<{
   className?: string;
@@ -303,8 +311,15 @@ function Heading({
   copy: string;
   centered?: boolean;
 }) {
+  const reduceMotion = useReducedMotion();
   return (
-    <div className={`${centered ? "mx-auto text-center" : ""} max-w-4xl`}>
+    <motion.div
+      initial={false}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.28 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`${centered ? "mx-auto text-center" : ""} max-w-4xl`}
+    >
       <span className="text-[11px] font-extrabold uppercase tracking-[.14em] text-[#0869c7]">
         {eyebrow}
       </span>
@@ -312,17 +327,28 @@ function Heading({
         {title}
       </h2>
       <p className="mt-4 max-w-3xl text-[15px] leading-7 text-slate-600">{copy}</p>
-    </div>
+    </motion.div>
   );
 }
 
 function ProductPreview() {
+  const reduceMotion = useReducedMotion();
+  const currentDate = new Intl.DateTimeFormat("pl-PL", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
   return (
-    <div
-      className="liquid-panel overflow-hidden rounded-[28px] border border-white/60 bg-white/80 shadow-[0_35px_95px_rgba(7,24,46,.18)]"
+    <motion.div
+      initial={false}
+      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.18 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="workspace-preview liquid-panel overflow-hidden rounded-[28px]"
       aria-label="Przykładowy panel EduNex"
     >
-      <div className="flex min-h-16 items-center justify-between gap-3 border-b border-slate-200 px-4">
+      <div className="workspace-preview-header flex min-h-16 items-center justify-between gap-3 px-4">
         <div className="flex items-center gap-3">
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#07182e] !text-[#fff]">
             <Layers3 className="h-4 w-4" />
@@ -332,12 +358,12 @@ function ProductPreview() {
             <small className="block text-[9px] text-slate-500">Podgląd interfejsu</small>
           </span>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[9px] font-bold text-emerald-800">
-          <i className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> System dostępny
+        <span className="preview-status inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[9px] font-bold">
+          <i className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Status podglądu
         </span>
       </div>
-      <div className="grid min-h-[430px] grid-cols-[90px_1fr] sm:grid-cols-[122px_1fr]">
-        <aside className="border-r border-slate-200 bg-slate-50 p-2.5" aria-hidden="true">
+      <div className="workspace-preview-layout grid min-h-[430px] grid-cols-[90px_1fr] sm:grid-cols-[122px_1fr]">
+        <aside className="workspace-preview-sidebar p-2.5" aria-hidden="true">
           {["Pulpit", "Egzaminy", "Klasy", "Wyniki", "NexDziennik"].map((item, index) => (
             <span
               key={item}
@@ -347,7 +373,7 @@ function ProductPreview() {
             </span>
           ))}
         </aside>
-        <div className="min-w-0 bg-[#f4f7fa] p-3 sm:p-5">
+        <div className="workspace-preview-canvas min-w-0 p-3 sm:p-5">
           <div className="flex items-start justify-between gap-3">
             <span>
               <small className="block text-[9px] font-bold uppercase tracking-wider text-slate-400">
@@ -358,7 +384,7 @@ function ProductPreview() {
               </strong>
             </span>
             <span className="hidden rounded-md border border-slate-200 bg-white px-2 py-1 text-[9px] text-slate-500 sm:block">
-              25 lipca 2026
+              {currentDate}
             </span>
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -367,20 +393,20 @@ function ProductPreview() {
               ["3", "sesje dzisiaj"],
               ["91%", "oddanych prac"],
             ].map(([value, label]) => (
-              <span key={label} className="rounded-lg border border-slate-200 bg-white p-3">
+              <span key={label} className="workspace-preview-card rounded-lg p-3">
                 <strong className="block text-xl text-[#07182e]">{value}</strong>
                 <small className="text-[9px] text-slate-500">{label}</small>
               </span>
             ))}
           </div>
           <div className="mt-3 grid gap-3 lg:grid-cols-[1.15fr_.85fr]">
-            <div className="rounded-xl border border-slate-200 bg-white p-3.5">
+            <div className="workspace-preview-card rounded-xl p-3.5">
               <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
                 Sesja egzaminacyjna
               </span>
               <div className="mt-1 flex items-center justify-between gap-2">
                 <strong className="text-xs sm:text-sm">Matematyka — klasa 7B</strong>
-                <span className="rounded-full bg-blue-50 px-2 py-1 text-[8px] font-extrabold text-blue-700">
+                <span className="preview-live rounded-full px-2 py-1 text-[8px] font-extrabold">
                   NA ŻYWO
                 </span>
               </div>
@@ -397,11 +423,17 @@ function ProductPreview() {
                 <span>Oddane</span>
                 <strong>24 / 28</strong>
               </div>
-              <div className="mt-1.5 h-1.5 rounded-full bg-slate-100">
-                <span className="block h-full w-[86%] rounded-full bg-[#0869c7]" />
+              <div className="preview-progress-track mt-1.5 h-1.5 rounded-full">
+                <motion.span
+                  initial={reduceMotion ? false : { width: 0 }}
+                  whileInView={reduceMotion ? undefined : { width: "86%" }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.9, delay: 0.2, ease: "easeOut" }}
+                  className="block h-full w-[86%] rounded-full bg-[#0869c7]"
+                />
               </div>
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3.5">
+            <div className="workspace-preview-card preview-ai-card rounded-xl p-3.5">
               <span className="grid h-9 w-9 place-items-center rounded-lg bg-blue-50 text-[#0869c7]">
                 <Sparkles className="h-4 w-4" />
               </span>
@@ -416,14 +448,32 @@ function ProductPreview() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function AudiencePanel() {
   const [active, setActive] = useState<AudienceKey>("dyrekcja");
+  const reduceMotion = useReducedMotion();
   const item = audiences[active];
   const ActiveIcon = item.icon;
+  const audienceKeys = Object.keys(audiences) as AudienceKey[];
+
+  const moveTab = (current: AudienceKey, direction: "next" | "previous" | "first" | "last") => {
+    const currentIndex = audienceKeys.indexOf(current);
+    const nextIndex =
+      direction === "first"
+        ? 0
+        : direction === "last"
+          ? audienceKeys.length - 1
+          : direction === "next"
+            ? (currentIndex + 1) % audienceKeys.length
+            : (currentIndex - 1 + audienceKeys.length) % audienceKeys.length;
+    const next = audienceKeys[nextIndex];
+    setActive(next);
+    requestAnimationFrame(() => document.getElementById(`audience-tab-${next}`)?.focus());
+  };
+
   return (
     <div className="mt-12 grid gap-4 lg:grid-cols-[230px_1fr]">
       <div
@@ -440,8 +490,24 @@ function AudiencePanel() {
               id={`audience-tab-${key}`}
               aria-controls="audience-panel"
               aria-selected={key === active}
+              tabIndex={key === active ? 0 : -1}
               onClick={() => setActive(key)}
-              className={`flex min-h-12 shrink-0 items-center gap-2 rounded-lg border px-3 text-left text-xs font-bold transition ${key === active ? "border-blue-200 bg-blue-50 text-[#0759aa]" : "border-transparent text-slate-600 hover:bg-slate-50"}`}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                  event.preventDefault();
+                  moveTab(key, "next");
+                } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                  event.preventDefault();
+                  moveTab(key, "previous");
+                } else if (event.key === "Home") {
+                  event.preventDefault();
+                  moveTab(key, "first");
+                } else if (event.key === "End") {
+                  event.preventDefault();
+                  moveTab(key, "last");
+                }
+              }}
+              className={`audience-tab flex min-h-12 shrink-0 items-center gap-2 rounded-lg border px-3 text-left text-xs font-bold transition ${key === active ? "is-active border-blue-200 bg-blue-50 text-[#0759aa]" : "border-transparent text-slate-600 hover:bg-slate-50"}`}
             >
               <audience.icon className="h-4 w-4" aria-hidden="true" />
               {audience.label}
@@ -449,12 +515,16 @@ function AudiencePanel() {
           ),
         )}
       </div>
-      <div
+      <motion.div
+        key={active}
+        initial={false}
+        animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
         id="audience-panel"
         role="tabpanel"
         aria-labelledby={`audience-tab-${active}`}
         tabIndex={0}
-        className="liquid-panel grid overflow-hidden rounded-2xl border border-white/60 bg-white/75 shadow-[0_22px_65px_rgba(7,24,46,.08)] md:grid-cols-[1fr_210px]"
+        className="audience-panel liquid-panel grid overflow-hidden rounded-2xl md:grid-cols-[1fr_210px]"
       >
         <div className="p-6 sm:p-10">
           <span className="grid h-12 w-12 place-items-center rounded-xl bg-[#07182e] !text-[#fff]">
@@ -487,7 +557,7 @@ function AudiencePanel() {
             Zakres orientacyjny zależny od konfiguracji i uprawnień placówki.
           </small>
         </aside>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -649,9 +719,20 @@ function ContactForm() {
 
 export function InstitutionalLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+
   return (
     <div className="institutional-landing min-h-screen overflow-x-clip bg-white font-[Inter,_Segoe_UI,_sans-serif] text-slate-950">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-center" theme={resolvedTheme} richColors />
       <a
         href="#main-content"
         className="fixed left-4 top-[-100px] z-[200] rounded-lg bg-white px-4 py-3 font-bold shadow-xl focus:top-4"
@@ -723,79 +804,107 @@ export function InstitutionalLanding() {
             </button>
           </div>
         </div>
-        {menuOpen && (
-          <nav
-            className="mx-auto grid max-w-[1440px] border-t border-slate-200 px-4 py-3 xl:hidden"
-            aria-label="Nawigacja mobilna"
-          >
-            {nav.map(([label, href]) =>
-              href.startsWith("#") ? (
-                <a
-                  key={href}
-                  href={href}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                >
-                  {label}
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              ) : (
-                <Link
-                  key={href}
-                  to={href as "/centrum-dokumentow"}
-                  onClick={() => setMenuOpen(false)}
-                  className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
-                >
-                  {label}
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              ),
-            )}
-            <Link
-              to="/auth"
-              onClick={() => setMenuOpen(false)}
-              className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-[#0869c7]"
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.nav
+              initial={reduceMotion ? false : { opacity: 0, height: 0 }}
+              animate={reduceMotion ? undefined : { opacity: 1, height: "auto" }}
+              exit={reduceMotion ? undefined : { opacity: 0, height: 0 }}
+              className="mx-auto grid max-w-[1440px] overflow-hidden border-t border-slate-200 px-4 py-3 xl:hidden"
+              aria-label="Nawigacja mobilna"
             >
-              Logowanie do systemu
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </nav>
-        )}
+              {nav.map(([label, href]) =>
+                href.startsWith("#") ? (
+                  <a
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                  >
+                    {label}
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                ) : (
+                  <Link
+                    key={href}
+                    to={href as "/centrum-dokumentow"}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                  >
+                    {label}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                ),
+              )}
+              <Link
+                to="/auth"
+                onClick={() => setMenuOpen(false)}
+                className="flex min-h-12 items-center justify-between rounded-lg px-3 text-sm font-bold text-[#0869c7]"
+              >
+                Logowanie do systemu
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </header>
 
       <main id="main-content">
         <section className="institutional-hero relative overflow-hidden border-b border-[#1d344f] bg-[#061325]">
-          <img
+          <motion.img
             src="/images/edunex-hero-director-samsung.webp"
             alt="Dyrektorka szkoły przed nowoczesnym budynkiem, trzymająca tablet"
             className="absolute inset-0 h-full w-full object-cover object-[64%_center] sm:object-center"
             fetchPriority="high"
+            initial={false}
+            animate={reduceMotion ? undefined : { scale: 1, opacity: 1 }}
+            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           />
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(4,17,33,.98)_0%,rgba(4,17,33,.93)_34%,rgba(4,17,33,.42)_63%,rgba(4,17,33,.12)_100%)]" />
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(4,17,33,.14),rgba(4,17,33,.34))]" />
           <div className="relative mx-auto grid max-w-[1440px] items-center px-4 py-16 sm:px-7 lg:min-h-[720px] lg:grid-cols-[.9fr_1.1fr] lg:py-24">
             <div className="max-w-3xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[11px] font-extrabold !text-[#bce7fa] backdrop-blur">
+              <motion.span
+                initial={false}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-[11px] font-extrabold !text-[#bce7fa] backdrop-blur"
+              >
                 <ShieldCheck className="h-4 w-4" />
                 Platforma egzaminacyjna dla polskiej edukacji
-              </span>
-              <h1 className="mt-6 text-[clamp(3rem,5.4vw,5.8rem)] font-semibold leading-[.96] tracking-[-.065em] !text-[#fff]">
+              </motion.span>
+              <motion.h1
+                initial={false}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-6 text-[clamp(3rem,5.4vw,5.8rem)] font-semibold leading-[.96] tracking-[-.065em] !text-[#fff]"
+              >
                 Bezpieczne egzaminy.
                 <span className="block !text-[#77d1f2]">Spójna praca całej szkoły.</span>
-              </h1>
-              <p className="mt-7 max-w-2xl text-base leading-8 !text-[#c4d0de]">
+              </motion.h1>
+              <motion.p
+                initial={false}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.16 }}
+                className="mt-7 max-w-2xl text-base leading-8 !text-[#c4d0de]"
+              >
                 EduNex łączy przygotowanie egzaminu, sesję ucznia, wyniki, raporty i administrację w
                 jednym systemie projektowanym dla szkół oraz instytucji publicznych.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a href="/student/dashboard" className={buttonPrimary}>
+              </motion.p>
+              <motion.div
+                initial={false}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.55, delay: 0.23 }}
+                className="mt-8 flex flex-wrap gap-3"
+              >
+                <a href="/auth?access=student" className={buttonPrimary}>
                   Przejdź do panelu ucznia
                   <ArrowRight className="h-4 w-4" />
                 </a>
                 <Link to="/auth" className={buttonSecondary}>
                   Zaloguj się lub załóż konto
                 </Link>
-              </div>
+              </motion.div>
               <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs !text-[#c4d0de]">
                 {[
                   "Wejście ucznia kodem PIN",
@@ -1141,7 +1250,7 @@ export function InstitutionalLanding() {
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
             <a
-              href="/student/dashboard"
+              href="/auth?access=student"
               className="inline-flex min-h-12 items-center rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-bold !text-[#fff] hover:bg-white/10"
             >
               Panel ucznia

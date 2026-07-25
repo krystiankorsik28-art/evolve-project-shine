@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { passwordRequirementState, validateNewPassword } from "@/lib/auth/password-policy";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { Toaster } from "@/components/ui/sonner";
+import { useTheme } from "@/lib/theme";
 
 type RecoveryState = "checking" | "ready" | "invalid" | "saving" | "success";
 
@@ -38,6 +41,7 @@ function BrandMark() {
 }
 
 function ResetPassword() {
+  const { resolvedTheme } = useTheme();
   const [state, setState] = useState<RecoveryState>("checking");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -98,6 +102,7 @@ function ResetPassword() {
 
   return (
     <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
+      <Toaster position="top-center" theme={resolvedTheme} richColors />
       <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
           <Link
@@ -112,10 +117,13 @@ function ResetPassword() {
               </span>
             </span>
           </Link>
-          <span className="hidden items-center gap-2 text-xs font-medium text-slate-600 sm:inline-flex">
-            <ShieldCheck className="h-4 w-4 text-emerald-600" />
-            Chroniona operacja bezpieczeństwa
-          </span>
+          <div className="ml-auto flex items-center gap-3">
+            <ThemeSwitcher compact />
+            <span className="hidden items-center gap-2 text-xs font-medium text-slate-600 sm:inline-flex">
+              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+              Chroniona operacja bezpieczeństwa
+            </span>
+          </div>
         </div>
       </header>
 
