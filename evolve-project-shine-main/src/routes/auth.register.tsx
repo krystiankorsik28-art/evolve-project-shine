@@ -532,9 +532,9 @@ function RegisterPanel() {
   if (completed) {
     return (
       <div className="edunex-next-gen-identity identity-confirmation grid min-h-screen place-items-center bg-[#f4f6f8] px-5 py-10 text-slate-950">
-        <Toaster position="top-center" theme="light" richColors />
+        <Toaster position="top-center" theme={resolvedTheme} richColors />
         <motion.main
-          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="identity-confirmation-card w-full max-w-[620px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,.12)]"
         >
@@ -649,7 +649,7 @@ function RegisterPanel() {
       <main className="identity-main mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-8 sm:py-10 lg:px-10">
         <form onSubmit={submit} noValidate>
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="identity-shell grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[380px_minmax(0,1fr)]"
@@ -764,7 +764,7 @@ function RegisterPanel() {
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={currentStep.id}
-                    initial={reduceMotion ? false : { opacity: 0, x: 10 }}
+                    initial={false}
                     animate={{ opacity: 1, x: 0 }}
                     exit={reduceMotion ? undefined : { opacity: 0, x: -8 }}
                     transition={{ duration: 0.2 }}

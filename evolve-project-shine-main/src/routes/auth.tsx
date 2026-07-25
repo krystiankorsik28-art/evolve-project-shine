@@ -8,7 +8,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
@@ -235,16 +235,14 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
             onChange(next);
             if (next[index]) {
               const sibling = event.currentTarget.parentElement?.children[index + 1] as
-                | HTMLInputElement
-                | undefined;
+                HTMLInputElement | undefined;
               sibling?.focus();
             }
           }}
           onKeyDown={(event) => {
             if (event.key === "Backspace" && !digit && index > 0) {
               const sibling = event.currentTarget.parentElement?.children[index - 1] as
-                | HTMLInputElement
-                | undefined;
+                HTMLInputElement | undefined;
               sibling?.focus();
             }
             if (event.key === "ArrowLeft" && index > 0) {
@@ -389,7 +387,6 @@ function AccessNotice({
 
 function AuthPage() {
   const navigate = useNavigate();
-  const reduceMotion = useReducedMotion();
   const pinLogin = useServerFn(studentPinLogin);
   const { signInWithEmail, signInWithProvider, resetPassword } = useAuth();
   const { resolvedTheme } = useTheme();
@@ -614,7 +611,7 @@ function AuthPage() {
 
       <main className="identity-main mx-auto flex w-full max-w-[1440px] items-center px-4 py-6 sm:px-8 sm:py-10 lg:min-h-[calc(100vh-69px)] lg:px-10">
         <motion.section
-          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="identity-shell grid w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_28px_90px_rgba(15,23,42,0.11)] lg:grid-cols-[minmax(360px,0.82fr)_minmax(580px,1.18fr)]"

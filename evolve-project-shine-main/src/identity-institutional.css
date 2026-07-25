@@ -80,6 +80,19 @@
   color: #c1cedc;
 }
 
+.edunex-next-gen-identity .identity-topbar button[aria-label^="Motyw:"] {
+  border-color: rgb(157 194 225 / 26%);
+  background: rgb(15 38 61 / 88%);
+  color: #d9e8f5;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.edunex-next-gen-identity .identity-topbar button[aria-label^="Motyw:"]:hover {
+  border-color: rgb(114 203 255 / 46%);
+  background: #15334f;
+  color: #ffffff;
+}
+
 .edunex-next-gen-identity .identity-main {
   align-items: stretch;
   padding-top: clamp(1.25rem, 3vw, 2.5rem);
@@ -297,6 +310,32 @@
   background: var(--identity-blue-soft);
 }
 
+.dark .edunex-next-gen-identity .identity-content [class~="bg-blue-50/60"],
+.dark .edunex-next-gen-identity .identity-content [class~="bg-blue-50/70"] {
+  border-color: rgb(85 184 255 / 22%) !important;
+  background: rgb(30 111 170 / 14%) !important;
+  color: #cde6f8 !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content button[class~="bg-[#f3f8fc]"] {
+  border-color: #55b8ff !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgb(85 184 255 / 14%), transparent 11rem), #0c2a42 !important;
+  box-shadow:
+    0 0 0 1px rgb(85 184 255 / 12%),
+    0 14px 36px rgb(0 0 0 / 18%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content .bg-amber-50 {
+  border-color: rgb(255 194 82 / 26%) !important;
+  background: rgb(151 95 8 / 18%) !important;
+  color: #ffe0a3 !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content .text-amber-950 {
+  color: #ffe0a3 !important;
+}
+
 .dark .edunex-next-gen-identity .text-blue-700,
 .dark .edunex-next-gen-identity .text-blue-600,
 .dark .edunex-next-gen-identity [class~="text-[#0067b8]"] {
@@ -319,6 +358,61 @@
 .dark .edunex-next-gen-identity .text-red-700,
 .dark .edunex-next-gen-identity .text-red-600 {
   color: var(--identity-danger);
+}
+
+/*
+ * Legacy next-generation.css uses !important for these exact surfaces.
+ * Keep the exception route-scoped so the production dark theme remains coherent.
+ */
+.dark .edunex-next-gen-identity .identity-shell {
+  border-color: rgb(112 174 219 / 24%) !important;
+  background:
+    radial-gradient(circle at 92% 5%, rgb(31 118 184 / 13%), transparent 24rem), rgb(6 17 29 / 97%) !important;
+  box-shadow:
+    0 40px 110px rgb(0 0 0 / 52%),
+    inset 0 1px 0 rgb(177 219 246 / 8%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content {
+  background:
+    radial-gradient(circle at 100% 0%, rgb(39 135 204 / 10%), transparent 22rem),
+    linear-gradient(rgb(10 25 40 / 98%), rgb(7 20 33 / 98%)),
+    linear-gradient(rgb(168 205 232 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(168 205 232 / 4%) 1px, transparent 1px) !important;
+  background-size:
+    auto,
+    auto,
+    42px 42px,
+    42px 42px !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea) {
+  border-color: rgb(142 183 216 / 24%) !important;
+  background: rgb(4 15 26 / 82%) !important;
+  color: #f3f7fb !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 3%),
+    0 1px 2px rgb(0 0 0 / 22%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, textarea)::placeholder {
+  color: #8499ae !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea):hover {
+  border-color: rgb(111 194 247 / 42%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content :is(input, select, textarea):focus {
+  border-color: #55b8ff !important;
+  box-shadow: 0 0 0 3px rgb(85 184 255 / 18%) !important;
+}
+
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill,
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill:hover,
+.dark .edunex-next-gen-identity .identity-content input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f3f7fb !important;
+  box-shadow: 0 0 0 1000px #081a2a inset !important;
 }
 
 @media (max-width: 1023px) {
