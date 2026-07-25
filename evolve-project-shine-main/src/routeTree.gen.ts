@@ -17,6 +17,7 @@ import { Route as EDziennikRouteImport } from './routes/e-dziennik'
 import { Route as DokumentyRouteImport } from './routes/dokumenty'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as CentrumDokumentowRouteImport } from './routes/centrum-dokumentow'
+import { Route as CennikRouteImport } from './routes/cennik'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -79,6 +80,11 @@ const DemoRoute = DemoRouteImport.update({
 const CentrumDokumentowRoute = CentrumDokumentowRouteImport.update({
   id: '/centrum-dokumentow',
   path: '/centrum-dokumentow',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CennikRoute = CennikRouteImport.update({
+  id: '/cennik',
+  path: '/cennik',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -199,6 +205,7 @@ const ApiAdminFixAuthRoute = ApiAdminFixAuthRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/cennik': typeof CennikRoute
   '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/cennik': typeof CennikRoute
   '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/cennik': typeof CennikRoute
   '/centrum-dokumentow': typeof CentrumDokumentowRoute
   '/demo': typeof DemoRouteWithChildren
   '/dokumenty': typeof DokumentyRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cennik'
     | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/cennik'
     | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cennik'
     | '/centrum-dokumentow'
     | '/demo'
     | '/dokumenty'
@@ -398,6 +410,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  CennikRoute: typeof CennikRoute
   CentrumDokumentowRoute: typeof CentrumDokumentowRoute
   DemoRoute: typeof DemoRouteWithChildren
   DokumentyRoute: typeof DokumentyRoute
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       path: '/centrum-dokumentow'
       fullPath: '/centrum-dokumentow'
       preLoaderRoute: typeof CentrumDokumentowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cennik': {
+      id: '/cennik'
+      path: '/cennik'
+      fullPath: '/cennik'
+      preLoaderRoute: typeof CennikRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -693,6 +713,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  CennikRoute: CennikRoute,
   CentrumDokumentowRoute: CentrumDokumentowRoute,
   DemoRoute: DemoRouteWithChildren,
   DokumentyRoute: DokumentyRoute,

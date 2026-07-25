@@ -227,7 +227,7 @@ function TeacherSidebar({
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
-            <div className="font-semibold text-slate-950">EduNex</div>
+            <div className="font-semibold text-slate-950">EduNex Workspace</div>
             <div className="text-[11px] font-medium uppercase tracking-[0.1em] text-slate-500">
               Panel nauczyciela
             </div>

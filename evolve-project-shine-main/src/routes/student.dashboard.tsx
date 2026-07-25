@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useState, type ComponentType, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ComponentType,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
@@ -38,7 +45,9 @@ import { resolveUserDisplayName } from "@/lib/auth/user-display-name";
 
 export const Route = createFileRoute("/student/dashboard")({
   beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw redirect({ to: "/auth", replace: true });
   },
   component: StudentDashboard,
@@ -107,7 +116,9 @@ function StudentDashboard() {
 
   useEffect(() => {
     const check = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session?.user) {
         navigate({ to: "/auth/student" });
         return;
@@ -172,22 +183,26 @@ function StudentDashboard() {
         const titleMap: Record<string, string> = {};
         for (const exam of exams ?? []) titleMap[exam.id] = exam.title;
 
-        setHistory(data.map((attempt) => ({
-          id: attempt.id,
-          exam_title: titleMap[attempt.exam_id] ?? "Egzamin",
-          status: attempt.status,
-          score: attempt.score,
-          max_score: attempt.max_score,
-          percent: attempt.percent,
-          passed: attempt.passed,
-          started_at: attempt.created_at,
-        })));
+        setHistory(
+          data.map((attempt) => ({
+            id: attempt.id,
+            exam_title: titleMap[attempt.exam_id] ?? "Egzamin",
+            status: attempt.status,
+            score: attempt.score,
+            max_score: attempt.max_score,
+            percent: attempt.percent,
+            passed: attempt.passed,
+            started_at: attempt.created_at,
+          })),
+        );
       }
 
       setLoadingHistory(false);
     })();
 
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [user]);
 
   const displayName = user?.display_name || "Uczniu";
@@ -206,9 +221,9 @@ function StudentDashboard() {
   const filteredHistory = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return history;
-    return history.filter((item) =>
-      item.exam_title.toLowerCase().includes(term) ||
-      item.status.toLowerCase().includes(term),
+    return history.filter(
+      (item) =>
+        item.exam_title.toLowerCase().includes(term) || item.status.toLowerCase().includes(term),
     );
   }, [history, query]);
 
@@ -272,7 +287,7 @@ function StudentDashboard() {
               <GraduationCap className="h-4 w-4" />
             </div>
             <div>
-              <div className="text-sm font-semibold">EduNex</div>
+              <div className="text-sm font-semibold">EduNex Workspace</div>
               <div className="text-xs text-slate-500">Panel ucznia</div>
             </div>
           </div>
@@ -309,15 +324,40 @@ function StudentDashboard() {
                 Dzień dobry, {displayName}.
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-                Wpisz kod PIN od nauczyciela, rozpocznij przypisany egzamin i wróć do wyników lub certyfikatów bez zbędnych elementów.
+                Wpisz kod PIN od nauczyciela, rozpocznij przypisany egzamin i wróć do wyników lub
+                certyfikatów bez zbędnych elementów.
               </p>
             </div>
 
             <div className="grid gap-px bg-slate-100 sm:grid-cols-4">
-              <SummaryTile icon={FileCheck2} label="Ukończone" value={String(completed)} note="podejścia" tone="blue" />
-              <SummaryTile icon={CheckCircle2} label="Zaliczone" value={String(passed)} note="egzaminy" tone="emerald" />
-              <SummaryTile icon={Clock} label="W toku" value={String(inProgress)} note="rozpoczęte" tone="amber" />
-              <SummaryTile icon={BookOpen} label="Średnia" value={average ? `${average}%` : "-"} note="z ocenionych" tone="slate" />
+              <SummaryTile
+                icon={FileCheck2}
+                label="Ukończone"
+                value={String(completed)}
+                note="podejścia"
+                tone="blue"
+              />
+              <SummaryTile
+                icon={CheckCircle2}
+                label="Zaliczone"
+                value={String(passed)}
+                note="egzaminy"
+                tone="emerald"
+              />
+              <SummaryTile
+                icon={Clock}
+                label="W toku"
+                value={String(inProgress)}
+                note="rozpoczęte"
+                tone="amber"
+              />
+              <SummaryTile
+                icon={BookOpen}
+                label="Średnia"
+                value={average ? `${average}%` : "-"}
+                note="z ocenionych"
+                tone="slate"
+              />
             </div>
           </motion.div>
 
@@ -331,7 +371,9 @@ function StudentDashboard() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-base font-semibold text-slate-950">Start egzaminu</h2>
-                <p className="mt-1 text-sm leading-6 text-slate-500">Wpisz 6-cyfrowy PIN przekazany przez nauczyciela.</p>
+                <p className="mt-1 text-sm leading-6 text-slate-500">
+                  Wpisz 6-cyfrowy PIN przekazany przez nauczyciela.
+                </p>
               </div>
               <div className="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 text-blue-700">
                 <KeyRound className="h-4 w-4" />
@@ -352,7 +394,8 @@ function StudentDashboard() {
                     const next = [...pinDigits];
                     next[index] = nextValue;
                     setPinDigits(next);
-                    if (nextValue && index < 5) document.getElementById(`student-pin-${index + 1}`)?.focus();
+                    if (nextValue && index < 5)
+                      document.getElementById(`student-pin-${index + 1}`)?.focus();
                   }}
                   onKeyDown={(event) => {
                     if (event.key === "Backspace" && !digit && index > 0) {
@@ -370,17 +413,25 @@ function StudentDashboard() {
               disabled={!pinReady || pinLoading}
               className="student-focus-button mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-45"
             >
-              {pinLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LockKeyhole className="h-4 w-4" />}
+              {pinLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <LockKeyhole className="h-4 w-4" />
+              )}
               {pinLoading ? "Sprawdzanie kodu..." : "Rozpocznij egzamin"}
             </button>
 
             <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 px-3 py-3 text-xs leading-5 text-blue-900">
-              PIN działa tylko dla egzaminu przypisanego przez nauczyciela. Jeżeli kod wygasł, poproś prowadzącego o nowy.
+              PIN działa tylko dla egzaminu przypisanego przez nauczyciela. Jeżeli kod wygasł,
+              poproś prowadzącego o nowy.
             </div>
           </motion.form>
         </section>
 
-        <nav className="student-tabs mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm" aria-label="Sekcje panelu ucznia">
+        <nav
+          className="student-tabs mt-6 overflow-x-auto rounded-xl border border-slate-200 bg-white p-1 shadow-sm"
+          aria-label="Sekcje panelu ucznia"
+        >
           <div className="flex min-w-max gap-1">
             {tabs.map((item) => (
               <button
@@ -388,7 +439,9 @@ function StudentDashboard() {
                 onClick={() => setTab(item.id)}
                 aria-current={tab === item.id ? "page" : undefined}
                 className={`relative inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition ${
-                  tab === item.id ? "text-slate-950" : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                  tab === item.id
+                    ? "text-slate-950"
+                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 {tab === item.id && (
@@ -415,8 +468,24 @@ function StudentDashboard() {
               className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]"
             >
               <div className="space-y-6">
-                <Panel title="Ostatnie wyniki" icon={History} action={<button onClick={() => setTab("exams")} className="text-sm font-semibold text-blue-700">Pokaż wszystkie</button>}>
-                  <HistoryList history={history.slice(0, 5)} loading={loadingHistory} emptyTitle="Brak historii egzaminów" emptyText="Po pierwszym podejściu zobaczysz tutaj wynik." />
+                <Panel
+                  title="Ostatnie wyniki"
+                  icon={History}
+                  action={
+                    <button
+                      onClick={() => setTab("exams")}
+                      className="text-sm font-semibold text-blue-700"
+                    >
+                      Pokaż wszystkie
+                    </button>
+                  }
+                >
+                  <HistoryList
+                    history={history.slice(0, 5)}
+                    loading={loadingHistory}
+                    emptyTitle="Brak historii egzaminów"
+                    emptyText="Po pierwszym podejściu zobaczysz tutaj wynik."
+                  />
                 </Panel>
 
                 <div className="grid gap-4 md:grid-cols-3">
@@ -430,7 +499,8 @@ function StudentDashboard() {
                 <Panel title="Asystent nauki" icon={MessageSquareText}>
                   <div className="space-y-3">
                     <p className="text-sm leading-6 text-slate-600">
-                      Przygotuj pytanie lub temat do omówienia. Ten panel zachowuje miejsce na integrację AI Tutor bez zmiany bazy danych.
+                      Przygotuj pytanie lub temat do omówienia. Ten panel zachowuje miejsce na
+                      integrację AI Tutor bez zmiany bazy danych.
                     </p>
                     <textarea
                       value={assistantPrompt}
@@ -440,7 +510,11 @@ function StudentDashboard() {
                       placeholder="Np. wyjaśnij równania kwadratowe krok po kroku"
                     />
                     <div className="flex flex-wrap gap-2">
-                      {["Powtórka przed egzaminem", "Błędy z ostatniego testu", "Plan nauki na tydzień"].map((topic) => (
+                      {[
+                        "Powtórka przed egzaminem",
+                        "Błędy z ostatniego testu",
+                        "Plan nauki na tydzień",
+                      ].map((topic) => (
                         <button
                           key={topic}
                           onClick={() => fillAssistantPrompt(topic)}
@@ -457,7 +531,9 @@ function StudentDashboard() {
                   <div className="space-y-3 text-sm text-slate-600">
                     <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-3">
                       <span>Data</span>
-                      <span className="font-medium text-slate-900">{new Date().toLocaleDateString("pl-PL")}</span>
+                      <span className="font-medium text-slate-900">
+                        {new Date().toLocaleDateString("pl-PL")}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-3">
                       <span>Status konta</span>
@@ -465,7 +541,9 @@ function StudentDashboard() {
                     </div>
                     <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-3">
                       <span>Ostatni wynik</span>
-                      <span className="font-medium text-slate-900">{history[0]?.percent != null ? `${history[0].percent}%` : "-"}</span>
+                      <span className="font-medium text-slate-900">
+                        {history[0]?.percent != null ? `${history[0].percent}%` : "-"}
+                      </span>
                     </div>
                   </div>
                 </Panel>
@@ -484,7 +562,9 @@ function StudentDashboard() {
               <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h2 className="text-base font-semibold text-slate-950">Historia egzaminów</h2>
-                  <p className="mt-1 text-sm text-slate-500">Lista podejść zapisanych dla Twojego profilu.</p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Lista podejść zapisanych dla Twojego profilu.
+                  </p>
                 </div>
                 <div className="flex min-w-0 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 sm:w-80">
                   <Search className="h-4 w-4 shrink-0 text-slate-400" />
@@ -496,7 +576,12 @@ function StudentDashboard() {
                   />
                 </div>
               </div>
-              <HistoryList history={filteredHistory} loading={loadingHistory} emptyTitle="Brak pasujących egzaminów" emptyText="Zmień wyszukiwanie albo rozpocznij egzamin kodem PIN." />
+              <HistoryList
+                history={filteredHistory}
+                loading={loadingHistory}
+                emptyTitle="Brak pasujących egzaminów"
+                emptyText="Zmień wyszukiwanie albo rozpocznij egzamin kodem PIN."
+              />
             </motion.section>
           )}
 
@@ -510,7 +595,9 @@ function StudentDashboard() {
             >
               <div className="border-b border-slate-200 px-5 py-4">
                 <h2 className="text-base font-semibold text-slate-950">Certyfikaty</h2>
-                <p className="mt-1 text-sm text-slate-500">Dokumenty można pobrać po zaliczonym egzaminie.</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  Dokumenty można pobrać po zaliczonym egzaminie.
+                </p>
               </div>
               {passedExams.length ? (
                 <div className="divide-y divide-slate-200">
@@ -527,28 +614,38 @@ function StudentDashboard() {
                     });
 
                     return (
-                      <article key={item.id} className="grid gap-4 px-5 py-4 md:grid-cols-[1fr_auto] md:items-center">
+                      <article
+                        key={item.id}
+                        className="grid gap-4 px-5 py-4 md:grid-cols-[1fr_auto] md:items-center"
+                      >
                         <div className="flex min-w-0 gap-3">
                           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-700">
                             <Award className="h-4 w-4" />
                           </div>
                           <div className="min-w-0">
-                            <h3 className="truncate text-sm font-semibold text-slate-950">{item.exam_title}</h3>
+                            <h3 className="truncate text-sm font-semibold text-slate-950">
+                              {item.exam_title}
+                            </h3>
                             <p className="mt-1 font-mono text-xs text-slate-500">{serial}</p>
                           </div>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           <button
-                            onClick={() => downloadCertPdf({
-                              attempt_id: item.id,
-                              exam_title: item.exam_title,
-                              student_name: displayName,
-                              score: item.score ?? 0,
-                              max_score: item.max_score ?? 0,
-                              percent: item.percent ?? 0,
-                              passed: true,
-                              completed_at: item.started_at,
-                            }, serial)}
+                            onClick={() =>
+                              downloadCertPdf(
+                                {
+                                  attempt_id: item.id,
+                                  exam_title: item.exam_title,
+                                  student_name: displayName,
+                                  score: item.score ?? 0,
+                                  max_score: item.max_score ?? 0,
+                                  percent: item.percent ?? 0,
+                                  passed: true,
+                                  completed_at: item.started_at,
+                                },
+                                serial,
+                              )
+                            }
                             className="inline-flex items-center gap-2 rounded-lg bg-slate-950 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-800"
                           >
                             <Download className="h-3.5 w-3.5" />
@@ -569,7 +666,11 @@ function StudentDashboard() {
                   })}
                 </div>
               ) : (
-                <EmptyState icon={Award} title="Brak certyfikatów" text="Certyfikaty pojawią się po zaliczonych egzaminach." />
+                <EmptyState
+                  icon={Award}
+                  title="Brak certyfikatów"
+                  text="Certyfikaty pojawią się po zaliczonych egzaminach."
+                />
               )}
             </motion.section>
           )}
@@ -593,7 +694,8 @@ function StudentDashboard() {
 
               <Panel title="Sesja" icon={LockKeyhole}>
                 <p className="text-sm leading-6 text-slate-600">
-                  Po zakończonej pracy wyloguj się, szczególnie na komputerze szkolnym lub współdzielonym.
+                  Po zakończonej pracy wyloguj się, szczególnie na komputerze szkolnym lub
+                  współdzielonym.
                 </p>
                 <button
                   onClick={handleLogout}
@@ -694,14 +796,19 @@ function HistoryList({
   return (
     <div className="divide-y divide-slate-200">
       {history.map((item) => (
-        <article key={item.id} className="grid gap-4 px-5 py-4 transition hover:bg-slate-50/80 md:grid-cols-[1fr_auto] md:items-center">
+        <article
+          key={item.id}
+          className="grid gap-4 px-5 py-4 transition hover:bg-slate-50/80 md:grid-cols-[1fr_auto] md:items-center"
+        >
           <div className="flex min-w-0 gap-3">
             <StatusIcon item={item} />
             <div className="min-w-0">
               <h3 className="truncate text-sm font-semibold text-slate-950">{item.exam_title}</h3>
               <p className="mt-1 text-xs text-slate-500">
                 {new Date(item.started_at).toLocaleDateString("pl-PL")}
-                {item.score != null ? ` • ${item.score}/${item.max_score} (${item.percent ?? 0}%)` : " • oczekuje na wynik"}
+                {item.score != null
+                  ? ` • ${item.score}/${item.max_score} (${item.percent ?? 0}%)`
+                  : " • oczekuje na wynik"}
               </p>
             </div>
           </div>
@@ -737,20 +844,24 @@ function StatusIcon({ item }: { item: AttemptSummary }) {
 }
 
 function StatusBadge({ item }: { item: AttemptSummary }) {
-  const label = item.status === "submitted"
-    ? "Zakończony"
-    : item.status === "in_progress"
-      ? "W toku"
-      : item.status;
+  const label =
+    item.status === "submitted"
+      ? "Zakończony"
+      : item.status === "in_progress"
+        ? "W toku"
+        : item.status;
 
-  const classes = item.status === "submitted"
-    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-    : item.status === "in_progress"
-      ? "border-amber-200 bg-amber-50 text-amber-700"
-      : "border-slate-200 bg-slate-50 text-slate-600";
+  const classes =
+    item.status === "submitted"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+      : item.status === "in_progress"
+        ? "border-amber-200 bg-amber-50 text-amber-700"
+        : "border-slate-200 bg-slate-50 text-slate-600";
 
   return (
-    <span className={`inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${classes}`}>
+    <span
+      className={`inline-flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${classes}`}
+    >
       {label}
       <ChevronRight className="h-3 w-3" />
     </span>
@@ -801,7 +912,11 @@ function DataRow({ label, value, mono }: { label: string; value: string; mono?: 
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
       <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</div>
-      <div className={`mt-1 break-words text-sm font-medium text-slate-950 ${mono ? "font-mono" : ""}`}>{value}</div>
+      <div
+        className={`mt-1 break-words text-sm font-medium text-slate-950 ${mono ? "font-mono" : ""}`}
+      >
+        {value}
+      </div>
     </div>
   );
 }

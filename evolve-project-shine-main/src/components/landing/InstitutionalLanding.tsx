@@ -1,5 +1,6 @@
-import { useState, type AriaAttributes, type ComponentType } from "react";
+import { useState, type AriaAttributes, type ComponentType, type FormEvent } from "react";
 import { Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import {
   Accessibility,
   ArrowRight,
@@ -17,6 +18,7 @@ import {
   Layers3,
   LifeBuoy,
   LockKeyhole,
+  Mail,
   Menu,
   MonitorCheck,
   Network,
@@ -24,10 +26,15 @@ import {
   ServerCog,
   ShieldCheck,
   Sparkles,
+  Send,
   UserRound,
   Users,
   X,
 } from "lucide-react";
+import { toast } from "sonner";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { Toaster } from "@/components/ui/sonner";
+import { submitContact } from "@/lib/contact.functions";
 
 type IconType = ComponentType<{
   className?: string;
@@ -39,10 +46,9 @@ const nav = [
   ["Produkt", "#produkt"],
   ["Rozwiązania", "#rozwiazania"],
   ["Dla instytucji", "#odbiorcy"],
+  ["Cennik", "/cennik"],
   ["Bezpieczeństwo", "#bezpieczenstwo"],
-  ["Dostępność", "#dostepnosc"],
-  ["Pilotaż", "#pilotaz"],
-  ["Dokumentacja", "/centrum-dokumentow"],
+  ["Kontakt", "#kontakt"],
 ] as const;
 
 const problems: Array<[IconType, string, string]> = [
@@ -308,7 +314,7 @@ function Heading({
 function ProductPreview() {
   return (
     <div
-      className="overflow-hidden rounded-2xl border border-slate-300 bg-white shadow-[0_35px_95px_rgba(7,24,46,.18)]"
+      className="liquid-panel overflow-hidden rounded-[28px] border border-white/60 bg-white/80 shadow-[0_35px_95px_rgba(7,24,46,.18)]"
       aria-label="Przykładowy panel EduNex"
     >
       <div className="flex min-h-16 items-center justify-between gap-3 border-b border-slate-200 px-4">
@@ -318,7 +324,7 @@ function ProductPreview() {
           </span>
           <span>
             <strong className="block text-xs">EduNex Workspace</strong>
-            <small className="block text-[9px] text-slate-500">Środowisko demonstracyjne</small>
+            <small className="block text-[9px] text-slate-500">Podgląd interfejsu</small>
           </span>
         </div>
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[9px] font-bold text-emerald-800">
@@ -415,13 +421,19 @@ function AudiencePanel() {
   const ActiveIcon = item.icon;
   return (
     <div className="mt-12 grid gap-4 lg:grid-cols-[230px_1fr]">
-      <div className="flex gap-2 overflow-x-auto pb-2 lg:grid lg:content-start lg:overflow-visible">
+      <div
+        className="liquid-tablist flex gap-2 overflow-x-auto rounded-2xl p-2 pb-2 lg:grid lg:content-start lg:overflow-visible"
+        role="tablist"
+        aria-label="Rozwiązania według odpowiedzialności"
+      >
         {(Object.entries(audiences) as Array<[AudienceKey, (typeof audiences)[AudienceKey]]>).map(
           ([key, audience]) => (
             <button
               key={key}
               type="button"
               role="tab"
+              id={`audience-tab-${key}`}
+              aria-controls="audience-panel"
               aria-selected={key === active}
               onClick={() => setActive(key)}
               className={`flex min-h-12 shrink-0 items-center gap-2 rounded-lg border px-3 text-left text-xs font-bold transition ${key === active ? "border-blue-200 bg-blue-50 text-[#0759aa]" : "border-transparent text-slate-600 hover:bg-slate-50"}`}
@@ -432,7 +444,13 @@ function AudiencePanel() {
           ),
         )}
       </div>
-      <div className="grid overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_22px_65px_rgba(7,24,46,.08)] md:grid-cols-[1fr_210px]">
+      <div
+        id="audience-panel"
+        role="tabpanel"
+        aria-labelledby={`audience-tab-${active}`}
+        tabIndex={0}
+        className="liquid-panel grid overflow-hidden rounded-2xl border border-white/60 bg-white/75 shadow-[0_22px_65px_rgba(7,24,46,.08)] md:grid-cols-[1fr_210px]"
+      >
         <div className="p-6 sm:p-10">
           <span className="grid h-12 w-12 place-items-center rounded-xl bg-[#07182e] !text-[#fff]">
             <ActiveIcon className="h-5 w-5" />
@@ -461,7 +479,7 @@ function AudiencePanel() {
             {item.metric.substring(item.metric.indexOf(" ") + 1)}
           </strong>
           <small className="mt-5 text-[10px] leading-5 text-slate-500">
-            Dane demonstracyjne opisujące zakres widoku, nie wynik wdrożenia.
+            Zakres orientacyjny zależny od konfiguracji i uprawnień placówki.
           </small>
         </aside>
       </div>
@@ -469,10 +487,166 @@ function AudiencePanel() {
   );
 }
 
+function ContactForm() {
+  const sendContact = useServerFn(submitContact);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    topic: "Wdrożenie w szkole",
+    message: "",
+    website: "",
+  });
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const update = (field: keyof typeof form, value: string) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setSent(false);
+  };
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (
+      form.name.trim().length < 2 ||
+      !/^\S+@\S+\.\S+$/.test(form.email.trim()) ||
+      form.message.trim().length < 5
+    ) {
+      toast.error("Uzupełnij imię, poprawny e-mail i krótką wiadomość.");
+      return;
+    }
+    setSending(true);
+    try {
+      await sendContact({
+        data: {
+          ...form,
+          name: form.name.trim(),
+          email: form.email.trim(),
+          message: form.message.trim(),
+        },
+      });
+      setSent(true);
+      setForm({
+        name: "",
+        email: "",
+        topic: "Wdrożenie w szkole",
+        message: "",
+        website: "",
+      });
+      toast.success("Wiadomość została przyjęta. Odpowiemy na podany adres e-mail.");
+    } catch {
+      toast.error("Nie udało się wysłać wiadomości. Spróbuj ponownie.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const fieldClass =
+    "liquid-field min-h-12 w-full rounded-xl border border-slate-300 bg-white/85 px-4 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-[#168cff] focus:ring-4 focus:ring-[#168cff]/15";
+
+  return (
+    <form
+      onSubmit={submit}
+      className="liquid-panel rounded-[28px] border border-white/60 p-5 sm:p-8"
+    >
+      <label
+        className="absolute -left-[10000px] top-auto h-px w-px overflow-hidden"
+        aria-hidden="true"
+      >
+        Pozostaw to pole puste
+        <input
+          name="website"
+          value={form.website}
+          onChange={(event) => update("website", event.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </label>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <span className="text-[10px] font-extrabold uppercase tracking-[.14em] text-[#0869c7]">
+            Formularz kontaktowy
+          </span>
+          <h3 className="mt-2 text-2xl font-semibold tracking-[-.04em] text-[#07182e]">
+            Porozmawiajmy o Twojej placówce
+          </h3>
+        </div>
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#07182e] text-white shadow-lg">
+          <Mail className="h-5 w-5" />
+        </span>
+      </div>
+      <div className="mt-7 grid gap-4 sm:grid-cols-2">
+        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          Imię i nazwisko
+          <input
+            value={form.name}
+            onChange={(e) => update("name", e.target.value)}
+            className={fieldClass}
+            autoComplete="name"
+            placeholder="Anna Nowak"
+            required
+          />
+        </label>
+        <label className="grid gap-2 text-sm font-semibold text-slate-700">
+          Adres e-mail
+          <input
+            value={form.email}
+            onChange={(e) => update("email", e.target.value)}
+            className={fieldClass}
+            type="email"
+            autoComplete="email"
+            placeholder="anna.nowak@szkola.pl"
+            required
+          />
+        </label>
+      </div>
+      <label className="mt-4 grid gap-2 text-sm font-semibold text-slate-700">
+        Temat rozmowy
+        <select
+          value={form.topic}
+          onChange={(e) => update("topic", e.target.value)}
+          className={fieldClass}
+        >
+          <option>Wdrożenie w szkole</option>
+          <option>Egzaminy i sesje PIN</option>
+          <option>NexDziennik</option>
+          <option>NexAI</option>
+          <option>Oferta dla instytucji</option>
+          <option>Bezpieczeństwo i integracje</option>
+        </select>
+      </label>
+      <label className="mt-4 grid gap-2 text-sm font-semibold text-slate-700">
+        Jakiego rozwiązania potrzebujesz?
+        <textarea
+          value={form.message}
+          onChange={(e) => update("message", e.target.value)}
+          className={`${fieldClass} min-h-36 resize-y py-3`}
+          maxLength={4000}
+          placeholder="Opisz liczbę klas, obecny proces i najważniejszy problem…"
+          required
+        />
+      </label>
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs leading-5 text-slate-500">
+          Wysyłając formularz, przekazujesz wyłącznie dane potrzebne do odpowiedzi.
+        </p>
+        <button
+          type="submit"
+          disabled={sending}
+          className={`${buttonPrimary} shrink-0 disabled:cursor-wait disabled:opacity-60`}
+        >
+          {sending ? "Wysyłanie…" : sent ? "Wysłano" : "Wyślij wiadomość"}
+          <Send className="h-4 w-4" />
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export function InstitutionalLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <div className="min-h-screen overflow-x-clip bg-white font-[Inter,_Segoe_UI,_sans-serif] text-slate-950">
+    <div className="institutional-landing min-h-screen overflow-x-clip bg-white font-[Inter,_Segoe_UI,_sans-serif] text-slate-950">
+      <Toaster position="top-center" richColors />
       <a
         href="#main-content"
         className="fixed left-4 top-[-100px] z-[200] rounded-lg bg-white px-4 py-3 font-bold shadow-xl focus:top-4"
@@ -495,7 +669,7 @@ export function InstitutionalLanding() {
           </Link>
         </div>
       </div>
-      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+      <header className="liquid-nav sticky top-0 z-50 border-b border-white/55 bg-white/75 backdrop-blur-2xl">
         <div className="mx-auto flex min-h-[76px] max-w-[1440px] items-center justify-between gap-5 px-4 sm:px-7">
           <Brand />
           <nav className="hidden items-center gap-5 xl:flex" aria-label="Nawigacja główna">
@@ -520,6 +694,7 @@ export function InstitutionalLanding() {
             )}
           </nav>
           <div className="flex items-center gap-2">
+            <ThemeSwitcher compact />
             <Link
               to="/auth"
               className="hidden min-h-11 items-center px-3 text-xs font-bold text-slate-700 sm:inline-flex"
@@ -584,7 +759,7 @@ export function InstitutionalLanding() {
       </header>
 
       <main id="main-content">
-        <section className="relative overflow-hidden border-b border-[#1d344f] bg-[#061325]">
+        <section className="institutional-hero relative overflow-hidden border-b border-[#1d344f] bg-[#061325]">
           <img
             src="/images/edunex-hero-director-samsung.webp"
             alt="Dyrektorka szkoły przed nowoczesnym budynkiem, trzymająca tablet"
@@ -608,12 +783,12 @@ export function InstitutionalLanding() {
                 jednym systemie projektowanym dla szkół oraz instytucji publicznych.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Link to="/demo" className={buttonPrimary}>
-                  Zobacz demonstrację
+                <a href="/student/dashboard" className={buttonPrimary}>
+                  Przejdź do panelu ucznia
                   <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link to="/auth/register" className={buttonSecondary}>
-                  Zgłoś szkołę do pilotażu
+                </a>
+                <Link to="/auth" className={buttonSecondary}>
+                  Zaloguj się lub załóż konto
                 </Link>
               </div>
               <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs !text-[#c4d0de]">
@@ -632,7 +807,7 @@ export function InstitutionalLanding() {
           </div>
         </section>
 
-        <section className="relative z-10 border-b border-slate-200 bg-white">
+        <section className="landing-light-surface relative z-10 border-b border-slate-200 bg-white">
           <div className="mx-auto max-w-[1180px] -translate-y-10 px-4 sm:-translate-y-14 sm:px-7">
             <ProductPreview />
           </div>
@@ -676,7 +851,7 @@ export function InstitutionalLanding() {
           </div>
         </section>
 
-        <section id="produkt" className="scroll-mt-24 bg-[#f3f6fa]">
+        <section id="produkt" className="landing-muted-surface scroll-mt-24 bg-[#f3f6fa]">
           <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-7 lg:py-32">
             <Heading
               eyebrow="Jeden proces"
@@ -844,39 +1019,50 @@ export function InstitutionalLanding() {
           </ol>
         </section>
 
-        <section className="bg-[#f3f6fa]">
-          <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-7 lg:py-32">
-            <Heading
-              centered
-              eyebrow="Demonstracja systemu"
-              title="Zobacz EduNex z perspektywy różnych użytkowników"
-              copy="Środowisko demonstracyjne wykorzystuje wyłącznie fikcyjne dane i pokazuje sposób organizacji pracy w poszczególnych rolach."
-            />
-            <div className="mt-12 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {[
-                [GraduationCap, "Panel nauczyciela", "Egzaminy, klasy, PIN i raporty."],
-                [UserRound, "Panel ucznia", "Zadania, wyniki i tryb egzaminu."],
-                [School, "Panel dyrekcji", "Placówka, role i zestawienia."],
-                [Building2, "Widok instytucji", "Programy i dane zagregowane."],
-              ].map(([Icon, title, copy]) => {
-                const C = Icon as IconType;
-                return (
-                  <article
-                    key={String(title)}
-                    className="rounded-2xl border border-slate-200 bg-white p-6"
+        <section id="cennik" className="pricing-section scroll-mt-24 bg-[#f3f6fa]">
+          <div className="mx-auto max-w-[1440px] px-4 py-20 sm:px-7 lg:py-28">
+            <div className="liquid-panel grid overflow-hidden rounded-[32px] border border-white/60 lg:grid-cols-[1.1fr_.9fr]">
+              <div className="p-7 sm:p-10 lg:p-14">
+                <span className="text-[10px] font-extrabold uppercase tracking-[.16em] text-[#0869c7]">
+                  Pakiety EduNex
+                </span>
+                <h2 className="mt-4 max-w-3xl text-3xl font-semibold tracking-[-.045em] text-[#07182e] sm:text-5xl">
+                  Jeden punkt startu. Pełna ścieżka rozwoju szkoły.
+                </h2>
+                <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
+                  Porównaj zakres dla klasy, nauczyciela, szkoły i instytucji. Bez ukrywania
+                  bezpieczeństwa, wsparcia ani funkcji administracyjnych za niejasnymi nazwami.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link to="/cennik" className={buttonPrimary}>
+                    Zobacz pełny cennik
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <a href="#kontakt" className={buttonSecondary}>
+                    Porozmawiaj o wdrożeniu
+                  </a>
+                </div>
+              </div>
+              <div className="grid content-center gap-3 border-t border-white/60 bg-[#07182e] p-7 text-white lg:border-l lg:border-t-0 sm:p-10">
+                {[
+                  ["Klasa", "Bezpłatny start"],
+                  ["Nauczyciel", "Zakres dopasowany"],
+                  ["Szkoła", "Wspólne środowisko"],
+                  ["Instytucja", "Wycena indywidualna"],
+                ].map(([name, value]) => (
+                  <div
+                    key={name}
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/[.06] px-4 py-3 backdrop-blur-xl"
                   >
-                    <C className="h-5 w-5 text-[#0869c7]" />
-                    <h3 className="mt-5 font-bold text-[#07182e]">{String(title)}</h3>
-                    <p className="mt-3 text-sm leading-7 text-slate-600">{String(copy)}</p>
-                  </article>
-                );
-              })}
-            </div>
-            <div className="mt-8 flex justify-center">
-              <Link to="/demo" className={buttonSecondary}>
-                Otwórz demonstrację
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+                    <span className="text-sm font-semibold !text-white">{name}</span>
+                    <span className="text-xs !text-[#a9c4df]">{value}</span>
+                  </div>
+                ))}
+                <p className="mt-2 text-xs leading-6 !text-[#a9c4df]">
+                  Warunki płatnego wdrożenia potwierdzamy przed aktywacją. Sam formularz nie
+                  uruchamia żadnych opłat.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -900,6 +1086,42 @@ export function InstitutionalLanding() {
           </div>
         </section>
 
+        <section id="kontakt" className="contact-section scroll-mt-24 border-y border-slate-200">
+          <div className="mx-auto grid max-w-[1440px] gap-12 px-4 py-20 sm:px-7 lg:grid-cols-[.82fr_1.18fr] lg:py-32">
+            <div>
+              <Heading
+                eyebrow="Kontakt i wdrożenie"
+                title="Zacznijmy od realnego procesu Twojej szkoły"
+                copy="Napisz, ilu użytkowników obejmuje projekt i co dziś zajmuje najwięcej czasu. Odpowiemy konkretnym zakresem kolejnego kroku."
+              />
+              <div className="mt-8 grid gap-3">
+                {[
+                  "Analiza potrzeb bez zobowiązań",
+                  "Zakres pilotażu i kryteria powodzenia",
+                  "Role, bezpieczeństwo i integracje",
+                  "Plan wdrożenia bez przerywania pracy szkoły",
+                ].map((item) => (
+                  <div
+                    key={item}
+                    className="liquid-chip flex items-center gap-3 rounded-xl border border-white/55 px-4 py-3 text-sm font-semibold text-slate-700"
+                  >
+                    <Check className="h-4 w-4 text-emerald-700" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <a
+                href="mailto:kontakt@edunex.pl"
+                className="mt-7 inline-flex items-center gap-2 text-sm font-bold text-[#0869c7] hover:underline"
+              >
+                <Mail className="h-4 w-4" />
+                kontakt@edunex.pl
+              </a>
+            </div>
+            <ContactForm />
+          </div>
+        </section>
+
         <section className="mx-auto mb-20 flex max-w-[1390px] flex-col justify-between gap-8 rounded-2xl bg-[#07182e] p-7 !text-[#fff] sm:p-12 lg:flex-row lg:items-end">
           <div className="max-w-4xl">
             <span className="text-[10px] font-extrabold uppercase tracking-[.14em] !text-[#8bd7f5]">
@@ -909,19 +1131,18 @@ export function InstitutionalLanding() {
               Sprawdźmy EduNex w realnym, kontrolowanym scenariuszu szkoły.
             </h2>
             <p className="mt-4 max-w-3xl leading-7 !text-[#b9c7d8]">
-              Rozpocznij od demonstracji albo załóż konto instytucjonalne, aby przygotować zakres
-              pilotażu.
+              Wejdź do swojego panelu albo utwórz konto dopasowane do roli w szkole.
             </p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
-            <Link
-              to="/demo"
+            <a
+              href="/student/dashboard"
               className="inline-flex min-h-12 items-center rounded-lg border border-white/30 bg-white/5 px-5 text-sm font-bold !text-[#fff] hover:bg-white/10"
             >
-              Zobacz demo
-            </Link>
-            <Link to="/auth/register" className={buttonPrimary}>
-              Rozpocznij zgłoszenie
+              Panel ucznia
+            </a>
+            <Link to="/auth" className={buttonPrimary}>
+              Logowanie i rejestracja
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -947,8 +1168,8 @@ export function InstitutionalLanding() {
             <a href="#odbiorcy" className="!text-[#a9b7c8] hover:underline">
               Dla instytucji
             </a>
-            <Link to="/demo" className="!text-[#a9b7c8] hover:underline">
-              Demonstracja
+            <Link to="/cennik" className="!text-[#a9b7c8] hover:underline">
+              Cennik
             </Link>
             <Link to="/moduly" className="!text-[#a9b7c8] hover:underline">
               Moduły
@@ -968,6 +1189,9 @@ export function InstitutionalLanding() {
             <Link to="/pomoc" className="!text-[#a9b7c8] hover:underline">
               Zgłoszenie problemu
             </Link>
+            <a href="#kontakt" className="!text-[#a9b7c8] hover:underline">
+              Kontakt
+            </a>
           </div>
           <div className="grid content-start gap-3 text-sm">
             <strong className="text-xs uppercase tracking-wider !text-[#fff]">Dostęp</strong>
@@ -978,7 +1202,7 @@ export function InstitutionalLanding() {
               Dołącz do egzaminu
             </Link>
             <Link to="/auth/register" className="!text-[#a9b7c8] hover:underline">
-              Rejestracja placówki
+              Rejestracja konta
             </Link>
             <Link to="/pomoc" className="!text-[#a9b7c8] hover:underline">
               Centrum pomocy
