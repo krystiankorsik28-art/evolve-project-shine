@@ -1,15 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PremiumLanding } from "@/components/landing/PremiumLanding";
+import { InstitutionalLanding } from "@/components/landing/InstitutionalLanding";
 
 export const Route = createFileRoute("/")({
-  component: PremiumLanding,
+  component: InstitutionalLanding,
   head: () => ({
     meta: [
-      { title: "EduNex — egzaminy, NexAI, NexDziennik i cyfrowa szkoła" },
+      { title: "EduNex — bezpieczne egzaminy i cyfrowa organizacja szkoły" },
       {
         name: "description",
         content:
-          "EduNex to nowoczesna platforma dla szkoły: egzaminy online, panel nauczyciela, PIN ucznia, NexAI, własny NexDziennik i publiczne Centrum Pomocy.",
+          "EduNex łączy egzaminy online, sesje PIN, raporty, panele użytkowników i administrację w jednym systemie projektowanym dla polskiej edukacji.",
       },
     ],
   }),

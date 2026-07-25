@@ -58,9 +58,9 @@ const providers: Record<Provider, { label: string; shortLabel: string }> = {
 };
 
 const trustPoints = [
-  { icon: ShieldCheck, value: "RLS", label: "Uprawnienia weryfikowane po stronie serwera" },
-  { icon: Fingerprint, value: "MFA", label: "Silne uwierzytelnianie dla kont uprzywilejowanych" },
-  { icon: Server, value: "RODO", label: "Minimalizacja danych i privacy by design" },
+  { icon: ShieldCheck, value: "DOSTĘP", label: "Uprawnienia wynikające z zatwierdzonej roli" },
+  { icon: Fingerprint, value: "MFA", label: "Dodatkowa ochrona kont uprzywilejowanych" },
+  { icon: Server, value: "DANE", label: "Minimalizacja zakresu danych w procesie logowania" },
 ];
 
 export const Route = createFileRoute("/auth")({
@@ -233,14 +233,16 @@ function PinInput({ value, onChange }: { value: string[]; onChange: (value: stri
             onChange(next);
             if (next[index]) {
               const sibling = event.currentTarget.parentElement?.children[index + 1] as
-                HTMLInputElement | undefined;
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
           }}
           onKeyDown={(event) => {
             if (event.key === "Backspace" && !digit && index > 0) {
               const sibling = event.currentTarget.parentElement?.children[index - 1] as
-                HTMLInputElement | undefined;
+                | HTMLInputElement
+                | undefined;
               sibling?.focus();
             }
             if (event.key === "ArrowLeft" && index > 0) {
@@ -608,11 +610,11 @@ function AuthPage() {
                 EduNex Identity
               </div>
               <h1 className="mt-7 max-w-xl text-[42px] font-semibold leading-[1.08] tracking-[-0.045em] text-white xl:text-[48px]">
-                Jedno bezpieczne wejście do całej szkoły.
+                Konto dopasowane do Twojej roli.
               </h1>
               <p className="mt-5 max-w-lg text-[15px] leading-7 text-slate-300">
-                Jedna tożsamość, serwerowa kontrola ról i bezpieczne wejście do właściwego
-                środowiska pracy — bez deklarowania uprawnień na ekranie logowania.
+                Jedna tożsamość, kontrola ról i wejście do właściwego środowiska szkoły — bez
+                nadawania uprawnień na podstawie samego formularza.
               </p>
 
               <div className="mt-9 grid gap-3">
@@ -638,9 +640,11 @@ function AuthPage() {
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
                         <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
                       </span>
-                      Usługi logowania działają
+                      Bezpieczna brama dostępu
                     </span>
-                    <span className="text-[11px] font-semibold text-slate-400">System online</span>
+                    <span className="text-[11px] font-semibold text-slate-400">
+                      EduNex Identity
+                    </span>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center gap-4 text-[11px] text-slate-400">
