@@ -1,29 +1,83 @@
 .institutional-landing {
-  --glass-bg: rgb(255 255 255 / 72%);
-  --glass-border: rgb(255 255 255 / 68%);
+  --page: #f5f8fc;
+  --surface: #ffffff;
+  --surface-elevated: rgb(255 255 255 / 82%);
+  --surface-muted: #eef3f8;
+  --surface-strong: #07182e;
+  --text-primary: #07182e;
+  --text-secondary: #44566d;
+  --text-muted: #687991;
+  --border: #d4dee9;
+  --border-strong: #b8c7d7;
+  --accent: #0869c7;
+  --accent-hover: #0759aa;
+  --accent-soft: #e8f3ff;
+  --success: #08775c;
+  --success-soft: #e7f8f2;
+  --warning: #966100;
+  --warning-soft: #fff4d8;
+  --danger: #b42318;
+  --danger-soft: #fff0ee;
+  --focus: #ffb020;
+  --glass-bg: rgb(255 255 255 / 76%);
+  --glass-border: rgb(255 255 255 / 76%);
+  --glass-highlight: rgb(255 255 255 / 88%);
   --glass-shadow: 0 24px 80px rgb(7 24 46 / 12%);
+  color-scheme: light;
   background:
     radial-gradient(circle at 12% 18%, rgb(92 197 240 / 14%), transparent 32rem),
-    radial-gradient(circle at 88% 54%, rgb(60 116 255 / 9%), transparent 38rem), #f7fafd;
+    radial-gradient(circle at 88% 54%, rgb(60 116 255 / 9%), transparent 38rem), var(--page);
+  color: var(--text-primary);
   transition:
     background-color 180ms ease,
     color 180ms ease;
+}
+
+.dark .institutional-landing {
+  --page: #050d17;
+  --surface: #0a1827;
+  --surface-elevated: rgb(12 29 48 / 84%);
+  --surface-muted: #0d2032;
+  --surface-strong: #020a12;
+  --text-primary: #f3f7fb;
+  --text-secondary: #c2d0de;
+  --text-muted: #91a5ba;
+  --border: rgb(148 185 218 / 18%);
+  --border-strong: rgb(156 198 230 / 30%);
+  --accent: #55b8ff;
+  --accent-hover: #83cbff;
+  --accent-soft: rgb(42 145 219 / 17%);
+  --success: #77e1bd;
+  --success-soft: rgb(22 154 112 / 16%);
+  --warning: #ffd278;
+  --warning-soft: rgb(198 128 14 / 16%);
+  --danger: #ff9a91;
+  --danger-soft: rgb(190 52 43 / 17%);
+  --focus: #ffd166;
+  --glass-bg: rgb(12 29 48 / 74%);
+  --glass-border: rgb(153 205 240 / 16%);
+  --glass-highlight: rgb(184 224 249 / 11%);
+  --glass-shadow: 0 28px 90px rgb(0 0 0 / 36%);
+  color-scheme: dark;
+  background:
+    radial-gradient(circle at 10% 12%, rgb(42 157 211 / 17%), transparent 34rem),
+    radial-gradient(circle at 86% 52%, rgb(54 92 218 / 13%), transparent 40rem), var(--page);
 }
 
 .institutional-landing .liquid-nav,
 .institutional-landing .liquid-panel,
 .institutional-landing .liquid-tablist,
 .institutional-landing .liquid-chip {
-  border-color: var(--glass-border) !important;
-  background: var(--glass-bg) !important;
+  border-color: var(--glass-border);
+  background: var(--glass-bg);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 82%),
+    inset 0 1px 0 var(--glass-highlight),
     var(--glass-shadow);
 }
 
 .institutional-landing .liquid-nav {
   box-shadow:
-    inset 0 -1px 0 rgb(15 40 70 / 7%),
+    inset 0 -1px 0 color-mix(in srgb, var(--border) 65%, transparent),
     0 14px 40px rgb(7 24 46 / 8%);
 }
 
@@ -45,10 +99,35 @@
   width: 80%;
   height: 100%;
   border-radius: 999px;
-  background: radial-gradient(circle, rgb(255 255 255 / 58%), transparent 68%);
+  background: radial-gradient(circle, var(--glass-highlight), transparent 68%);
   content: "";
   pointer-events: none;
   transform: rotate(-18deg);
+}
+
+.institutional-landing .landing-light-surface,
+.institutional-landing .pricing-section {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.institutional-landing .landing-muted-surface,
+.institutional-landing .contact-section {
+  border-color: var(--border);
+  background:
+    radial-gradient(circle at 9% 20%, rgb(90 205 245 / 12%), transparent 27rem),
+    radial-gradient(circle at 92% 80%, rgb(77 121 255 / 8%), transparent 30rem),
+    var(--surface-muted);
+}
+
+.institutional-landing .pricing-card,
+.institutional-landing article,
+.institutional-landing details,
+.institutional-landing #dostepnosc > div,
+.institutional-landing .audience-panel,
+.institutional-landing .audience-panel > aside {
+  border-color: var(--border);
+  background-color: var(--surface-elevated);
 }
 
 .institutional-landing .pricing-card {
@@ -60,24 +139,168 @@
 
 .institutional-landing .pricing-card:hover {
   transform: translateY(-5px);
-  border-color: rgb(22 140 255 / 35%) !important;
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--border));
   box-shadow: 0 32px 95px rgb(7 24 46 / 16%);
 }
 
 .institutional-landing .pricing-card-featured {
   background:
-    radial-gradient(circle at 100% 0%, rgb(113 208 249 / 25%), transparent 18rem),
-    rgb(255 255 255 / 82%) !important;
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 92%),
-    0 30px 90px rgb(22 140 255 / 17%);
+    radial-gradient(circle at 100% 0%, rgb(113 208 249 / 23%), transparent 18rem),
+    var(--surface-elevated);
 }
 
-.institutional-landing .contact-section {
-  background:
-    radial-gradient(circle at 9% 20%, rgb(90 205 245 / 15%), transparent 27rem),
-    radial-gradient(circle at 92% 80%, rgb(77 121 255 / 10%), transparent 30rem),
-    rgb(241 246 251 / 82%);
+.institutional-landing .liquid-field {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+  caret-color: var(--accent);
+}
+
+.institutional-landing .liquid-field::placeholder {
+  color: var(--text-muted);
+}
+
+.institutional-landing .liquid-field:hover {
+  border-color: var(--border-strong);
+}
+
+.institutional-landing .liquid-field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.institutional-landing .workspace-preview {
+  border: 1px solid var(--border);
+  background: var(--surface-elevated);
+  box-shadow: 0 35px 95px rgb(7 24 46 / 18%);
+}
+
+.institutional-landing .workspace-preview-header {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 86%, transparent);
+}
+
+.institutional-landing .workspace-preview-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--surface-muted);
+}
+
+.institutional-landing .workspace-preview-canvas {
+  background: var(--page);
+}
+
+.institutional-landing .workspace-preview-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.institutional-landing .preview-status {
+  border: 1px solid color-mix(in srgb, var(--success) 28%, transparent);
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.institutional-landing .preview-live {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.institutional-landing .preview-progress-track {
+  background: var(--surface-muted);
+}
+
+.institutional-landing .audience-tab {
+  color: var(--text-secondary);
+}
+
+.institutional-landing .audience-tab:hover {
+  background: var(--surface-muted);
+}
+
+.institutional-landing .audience-tab.is-active {
+  border-color: color-mix(in srgb, var(--accent) 26%, var(--border));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.institutional-landing :focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.institutional-landing ::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--text-primary);
+}
+
+/* Scoped compatibility for existing Tailwind utility surfaces. */
+.dark .institutional-landing .bg-white,
+.dark .institutional-landing [class~="bg-white/75"],
+.dark .institutional-landing [class~="bg-white/80"] {
+  background-color: var(--surface-elevated);
+}
+
+.dark .institutional-landing .bg-slate-50,
+.dark .institutional-landing .bg-slate-100,
+.dark .institutional-landing [class~="bg-[#f4f7fa]"] {
+  background-color: var(--surface-muted);
+}
+
+.dark .institutional-landing .border-slate-200,
+.dark .institutional-landing .border-slate-300,
+.dark .institutional-landing .border-white\/60 {
+  border-color: var(--border);
+}
+
+.dark .institutional-landing .text-slate-950,
+.dark .institutional-landing .text-slate-900,
+.dark .institutional-landing .text-slate-800,
+.dark .institutional-landing .text-slate-700,
+.dark .institutional-landing [class~="text-[#07182e]"] {
+  color: var(--text-primary);
+}
+
+.dark .institutional-landing .text-slate-600,
+.dark .institutional-landing .text-slate-500 {
+  color: var(--text-secondary);
+}
+
+.dark .institutional-landing .text-slate-400 {
+  color: var(--text-muted);
+}
+
+.dark .institutional-landing .text-blue-700,
+.dark .institutional-landing [class~="text-[#0869c7]"],
+.dark .institutional-landing [class~="text-[#0759aa]"] {
+  color: var(--accent);
+}
+
+.dark .institutional-landing .bg-blue-50 {
+  background: var(--accent-soft);
+}
+
+.dark .institutional-landing .bg-emerald-50 {
+  background: var(--success-soft);
+}
+
+.dark .institutional-landing footer {
+  border-color: #19314b;
+  background: #030a12;
+}
+
+.dark .pricing-page .pricing-compare {
+  border-color: var(--border);
+  background: var(--surface-elevated);
+}
+
+.dark .pricing-page .pricing-compare thead tr {
+  background: var(--surface-muted);
+}
+
+.dark .pricing-page .pricing-compare tr,
+.dark .pricing-page .pricing-compare td,
+.dark .pricing-page .pricing-compare th {
+  border-color: var(--border);
 }
 
 @supports (backdrop-filter: blur(18px)) {
@@ -89,99 +312,39 @@
   }
 }
 
-.dark .institutional-landing {
-  --glass-bg: rgb(12 29 48 / 70%);
-  --glass-border: rgb(153 205 240 / 15%);
-  --glass-shadow: 0 28px 90px rgb(0 0 0 / 34%);
-  background:
-    radial-gradient(circle at 10% 12%, rgb(42 157 211 / 17%), transparent 34rem),
-    radial-gradient(circle at 86% 52%, rgb(54 92 218 / 13%), transparent 40rem), #050d17;
-  color: #e8f0f8;
-}
+@media (max-width: 639px) {
+  .institutional-landing .workspace-preview-layout {
+    display: block;
+    min-height: 0;
+  }
 
-.dark .institutional-landing .liquid-nav {
-  background: rgb(5 16 29 / 78%) !important;
-  box-shadow:
-    inset 0 -1px 0 rgb(153 205 240 / 10%),
-    0 16px 46px rgb(0 0 0 / 28%);
-}
+  .institutional-landing .workspace-preview-sidebar {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: thin;
+  }
 
-.dark .institutional-landing .pricing-section,
-.dark .institutional-landing .contact-section,
-.dark .institutional-landing .landing-light-surface,
-.dark .institutional-landing .landing-muted-surface {
-  background-color: #081522 !important;
-  background-image:
-    radial-gradient(circle at 10% 16%, rgb(49 169 218 / 13%), transparent 28rem),
-    radial-gradient(circle at 88% 78%, rgb(75 101 222 / 11%), transparent 32rem) !important;
-}
+  .institutional-landing .workspace-preview-sidebar span {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
 
-.dark .institutional-landing article,
-.dark .institutional-landing details,
-.dark .institutional-landing #dostepnosc > div,
-.dark .institutional-landing #audience-panel > aside {
-  border-color: rgb(148 185 218 / 14%) !important;
-  background-color: rgb(12 29 48 / 76%) !important;
-}
-
-.dark .institutional-landing :is(h1, h2, h3, strong, summary, label) {
-  color: #f2f7fb !important;
-}
-
-.dark .institutional-landing :is(p, li, small) {
-  color: #aebdcd;
-}
-
-.dark .institutional-landing header :is(a, button) {
-  color: #dce8f3 !important;
-}
-
-.dark .institutional-landing .liquid-field {
-  border-color: rgb(149 186 218 / 18%) !important;
-  background: rgb(5 15 27 / 74%) !important;
-  color: #f4f8fb !important;
-}
-
-.dark .institutional-landing .liquid-field::placeholder {
-  color: #70849a !important;
-}
-
-.dark .institutional-landing .pricing-card-featured {
-  background:
-    radial-gradient(circle at 100% 0%, rgb(82 191 238 / 22%), transparent 18rem),
-    rgb(12 29 48 / 84%) !important;
-}
-
-.dark .pricing-page .pricing-compare {
-  border-color: rgb(148 185 218 / 14%) !important;
-  background: rgb(8 21 34 / 88%) !important;
-}
-
-.dark .pricing-page .pricing-compare thead tr {
-  background: rgb(12 29 48 / 92%) !important;
-}
-
-.dark .pricing-page .pricing-compare tr,
-.dark .pricing-page .pricing-compare td,
-.dark .pricing-page .pricing-compare th {
-  border-color: rgb(148 185 218 / 14%) !important;
-}
-
-.dark .pricing-page .pricing-compare :is(td, th) {
-  color: #c5d2df;
-}
-
-.dark .institutional-landing footer {
-  border-color: #19314b !important;
-  background: #030a12 !important;
+  .institutional-landing .workspace-preview-canvas > div:nth-of-type(2),
+  .institutional-landing .workspace-preview-canvas > div:nth-of-type(3) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .institutional-landing *,
   .institutional-landing *::before,
   .institutional-landing *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
   }
 }

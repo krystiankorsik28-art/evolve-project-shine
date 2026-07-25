@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { IdentityTrustCenter } from "@/components/auth/IdentityTrustCenter";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Toaster } from "@/components/ui/sonner";
 import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import {
@@ -47,6 +48,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import type { AuthProvider } from "@/lib/auth/auth-types";
 import { authRedirectUrl, ssoDomainFrom } from "@/lib/auth/security";
 import { studentPinLogin } from "@/lib/student-auth.functions";
+import { useTheme } from "@/lib/theme";
 
 type Provider = "microsoft" | "google";
 type Mode = "login" | "forgot";
@@ -297,6 +299,26 @@ function AccessModeSelector({
             role="tab"
             aria-selected={selected}
             onClick={() => onChange(option.id)}
+            onKeyDown={(event) => {
+              const currentIndex = options.findIndex((item) => item.id === value);
+              const lastIndex = options.length - 1;
+              let nextIndex = currentIndex;
+              if (event.key === "ArrowRight")
+                nextIndex = currentIndex === lastIndex ? 0 : currentIndex + 1;
+              if (event.key === "ArrowLeft")
+                nextIndex = currentIndex === 0 ? lastIndex : currentIndex - 1;
+              if (event.key === "Home") nextIndex = 0;
+              if (event.key === "End") nextIndex = lastIndex;
+              if (nextIndex === currentIndex) return;
+              event.preventDefault();
+              onChange(options[nextIndex].id);
+              const tabs =
+                event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>(
+                  '[role="tab"]',
+                );
+              tabs?.[nextIndex]?.focus();
+            }}
+            tabIndex={selected ? 0 : -1}
             className={`min-h-[66px] rounded-lg px-3 py-2.5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0067b8]/30 ${
               selected
                 ? "bg-white text-slate-950 shadow-sm ring-1 ring-slate-200"
@@ -370,6 +392,7 @@ function AuthPage() {
   const reduceMotion = useReducedMotion();
   const pinLogin = useServerFn(studentPinLogin);
   const { signInWithEmail, signInWithProvider, resetPassword } = useAuth();
+  const { resolvedTheme } = useTheme();
   const [accessMode, setAccessMode] = useState<AccessMode>("account");
   const [showSso, setShowSso] = useState(false);
   const [mode, setMode] = useState<Mode>("login");
@@ -395,6 +418,9 @@ function AuthPage() {
   useEffect(() => {
     const savedEmail = window.localStorage.getItem("edunex_remembered_email");
     if (savedEmail) setEmail(savedEmail);
+    if (new URLSearchParams(window.location.search).get("access") === "student") {
+      setAccessMode("student");
+    }
   }, []);
 
   const changeAccessMode = (nextMode: AccessMode) => {
@@ -546,7 +572,7 @@ function AuthPage() {
 
   return (
     <div className="edunex-next-gen-identity min-h-screen bg-[#f4f6f8] text-slate-950 antialiased">
-      <Toaster position="top-center" theme="light" richColors />
+      <Toaster position="top-center" theme={resolvedTheme} richColors />
 
       <header className="identity-topbar border-b border-slate-200 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] w-full max-w-[1440px] items-center justify-between px-5 sm:px-8 lg:px-10">
@@ -566,6 +592,7 @@ function AuthPage() {
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-5">
+            <ThemeSwitcher compact />
             <Link
               to="/pomoc"
               className="hidden items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-950 sm:inline-flex"
